@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 function strings(locale: string, table = 'Localizable') {
- const source = readFileSync(`ios/Resources/${locale}.lproj/${table}.strings`, 'utf8');
+ const source = readFileSync(`apps/ios/Resources/${locale}.lproj/${table}.strings`, 'utf8');
  const result: Record<string,string> = {};
  for (const line of source.split('\n').filter(line => line.trim() && !line.trim().startsWith('//'))) {
   const match = line.match(/^("(?:[^"\\]|\\.)*")\s*=\s*("(?:[^"\\]|\\.)*");$/);
@@ -23,8 +23,8 @@ describe('English and Vietnamese app copy', () => {
  });
  it('covers native copy and keeps Vietnamese in translation resources', () => {
   const en = strings('en');
-  for (const file of readdirSync('ios/HiMorning').filter(file => file.endsWith('.swift'))) {
-   const source = readFileSync(`ios/HiMorning/${file}`, 'utf8');
+  for (const file of readdirSync('apps/ios/HiMorning').filter(file => file.endsWith('.swift'))) {
+   const source = readFileSync(`apps/ios/HiMorning/${file}`, 'utf8');
    expect(source, file).not.toMatch(/[À-ỹ]/u);
    for (const match of source.matchAll(/appText\(("(?:[^"\\]|\\.)*")/g)) expect(en, `${file}: ${match[1]}`).toHaveProperty(JSON.parse(match[1]));
   }

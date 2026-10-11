@@ -7,6 +7,21 @@ habits, energy levels and living situations.
 **Status:** Native pilot screens exist in English and Vietnamese. The earlier
 Vietnamese web concept includes planned screens and simulated behavior.
 
+## Native screens
+
+These are unedited screenshots attached by XCUITest, showing the same home and
+new-alarm journeys in both languages. Gentle is selected by default. The language
+menu changes app copy; it does not change the phone's language settings.
+
+| Screen | English | Vietnamese |
+|---|---|---|
+| Home | <img src="images/ui/home-en.png" width="260" alt="Native home in English"> | <img src="images/ui/home-vi.png" width="260" alt="Native home in Vietnamese"> |
+| New alarm | <img src="images/ui/alarm-editor-en.png" width="260" alt="Native alarm editor in English"> | <img src="images/ui/alarm-editor-vi.png" width="260" alt="Native alarm editor in Vietnamese"> |
+
+Open an image for full resolution. [Capture details](images/ui/README.md) record
+the CI run, source commit and simulator. These four images do not cover the camera,
+permission prompts, large text, dark mode or physical-device behavior.
+
 ## Design at a glance
 
 - One clear next action on each screen, with a visible way to stop.

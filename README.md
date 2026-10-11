@@ -14,6 +14,7 @@ released or device-validated alarm app.
 | You want to… | Read |
 |---|---|
 | Run the app or tests | [Setup guide](docs/RUNNING.md) |
+| Extend the project to Android | [Android guide](docs/ANDROID.md) and [shared contracts](shared/contracts/README.md) |
 | Understand the system | [Architecture](docs/ARCHITECTURE.md) and [tech stack](docs/TECH-STACK.md) |
 | Review the experience | [UI guide](docs/UI-DESIGN.md) and [language guide](docs/LOCALIZATION.md) |
 | Understand AI costs and safeguards | [Firebase backend](docs/FIREBASE.md) |
@@ -42,13 +43,14 @@ preview volume is separate from alarm volume.
 
 ## Quick start
 
-Backend checks need Node 22, npm and Java 21:
+Backend checks need Node 22, pnpm and Java 21:
 
 ```sh
-npm ci --ignore-scripts
-npm run typecheck
-npm run build
-npm run test:coverage
+corepack enable
+pnpm install --frozen-lockfile
+pnpm run typecheck
+pnpm run build
+pnpm run test:coverage
 ```
 
 Swift core checks work with Apple's Command Line Tools:
@@ -60,8 +62,8 @@ sh scripts/test-swift.sh
 For the native app, use Xcode 26+ and XcodeGen:
 
 ```sh
-xcodegen generate --spec ios/project.yml
-open ios/HiMorning.xcodeproj
+xcodegen generate --spec apps/ios/project.yml
+open apps/ios/HiMorning.xcodeproj
 ```
 
 The globe menu offers **Use device language**, **English** and **Vietnamese**. Your
@@ -71,16 +73,38 @@ choice stays on this device. See [setup](docs/RUNNING.md) for signing and Fireba
 
 | Path | Purpose |
 |---|---|
-| `ios/HiMorningCore/` | Alarm domain, local journal, evidence capture and cloud lifecycle |
-| `ios/HiMorning/` | SwiftUI, AlarmKit, camera and Firebase adapters |
-| `ios/Resources/` | English/Vietnamese strings, permission text and sound sketches |
-| `functions/src/` | Firebase callables, OpenAI adapter, session policy and quotas |
+| `apps/ios/HiMorningCore/` | Alarm domain, local journal, evidence capture and cloud lifecycle |
+| `apps/ios/HiMorning/` | SwiftUI, AlarmKit, camera and Firebase adapters |
+| `apps/ios/Resources/` | English/Vietnamese strings, permission text and sound sketches |
+| `backend/functions/src/` | Firebase callables, OpenAI adapter, session policy and quotas |
+| `apps/android/` | Reserved future Android root and extension guide |
+| `shared/contracts/v1/` | Language-neutral API schema, wire fixtures and mode presets |
 | `tests/` | Backend, emulator, localization and engineering-metrics tests |
 | `design/` | Earlier Vietnamese design simulation; no real alarm, camera or API |
 | `docs/` | Guides, decisions, plans and evidence |
 
 The working checkout is `~/Projects/HiMorning`. Run `python3 scripts/preview.py` to
 view the earlier design study at http://127.0.0.1:4173/design/.
+
+## Native screens
+
+Actual iOS simulator captures from the English and Vietnamese UI tests:
+
+| English | Vietnamese |
+|---|---|
+| <img src="docs/images/ui/home-en.png" width="260" alt="English home screen"> | <img src="docs/images/ui/home-vi.png" width="260" alt="Vietnamese home screen"> |
+| <img src="docs/images/ui/alarm-editor-en.png" width="260" alt="English alarm editor"> | <img src="docs/images/ui/alarm-editor-vi.png" width="260" alt="Vietnamese alarm editor"> |
+
+See the [UI guide](docs/UI-DESIGN.md#native-screens) and
+[capture details](docs/images/ui/README.md). These show the native pilot; the earlier
+web study explores additional planned features.
+
+## Architecture at a glance
+
+![HiMorning native apps, shared contracts and verification service](docs/images/architecture.svg)
+
+Android is planned. See the [architecture guide](docs/ARCHITECTURE.md) for boundaries
+and [setup](docs/RUNNING.md) for pnpm and Firebase packaging.
 
 ## What comes next?
 

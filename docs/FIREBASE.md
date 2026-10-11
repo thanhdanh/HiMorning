@@ -86,8 +86,9 @@ for attempt documents.
 See [setup](RUNNING.md) for prerequisites and environment variables:
 
 ```sh
-npm ci --ignore-scripts
-npm run test:coverage
+corepack enable
+pnpm install --frozen-lockfile
+pnpm run test:coverage
 ```
 
 This uses `demo-himorning` and the Firestore Emulator. The suite checks real
@@ -104,6 +105,14 @@ accuracy, latency and cost gates. A cloud kill switch must leave local alarms us
 Account linking, anonymous-account cleanup, deletion workflows and sync conflict
 rules remain future work. Adding sync must never make FCM or a cloud job the alarm
 clock, or change an active challenge midway.
+
+## Deployment packaging
+
+`pnpm run prepare:firebase` builds the backend and uses pnpm deploy to produce
+`.firebase/functions`. This isolated source has a production package and generated
+lockfile; it does not depend on workspace symlinks outside the upload. See
+[setup](RUNNING.md) for the preparation and validation commands. No cloud deployment
+has been performed.
 
 ## Read next
 

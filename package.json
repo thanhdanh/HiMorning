@@ -2,17 +2,16 @@
   "name": "himorning",
   "private": true,
   "type": "module",
-  "workspaces": [
-    "functions"
-  ],
   "scripts": {
     "test": "vitest run --exclude tests/firestore.test.ts",
     "test:coverage": "firebase emulators:exec --project demo-himorning --only firestore \"vitest run --coverage\"",
     "test:emulator": "firebase emulators:exec --project demo-himorning --only firestore \"vitest run tests/firestore.test.ts\"",
-    "build": "npm run build --workspace functions",
+    "build": "pnpm --filter @himorning/functions run build",
     "typecheck": "tsc --noEmit",
-    "check": "npm run typecheck && npm test && npm run build",
-    "metrics:ai": "node scripts/collect-ai-usage.mjs"
+    "check": "pnpm run typecheck && pnpm test && pnpm run build",
+    "metrics:ai": "node scripts/collect-ai-usage.mjs",
+    "contracts:generate": "pnpm run build && node scripts/export-contracts.mjs",
+    "prepare:firebase": "pnpm run build && node scripts/prepare-firebase.mjs"
   },
   "devDependencies": {
     "vitest": "5.0.3",
@@ -21,6 +20,11 @@
     "@types/node": "^22",
     "firebase-tools": "15.33.0",
     "@firebase/rules-unit-testing": "6.0.0",
-    "firebase": "13.0.0"
-  }
+    "firebase": "13.0.0",
+    "firebase-admin": "14.5.0",
+    "openai": "7.32.0",
+    "sharp": "0.35.5",
+    "zod": "4.6.5"
+  },
+  "packageManager": "pnpm@10.34.6"
 }

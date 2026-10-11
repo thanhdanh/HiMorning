@@ -1,0 +1,6 @@
+packages:
+  - backend/functions
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+injectWorkspacePackages: true

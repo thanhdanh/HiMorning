@@ -10,7 +10,7 @@ review or use the local alarm flow.
 
 | Work | Tools |
 |---|---|
-| Backend/emulator tests | Node 22, npm, Java 21 |
+| Backend/emulator tests | Node 22, pnpm, Java 21 |
 | Portable Swift checks | Apple Command Line Tools |
 | Native build/UI | Xcode 26+ and XcodeGen |
 | Physical iPhone | iOS 26+, development signing/team |
@@ -20,31 +20,33 @@ The working checkout is `~/Projects/HiMorning`. Run commands from its root.
 ## Check the backend
 
 ```sh
-npm ci --ignore-scripts
-npm run typecheck
-npm run build
-npm test
-npm run test:coverage
+corepack enable
+corepack pnpm@10.34.6 --version
+pnpm install --frozen-lockfile
+pnpm run typecheck
+pnpm run build
+pnpm test
+pnpm run test:coverage
 ```
 
-`npm test` runs tests without Firestore. Coverage starts the real Firestore Emulator
+`pnpm test` runs tests without Firestore. Coverage starts the real Firestore Emulator
 under the safe `demo-himorning` project, then adds transaction/rules tests. OpenAI
 uses SDK mocks. If the emulator cannot find Java, install/select Java 21 and check
 `JAVA_HOME`; do not count an environment failure as a behavior-test RED.
 
-Production audit: `npm audit --omit=dev`. The historical full development audit had
+Production audit: `pnpm audit --prod`. The historical full development audit had
 16 advisories in Firebase tooling dependencies; it was not claimed clean.
 
 ## Check Swift and open the app
 
 ```sh
 sh scripts/test-swift.sh
-xcodegen generate --spec ios/project.yml
-open ios/HiMorning.xcodeproj
+xcodegen generate --spec apps/ios/project.yml
+open apps/ios/HiMorning.xcodeproj
 ```
 
 The portable harness reports core coverage without requiring local XCTest. Full
-Xcode can run `swift test --package-path ios/HiMorningCore` and the native scheme's
+Xcode can run `swift test --package-path apps/ios/HiMorningCore` and the native scheme's
 UI tests. Hosted CI runs both paths.
 
 Select a simulator to review English/Vietnamese screens. Use the globe menu to
@@ -61,7 +63,7 @@ Do this only when ready for real cloud testing:
 
 1. Register the app bundle ID in your Firebase project and enable anonymous Auth.
 2. Configure App Attest and add an untracked `GoogleService-Info.plist` to app resources.
-3. Configure backend values using `functions/.env.example`; keep OpenAI credentials
+3. Configure backend values using `backend/functions/.env.example`; keep OpenAI credentials
    in Secret Manager and bind them only to verification.
 4. Review quotas, TTL, provider limits and billing before enabling cloud verification.
 
@@ -94,3 +96,27 @@ nor synthetic-image tests establish exercise accuracy or alarm delivery reliabil
 
 [Tech stack](TECH-STACK.md) · [Language guide](LOCALIZATION.md) · [Firebase](FIREBASE.md) ·
 [TDD evidence](tdd/cost-optimized-pilot.tdd.md)
+
+## Prepare a Firebase deployment package
+
+```sh
+pnpm run prepare:firebase
+pnpm --dir .firebase/functions install --prod --frozen-lockfile
+```
+
+This builds `backend/functions` and stages a standalone production package in
+`.firebase/functions`, including its generated pnpm lockfile. The directory is
+ignored and may be rebuilt. It is the configured Firebase source. Preparation
+does not deploy anything or create billing.
+
+After separate deployment authorization and project configuration, run the Firebase
+CLI from the repo root. Its predeploy hook repeats preparation. Run preparation
+first so the configured source exists when the CLI inspects it. Never deploy a
+workspace symlink tree without the production stage.
+
+Only `sharp` and `esbuild` dependency builds are allowed in the development
+workspace; the production stage allows `sharp`. Other dependency install scripts
+stay blocked. The clean install, image processing, emulator and isolated import
+checks verify the current dependency set; do not approve every script by default.
+
+[Architecture](ARCHITECTURE.md) · [Android guide](ANDROID.md) · [Contracts](../shared/contracts/README.md)

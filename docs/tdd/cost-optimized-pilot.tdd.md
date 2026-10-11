@@ -123,3 +123,34 @@ OS alarm labels keep their scheduled language. The web design study remains a
 separate Vietnamese concept. Device permission copy, VoiceOver, long text and actual
 alarm/camera/audio behavior still require review. Translation parity does not prove
 natural wording or layout fit.
+
+
+## pnpm and future Android boundaries
+
+Earlier npm commands and paths in this report record what ran at each historical
+checkpoint. Current commands use pnpm and the `apps/ios` / `backend/functions`
+layout; see [setup](../RUNNING.md). Historical metrics JSON remains unchanged.
+
+| Journey | RED | GREEN |
+|---|---|---|
+| Shared wire agreement is available to clients | `418b675`: executed contract suite failed to import the intentionally missing contract module | `aa42859`: three contract tests pass against exported schema and synthetic fixtures |
+| Swift agrees with shared payloads and wake modes | `cdf86bb`: portable harness compiled, then failed on the intentionally missing wire fixture file | `aa42859`: same harness passes 15 journeys, including decoding responses and matching encoded submissions |
+
+A clean frozen pnpm install passed. Real Firestore coverage passed **56 tests**:
+42 backend, 8 metrics, 3 localization and 3 shared-contract tests. Backend coverage:
+97.56% statements, 95.86% branches, 92.50% functions, 100% lines. Combined backend
+and collector: 98.06% statements, 96.48% branches, 94.33% functions, 100% lines.
+Swift core remains 84.41% regions, 98.63% functions and 97.86% lines.
+
+Legacy pnpm deployment staging initially failed because it produced no standalone
+lockfile. The current deploy mode with workspace injection produces that lockfile;
+its frozen production install and entry-point import passed. This is packaging
+feedback, not a fabricated business-logic RED. No cloud deployment or paid call ran.
+
+Hosted [run 38155392322](https://github.com/thanhdanh/HiMorning/actions/runs/38155392322)
+at `72e1bb9` passed both jobs: 56 Vitest tests, 15 portable Swift journeys,
+10 Swift package XCTest cases, the relocated native SDK build and all 3 UI journeys.
+The schema-drift check, isolated Firebase frozen install/import and production
+audit also passed. [Four native screenshots](../images/ui/README.md) were exported
+from that run, copied without edits and visually reviewed in both languages.
+Android remains a documented extension point, not a built application.

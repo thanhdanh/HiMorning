@@ -2,14 +2,9 @@ import { createHash } from 'node:crypto';
 import sharp from 'sharp';
 import { z } from 'zod';
 import { Failure, parse } from './errors.js';
-export const CONSENT_VERSION = '2026-10-11';
+import { CONSENT_VERSION, LIMITS, submissionSchema } from './contracts.js';
+export { CONSENT_VERSION, LIMITS, sessionIDSchema, submissionSchema } from './contracts.js';
 export const POLICY_VERSION = 'pilot-v1';
-export const LIMITS = Object.freeze({ maxFrames: 25, maxFrameBytes: 50000, maxTotalBytes: 1250000, maxDimension: 512, framesPerRep: 5 });
-export const sessionIDSchema = z.string().regex(/^[a-f0-9]{64}$/);
-export const submissionSchema = z.object({
- sessionID: sessionIDSchema, nonce: z.uuid(), evidenceID: z.uuid(), consentVersion: z.literal(CONSENT_VERSION),
- frames: z.array(z.object({ id: z.string().regex(/^[a-zA-Z0-9_-]{1,32}$/), timestampMs: z.number().int().min(0).max(120000), jpegBase64: z.string().min(4).max(66668) }).strict()).min(1).max(LIMITS.maxFrames),
-}).strict();
 export interface Evidence { frames: { id: string; timestampMs: number; dataURL: string }[]; payloadHash: string; sufficient: boolean }
 export const hash = (value: string) => createHash('sha256').update(value).digest('hex');
 export const verdictSchema = z.object({ status: z.enum(['complete','incomplete','uncertain']), reps: z.array(z.object({ frameIDs: z.array(z.string()).length(5) }).strict()).max(5), cue: z.enum(['none','adjust_camera']) }).strict();

@@ -4,8 +4,8 @@ import { initializeTestEnvironment, assertSucceeds, assertFails, type RulesTestE
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { initializeApp, deleteApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
-import { FirestoreStore } from '../functions/src/firestore-store.js';
-import { VerificationService } from '../functions/src/service.js';
+import { FirestoreStore } from '../backend/functions/src/firestore-store.js';
+import { VerificationService } from '../backend/functions/src/service.js';
 import { actor, config, createInput, complete, frames, uuid } from './helpers.js';
 let env: RulesTestEnvironment;
 const admin=initializeApp({projectId:'demo-himorning'},'tests');const db=getFirestore(admin);

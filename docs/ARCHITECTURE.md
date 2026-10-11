@@ -9,6 +9,51 @@ not yet validated. Android and several product features remain planned.
 
 ## At a glance
 
+![Native apps share contracts and one verification service](images/architecture.svg)
+
+The dashed Android card is planned. The iOS app and Firebase service are implemented.
+
+## Repository boundaries
+
+```text
+apps/
+  ios/                      # SwiftUI, Swift core and Apple adapters
+  android/                  # extension guide; app not implemented
+backend/functions/          # reusable Firebase service and provider adapter
+shared/contracts/v1/        # JSON Schema, wire fixtures and mode presets
+tests/                      # service, emulator, contract and tooling checks
+scripts/                    # contract export, deployment staging and local checks
+design/                     # earlier Vietnamese web concept
+docs/                       # guides, diagrams, screenshots and evidence
+```
+
+pnpm manages the JavaScript workspace and tooling. SwiftPM/Xcode build iOS; a future
+Android project will use Gradle. There is no shared mobile JavaScript runtime.
+
+Server wire schemas live in `backend/functions/src/contracts.ts`. The exported JSON
+Schema and shared fixtures let Swift and future Kotlin clients test the same
+agreement. TypeScript tests guard schema drift; the portable Swift harness decodes
+server fixtures, encodes a matching submission and checks mode presets.
+
+### Key choices
+
+| Choice | Benefit | Cost / alternative |
+|---|---|---|
+| Separate native app roots | Clear platform ownership; keep existing iOS work | Two client implementations; a cross-platform rewrite is deferred |
+| Shared data contracts | Reuse backend and test payload parity across languages | Fixtures need versioning and do not replace native lifecycle tests |
+| Pinned pnpm workspace | One development lockfile and explicit dependencies | Toolchain major upgrades need a deliberate validation pass |
+| Isolated Firebase stage | Production package includes its own generated lockfile | Run the preparation step before deploy; the stage is not source code |
+
+The pnpm pin is 10.34.6, the published 10.x release used for this Node 22/Corepack
+workflow. It is not presented as the newest pnpm major. `pnpm import` carried the
+existing dependency resolutions into the workspace; the npm lockfile was removed.
+Direct test dependencies are declared explicitly instead of relying on hoisting.
+
+See [shared contracts](../shared/contracts/README.md) and the [Android guide](ANDROID.md)
+for extension steps and platform-specific responsibilities.
+
+## Components
+
 ```mermaid
 flowchart LR
   UI[SwiftUI: English / Vietnamese] --> CORE[Swift alarm domain]
@@ -25,12 +70,12 @@ flowchart LR
 
 | Layer | Current implementation | Responsibility |
 |---|---|---|
-| UI | `ios/HiMorning/` | Show choices, language, schedule state and recovery |
-| Domain | `ios/HiMorningCore/` | Alarm rules, persistence, provisional cycles and lifecycle |
+| UI | `apps/ios/HiMorning/` | Show choices, language, schedule state and recovery |
+| Domain | `apps/ios/HiMorningCore/` | Alarm rules, persistence, provisional cycles and lifecycle |
 | OS adapter | `NativeAlarmScheduler.swift` | Request access, schedule, cancel, stop and inspect alarms |
 | Camera adapter | `CameraCapture.swift` | Foreground capture, local visibility checks and JPEG evidence |
 | Cloud client | `FirebaseCloud.swift` | Anonymous Auth, App Check and callable requests |
-| Backend | `functions/src/` | Ownership, evidence validation, quotas and authoritative decisions |
+| Backend | `backend/functions/src/` | Ownership, evidence validation, quotas and authoritative decisions |
 
 SwiftData was considered in the original plan. The current pilot uses an atomic
 JSON journal behind a persistence interface. Firestore does not sync or ring alarms.
@@ -53,6 +98,9 @@ and reconciliation handle that gap; there is no shared transaction between them.
 Existing-alarm editing, revision sync and a shared intent inbox are future work.
 
 ## Follow one AI challenge
+
+![Consent, bounded evidence and cancellation in the verification flow](images/verification-flow.svg)
+
 
 1. Obtain explicit consent and create an owned, short-lived server session.
 2. Capture only in the foreground. Vision estimates visibility and arm movement.

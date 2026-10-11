@@ -1,0 +1,172 @@
+{
+  "schemaVersion": 1,
+  "source": "codex-local-token_usage_record",
+  "capturedThrough": "2026-10-11T16:28:53.004Z",
+  "attribution": "manual turn categories; mixed code/test turns remain combined",
+  "responses": 314,
+  "duplicateRecords": 0,
+  "totals": {
+    "input_tokens": 44142473,
+    "cached_input_tokens": 42258688,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 321472,
+    "reasoning_output_tokens": 106186,
+    "total_tokens": 44463945,
+    "uncached_input_tokens": 1883785
+  },
+  "byPhase": {
+    "product_planning": {
+      "input_tokens": 861800,
+      "cached_input_tokens": 766720,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 7042,
+      "reasoning_output_tokens": 2013,
+      "total_tokens": 868842,
+      "uncached_input_tokens": 95080
+    },
+    "reference_research": {
+      "input_tokens": 693121,
+      "cached_input_tokens": 655744,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 1838,
+      "reasoning_output_tokens": 924,
+      "total_tokens": 694959,
+      "uncached_input_tokens": 37377
+    },
+    "architecture_ui_mock": {
+      "input_tokens": 727018,
+      "cached_input_tokens": 688512,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 38616,
+      "reasoning_output_tokens": 3947,
+      "total_tokens": 765634,
+      "uncached_input_tokens": 38506
+    },
+    "pose_feedback_planning": {
+      "input_tokens": 3326351,
+      "cached_input_tokens": 3282176,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 9807,
+      "reasoning_output_tokens": 4226,
+      "total_tokens": 3336158,
+      "uncached_input_tokens": 44175
+    },
+    "openai_architecture": {
+      "input_tokens": 2562602,
+      "cached_input_tokens": 2232832,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 19693,
+      "reasoning_output_tokens": 1784,
+      "total_tokens": 2582295,
+      "uncached_input_tokens": 329770
+    },
+    "stack_documentation": {
+      "input_tokens": 281577,
+      "cached_input_tokens": 139776,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 1207,
+      "reasoning_output_tokens": 632,
+      "total_tokens": 282784,
+      "uncached_input_tokens": 141801
+    },
+    "repository_firebase_setup": {
+      "input_tokens": 2772336,
+      "cached_input_tokens": 2583424,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 10822,
+      "reasoning_output_tokens": 3611,
+      "total_tokens": 2783158,
+      "uncached_input_tokens": 188912
+    },
+    "implementation_planning": {
+      "input_tokens": 1029067,
+      "cached_input_tokens": 1000192,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 2120,
+      "reasoning_output_tokens": 751,
+      "total_tokens": 1031187,
+      "uncached_input_tokens": 28875
+    },
+    "implementation_testing": {
+      "input_tokens": 11346403,
+      "cached_input_tokens": 11032320,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 84250,
+      "reasoning_output_tokens": 30761,
+      "total_tokens": 11430653,
+      "uncached_input_tokens": 314083
+    },
+    "fixes_metrics_documentation": {
+      "input_tokens": 3690176,
+      "cached_input_tokens": 3370368,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 36875,
+      "reasoning_output_tokens": 11468,
+      "total_tokens": 3727051,
+      "uncached_input_tokens": 319808
+    },
+    "localization_english_docs": {
+      "input_tokens": 10947784,
+      "cached_input_tokens": 10750208,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 66796,
+      "reasoning_output_tokens": 27997,
+      "total_tokens": 11014580,
+      "uncached_input_tokens": 197576
+    },
+    "pnpm_android_architecture_visuals": {
+      "input_tokens": 5904238,
+      "cached_input_tokens": 5756416,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 42406,
+      "reasoning_output_tokens": 18072,
+      "total_tokens": 5946644,
+      "uncached_input_tokens": 147822
+    }
+  },
+  "byModel": {
+    "gpt-6-astra": {
+      "input_tokens": 8170892,
+      "cached_input_tokens": 7625984,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 76996,
+      "reasoning_output_tokens": 12894,
+      "total_tokens": 8247888,
+      "uncached_input_tokens": 544908
+    },
+    "gpt-6.1-sol": {
+      "input_tokens": 35525514,
+      "cached_input_tokens": 34399616,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 230196,
+      "reasoning_output_tokens": 93292,
+      "total_tokens": 35755710,
+      "uncached_input_tokens": 1125898
+    },
+    "unknown": {
+      "input_tokens": 446067,
+      "cached_input_tokens": 233088,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 14280,
+      "reasoning_output_tokens": 0,
+      "total_tokens": 460347,
+      "uncached_input_tokens": 212979
+    }
+  },
+  "cacheHitRatio": 0.9573248875295228,
+  "reconciliation": {
+    "matches": true,
+    "delta": {
+      "input_tokens": 0,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 0,
+      "reasoning_output_tokens": 0,
+      "total_tokens": 0
+    }
+  },
+  "estimatedCostUSD": null,
+  "costNote": "Token telemetry is not an invoice. No subscription-to-API price conversion or assumed price table.",
+  "sourceSHA256": "92addde72d59013c209c4847d5f1664da92ce456baed4d6aaefaed9c95a3e9d4",
+  "incompleteFinalLine": false
+}

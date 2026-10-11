@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 const sdk=vi.hoisted(()=>({parse:vi.fn(),options:vi.fn()}));
 vi.mock('openai',()=>({default:class { responses={parse:sdk.parse};constructor(options:unknown){sdk.options(options);} }}));
-import { OpenAIVerifier } from '../functions/src/openai.js';
-import { prepareEvidence } from '../functions/src/evidence.js';
+import { OpenAIVerifier } from '../backend/functions/src/openai.js';
+import { prepareEvidence } from '../backend/functions/src/evidence.js';
 import { frames, uuid, complete } from './helpers.js';
 beforeEach(()=>{vi.clearAllMocks();});
 describe('OpenAI bounded adapter',()=>{
