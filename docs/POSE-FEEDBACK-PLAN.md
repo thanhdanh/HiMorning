@@ -1,82 +1,81 @@
-# Kế hoạch: gợi ý động tác trong challenge
+# Movement feedback plan
 
-**Trạng thái:** đề xuất cho review; mockup chỉ mô phỏng gợi ý, chưa có mô hình nhận diện thật. **Ngày:** 11/10/2026.
+A person may be trying sincerely and still move in a way the camera cannot read.
+Feedback should help them understand what to try next, without blame or pressure.
 
-## Khuyến nghị
+**Status:** Framing cues and provisional counting exist. Deeper technique coaching
+is planned, requires expert review and has not been validated for release.
 
-Nên bổ sung để giảm bối rối khi người dùng làm chưa đúng. Mục tiêu là giúp hoàn thành một tác vụ vừa sức, không chấm điểm kỹ thuật hoặc phán đoán người dùng đang gian lận. Bản đầu ưu tiên hướng dẫn đặt máy và động tác trọn vẹn; phản hồi sâu về tư thế nằm sau cổng kiểm chứng chuyên môn và dữ liệu thực tế.
+## Three different questions
 
-## Phân biệt ba trường hợp
-
-| Tình huống | Kết luận được phép | UX |
+| Observation | What the app may say | What it should do |
 |---|---|---|
-| Thiếu khớp, confidence thấp, che khuất | Không đủ dữ liệu để nhận xét động tác | “Đặt máy xa hơn để thấy rõ động tác.” Tạm ngừng cộng rep; giữ rep đã xác nhận. |
-| Có chuyển động nhưng chưa đủ một chu kỳ | Rep chưa hoàn tất | “Hoàn thành động tác rồi trở về vị trí đầu nhé.” Không trừ rep, không tăng mục tiêu. |
-| Landmarks ổn định, đủ góc nhìn, có tín hiệu tư thế lệch lặp lại | Có thể đưa một gợi ý đã được kiểm chứng | Ví dụ có điều kiện: “Thử giữ thân người thẳng hơn.” Nhãn gợi ý, không gán “sai”, không báo gian lận. |
+| Body is hidden, cropped or unclear | “Try moving your phone.” | Pause incomplete evidence; keep completed provisional cycles |
+| Movement has not completed a cycle | “Return to your starting position.” | Wait; do not subtract reps or raise the target |
+| A stable, validated technique signal is visible | A reviewed optional cue | Show one suggestion with a cooldown; do not punish |
 
-Không nhận xét thẳng lưng hoặc độ sâu khi góc quay không cho phép quan sát. Confidence của landmark không tự tương đương độ tin cậy của kết luận về kỹ thuật. Một tư thế biến thể (chống đẩy gối/tường) không được đánh là sai của tư thế sàn; MVP chỉ hỗ trợ biến thể đã được hướng dẫn và kiểm thử, người không phù hợp chọn QR/báo thức thường.
+The first two are about evidence and completeness. The third is advice. Landmark
+confidence is not proof that advice is correct. A knee or wall push-up is a different
+variant, not automatically a badly performed floor push-up. Only support variants
+with clear instructions and validation; offer a regular alarm or Stop otherwise.
 
-## Quy tắc sản phẩm
-
-- Gợi ý kỹ thuật là tùy chọn, giải thích trong buổi rehearsal và có thể tắt. Nút tắt gợi ý không thay đổi tiêu chí xác nhận một chu kỳ động tác.
-- Một thông điệp mỗi lúc, chữ ngắn, nền vàng dịu. Không phủ kín khung hình/counter. Không có tiếng nhắc liên tục.
-- Ưu tiên framing → chất lượng tín hiệu → completeness → form suggestion. Chỉ phát khi hiện tượng ổn định qua một khoảng thời gian, có cooldown và không đổi qua lại từng frame.
-- Advisory form feedback không tự bác bỏ một rep đã đáp ứng tiêu chí đếm. Rep không đủ chu kỳ có thể chưa được cộng, nhưng không trừ số đã có, không thêm rep phạt hay tự tăng thời gian chuông.
-- Hướng dẫn có ích nhất nằm ở rehearsal trước khi đi ngủ; sáng sớm chỉ đưa cue tối thiểu.
-- Nếu khó chịu hoặc không thể hoàn thành, người dùng được dừng hoặc đổi sang lựa chọn phù hợp. Không giữ âm vô hạn vì gợi ý tư thế.
-- Không tuyên bố chẩn đoán chấn thương, phục hồi chức năng hay bảo đảm tập đúng/an toàn tuyệt đối.
-
-## Kiến trúc
+## How the feedback would work
 
 ```mermaid
 flowchart LR
-  CAM[Camera foreground] --> POSE[Pose detector]
-  POSE --> QUALITY[Observation quality gate]
-  QUALITY --> REP[Rep state machine]
-  QUALITY --> FORM[FormFeedback evaluator]
-  FORM --> ARB[Feedback arbiter + cooldown]
-  REP --> COUNT[Provisional rep count]
-  CAM --> EVIDENCE[Ordered image evidence + consent]
-  EVIDENCE --> CLOUD[Backend / OpenAI verification]
-  CLOUD --> POLICY[Completion policy]
-  CLOUD -. optional cue code .-> ARB
-  ARB --> UI[One concise cue]
+  CAMERA[Foreground camera] --> QUALITY[Visibility gate]
+  QUALITY --> REP[Provisional cycle counter]
+  QUALITY --> FORM[Optional reviewed form rules]
+  FORM --> ARBITER[One cue + cooldown]
+  REP --> EVIDENCE[Ordered evidence]
+  EVIDENCE --> AI[Backend / OpenAI check]
+  ARBITER --> UI[Short suggestion]
 ```
 
-`FormFeedbackEvaluator` là consumer song song của pose sequence, độc lập với `RepVerifier`. `FeedbackArbiter` chọn tối đa một cue và thực hiện priority/cooldown. Permission denied, low confidence và camera interruption luôn ưu tiên hơn nhận xét form.
+Keep a future form evaluator separate from completion policy. Prioritize camera
+access, visibility and incomplete movement before technique suggestions. The current
+backend accepts only `none` and `adjust_camera` cue codes; it does not display
+free-text model coaching.
 
-Hợp đồng dự kiến:
+## Product rules
 
-```text
-ObservationQuality = sufficient | insufficient(reason)
-RepEvent = progress | completed | incomplete(reason)
-FormSuggestion = none | cue(id, confidenceBand, stableDuration, ruleVersion)
-FeedbackArbiter.next(quality, repEvent, formSuggestion, preferences) -> DisplayCue?
-```
+- Make advice optional and explain it during rehearsal, before the morning rush.
+- Show one short cue without covering the camera or counter; avoid repeated speech.
+- A form suggestion must not cancel an otherwise accepted rep, add penalty reps or
+  keep sound playing indefinitely.
+- Preserve self-confirm and Stop. Turning advice off does not silently change the
+  evidence rules or consent needed for cloud verification.
+- Do not claim to diagnose injury, provide rehabilitation or guarantee safe form.
 
-Counter local là tạm thời; OpenAI xác minh challenge qua chuỗi ảnh theo [tech stack](TECH-STACK.md). Cloud cue chỉ thuộc allowlist đã review, không hiện lời khuyên kỹ thuật tự do. Bật/tắt gợi ý không thay đổi consent gửi ảnh cần cho xác minh challenge.
+## Data boundaries
 
-Không lưu landmarks hoặc frames bền vững cho tính năng mặc định; khung hình vẫn được gửi qua backend đến OpenAI khi có consent. Không ghi “chỉ xử lý trên điện thoại”. Dữ liệu đã gửi chịu chính sách retention của nhà cung cấp. Feedback logs cục bộ chỉ chứa cueID/ruleVersion và trạng thái bật/tắt; dữ liệu nghiên cứu video cần consent riêng, mục đích và thời hạn lưu rõ ràng. Tần suất cue không được sử dụng để suy ra sức khỏe hay khả năng thể chất.
+Default features do not save frames or pose landmarks. Consented challenge images
+still travel through the backend to OpenAI, whose data policies apply. Research
+clips need separate consent, access controls and retention. Cue frequency must not
+be used to infer someone's health or physical ability.
 
-## Các bước
+## Build in small steps
 
-1. **Thiết kế + rehearsal:** đưa feedback option vào mockup, minh họa framing/completeness/form ở ba trạng thái riêng. Review với người hay chần chừ, người tập thường xuyên và người mới.
-2. **MVP camera + OpenAI:** triển khai framing/confidence, counter tạm, bằng chứng đủ chu kỳ và cloud verdict tách biệt. Đo cue gây nhầm và false rejection; chưa chấm kỹ thuật sâu.
-3. **Pilot một cue tư thế:** chuyên gia phù hợp rà soát tiêu chí và copy; dữ liệu nhiều vóc dáng, góc quay, phòng, trang phục. Tách dữ liệu hiệu chỉnh và kiểm thử theo người để tránh leakage.
-4. **Mở dần:** chỉ bật rule qua gates; version hóa rules, rollback được. Không tự thay đổi độ khó hoặc tiêu chí đếm của alarm đã lưu qua một model update.
+1. Review framing and incomplete-cycle copy with beginners and regular exercisers.
+2. Measure confusion and false rejection in the existing camera/OpenAI pipeline.
+3. Choose one form cue, have suitable experts define its valid viewing conditions,
+   and test it with consented data across people, clothing, rooms and angles.
+4. Split calibration and holdout sets by person to avoid leakage. Measure cue
+   precision/recall and user comfort, not just landmark quality.
+5. Release only reviewed rules, version them and keep rollback possible. A model
+   update must not silently change the challenge saved in an alarm.
 
-## Kiểm chứng và rủi ro
+## What would count as useful?
 
-- **False coaching:** so sánh với đánh giá độc lập của chuyên gia, đo precision/recall từng cue và nhóm điều kiện. Landmark accuracy không thay cho đánh giá cue accuracy.
-- **Gây phiền:** so sánh completion time, số lần cue đổi, tỷ lệ tắt gợi ý và cảm nhận áp lực giữa có/không cue. Mục tiêu là hỗ trợ, không chỉ tăng số cue.
-- **Overconfidence:** khi ánh sáng/góc nhìn không đạt, phải trả insufficient thay vì đoán. Tạo fixture che vai/hông, quay chính diện, mất frame và nhiều người.
-- **Vòng lặp không hoàn thành:** kiểm thử low confidence kéo dài, dừng, resume và camera permission revoked; luôn có đường thoát.
-- **Biến thể/cơ thể:** tiêu chí hỗ trợ một biến thể phải được mô tả rõ; không dùng một bộ góc chuẩn cố định cho mọi người.
+Compare completion time, confusing cue changes, advice opt-out and reported pressure
+with and without advice. Include poor light, cropped joints, frontal views, multiple
+people, interruption and permission loss. When evidence is insufficient, the right
+answer is uncertainty. Set gates before a pilot; do not invent an accuracy target
+from unmeasured data.
 
-Các ngưỡng chất lượng cụ thể được chốt trước pilot với người rà soát chuyên môn, không tự đặt “AI đúng 95%” từ dữ liệu chưa có. Phạm vi kỹ thuật này có độ phức tạp cao hơn bộ đếm rep; chỉ phát hành theo từng cue có bằng chứng.
+## Read next
 
-## Nguồn
+[UI guide](UI-DESIGN.md) · [Tech stack](TECH-STACK.md) · [Architecture](ARCHITECTURE.md)
 
-- [Apple Vision body pose](https://developer.apple.com/documentation/vision/detecting-human-body-poses-in-images): landmark confidence và giới hạn khi che khuất/trang phục/góc nhìn.
-- [Apple WWDC20: Body and Hand Pose](https://developer.apple.com/videos/play/wwdc2020/10653/): body pose có thể kém hơn ở tư thế cúi/ngược và bị che khuất.
-- [Mayo Clinic: modified pushup](https://www.mayoclinic.org/healthy-lifestyle/fitness/multimedia/modified-pushup/vid-20084674): ví dụ hướng dẫn giữ thân thẳng và chuyển động có kiểm soát. Đây là tham khảo nội dung, không phải bằng chứng camera có thể nhận xét đúng.
+Technical references: [Vision body pose](https://developer.apple.com/documentation/vision/detecting-human-body-poses-in-images),
+[WWDC body and hand pose](https://developer.apple.com/videos/play/wwdc2020/10653/).

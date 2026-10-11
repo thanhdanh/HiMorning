@@ -1,0 +1,13 @@
+import { readFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { parseArgs } from 'node:util';
+import { parseRollout, summarizeUsage } from './lib/ai-usage.mjs';
+const { values } = parseArgs({ options: { log: { type: 'string' }, phases: { type: 'string', default: 'docs/metrics/phase-map.json' } } });
+if (!values.log) throw new Error('Use --log with the current conversation rollout path. No global transcript scan is performed.');
+const text = await readFile(values.log, 'utf8');
+const { records, incompleteFinalLine } = parseRollout(text);
+const config = JSON.parse(await readFile(values.phases, 'utf8'));
+const report = summarizeUsage(records, config);
+report.sourceSHA256 = createHash('sha256').update(text).digest('hex');
+report.incompleteFinalLine = incompleteFinalLine;
+process.stdout.write(JSON.stringify(report, null, 2) + '\n');

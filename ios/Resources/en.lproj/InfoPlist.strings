@@ -1,0 +1,3 @@
+// HiMorning app copy. Keep format placeholders unchanged.
+"NSAlarmKitUsageDescription" = "HiMorning needs access to set your morning alarms.";
+"NSCameraUsageDescription" = "The camera opens only for a challenge you choose. With your consent, movement photos are sent to OpenAI for checking.";

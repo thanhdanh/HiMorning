@@ -1,0 +1,52 @@
+name: HiMorning checks
+on:
+  push:
+    branches: [main, 'codex/**']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci --ignore-scripts
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npm run test:coverage
+      - run: npm audit --omit=dev
+  ios:
+    runs-on: macos-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - run: sh scripts/test-swift.sh
+      - run: swift test --package-path ios/HiMorningCore
+      - run: brew install xcodegen
+      - run: xcodegen generate --spec ios/project.yml
+      - name: Build native pilot with simulator SDK
+        run: xcodebuild -project ios/HiMorning.xcodeproj -scheme HiMorning -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath /tmp/himorning-derived CODE_SIGNING_ALLOWED=NO build
+      - name: Select an available iPhone simulator
+        id: simulator
+        run: |
+          xcrun simctl list devices available -j > /tmp/himorning-devices.json
+          python3 - <<'PYDEVICE'
+          import json,os
+          devices=json.load(open('/tmp/himorning-devices.json'))['devices']
+          device=next(d for group in devices.values() for d in group if d.get('isAvailable') and d['name'].startswith('iPhone'))
+          with open(os.environ['GITHUB_OUTPUT'],'a') as output: output.write('id='+device['udid']+'\n')
+          PYDEVICE
+      - name: Test native gentle-default journey
+        run: xcodebuild -project ios/HiMorning.xcodeproj -scheme HiMorning -destination 'platform=iOS Simulator,id=${{ steps.simulator.outputs.id }}' -derivedDataPath /tmp/himorning-derived CODE_SIGNING_ALLOWED=NO test

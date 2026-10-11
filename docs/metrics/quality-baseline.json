@@ -1,0 +1,338 @@
+{
+  "schemaVersion": 1,
+  "testedHead": "e6b1a35ec4618eb95fe69366b9b55ad9ec870a0a",
+  "commands": {
+    "coverage": "npm run test:coverage (Java 21, demo Firestore Emulator)",
+    "swift": "sh scripts/test-swift.sh",
+    "typecheck": "npm run typecheck",
+    "build": "npm run build",
+    "audit": "npm audit --omit=dev"
+  },
+  "vitest": {
+    "totalTests": 50,
+    "backendTests": 42,
+    "collectorTests": 8,
+    "failed": 0
+  },
+  "swiftPortable": {
+    "journeys": 13,
+    "regions": {
+      "total": 251,
+      "missed": 41,
+      "percent": 83.67
+    },
+    "functions": {
+      "total": 69,
+      "missed": 1,
+      "percent": 98.55
+    },
+    "lines": {
+      "total": 223,
+      "missed": 5,
+      "percent": 97.76
+    },
+    "branchPercent": null,
+    "scope": "HiMorningCore only; native adapters excluded"
+  },
+  "coverage": {
+    "total": {
+      "lines": {
+        "total": 175,
+        "covered": 175,
+        "skipped": 0,
+        "pct": 100
+      },
+      "statements": {
+        "total": 308,
+        "covered": 302,
+        "skipped": 0,
+        "pct": 98.05
+      },
+      "functions": {
+        "total": 53,
+        "covered": 50,
+        "skipped": 0,
+        "pct": 94.33
+      },
+      "branches": {
+        "total": 199,
+        "covered": 192,
+        "skipped": 0,
+        "pct": 96.48
+      },
+      "branchesTrue": {
+        "total": 0,
+        "covered": 0,
+        "skipped": 0,
+        "pct": 100
+      }
+    },
+    "functions/src/api.ts": {
+      "lines": {
+        "total": 4,
+        "covered": 4,
+        "skipped": 0,
+        "pct": 100
+      },
+      "functions": {
+        "total": 3,
+        "covered": 3,
+        "skipped": 0,
+        "pct": 100
+      },
+      "statements": {
+        "total": 8,
+        "covered": 8,
+        "skipped": 0,
+        "pct": 100
+      },
+      "branches": {
+        "total": 4,
+        "covered": 4,
+        "skipped": 0,
+        "pct": 100
+      }
+    },
+    "functions/src/config.ts": {
+      "lines": {
+        "total": 3,
+        "covered": 3,
+        "skipped": 0,
+        "pct": 100
+      },
+      "functions": {
+        "total": 2,
+        "covered": 2,
+        "skipped": 0,
+        "pct": 100
+      },
+      "statements": {
+        "total": 4,
+        "covered": 4,
+        "skipped": 0,
+        "pct": 100
+      },
+      "branches": {
+        "total": 6,
+        "covered": 6,
+        "skipped": 0,
+        "pct": 100
+      }
+    },
+    "functions/src/errors.ts": {
+      "lines": {
+        "total": 4,
+        "covered": 4,
+        "skipped": 0,
+        "pct": 100
+      },
+      "functions": {
+        "total": 2,
+        "covered": 2,
+        "skipped": 0,
+        "pct": 100
+      },
+      "statements": {
+        "total": 6,
+        "covered": 6,
+        "skipped": 0,
+        "pct": 100
+      },
+      "branches": {
+        "total": 2,
+        "covered": 2,
+        "skipped": 0,
+        "pct": 100
+      }
+    },
+    "functions/src/evidence.ts": {
+      "lines": {
+        "total": 40,
+        "covered": 40,
+        "skipped": 0,
+        "pct": 100
+      },
+      "functions": {
+        "total": 6,
+        "covered": 6,
+        "skipped": 0,
+        "pct": 100
+      },
+      "statements": {
+        "total": 58,
+        "covered": 57,
+        "skipped": 0,
+        "pct": 98.27
+      },
+      "branches": {
+        "total": 41,
+        "covered": 40,
+        "skipped": 0,
+        "pct": 97.56
+      }
+    },
+    "functions/src/firestore-store.ts": {
+      "lines": {
+        "total": 4,
+        "covered": 4,
+        "skipped": 0,
+        "pct": 100
+      },
+      "functions": {
+        "total": 5,
+        "covered": 5,
+        "skipped": 0,
+        "pct": 100
+      },
+      "statements": {
+        "total": 6,
+        "covered": 6,
+        "skipped": 0,
+        "pct": 100
+      },
+      "branches": {
+        "total": 2,
+        "covered": 2,
+        "skipped": 0,
+        "pct": 100
+      }
+    },
+    "functions/src/index.ts": {
+      "lines": {
+        "total": 10,
+        "covered": 10,
+        "skipped": 0,
+        "pct": 100
+      },
+      "functions": {
+        "total": 5,
+        "covered": 3,
+        "skipped": 0,
+        "pct": 60
+      },
+      "statements": {
+        "total": 16,
+        "covered": 14,
+        "skipped": 0,
+        "pct": 87.5
+      },
+      "branches": {
+        "total": 7,
+        "covered": 6,
+        "skipped": 0,
+        "pct": 85.71
+      }
+    },
+    "functions/src/openai.ts": {
+      "lines": {
+        "total": 10,
+        "covered": 10,
+        "skipped": 0,
+        "pct": 100
+      },
+      "functions": {
+        "total": 3,
+        "covered": 2,
+        "skipped": 0,
+        "pct": 66.66
+      },
+      "statements": {
+        "total": 15,
+        "covered": 15,
+        "skipped": 0,
+        "pct": 100
+      },
+      "branches": {
+        "total": 9,
+        "covered": 8,
+        "skipped": 0,
+        "pct": 88.88
+      }
+    },
+    "functions/src/service.ts": {
+      "lines": {
+        "total": 60,
+        "covered": 60,
+        "skipped": 0,
+        "pct": 100
+      },
+      "functions": {
+        "total": 14,
+        "covered": 14,
+        "skipped": 0,
+        "pct": 100
+      },
+      "statements": {
+        "total": 131,
+        "covered": 128,
+        "skipped": 0,
+        "pct": 97.7
+      },
+      "branches": {
+        "total": 74,
+        "covered": 71,
+        "skipped": 0,
+        "pct": 95.94
+      }
+    },
+    "functions/src/store.ts": {
+      "lines": {
+        "total": 0,
+        "covered": 0,
+        "skipped": 0,
+        "pct": 100
+      },
+      "functions": {
+        "total": 0,
+        "covered": 0,
+        "skipped": 0,
+        "pct": 100
+      },
+      "statements": {
+        "total": 0,
+        "covered": 0,
+        "skipped": 0,
+        "pct": 100
+      },
+      "branches": {
+        "total": 0,
+        "covered": 0,
+        "skipped": 0,
+        "pct": 100
+      }
+    },
+    "scripts/lib/ai-usage.mjs": {
+      "lines": {
+        "total": 40,
+        "covered": 40,
+        "skipped": 0,
+        "pct": 100
+      },
+      "functions": {
+        "total": 13,
+        "covered": 13,
+        "skipped": 0,
+        "pct": 100
+      },
+      "statements": {
+        "total": 64,
+        "covered": 64,
+        "skipped": 0,
+        "pct": 100
+      },
+      "branches": {
+        "total": 54,
+        "covered": 53,
+        "skipped": 0,
+        "pct": 98.14
+      }
+    }
+  },
+  "productionAuditAdvisories": 0,
+  "livePaidOpenAICalls": 0,
+  "limits": [
+    "Exercise recognition accuracy is unmeasured.",
+    "Coverage includes backend and collector library, not collector CLI or native adapters.",
+    "Physical-device AlarmKit/camera/audio not validated."
+  ]
+}

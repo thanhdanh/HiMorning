@@ -1,0 +1,55 @@
+name: HiMorning
+options:
+  developmentLanguage: en
+  bundleIdPrefix: com.himorning
+  deploymentTarget:
+    iOS: "26.0"
+packages:
+  HiMorningCore:
+    path: HiMorningCore
+  Firebase:
+    url: https://github.com/firebase/firebase-ios-sdk.git
+    exactVersion: 13.0.1
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    CODE_SIGNING_ALLOWED: NO
+    TARGETED_DEVICE_FAMILY: "1"
+targets:
+  HiMorning:
+    type: application
+    platform: iOS
+    sources: [HiMorning, Resources]
+    info:
+      path: HiMorning/Info.plist
+      properties:
+        CFBundleDisplayName: HiMorning
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        NSAlarmKitUsageDescription: HiMorning needs access to set your morning alarms.
+        NSCameraUsageDescription: The camera opens only for a challenge you choose. With your consent, movement photos are sent to OpenAI for checking.
+    dependencies:
+      - package: HiMorningCore
+      - package: Firebase
+        product: FirebaseCore
+      - package: Firebase
+        product: FirebaseAuth
+      - package: Firebase
+        product: FirebaseFunctions
+      - package: Firebase
+        product: FirebaseAppCheck
+  HiMorningUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [HiMorningUITests]
+    dependencies:
+      - target: HiMorning
+    settings:
+      GENERATE_INFOPLIST_FILE: YES
+schemes:
+  HiMorning:
+    build:
+      targets:
+        HiMorning: all
+    test:
+      targets: [HiMorningUITests]

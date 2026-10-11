@@ -14,3 +14,15 @@ coverage/
 .DerivedData/
 build/
 dist/
+
+functions/lib/
+.build/
+.swiftpm/
+*.xcuserstate
+*.xcodeproj/xcuserdata/
+playwright-report/
+test-results/
+
+ios/HiMorning.xcodeproj/
+ios/HiMorning/Info.plist
+GoogleService-Info.plist
