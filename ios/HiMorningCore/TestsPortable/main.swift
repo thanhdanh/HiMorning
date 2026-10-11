@@ -87,9 +87,10 @@ final class CoreTests {
 actor FakeScheduler: AlarmScheduler {
  var ids:Set<UUID>=[]
  var shouldFail=false
+ var stops=0
  func schedule(_ alarm:SavedAlarm) async throws { if shouldFail {throw DomainError.invalidAlarmTime};ids.insert(alarm.id) }
  func cancel(id:UUID) async throws {ids.remove(id)}
- func stop(id:UUID) async throws {}
+ func stop(id:UUID) async throws {stops+=1}
  func scheduledIDs() async throws -> Set<UUID> {ids}
  func failNext() {shouldFail=true}
 }
@@ -161,6 +162,13 @@ actor FakeCloud: CloudVerification {
  let applied=try await pending.value
  XCTAssertFalse(applied);XCTAssertEqual(flow.session.outcome,.dismissed)
  let cancelled=await cloud.cancelled;XCTAssertTrue(cancelled)
+ let suspendedCloud=FakeCloud()
+ let suspended=ChallengeCoordinator(alarm:alarm,cloud:suspendedCloud,scheduler:scheduler)
+ try await suspended.startCloud(consent:true)
+ let before=await scheduler.stops
+ await suspended.suspend()
+ let after=await scheduler.stops
+ XCTAssertEqual(before,after);XCTAssertNil(suspended.session.outcome)
  let noCloud=ChallengeCoordinator(alarm:alarm,cloud:nil,scheduler:scheduler)
  do {try await noCloud.startCloud(consent:true);preconditionFailure("Missing backend")} catch {}
  try await noCloud.finish(.selfConfirmed);XCTAssertEqual(noCloud.session.outcome,.selfConfirmed)
