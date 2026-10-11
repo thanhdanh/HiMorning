@@ -11,6 +11,14 @@ describe('callable boundary and deployment defaults',()=>{
    expect(fn.__endpoint.maxInstances).toBe(2);
   }
  });
+ it('rejects missing auth and missing attestation through the actual exported callable handlers',async()=>{
+  vi.stubEnv('AI_VERIFICATION_ENABLED','false');
+  try {
+   await expect(entry.createVerificationSession.run({data:{},app:{appId:'test'}} as any)).rejects.toMatchObject({code:'unauthenticated'});
+   await expect(entry.cancelVerificationSession.run({data:{},auth:{uid:'guest'}} as any)).rejects.toMatchObject({code:'permission-denied'});
+   await expect(entry.verifyChallenge.run({data:{},auth:{uid:'guest'}} as any)).rejects.toMatchObject({code:'permission-denied'});
+  } finally { vi.unstubAllEnvs(); }
+ });
  it('defaults off and rejects unsafe configuration instead of silently removing caps',()=>{
   expect(readConfig({})).toMatchObject({enabled:false,userDailyLimit:3,globalDailyLimit:100});
   for(const env of [{AI_USER_DAILY_LIMIT:'0'},{AI_GLOBAL_DAILY_LIMIT:'NaN'},{AI_VERIFICATION_ENABLED:'yes'},{AI_GLOBAL_DAILY_LIMIT:'100001'}]) expect(()=>readConfig(env)).toThrow();

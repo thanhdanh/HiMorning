@@ -84,14 +84,64 @@ final class CoreTests {
  }
 }
 
+actor FakeScheduler: AlarmScheduler {
+ var ids:Set<UUID>=[]
+ var shouldFail=false
+ func schedule(_ alarm:SavedAlarm) async throws { if shouldFail {throw DomainError.invalidAlarmTime};ids.insert(alarm.id) }
+ func cancel(id:UUID) async throws {ids.remove(id)}
+ func stop(id:UUID) async throws {}
+ func scheduledIDs() async throws -> Set<UUID> {ids}
+ func failNext() {shouldFail=true}
+}
+func testNativeLibrary() async throws {
+ let dir=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+ defer {try? FileManager.default.removeItem(at:dir)}
+ try FileManager.default.createDirectory(at:dir,withIntermediateDirectories:true)
+ let persistence=FileAlarmPersistence(url:dir.appendingPathComponent("alarms.json"))
+ let scheduler=FakeScheduler()
+ let library=try AlarmLibrary(persistence:persistence,scheduler:scheduler)
+ let alarm=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[2,3,4,5,6]),mode:.gentle,sound:.sunrise)
+ try await library.add(alarm)
+ let saved=await library.all();XCTAssertEqual(saved.first?.state,.confirmed)
+ let restarted=try AlarmLibrary(persistence:persistence,scheduler:scheduler)
+ let restored=await restarted.all();XCTAssertEqual(restored.first?.id,alarm.id)
+ try await library.disable(id:alarm.id)
+ let disabled=await library.all();XCTAssertEqual(disabled.first?.state,.off)
+ await scheduler.failNext()
+ do {try await library.add(SavedAlarm(time:alarm.time,mode:.balanced,sound:.system));preconditionFailure("Expected schedule failure")} catch {}
+ let failed=await library.all();XCTAssertEqual(failed.last?.state,.needsReview)
+ try await library.reconcile()
+}
+func testCaptureSelectsCompleteCyclesAndDiscardsInterruptedEvidence() {
+ var capture=CycleCapture(target:1)
+ for (i,angle) in [165.0,120,80,120,165].enumerated() {capture.observe(angle:angle,visible:true,jpeg:Data([UInt8(i+1)]),timestampMs:i*300)}
+ XCTAssertEqual(capture.completedReps,1);XCTAssertEqual(capture.frames.count,5);XCTAssertTrue(capture.ready)
+ capture.observe(angle:165,visible:true,jpeg:Data([10]),timestampMs:1800)
+ XCTAssertEqual(capture.frames.count,5)
+ capture.clear();XCTAssertTrue(capture.frames.isEmpty)
+ var interrupted=CycleCapture(target:1)
+ interrupted.observe(angle:165,visible:true,jpeg:Data([1]),timestampMs:0)
+ interrupted.observe(angle:120,visible:true,jpeg:Data([2]),timestampMs:300)
+ interrupted.observe(angle:80,visible:false,jpeg:Data([3]),timestampMs:600)
+ interrupted.observe(angle:165,visible:true,jpeg:Data([4]),timestampMs:900)
+ XCTAssertEqual(interrupted.completedReps,0);XCTAssertTrue(interrupted.frames.isEmpty)
+ var oversize=EvidenceBuffer()
+ XCTAssertFalse(oversize.append(Data(repeating:1,count:50001),timestampMs:0))
+}
+func testPersistedTimeCannotBypassValidation() {
+ XCTAssertThrowsError(try JSONDecoder().decode(AlarmTime.self,from:Data(#"{"hour":24,"minute":30,"weekdays":[]}"#.utf8)))
+}
 let suite = CoreTests()
-try suite.testPresetsAreGentleAndBounded()
+suite.testPresetsAreGentleAndBounded()
 try suite.testAlarmValidation()
 try suite.testNextWeekdayInVietnamAndOneTimeTomorrow()
 try suite.testSpringDSTDoesNotCreatePastAlarm()
-try suite.testStopInvalidatesPendingResponseAndDoesNotCountAsSuccess()
-try suite.testLocalCountNeverCompletesCloudChallengeAndDuplicateResultCannotApply()
-try suite.testFallbackAndSnoozeRemainExplicit()
-try suite.testInterruptedRepResetsButRetainsCompletedReps()
-try suite.testNoiseDoesNotCountAndBufferNeverExceedsCap()
-print("PASS: 9 portable Swift domain journeys")
+suite.testStopInvalidatesPendingResponseAndDoesNotCountAsSuccess()
+suite.testLocalCountNeverCompletesCloudChallengeAndDuplicateResultCannotApply()
+suite.testFallbackAndSnoozeRemainExplicit()
+suite.testInterruptedRepResetsButRetainsCompletedReps()
+suite.testNoiseDoesNotCountAndBufferNeverExceedsCap()
+try await testNativeLibrary()
+testCaptureSelectsCompleteCyclesAndDiscardsInterruptedEvidence()
+testPersistedTimeCannotBypassValidation()
+print("PASS: 12 portable Swift domain and integration journeys")

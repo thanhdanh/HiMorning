@@ -7,7 +7,7 @@
   ],
   "scripts": {
     "test": "vitest run --exclude tests/firestore.test.ts",
-    "test:coverage": "vitest run --coverage --exclude tests/firestore.test.ts",
+    "test:coverage": "firebase emulators:exec --project demo-himorning --only firestore \"vitest run --coverage\"",
     "test:emulator": "firebase emulators:exec --project demo-himorning --only firestore \"vitest run tests/firestore.test.ts\"",
     "build": "npm run build --workspace functions",
     "typecheck": "tsc --noEmit",
