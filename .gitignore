@@ -14,3 +14,11 @@ coverage/
 .DerivedData/
 build/
 dist/
+
+functions/lib/
+.build/
+.swiftpm/
+*.xcuserstate
+*.xcodeproj/xcuserdata/
+playwright-report/
+test-results/
