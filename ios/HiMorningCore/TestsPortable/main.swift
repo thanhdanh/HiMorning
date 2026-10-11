@@ -131,6 +131,37 @@ func testCaptureSelectsCompleteCyclesAndDiscardsInterruptedEvidence() {
 func testPersistedTimeCannotBypassValidation() {
  XCTAssertThrowsError(try JSONDecoder().decode(AlarmTime.self,from:Data(#"{"hour":24,"minute":30,"weekdays":[]}"#.utf8)))
 }
+actor FakeCloud: CloudVerification {
+ var continuation:CheckedContinuation<CloudDecision,Error>?
+ var started:CheckedContinuation<Void,Never>?
+ var cancelled=false
+ func create(target:Int,requestID:UUID) async throws -> CloudSession {CloudSession(sessionID:String(repeating:"a",count:64),nonce:UUID().uuidString,expiresAt:Date().addingTimeInterval(120).timeIntervalSince1970*1000)}
+ func verify(_ request:VerificationSubmission) async throws -> CloudDecision {
+  return try await withCheckedThrowingContinuation {continuation=$0;started?.resume();started=nil}
+ }
+ func waitStarted() async {if continuation != nil {return};await withCheckedContinuation {started=$0}}
+ func cancel(sessionID:String) async throws {cancelled=true}
+ func release() {continuation?.resume(returning:CloudDecision(status:"verified",decisionID:UUID().uuidString,verifiedRepCount:3));continuation=nil}
+}
+@MainActor func testCloudStopRaceAndConsent() async throws {
+ let cloud=FakeCloud();let scheduler=FakeScheduler()
+ let alarm=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),mode:.balanced)
+ let flow=ChallengeCoordinator(alarm:alarm,cloud:cloud,scheduler:scheduler)
+ do {try await flow.startCloud(consent:false);preconditionFailure("Consent required")} catch {}
+ try await flow.startCloud(consent:true)
+ let evidence=(0..<15).map {EvidenceFrame(jpeg:Data([UInt8($0+1)]),timestampMs:$0*300)}
+ let pending=Task {try await flow.submit(evidence)}
+ await cloud.waitStarted()
+ try await flow.finish(.dismissed)
+ await cloud.release()
+ let applied=try await pending.value
+ XCTAssertFalse(applied);XCTAssertEqual(flow.session.outcome,.dismissed)
+ let cancelled=await cloud.cancelled;XCTAssertTrue(cancelled)
+ let noCloud=ChallengeCoordinator(alarm:alarm,cloud:nil,scheduler:scheduler)
+ do {try await noCloud.startCloud(consent:true);preconditionFailure("Missing backend")} catch {}
+ try await noCloud.finish(.selfConfirmed);XCTAssertEqual(noCloud.session.outcome,.selfConfirmed)
+}
+
 let suite = CoreTests()
 suite.testPresetsAreGentleAndBounded()
 try suite.testAlarmValidation()
@@ -144,4 +175,5 @@ suite.testNoiseDoesNotCountAndBufferNeverExceedsCap()
 try await testNativeLibrary()
 testCaptureSelectsCompleteCyclesAndDiscardsInterruptedEvidence()
 testPersistedTimeCannotBypassValidation()
-print("PASS: 12 portable Swift domain and integration journeys")
+try await testCloudStopRaceAndConsent()
+print("PASS: 13 portable Swift domain and integration journeys")
