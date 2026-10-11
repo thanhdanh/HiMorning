@@ -1,87 +1,148 @@
-# Baseline đo AI engineering
+# AI engineering metrics
 
-Snapshot token đến **2026-10-11T10:32:34.654Z** (UTC; giờ Việt Nam +07:00), 178 response có usage. Đây là điểm chụp giữa phiên, không phải tổng cuối cùng của mọi công việc về sau.
+Measure the work, keep the limits visible, and connect usage to useful results.
+This guide separates development tokens from application inference and software
+quality. None of those measures is a substitute for the others.
 
-Nguồn: [agent usage JSON](ai-usage-baseline.json), [phân nhóm lượt](phase-map.json), [quality JSON](quality-baseline.json), [CI JSON](ci-baseline.json). Raw transcript, prompts, ảnh, API keys và đường dẫn rollout cá nhân không được commit. Collector chỉ đọc một file được chỉ định của đúng thread; file local dùng schema quan sát ngày 11/10/2026, không phải public API ổn định.
+**Status:** Historical baseline captured at **2026-10-11T10:32:34.654Z**
+(17:32 on 11 October 2026 in Vietnam), before the localization change.
 
-## Token đã đo
+## Localization and English documentation update
 
-- Input: **25,283,416**; trong đó cached input **23,766,272** và uncached input **1,517,144**.
-- Output: **205,159**, đã bao gồm **55,721** reasoning tokens.
-- Tổng input + output: **25,488,575**. Cached input ratio: **94.00%**.
-- Tổng từng response khớp cumulative thread snapshot: **true**; delta mọi trường bằng 0. Usage của response được dedup theo ID; không cộng các snapshot tích lũy.
-- USD: **chưa có dữ liệu hóa đơn**, giữ `null`. Tokens của Codex không được chuyển thành chi phí OpenAI API của app.
+A separate [usage snapshot](ai-usage-localization.json) preserves later work without
+rewriting the original baseline. Cutoff: **2026-10-11T11:23:52.610Z** (UTC).
+The manually tagged `localization_english_docs` turn has **7,353,183 input**
+(including **7,186,944 cached**), **52,200 output** and
+**7,405,383 total tokens**. It includes code, test, documentation and CI
+fixes together; it is not an exact split of those activities. The whole conversation
+still reconciles with the cumulative token snapshot. USD remains unknown.
 
-Input là tổng token context được xử lý qua nhiều request, có thể đọc lại cùng context nhiều lần; không phải số từ duy nhất của code/prompt. Cached ratio không đồng nghĩa phần trăm tiền hoặc thời gian tiết kiệm. Không cộng cached input lần nữa vào input, hoặc reasoning lần nữa vào output.
+## Start with the evidence
 
-## Theo hạng mục
+| File | What it records |
+|---|---|
+| [Agent usage](ai-usage-baseline.json) | Real Codex request tokens and reconciliation |
+| [Phase map](phase-map.json) | Manual categories for conversation turns |
+| [Quality baseline](quality-baseline.json) | Test/coverage results at the recorded commit |
+| [CI baseline](ci-baseline.json) | Runs and job times before the documentation push |
 
-Phân nhóm bằng turn ID và yêu cầu của lượt; tổng tokens đo được, còn nhãn nhóm do người/agent gán. Không thể tách chính xác code/test/research trong một lượt trộn nếu lúc đó chưa đánh dấu phase. Các lượt không có usage record không được giả lập bằng số 0; tổng quan sát vẫn được đối chiếu snapshot phiên.
+These are point-in-time snapshots, not live counters. Raw transcripts, prompts,
+images, API keys and personal rollout paths are not committed. The collector reads
+one explicitly selected rollout and filters the intended thread. Its local schema
+was observed on 11 October 2026; it is not a stable public API.
 
-| Hạng mục | Input | Cached (thuộc input) | Uncached | Output | Tổng |
+## Observed token usage
+
+- Input: **25,283,416**, including **23,766,272** cached
+  and **1,517,144** uncached input tokens.
+- Output: **205,159**, already including **55,721** reasoning tokens.
+- Total input + output: **25,488,575** across **178** responses.
+- Cached input ratio: **94.00%**.
+- Reconciliation: **matched**, with zero delta in every field.
+- USD cost: **unknown**, stored as `null`. Codex usage is not an app OpenAI invoice.
+
+Input counts repeated context processing across requests, not unique words in the
+project. Cached input is a subset of input; reasoning is a subset of output. Adding
+them again would double-count. A cache ratio is not a measured savings percentage.
+
+## By work category
+
+Tokens are measured; category labels are manual. A mixed coding/testing turn cannot
+be split exactly after the fact without finer markers. Turns with no usage record
+are not filled with invented zeroes; the observed total still matches the snapshot.
+
+| Category | Input | Cached within input | Uncached | Output | Total |
 |---|---:|---:|---:|---:|---:|
-| Plan sản phẩm/UX | 861,800 | 766,720 | 95,080 | 7,042 | 868,842 |
-| Tham khảo Erly | 693,121 | 655,744 | 37,377 | 1,838 | 694,959 |
-| Kiến trúc + UI mock | 727,018 | 688,512 | 38,506 | 38,616 | 765,634 |
-| Plan góp ý tư thế | 3,326,351 | 3,282,176 | 44,175 | 9,807 | 3,336,158 |
-| Kiến trúc OpenAI | 2,562,602 | 2,232,832 | 329,770 | 19,693 | 2,582,295 |
-| Mô tả tech stack | 281,577 | 139,776 | 141,801 | 1,207 | 282,784 |
-| Di chuyển repo + GitHub/Firebase | 2,772,336 | 2,583,424 | 188,912 | 10,822 | 2,783,158 |
-| Chuẩn bị triển khai/TDD | 1,029,067 | 1,000,192 | 28,875 | 2,120 | 1,031,187 |
-| Triển khai + test (lượt trộn) | 11,346,403 | 11,032,320 | 314,083 | 84,250 | 11,430,653 |
-| Sửa lỗi + metrics/docs (lượt hiện tại) | 1,683,141 | 1,384,576 | 298,565 | 29,764 | 1,712,905 |
+| Product and UX planning | 861,800 | 766,720 | 95,080 | 7,042 | 868,842 |
+| Erly research | 693,121 | 655,744 | 37,377 | 1,838 | 694,959 |
+| Architecture and UI mock | 727,018 | 688,512 | 38,506 | 38,616 | 765,634 |
+| Movement feedback plan | 3,326,351 | 3,282,176 | 44,175 | 9,807 | 3,336,158 |
+| OpenAI architecture | 2,562,602 | 2,232,832 | 329,770 | 19,693 | 2,582,295 |
+| Tech stack explanation | 281,577 | 139,776 | 141,801 | 1,207 | 282,784 |
+| Repository, GitHub and Firebase setup | 2,772,336 | 2,583,424 | 188,912 | 10,822 | 2,783,158 |
+| Implementation/TDD preparation | 1,029,067 | 1,000,192 | 28,875 | 2,120 | 1,031,187 |
+| Implementation and testing (mixed) | 11,346,403 | 11,032,320 | 314,083 | 84,250 | 11,430,653 |
+| Fixes, metrics and documentation (mixed) | 1,683,141 | 1,384,576 | 298,565 | 29,764 | 1,712,905 |
 
-## Theo model được log ghi nhận
+## By recorded model
 
-| Model | Input | Cached | Output | Tổng |
+| Model | Input | Cached | Output | Total |
 |---|---:|---:|---:|---:|
 | gpt-6-astra | 8,170,892 | 7,625,984 | 76,996 | 8,247,888 |
 | gpt-6.1-sol | 16,666,457 | 15,907,200 | 113,883 | 16,780,340 |
 | unknown | 446,067 | 233,088 | 14,280 | 460,347 |
 
-`unknown` nghĩa là record không có turn context khớp để gán model; vẫn tính tokens và giữ nguyên phần chưa biết. Đây không phải bằng chứng agent tự chọn model tối ưu. Phần lớn planning ban đầu dùng label `gpt-6-astra`, triển khai dùng `gpt-6.1-sol` theo trace.
+`unknown` means a matching turn context was unavailable for model attribution.
+Those tokens stay counted. Recorded labels do not establish intentional or optimal
+model routing. Request tokens also cannot be billed separately to each MCP/skill
+without additional attribution rules.
 
-## Chất lượng và CI
+## Quality at the historical baseline
 
-| Chỉ số | Baseline đã quan sát | Cách diễn giải |
+| Measure | Observed result | Scope |
 |---|---|---|
-| Vitest | 50/50 đạt: 42 backend + 8 collector | Có real Firestore Emulator; OpenAI dùng mock |
-| Backend coverage | 97.54% statements; 95.86% branches; 92.50% functions; 100% lines | Chỉ backend TypeScript |
-| Collector library | 100% statements/functions/lines; 98.14% branches | CLI wrapper không nằm trong instrumented scope |
-| Swift core | 13 portable journeys đạt; 83.67% regions; 98.55% functions; 97.76% lines | Native adapters ngoài scope; không có branch counters |
-| Hosted native | Swift XCTest, SDK build và gentle-default UI test đạt | Không chứng nhận alarm/camera/audio trên iPhone thật |
-| TDD | 9 chu kỳ có mapping RED/GREEN trong evidence | Không đếm native integration spike thành native runtime TDD |
-| Production audit | 0 advisories | Full dev audit còn 16; xem TDD report |
-| Paid inference thật | 0 call trong quá trình này | Chưa có accuracy/latency/cost benchmark |
+| Vitest | 50/50 passed: 42 backend + 8 collector | Real Firestore Emulator, mocked OpenAI |
+| Backend coverage | 97.54% statements, 95.86% branches, 92.50% functions, 100% lines | Backend TypeScript only |
+| Collector coverage | 100% statements/functions/lines, 98.14% branches | Library; CLI wrapper excluded |
+| Swift | 13 portable journeys passed; 83.67% regions, 98.55% functions, 97.76% lines | Core only; no branch counters |
+| Native | XCTest, simulator SDK build and gentle-default UI passed | Not physical-device alarm/camera validation |
+| TDD | 9 mapped cycles before localization | Native integration spike is not counted as local native TDD |
+| Production audit | 0 advisories | Full dev audit still had 16 |
+| Real paid inference | 0 calls in implementation tests | No accuracy/latency/cost benchmark |
 
-CI baseline trước push docs/metrics: **5 runs**, gồm **1 success / 2 failure / 2 cancelled**. Hai failure phát hiện lỗi compile native. Hai cancelled có một manual dispatch trùng push, là chi phí orchestration cần tránh. Không giấu các lần thất bại để làm đẹp pass rate. Mẫu nhỏ này không phải đánh giá năng suất dài hạn.
+See the [TDD report](../tdd/cost-optimized-pilot.tdd.md) for later localization results.
+Do not update historical numbers silently when new tests are added.
 
-[Run xanh 38131960302](https://github.com/thanhdanh/HiMorning/actions/runs/38131960302) ở commit `39ecc17`: elapsed toàn run **236 giây**; job backend **56 giây**, iOS **230 giây**. Hai job chạy song song nên không cộng job duration thành elapsed. Runner billing minutes/chi phí USD chưa thu thập; thời gian chờ review/tool cũng không được coi là thời gian model tính toán.
+CI baseline: **5 runs—1 success, 2 failures, 2 cancelled**. Failures caught native
+compile errors. A manual dispatch duplicated a push among the cancelled work; that
+is orchestration waste to avoid, not a result to hide. This small sample is not a
+long-term productivity score.
 
-## Cập nhật lại số liệu
+[Run 38131960302](https://github.com/thanhdanh/HiMorning/actions/runs/38131960302) at
+`39ecc17` took **236s** elapsed. Backend took **56s**, iOS **230s**; jobs overlapped.
+Do not add job times and call the result elapsed time. Runner billing and tool/review
+waiting time were not measured as model computation or USD.
 
-Trong repo, chỉ định đường dẫn rollout của cuộc hội thoại hiện tại và cập nhật `threadID`/`phaseByTurn` nếu dùng phiên mới:
+## Refresh the usage snapshot
+
+Pass the current conversation's exact rollout path. For a new conversation, update
+`threadID` and `phaseByTurn` in the phase map first:
 
 ```sh
 node scripts/collect-ai-usage.mjs --log /absolute/path/to/current-rollout.jsonl > /private/tmp/ai-usage.json
 npm test -- tests/engineering-metrics.test.ts
 ```
 
-Review JSON rồi chép snapshot đã lọc vào `docs/metrics/ai-usage-baseline.json`, cập nhật bảng trong tài liệu cùng thời điểm cutoff. Không commit raw rollout. `sourceSHA256` xác định bytes đã đọc tại thời điểm chụp; log tiếp tục append sẽ có hash mới. Collector từ chối số token không hợp lệ, duplicate xung đột hoặc JSONL hỏng ở dòng hoàn chỉnh; chỉ bỏ dòng cuối chưa ghi xong và báo cờ tương ứng. Snapshot thiếu usage hoặc thiếu reconciliation được giữ `null`, không biến thành “0 token”.
+Review the sanitized JSON, save it as a dated snapshot and update the reader-facing
+table with the same cutoff. Never commit the raw rollout. `sourceSHA256` describes
+the bytes read at capture time; appending to the local log changes that hash.
 
-Agent Stop cost hook của ECC dành cho Claude Code không được bật ở đây. Git pre-push hook chỉ làm quality gate, không phải token meter. CI hiện chạy test/coverage và lưu log; các JSON baseline được xuất chủ động, chưa có lịch tự cập nhật.
+The collector deduplicates response IDs and compares summed request usage with the
+last cumulative snapshot. It rejects conflicting duplicates, invalid arithmetic
+and malformed complete JSONL lines. An unfinished last line is ignored with a flag.
+Missing telemetry/reconciliation stays `null`, not “zero usage”.
 
-## Các KPI nên theo dõi tiếp
+The pre-push hook is a quality gate, not a token meter. No agent Stop hook or automatic
+snapshot schedule is active. CI runs tests/coverage and keeps logs; it does not read
+local chat transcripts. Library tests cover privacy filtering and failure cases.
 
-| KPI | Công thức / cách lấy | Trạng thái |
+## What to measure next
+
+| KPI | Definition | Missing evidence |
 |---|---|---|
-| Token theo phase | Unique response usage, phase map theo lượt riêng | Có baseline; lịch sử code/test còn trộn |
-| Acceptance lần đầu | Task đạt toàn acceptance trong lần review đầu / tổng task | Chưa có review ledger độc lập |
-| Rework | Uncached + output tokens các lượt sửa / tổng cùng đơn vị | Chưa phân loại đủ, không gán mọi token test là rework |
-| CI waste | Cancelled/duplicate runs, job durations, runner billing | Có lịch sử run; chưa có hóa đơn |
-| Cost/accepted behavior | Chi phí agent thực / behavior được chấp nhận | Chưa đủ hóa đơn và denominator |
-| App cost/verified session | Chi phí provider thực / session verified, kèm tỷ lệ uncertain | Chưa có real inference |
-| Accuracy theo điều kiện | False accept/reject, uncertain, latency p50/p95 theo ánh sáng/góc máy/nhóm người | Cần bộ video có consent, ground truth và holdout |
-| Lợi ích memory MCP | So task tương đương graph-first/source-only cùng chất lượng | Chưa chạy đối chứng; không tuyên bố tiết kiệm X% |
+| Usage by phase | Unique request tokens in tagged planning/code/test/review turns | Older turns mix work types |
+| First-review acceptance | Tasks meeting all acceptance criteria at first review / total tasks | Independent review ledger |
+| Rework | Fix-phase tokens / comparable total tokens | Complete phase labels; testing is not automatically rework |
+| CI waste | Duplicate/cancelled runs, job time and runner billing | Actual billing |
+| Cost per accepted behavior | Actual agent spend / accepted behaviors | Cost source and acceptance denominator |
+| App cost per verified session | Provider cost / verified sessions, with uncertainty rate | Real provider usage, prices and outcomes |
+| Exercise quality | False accept/reject, uncertainty, p50/p95 delay by viewing condition | Consented holdout clips and ground truth |
+| Memory MCP benefit | Equivalent tasks using graph-first vs source-only retrieval | Controlled comparison at equal quality |
 
-Khi đánh giá app, đo uncertainty và false acceptance cùng chi phí. Chỉ giảm tokens mà làm xác minh kém đi thì chưa phải tối ưu thành công. Khi đánh giá agent, ưu tiên behavior được chấp nhận và lỗi còn lại; số dòng code và số công cụ dùng không đại diện năng lực.
+A useful comparison fixes the starting commit, task difficulty, runner, acceptance
+criteria and budget. Lower tokens with worse behavior is not a successful optimization.
+Prefer accepted behavior and remaining defects over lines of code or tool count.
+
+## Read next
+
+[AI engineering case study](../AI-ENGINEERING.md) · [TDD evidence](../tdd/cost-optimized-pilot.tdd.md)

@@ -67,10 +67,59 @@ Known limits: no real paid inference, no calibrated model accuracy/latency/cost 
 | Repeated cancellation | `7f9e286` | `2237e98` | Runtime RED `expected 5 to be 4` database writes; same service test target then passed 13/13 |
 | Token evidence collector | `bd975e1` | `9e975d6` | Intended absent business-module import RED; then 7 tests passed. Refactor `e6b1a35` added typecheck-safe assertion, an eighth case and library coverage gate |
 
-Latest combined `npm run test:coverage`: **50 tests passed** (42 backend + 8 engineering metrics). Backend alone: statements **97.54%**, branches **95.86%**, functions **92.50%**, lines **100%**. Collector library: statements/functions/lines **100%**, branches **98.14%**, with its own 80% threshold. Combined: statements **98.05%**, branches **96.48%**, functions **94.33%**, lines **100%**. Including the collector does not replace the separately reported backend scope. The small CLI wrapper is exercised on the real local rollout but is outside instrumented coverage.
+At this follow-up checkpoint, `npm run test:coverage`: **50 tests passed** (42 backend + 8 engineering metrics). Backend alone: statements **97.54%**, branches **95.86%**, functions **92.50%**, lines **100%**. Collector library: statements/functions/lines **100%**, branches **98.14%**, with its own 80% threshold. Combined: statements **98.05%**, branches **96.48%**, functions **94.33%**, lines **100%**. Including the collector does not replace the separately reported backend scope. The small CLI wrapper is exercised on the real local rollout but is outside instrumented coverage.
 
-Latest portable Swift: **13 journeys passed**, regions **83.67%**, functions **98.55%**, lines **97.76%**, no instrumentable branch counters. `npm run typecheck`, `npm run build`, production audit and Swift source syntax parsing passed.
+At this follow-up checkpoint, portable Swift: **13 journeys passed**, regions **83.67%**, functions **98.55%**, lines **97.76%**, no instrumentable branch counters. `npm run typecheck`, `npm run build`, production audit and Swift source syntax parsing passed.
 
 Hosted [run 38131960302](https://github.com/thanhdanh/HiMorning/actions/runs/38131960302), head `39ecc17`: backend and iOS jobs **SUCCESS**. This includes Swift package XCTest, native simulator SDK build and the gentle-default XCUITest. Earlier runs correctly failed on a multiline string syntax mistake and catch-bound `error` shadowing UI state; `1694652` and `39ecc17` fixed those compile failures. These are recorded as SDK integration feedback, not claimed runtime behavior TDD cycles. The camera also uses monotonic uptime and defers session stop until the frame delegate returns; hardware behavior still needs device validation.
 
 [AI engineering case study](../AI-ENGINEERING.md) and [metrics baseline](../metrics/README.md) preserve token methodology, tool/skill provenance, local Git hook, CI history and scope limitations. All checkpoints above remain reachable on the current task branch.
+
+
+## English code/docs and bilingual native app
+
+Request: use simple, natural English for coding and documentation; support English
+and Vietnamese in the app. New guides use [the documentation template](../DOC-TEMPLATE.md)
+and separate implemented behavior from planned work. Historical metrics remain
+frozen; later tokens are recorded in a separate snapshot.
+
+| Journey | RED evidence | GREEN evidence | Checkpoints |
+|---|---|---|---|
+| Both app languages have complete text and matching placeholders | Three executed resource tests failed with ENOENT for intentionally absent language resources | Same three tests passed; four `.strings` files passed `plutil -lint` | `be321d2` → `357e952` |
+| Device language and explicit choice resolve predictably | Portable Swift compile failed because `AppLanguage` was absent | Same harness passed all 14 journeys; language policy is 100% covered | `be321d2` → `357e952` |
+| Language choice persists; native editors work in both languages | Hosted run 38134897283 executed the tests: English passed, Vietnamese and saved-language journeys failed | Same three UI tests passed after resources were bundled; no local native runtime result claimed | `f75166e` → `dc6ddce` |
+
+Latest local validation: **53 Vitest tests passed** (42 backend, 8 metrics, 3
+localization). Combined instrumented coverage remains 98.05% statements, 96.48%
+branches, 94.33% functions and 100% lines; it covers backend + collector library,
+not native adapters or locale text quality. Backend scope is unchanged.
+
+Portable Swift: **14 journeys passed**; 84.41% regions (263 total, 41 missed),
+98.63% functions (73 total, 1 missed), 97.86% lines (234 total, 5 missed), no
+instrumentable branch counters. Typecheck, Functions build, native syntax parsing
+and the four native string-file lint checks passed.
+
+Hosted run 38132958590 caught a duplicate XCTest method introduced while adding
+coverage. Commit `fad7ef9` removes it. This is a test compilation correction, not
+a behavior RED. Both production locale resources and language fallback tests had
+already passed locally.
+
+Hosted [run 38134897283](https://github.com/thanhdanh/HiMorning/actions/runs/38134897283)
+at `fad7ef9` passed backend checks, 10 Swift package tests and the native build.
+It executed all three UI tests: English passed; Vietnamese and saved-language
+journeys failed. The build omitted app resources because `resources` was not a
+supported target property. The executed RED is preserved in `f75166e`; `dc6ddce`
+includes `Resources` in the target sources.
+
+GREEN: [run 38135338781](https://github.com/thanhdanh/HiMorning/actions/runs/38135338781)
+at `dc6ddce` passed both jobs, including **10 Swift package XCTest cases**, native
+simulator build and **all 3 UI journeys** with zero failures. The log confirms
+English/Vietnamese `Localizable.strings`, `InfoPlist.strings` and both WAV sounds
+were copied into the app bundle. This validates packaging and tested UI behavior,
+not physical-device sound playback or alarm delivery.
+
+Known limits: system permission dialogs still follow iOS language settings; existing
+OS alarm labels keep their scheduled language. The web design study remains a
+separate Vietnamese concept. Device permission copy, VoiceOver, long text and actual
+alarm/camera/audio behavior still require review. Translation parity does not prove
+natural wording or layout fit.

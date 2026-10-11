@@ -1,95 +1,117 @@
-# HiMorning · Firebase architecture
+# Firebase backend
 
-**Status:** Firebase service, OpenAI adapter, rules and emulator tests implemented on 2026-10-11. No real Firebase project, billing account, deployed function or production database has been created. See [running instructions](RUNNING.md) and [TDD evidence](tdd/cost-optimized-pilot.tdd.md). The design below remains the broader roadmap; native pilot persistence currently uses an atomic local JSON journal rather than SwiftData, and remote alarm sync is deferred.
+Firebase handles identity, metadata and the small amount of server work needed for
+AI checking. It does not keep time for the alarm; the phone's OS does that.
 
-## Recommendation
-
-Use Firebase Authentication, Cloud Firestore, and Cloud Functions for Firebase for the MVP. They replace the proposed custom Fastify service and PostgreSQL deployment. Keep the native alarm and local database on the device, and keep OpenAI as the cloud challenge verifier.
-
-```mermaid
-flowchart TB
-  UI[SwiftUI / Jetpack Compose] --> LOCAL[SwiftData / Room]
-  LOCAL --> OS[AlarmKit / AlarmManager]
-  UI --> AUTH[Firebase Authentication: guest UID]
-  UI --> CAM[Foreground camera + local pose]
-  CAM -->|Consent + bounded ordered frames| FN[Callable Cloud Functions: TypeScript]
-  AUTH --> FN
-  CHECK[Firebase App Check] --> FN
-  FN --> DB[(Firestore: sessions / attempts / quotas)]
-  SECRET[Secret Manager: OpenAI API key] --> FN
-  FN --> AI[OpenAI Responses API]
-  AI --> FN
-  FN -->|Validated, session-bound verdict| UI
-```
+**Status:** Functions, rules and emulator tests are implemented. No real Firebase
+project, billing account, database or function deployment has been created.
 
 ## Responsibilities
 
-| Service | HiMorning responsibility |
+| Service | Current job |
 |---|---|
-| Firebase Authentication | Anonymous sign-in when cloud features are used; optional Apple/Google account linking later |
-| Cloud Firestore | Minimal profile/preferences when sync is enabled, verification sessions, server decisions, quotas, consent version |
-| Cloud Functions, 2nd gen | Authenticate, authorize, validate evidence, enforce quotas, call OpenAI, validate the verdict, handle cancellation |
-| Secret Manager | OpenAI secret bound only to the verification function |
-| App Check | Additional protection against unauthorized clients; independent of user authorization and rate limits |
-| Emulator Suite | Local integration and security-rules testing before deployment |
-| Firebase Hosting, optional | Static design previews or a later marketing site |
+| Anonymous Auth | Give cloud requests a UID without a sign-up flow |
+| App Check | Require attestation in addition to user identity |
+| Callable Functions v2 | Check ownership, validate evidence, reserve quota and call OpenAI |
+| Firestore | Store sessions, attempts and quota metadata |
+| Secret Manager | Bind the OpenAI key only to the verification function |
+| Emulator Suite | Test transactions and rules without production deployment |
 
-Anonymous Auth lets guests use protected cloud data and later link credentials to that account. A guest still has an account/UID internally. First sign-in and cloud verification require connectivity; creating an ordinary alarm does not. Account recovery across devices requires a linked sign-in method. [Firebase anonymous authentication](https://firebase.google.com/docs/auth/ios/anonymous-auth).
+Auth and attestation do not prove that a person exercised. Local alarms and explicit
+stops remain usable when cloud sign-in fails. No Storage bucket, analytics SDK,
+remote alarm sync or subscription service is provisioned for this pilot.
 
-Callable SDKs attach available Authentication and App Check tokens. Functions must still reject unauthenticated requests, check session ownership, and enforce App Check for released clients. App Check is not evidence that a physical exercise happened. [Callable functions](https://firebase.google.com/docs/functions/callable), [App Check enforcement](https://firebase.google.com/docs/app-check/cloud-functions).
-
-## Data model and authority
+## Data and authority
 
 ```text
-users/{uid}                              minimal profile, explicit sync preferences
-users/{uid}/alarms/{alarmID}             optional sync copy, revision and originDeviceID
-users/{uid}/wakeSessions/{sessionID}     local outcome summary; source explicitly recorded
-verificationSessions/{sessionID}        ownerUID, target/variant, nonce, expiresAt, status
+users/{uid}                                  allowed preference document
+verificationSessions/{sessionID}             owner, nonce, target, expiry, state
 verificationSessions/{sessionID}/attempts/{evidenceID}
-                                        payloadHash, lease, policy/model version, verdict
-quotaBuckets/{uidAndTimeBucket}         server-owned usage counters
+                                              hash, lease, decision, model/policy version
+quotaBuckets/{bucketID}                       server-owned counters
 ```
 
-- Security Rules default to deny. A user can read only their own permitted documents and write only allowed fields in their own preferences/sync records.
-- Clients cannot set `openai_verified`, alter quota counters, or write verification attempts. The function owns authoritative verdicts. A client-reported outcome is never trusted as an AI decision.
-- Admin SDK access bypasses Firestore Security Rules, so Functions must enforce ownership and input checks explicitly. Use a service account with only the required permissions. [Firestore rules](https://firebase.google.com/docs/firestore/security/get-started).
-- Claim an attempt and reserve quota with a Firestore transaction. Call OpenAI **after** the transaction commits, then conditionally finalize the current lease. Do not make a paid model request inside a transaction callback that may run again.
-- Check payload hash, session generation, expiry and cancellation when finalizing. If a stop/cancel request fails during a network outage, the app still stops locally and ignores late results; a request already running on the server may still finish and incur cost.
-- If a process crashes after inference but before the decision is saved, treat the result as uncertain. Do not promise exactly-once provider billing. Retry remains bounded and idempotent at the app/session layer.
-- Firestore TTL cleans up expired metadata, but deletion is asynchronous. Validate `expiresAt` on every server operation; an expired document must never authorize a request. Deleting a parent document does not automatically delete its subcollections, so give attempt documents their own retention policy. [Firestore TTL](https://firebase.google.com/docs/firestore/ttl).
+Client rules allow only an owner's preference document with exactly `locale`,
+`theme` and `guidance`. Locale is `en` or `vi`. Every other client path is denied.
+The current native app stores its language locally; it does not sync preferences.
 
-## Local alarms and optional sync
+Functions use the Admin SDK, so they enforce ownership and inputs themselves.
+Clients cannot set a verified outcome or change quotas. Images, labels and raw
+request bodies are not stored in these documents.
 
-SwiftData/Room and the OS registration journal remain the source of the alarm actually scheduled on a device. Firestore is a sync/metadata store. Neither Cloud Functions, scheduled cloud jobs, nor FCM should be used as the clock that rings the alarm.
+## One verification, step by step
 
-Firestore supports offline caching and later synchronization, with last-write-wins behavior for multiple updates to a document. That does not automatically register or reconcile an OS alarm. [Firestore offline behavior](https://firebase.google.com/docs/firestore/manage-data/enable-offline).
+1. Create a deterministic session ID from UID and request ID. Matching creates
+   reuse the session; a changed request under the same ID is rejected.
+2. Check auth, App Check, owner, nonce, consent and expiry. Decode JPEG evidence and
+   validate byte/dimension/frame/order limits.
+3. Atomically claim an attempt and reserve the user's and global daily quota.
+4. Call OpenAI **outside** the transaction callback. Firestore may run that callback
+   again; paid work inside it could duplicate spending.
+5. Finalize only the current, active lease. Cancellation and expiry win even over
+   cached results or a response that arrives later.
 
-For the MVP, keep alarm sync off until conflict policy is implemented. Later, each device reconciles a received revision with its own OS, shows pending/conflicting revisions honestly, and never changes an active challenge midway. User account/sign-in failures must leave the local alarm and stop action usable.
+One attempt is allowed per session. A running replay returns pending, a finished
+matching replay returns its decision, and changed payloads are rejected. A stale
+lease becomes uncertain and is never reclaimed automatically. This avoids blind
+retries, but it is not a promise of exactly-once provider billing after a crash.
 
-## Camera evidence and OpenAI
+Repeated consent reuses the current client session. Repeated cancellation performs
+no second Firestore write. Both cost edges have regression tests.
 
-Keep camera frames out of Firestore, analytics and crash reports. Send a bounded set of ordered, encoded frames in the callable request, process them in memory, and release references after completion/cancel/deadline. Application payload limits must account for encoding overhead and be tested against Functions limits; insufficient evidence produces `uncertain`, rather than silent truncation and approval.
+## Operating limits
 
-No Cloud Storage bucket is needed for default challenge verification. If future research needs recorded clips, introduce separate consent, restricted access and retention first. Do not hide image data inside Firestore documents to simplify uploads.
+| Setting | Current default |
+|---|---|
+| Region | `asia-southeast1` |
+| Runtime | Node 22, 256MiB, concurrency 8 |
+| Instances | Minimum 0, maximum 2 |
+| Timeouts | Create/cancel 10s; verify 30s; provider 15s |
+| Session / lease | 120s / 25s |
+| AI quota | 3 per user/day UTC, 100 globally/day UTC |
+| Create quota | 20 per user/day UTC, 1,000 globally/day UTC |
+| Cloud AI | Disabled unless configured |
 
-Use `defineSecret` to bind the OpenAI API key to the verification function. Do not put it in the client bundle, Firestore or the Git repository. [Firebase secret parameters](https://firebase.google.com/docs/functions/config-env).
+These are pilot limits, not a latency or monthly-cost forecast. A region near users
+does not determine OpenAI's processing location. Measure cold starts and delay
+before paying for warm instances.
 
-Functions still implement the OpenAI evidence policy described in [TECH-STACK.md](TECH-STACK.md). Firebase does not supply pose verification or guarantee an accurate model verdict. Keep framing feedback local, form advice optional, and `self_confirmed`, `qr_verified`, `openai_verified` and `dismissed` distinct.
+Each metadata document has a `deleteAt` field two days ahead. Enable TTL separately
+for sessions, attempts and quota buckets in a real project. Cleanup is asynchronous;
+request expiry is checked synchronously. Parent deletion does not replace retention
+for attempt documents.
 
-## Deployment and operating choices
+## Run it locally
 
-Deploying Functions requires the pay-as-you-go Blaze plan. Firebase and OpenAI usage are separate costs; local emulators can be used before production deployment. [Firebase Functions setup](https://firebase.google.com/docs/functions/get-started).
+See [setup](RUNNING.md) for prerequisites and environment variables:
 
-Choose a supported region near the initial Vietnam users after measuring latency and reviewing the data flow. Co-locate Functions and Firestore when supported. A nearby Firebase region does not determine OpenAI's inference location.
+```sh
+npm ci --ignore-scripts
+npm run test:coverage
+```
 
-Measure cold starts, inference p50/p95, uncertain/retry rates, per-session cost and Firestore operations. Configure bounded function concurrency/instances, server quotas, deadlines and a cloud kill switch. Evaluate paid minimum instances only if cold-start measurements justify them. Use platform budget controls and provider spend limits appropriate to the deployment; no billing is being enabled as part of this design update.
+This uses `demo-himorning` and the Firestore Emulator. The suite checks real
+transactions, concurrent claims, global quotas and deny-by-default rules. OpenAI
+is mocked; no paid inference is needed.
 
-## Implementation order
+## Before deployment
 
-1. Keep the existing prototype working under the HiMorning name.
-2. Add emulator-based Auth, callable Functions and deny-by-default Rules when backend implementation begins.
-3. Implement session/attempt/lease/quota logic and cancellation without a real model call first.
-4. Integrate OpenAI with consented fixtures; measure accuracy, latency and cost before choosing the production model/sampling policy.
-5. Integrate native camera/alarms, then test sign-in failure, expired tokens, denied App Check, offline operation, duplicate submissions, 429/timeouts and late responses after Stop.
+Review project configuration, access permissions, secret binding, TTL, provider
+limits and billing. Deployment needs a real project and a supported billing plan;
+none is enabled by this repo. Keep cloud off until consented evaluation meets agreed
+accuracy, latency and cost gates. A cloud kill switch must leave local alarms usable.
 
-Account deletion, anonymous-account cleanup, attempt expiry and optional sync deletion need explicit retention behavior before launch. No social features, continuous video upload or background cloud alarm scheduling are required for this MVP.
+Account linking, anonymous-account cleanup, deletion workflows and sync conflict
+rules remain future work. Adding sync must never make FCM or a cloud job the alarm
+clock, or change an active challenge midway.
+
+## Read next
+
+[Tech stack](TECH-STACK.md) · [Architecture](ARCHITECTURE.md) · [Evidence](tdd/cost-optimized-pilot.tdd.md)
+
+Platform references: [callable functions](https://firebase.google.com/docs/functions/callable),
+[anonymous Auth](https://firebase.google.com/docs/auth/ios/anonymous-auth),
+[App Check](https://firebase.google.com/docs/app-check/cloud-functions),
+[transactions](https://firebase.google.com/docs/firestore/manage-data/transactions),
+[TTL](https://firebase.google.com/docs/firestore/ttl),
+[secret parameters](https://firebase.google.com/docs/functions/config-env).

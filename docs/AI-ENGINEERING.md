@@ -1,76 +1,156 @@
-# HiMorning — hồ sơ AI engineering
+# Building HiMorning with AI
 
-Tài liệu này mô tả công việc thực tế trong repository, phục vụ phỏng vấn và cải tiến quy trình. Đây là một **pilot đang phát triển**, có draft [PR #1](https://github.com/thanhdanh/HiMorning/pull/1); chưa phát hành, deploy Firebase hay benchmark nhận diện động tác với OpenAI thật.
+HiMorning is a practical case study in using an AI agent to build, test and explain
+a mobile product. The useful evidence is the chain from a user need to a decision,
+a test and a reviewable change—not the number of tools used.
 
-## Vai trò của người phát triển và AI
+**Status:** Pilot source and a draft [PR #1](https://github.com/thanhdanh/HiMorning/pull/1).
+No production deployment, paid inference benchmark or release certification.
 
-Người phát triển xác định bài toán và các ràng buộc: phù hợp người Việt, dễ dùng, vàng nắng, nhiều mức cam kết, luôn có cách dừng, dùng OpenAI và Firebase, ưu tiên pilot iOS 26+. AI agent hỗ trợ nghiên cứu, viết kế hoạch/kiến trúc, tạo mockup, viết test trước, triển khai, đọc kết quả kiểm tra và sửa lỗi. Không nên kể rằng mọi dòng code/test đều được viết thủ công, hoặc rằng người phát triển đã review từng dòng nếu chưa làm việc đó.
+## The problem and the human decisions
 
-Các quyết định kỹ thuật và test là bằng chứng có thể kiểm tra; số lượng prompt hay danh sách công cụ chỉ là thông tin phụ trợ.
+The goal was a morning alarm for people with different habits: some want structure,
+others need a gentle start. The developer set the product direction: simple choices,
+yellow sunshine branding, Vietnamese users, OpenAI/Firebase, an iOS 26+ pilot, then
+English and Vietnamese support with English code and docs.
 
-## Từ yêu cầu đến code được kiểm chứng
+The agent researched, proposed architecture, built the mockup, wrote tests and code,
+read failures and prepared documentation. Do not describe agent-written work as
+hand-written, or claim every line received human review unless that review happened.
 
-| Giai đoạn | Cách dùng AI | Bằng chứng trong repo |
+## From idea to evidence
+
+| Stage | How AI helped | Reviewable artifact |
 |---|---|---|
-| Plan sản phẩm | Chuyển ý tưởng Erly thành các mức nhẹ nhàng/cân bằng/tập trung; tách xác minh hoàn thành và gợi ý tư thế | [Kiến trúc](ARCHITECTURE.md), [pose plan](POSE-FEEDBACK-PLAN.md) |
-| Thiết kế | Định hướng giao diện Việt, vàng nắng, mockup tương tác trước native code | [UI design](UI-DESIGN.md), [prototype](../design/index.html) |
-| Thiết kế hệ thống | Tách alarm offline, local pose/capture và xác minh cloud; backend giữ quyền quyết định | [Tech stack](TECH-STACK.md), [Firebase](FIREBASE.md), [plan triển khai](IMPLEMENTATION-PLAN.md) |
-| Code bằng TDD | Viết test, chạy RED thật, commit checkpoint, sửa tối thiểu, chạy lại cùng test và commit GREEN | [TDD evidence](tdd/cost-optimized-pilot.tdd.md), lịch sử Git |
-| Test nhiều lớp | Contract/unit → Firestore Emulator → Swift domain/file integration → hosted Xcode build/XCTest/UI | [Hướng dẫn chạy](RUNNING.md), [CI](../.github/workflows/ci.yml) |
-| Đo và phản hồi | Trích xuất token thật, đối chiếu cumulative snapshot, lưu baseline; lỗi CI được giữ làm evidence | [Báo cáo số liệu](metrics/README.md), [collector](../scripts/lib/ai-usage.mjs) |
+| Plan | Turn a broad idea into user choices, constraints and milestones | [Plan](IMPLEMENTATION-PLAN.md), [feedback proposal](POSE-FEEDBACK-PLAN.md) |
+| Design | Explore a calm yellow UI and simple morning flow | [UI guide](UI-DESIGN.md), `design/` study |
+| Architecture | Separate local alarms from optional cloud checking | [Architecture](ARCHITECTURE.md), [backend](FIREBASE.md) |
+| Code | Implement behavior around failing contracts and preserved checkpoints | [TDD evidence](tdd/cost-optimized-pilot.tdd.md), Git history |
+| Test | Run unit, emulator, Swift, native build and UI checks | [Setup](RUNNING.md), GitHub Actions |
+| Measure | Extract actual token records, reconcile totals and label limits | [Metrics](metrics/README.md), tested collector library |
+| Refine | Add language resources and rewrite reader-facing guides | [Language guide](LOCALIZATION.md), [doc template](DOC-TEMPLATE.md) |
 
-## MCPs, skills và plugins thực sự dùng
+## A concrete example: cost bugs that tests caught
 
-**MCP** cung cấp giao diện để agent gọi công cụ. **Skill** là hướng dẫn quy trình. **Plugin** đóng gói skill/công cụ; cài một plugin không chứng minh đã dùng mọi chức năng của nó.
+Accepting camera consent twice created two cloud sessions. A runtime test reproduced
+the extra session; the fix reuses the current unexpired one. Repeating cancellation
+also performed an extra Firestore write. Its RED showed `expected 5 to be 4` writes;
+the fix returns the same outcome without writing again.
 
-| Thành phần | Vai trò thực tế | Giới hạn của bằng chứng |
+These small cases connect product behavior with operating cost. They are stronger
+interview evidence than saying “the app is cost optimized” without a reproducer.
+The [checkpoint index](tdd/cost-optimized-pilot.tdd.md) shows both failures and fixes.
+
+Native UI tests also caught a packaging bug: language files existed and resource
+checks passed, but XcodeGen had omitted them from the app bundle. The English
+journey passed through fallback text; Vietnamese and saved-choice journeys failed.
+The fix includes the resource folder in the target sources; all three UI journeys
+then passed in [CI](https://github.com/thanhdanh/HiMorning/actions/runs/38135338781).
+This shows why catalog checks and native runtime checks answer different questions.
+
+## Tools, skills and plugins
+
+An **MCP** exposes tools to the agent. A **skill** guides a workflow. A **plugin**
+packages capabilities; installation alone is not evidence that they were used.
+
+| Used capability | Role in this work | Boundary |
 |---|---|---|
-| `codebase-memory` skill + `codebase-memory-mcp` | Kiểm tra project/index, lấy kiến trúc, kiểm tra coverage/freshness theo đường dẫn; re-index khi graph cũ | Không phải bộ nhớ cá nhân. Graph có thể thiếu symbol; không chứng minh toàn bộ call graph đúng |
-| ECC 2.2.3: plan-orchestrate, architecture-decision-records, frontend-design-direction | Hướng dẫn các giai đoạn plan, kiến trúc và mockup; đường dẫn SKILL xuất hiện trong tool trace của cuộc hội thoại | Không tuyên bố có nhiều agent chạy song song; phiên này không dùng subagent |
-| ECC `tdd-workflow` | RED/GREEN thật, checkpoint Git, evidence và coverage | Native adapter ban đầu là integration spike; không có local native TDD đầy đủ vì thiếu Xcode |
-| `openai-docs` | Tra cứu tài liệu OpenAI chính thức cho Responses, ảnh, structured output và data controls | Docs lookup không thay thế benchmark model |
-| ECC `cost-tracking` | Kiểm tra nguồn chi phí và nguyên tắc không cộng các cumulative snapshots | Hook của skill dành cho Claude Code; file `~/.claude/metrics/costs.jsonl` không tồn tại khi kiểm tra. Không dùng nó làm nguồn token Codex |
-| Codex app tools | Mở artifact và gắn PR với cuộc hội thoại | GitHub thao tác chủ yếu qua `gh`/Git; không gọi một công cụ là MCP chỉ vì agent chạy CLI |
-| Computer-use/CUA | Xem và thao tác prototype trong các lượt thiết kế | Không phải chứng cứ native camera/AlarmKit đã hoạt động trên iPhone |
-| Shell + npm/Swift/Firebase CLI + GitHub Actions | Thực thi test, emulator, build, checkpoint, push và hosted validation | Test SDK mock không phải inference thật; emulator không phải production Firebase |
+| `codebase-memory` skill + MCP | Inspect index, architecture and path coverage; refresh stale data | Graph results need freshness checks and source fallback |
+| ECC 2.2.3 planning/ADR/frontend skills | Guide planning, architecture and the design study; skill paths appear in the trace | No subagents or parallel agent team were used |
+| ECC `tdd-workflow` | Require a valid RED, GREEN, checkpoints, coverage and evidence | Initial native adapters were an integration spike, not complete local native TDD |
+| `openai-docs` | Consult official API material at the point of implementation | Documentation does not measure model accuracy |
+| ECC `cost-tracking` | Review cost-log availability and cumulative-snapshot pitfalls | Its Claude cost log was absent; Codex token records are the actual source here |
+| Codex app tools | Open artifacts and attach the PR to the conversation | Git/`gh` operations remain CLI work, not automatically MCP calls |
+| Computer use/CUA | Review the earlier prototype | Not proof of native camera or alarm behavior |
+| npm, Swift, Firebase CLI and Actions | Execute checks and preserve build feedback | SDK mocks and emulators are not production results |
 
-### Memory MCP: ví dụ phát hiện dữ liệu cũ
+The JSON-oriented `i18n-sync` skill was reviewed for the language change. Native
+`.strings` extraction is outside its scope, so the implementation uses Apple's
+localization format and project tests instead of claiming that workflow was applied.
 
-Index ban đầu ở `2026-10-11T05:21:54Z` có 162 nodes/359 edges. Khi code native/backend mới đã có, `check_index_coverage` trả `freshness: not_tracked` cho các file mới, dù status là `no_recorded_issue`. Agent không xem đó là bằng chứng code đã được index; đã đọc source và re-index ở chế độ `fast`, không thêm semantic embedding.
+## Memory that can be checked
 
-Lần refresh `2026-10-11T10:26:33Z` có 632 nodes/1.920 edges. Coverage của `functions/src/service.ts`, `openai.ts`, camera và cloud core khớp metadata. `ChallengeView.swift:66` có parse_partial; đoạn source quanh dòng đó được đọc trực tiếp. Fast index còn loại một số docs/scripts/tests theo cấu hình. Các con số này là một snapshot, không phải benchmark token tiết kiệm.
+The initial index at `2026-10-11T05:21:54Z` had 162 nodes/359 edges. After native and
+backend files were added, path coverage reported `not_tracked` even though the issue
+status said `no_recorded_issue`. The agent read source and refreshed the index in
+`fast` mode, without adding semantic embeddings.
 
-Quy trình dùng lại: kiểm tra index → truy vấn phạm vi hẹp → kiểm tra coverage/freshness → đọc source ở phần thiếu → refresh khi cần. Không nạp cả repository vào prompt và không suy ra “không tồn tại” từ một kết quả graph rỗng.
+The `2026-10-11T10:26:33Z` snapshot had 632 nodes/1,920 edges. Relevant backend/camera/
+core paths matched metadata. `ChallengeView.swift:66` had a partial parse, so the
+source around it was read directly. Some docs/scripts/tests were excluded by the
+fast index. Those counts describe that snapshot, not the final repo or token savings.
 
-## Những kỹ thuật có thể giải thích sâu khi phỏng vấn
+After localization, the `2026-10-11T11:19:16Z` fast index had 889 nodes and
+2,267 edges. The new language helper and policy paths matched metadata; the partial
+challenge-view parse and fast-mode exclusions still required source fallback.
 
-1. **Hybrid inference có ngân sách.** Vision/capture tại máy chỉ tạo evidence và đếm tạm. OpenAI đánh giá tối đa 25 JPEG; backend kiểm tra schema và các chu kỳ có thứ tự trước khi trả `verified`. Local count không tự biến thành thành công AI. Một paid attempt/session, không tự retry, quota theo user/toàn hệ thống, output 800 tokens, reasoning `none`, AI tắt mặc định. Đây là kiểm soát chi phí đã test; chưa phải bằng chứng độ chính xác hay số USD tiết kiệm.
-2. **Idempotency và concurrency là phần của cost engineering.** Request ID, payload hash, atomic transaction và lease ngăn hai worker cùng gọi model. Paid call nằm ngoài transaction callback vì Firestore có thể chạy lại callback. Test mới bắt được repeated consent tạo hai session và repeated cancel ghi thêm DB.
-3. **State machine chống kết quả đến muộn.** Stop/expiry có quyền ưu tiên; generation của client loại response cũ. Alarm native và quyền dừng không phụ thuộc network. Background suspension hủy cloud nhưng không dừng OS alarm.
-4. **Evidence có thể audit.** RED phải là lỗi do behavior thiếu/sai, không tính thiếu Java/XCTest là RED. Checkpoint được giữ, test guarantees được mô tả bằng ngôn ngữ người dùng. Native SDK compilation được kiểm tra riêng trên hosted Xcode.
-5. **Context có phạm vi và nguồn.** Graph trước, source fallback, đọc docs chính thức đúng chỗ, gom các read độc lập trong một tool batch. Compaction/handoff giữ trạng thái đang làm và không lấy summary thay kết quả test thật. Chưa có đối chứng để quy đổi các lựa chọn này thành phần trăm tiết kiệm.
-6. **Đo token mà không đếm trùng.** Collector chỉ đọc rollout được chỉ định, lọc đúng thread, deduplicate `response_id`, cộng `usage` từng response và so với cumulative thread snapshot cuối. Cached input thuộc input; reasoning thuộc output. Không cộng lại các phần con hoặc cumulative event.
+Use this sequence: inspect readiness → query a small scope → check path coverage →
+read gaps → refresh if needed. A clean signal is not proof of completeness, and an
+empty result is not proof that code does not exist. This is codebase memory, not
+personal memory about users.
 
-## Hooks và quality gates
+## Techniques worth explaining in an interview
 
-Thêm hook Git **cục bộ cho repository** tại [.githooks/pre-push](../.githooks/pre-push), kích hoạt bằng `git config --local core.hooksPath .githooks`. Hook kiểm tra whitespace trên branch, TypeScript và unit/contract/metrics tests trước push. Nó không gọi OpenAI, không gửi transcript và không chạy emulator/Xcode. Full emulator/native checks nằm trong CI. Bản clone mới cần tự kích hoạt lại; config local không theo Git.
+1. **Bounded hybrid inference.** Local pose/capture gives quick feedback, but cannot
+   declare AI success. OpenAI receives ordered evidence; server policy checks it.
+   Image/output budgets, one attempt, quotas and default-off cloud limit spending.
+   Accuracy and actual dollar savings remain unmeasured.
+2. **Transactions around paid work.** Reserve an attempt atomically, call the model
+   outside the transaction, then finalize the current lease. This protects against
+   callback retries and concurrent workers without promising exactly-once billing.
+3. **Lifecycle and late results.** Client generations and server cancellation/expiry
+   stop old results from changing the outcome. Offline scheduling/stop is separate
+   from sign-in, camera and cloud success.
+4. **Evidence before claims.** Keep runtime/compile REDs and GREEN commits. Missing
+   Java or XCTest is infrastructure failure, not a behavior RED. Keep SDK build
+   feedback separate and report coverage by scope.
+5. **Focused context.** Use graph queries, targeted source reads and official docs;
+   batch independent reads. Handoffs preserve current work. These practices still
+   need a controlled comparison before claiming a savings percentage.
+6. **Measured usage.** Filter one conversation, deduplicate response IDs, sum each
+   request's usage and compare with the last cumulative snapshot. Cached input is
+   part of input; reasoning is part of output. Neither is added twice.
 
-Không tạo global hook hoặc agent Stop hook. Không tuyên bố ECC Claude cost hook đã chạy trên Codex. Collector chạy thủ công để tạo snapshot, vì phiên này có log Codex thực; CI không có log chat local và không được truy cập chúng. Muốn bỏ local hook: `git config --local --unset core.hooksPath`.
+## Hooks and quality gates
 
-## Đo hiệu quả thay vì chỉ đếm tokens
+The project-local [.githooks/pre-push](../.githooks/pre-push) runs whitespace checks,
+TypeScript and non-emulator tests. It was enabled locally with:
 
-[Bảng baseline](metrics/README.md) phân biệt ba lớp:
+```sh
+git config --local core.hooksPath .githooks
+```
 
-- **Agent:** input/cached/output/reasoning theo lượt và nhóm việc, reconciliation, phần chưa phân loại; chi phí USD chưa biết.
-- **Chất lượng phát triển:** behavior có test, coverage đúng phạm vi, RED/GREEN, CI pass/fail/cancel và thời gian từng job. Coverage cao không chứng minh AI nhận diện đúng.
-- **Inference của app:** event `verification_token_usage` ghi số tokens/model; chưa có paid call. Cần thêm latency, provider request ID để dedup, outcome, lượng ảnh và bảng giá có ngày hiệu lực trước khi tính cost/verified session.
+It actually ran on pushes. A fresh clone needs to enable it separately. It does
+not call OpenAI or export transcripts. Emulator/native checks run in CI. No global
+or agent Stop hook was installed; the ECC Claude cost hook is not a Codex meter.
+Remove the local hook with `git config --local --unset core.hooksPath` if needed.
 
-Lần benchmark tiếp theo nên cố định cùng task/acceptance criteria, commit gốc, runner và budget; so sánh graph-first với source-only trên các task tương đương. Thu thập uncached input, output, tool calls, wall-clock, acceptance lần đầu và lỗi còn lại. Chỉ nói tiết kiệm khi có baseline đối chứng, đồng thời giữ chất lượng không giảm. Không dùng “tokens/LOC” làm KPI chính vì khuyến khích sinh nhiều code.
+## Measure useful outcomes
 
-Tách lượt `[phase:planning]`, `[phase:coding]`, `[phase:testing]`, `[phase:review]` và thêm turn ID vào phase-map sẽ giúp phân bổ các lần sau rõ hơn. Lượt lịch sử trộn code và test được giữ chung; không suy diễn tỉ lệ từ số dòng code. Model labels trong log là quan sát thực tế, không đủ chứng minh có model routing tối ưu.
+Separate agent usage, software quality and app inference. See the [baseline](metrics/README.md)
+for exact counts and missing data. No per-MCP/skill token billing is available;
+request usage includes context and tool results, so allocating it to individual
+tools would require additional instrumentation and clear attribution rules.
 
-## Cách kể trong phỏng vấn
+A future comparison should use equivalent tasks, the same starting commit, runner,
+acceptance criteria and budget. Measure uncached input, output, elapsed time,
+first-review acceptance and remaining defects. Cost per accepted behavior needs an
+actual cost source and an acceptance ledger. More code or more tool calls is not
+success by itself.
 
-> Tôi xây HiMorning theo hướng AI-assisted engineering: tự đặt yêu cầu UX và chọn pilot iOS, dùng agent để biến chúng thành architecture, test contracts và implementation. Tôi giữ RED/GREEN commits, kiểm thử concurrency/idempotency và cancellation trước khi tin vào luồng OpenAI. Tôi còn xây collector token có test để tách cached input, đối chiếu tổng phiên và gắn chi phí phát triển với kết quả kỹ thuật. Hiện đây là pilot: SDK build/UI được kiểm tra trên CI, còn độ chính xác động tác và trải nghiệm alarm thực tế cần benchmark trên iPhone.
+Split future planning/coding/testing/review turns and label them in the phase map.
+Historical mixed turns stay combined. Observed model labels do not prove an optimal
+routing strategy. A high cache ratio is not the same as dollars or minutes saved.
 
-Có thể demo: mở một RED commit → xem assertion/import failure → chuyển GREEN commit → chạy lại test → mở coverage và CI → giải thích cost caps → mở token ledger. Nếu chưa review một phần code, nói rõ agent thực hiện và chỉ ra cách bạn đã kiểm chứng; không biến giới hạn thành thành tích.
+## A short interview story
+
+> I built HiMorning with an AI agent, while setting the product goals and pilot
+> scope myself. I used tests and preserved RED/GREEN commits to check cloud cost
+> controls, cancellation and local alarm state. I also built a tested token collector
+> that reconciles real usage records, then documented both the results and gaps.
+> The pilot has native build/UI checks; physical-device reliability and exercise
+> accuracy still need separate evaluation.
+
+A useful demo is one RED commit, its GREEN fix, the test result, a CI run and the
+token ledger. Explain what you verified and what the agent did. Be ready to describe
+one failure and the tradeoff behind its fix.

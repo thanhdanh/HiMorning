@@ -1,53 +1,95 @@
-# HiMorning
+# HiMorning ☀️
 
-Ứng dụng báo thức dành cho người dùng Việt Nam, màu vàng nắng và trải nghiệm thức dậy vừa sức. Pilot iOS 26+ đã được người dùng chọn. Mã nguồn ở `~/Projects/HiMorning`; repository GitHub riêng tư: [thanhdanh/HiMorning](https://github.com/thanhdanh/HiMorning).
+A calmer way to start the day. HiMorning is an alarm app with simple choices: wake
+up at your own pace, try a small movement challenge, or stop when you need to.
 
-## Đã triển khai
+**Status:** iOS 26+ pilot. English and Vietnamese are supported in the native app.
+The backend is built and tested, but cloud AI is off by default. This is not a
+released or device-validated alarm app.
 
-- `functions/src/`: Firebase Callable Functions, kiểm tra Auth/App Check, session có hạn dùng, Firestore transactions, idempotency, quota và OpenAI Responses adapter.
-- `ios/HiMorningCore/`: Swift domain, lịch theo múi giờ/ngày lặp, lưu lịch cục bộ, journal trước khi đặt native alarm, phục hồi, capture theo năm pha và kiểm soát consent/cancel/response đến muộn.
-- `ios/HiMorning/`: SwiftUI pilot tiếng Việt, AlarmKit, AVFoundation/Vision và Firebase client adapters. XcodeGen tạo project từ `ios/project.yml`.
-- `tests/`, `ios/HiMorningCore/TestsPortable/`: unit/integration tests; Firestore Emulator/rules tests và portable Swift tests. `.github/workflows/ci.yml` kiểm tra backend và native build/UI.
-- `design/`: mockup tương tác độc lập, không mở camera, không hẹn alarm và không gọi cloud.
+[GitHub repository](https://github.com/thanhdanh/HiMorning) · [Draft PR](https://github.com/thanhdanh/HiMorning/pull/1)
 
-Cloud AI **tắt mặc định**. Ảnh chỉ xử lý trong bộ nhớ, không lưu vào Firestore/Storage. Giới hạn 25 JPEG 512px, 50KB/ảnh, một paid attempt/session, không tự retry OpenAI; quota mặc định 3/user/ngày UTC và 100 toàn hệ thống/ngày. Output tối đa 800 tokens, reasoning `none`, verbosity thấp, metrics chỉ chứa số tokens/model. Model/ảnh giới hạn là ứng viên cần đánh giá, chưa chứng minh đủ chính xác cho release.
+## Start here
 
-## Chạy và kiểm thử
+| You want to… | Read |
+|---|---|
+| Run the app or tests | [Setup guide](docs/RUNNING.md) |
+| Understand the system | [Architecture](docs/ARCHITECTURE.md) and [tech stack](docs/TECH-STACK.md) |
+| Review the experience | [UI guide](docs/UI-DESIGN.md) and [language guide](docs/LOCALIZATION.md) |
+| Understand AI costs and safeguards | [Firebase backend](docs/FIREBASE.md) |
+| See how AI helped build it | [AI engineering case study](docs/AI-ENGINEERING.md) and [metrics](docs/metrics/README.md) |
+| Check what the tests prove | [TDD evidence](docs/tdd/cost-optimized-pilot.tdd.md) |
 
-Node 22, npm, Java 21:
+## A morning with HiMorning
+
+Set a time, choose a mode and pick a sound. The phone's alarm system keeps the
+schedule. A regular alarm works without cloud sign-in.
+
+If you choose an AI challenge, the app asks before opening the camera or sending
+movement photos to OpenAI. Local movement counts are a preview; the backend must
+validate the evidence before reporting AI success. You can always confirm you are
+awake or stop. A cloud error must not take away that choice.
+
+| Mode | Suggested challenge | Snooze policy in the core |
+|---|---|---|
+| Gentle — the default | No exercise required | 2 × 5 minutes |
+| Balanced | 3 push-ups | 1 × 5 minutes |
+| Focused | 5 push-ups | None |
+
+Native snooze/countdown UI is still planned. Core policy tests do not prove it is
+connected to AlarmKit. The app includes system sound and two original chime sketches;
+preview volume is separate from alarm volume.
+
+## Quick start
+
+Backend checks need Node 22, npm and Java 21:
 
 ```sh
 npm ci --ignore-scripts
 npm run typecheck
 npm run build
-npm test
 npm run test:coverage
 ```
 
-Swift domain với Command Line Tools:
+Swift core checks work with Apple's Command Line Tools:
 
 ```sh
 sh scripts/test-swift.sh
 ```
 
-Native iOS cần Xcode 26+ và XcodeGen:
+For the native app, use Xcode 26+ and XcodeGen:
 
 ```sh
 xcodegen generate --spec ios/project.yml
 open ios/HiMorning.xcodeproj
 ```
 
-Xem [hướng dẫn chạy, cấu hình và giới hạn pilot](docs/RUNNING.md) và [bằng chứng TDD](docs/tdd/cost-optimized-pilot.tdd.md). Chưa tạo Firebase project, bật cloud billing, deploy hay gọi OpenAI tính phí. Native alarm/camera/audio cần kiểm tra trên iPhone thật trước phát hành. QR, native snooze/countdown, chỉnh sửa alarm và lịch sử tuần vẫn là các phần tiếp theo của kế hoạch; không được mô tả là đã hoàn thành.
+The globe menu offers **Use device language**, **English** and **Vietnamese**. Your
+choice stays on this device. See [setup](docs/RUNNING.md) for signing and Firebase.
 
-## Hồ sơ AI engineering
+## What is in the repo?
 
-Xem [cách dùng AI để plan/code/test, MCPs, skills, hooks và evidence phỏng vấn](docs/AI-ENGINEERING.md), cùng [baseline tokens và hiệu quả](docs/metrics/README.md). Token phát triển được đo từ đúng phiên Codex; không quy đổi thành hóa đơn OpenAI của app.
+| Path | Purpose |
+|---|---|
+| `ios/HiMorningCore/` | Alarm domain, local journal, evidence capture and cloud lifecycle |
+| `ios/HiMorning/` | SwiftUI, AlarmKit, camera and Firebase adapters |
+| `ios/Resources/` | English/Vietnamese strings, permission text and sound sketches |
+| `functions/src/` | Firebase callables, OpenAI adapter, session policy and quotas |
+| `tests/` | Backend, emulator, localization and engineering-metrics tests |
+| `design/` | Earlier Vietnamese design simulation; no real alarm, camera or API |
+| `docs/` | Guides, decisions, plans and evidence |
 
-## Thiết kế và kiến trúc
+The working checkout is `~/Projects/HiMorning`. Run `python3 scripts/preview.py` to
+view the earlier design study at http://127.0.0.1:4173/design/.
 
-- [Firebase](docs/FIREBASE.md), [tech stack/OpenAI](docs/TECH-STACK.md), [kiến trúc sản phẩm](docs/ARCHITECTURE.md).
-- [UI/UX](docs/UI-DESIGN.md), [gợi ý tư thế](docs/POSE-FEEDBACK-PLAN.md), [kế hoạch triển khai pilot](docs/IMPLEMENTATION-PLAN.md).
+## What comes next?
 
-`python3 scripts/preview.py` mở mockup tại http://127.0.0.1:4173/design/. Các âm web là sketch tổng hợp. Native pilot có hai chime tự tổng hợp và âm hệ thống; âm lượng nghe thử tách biệt với âm báo hệ thống.
+Test alarm delivery, camera placement and sounds on iPhone. Evaluate consented
+movement clips for accuracy, delay and cost before enabling AI for users. QR,
+existing-alarm editing, native snooze, weekly history, deeper form guidance and
+Android remain planned. No Firebase project, billing setup or paid OpenAI call was
+created during the implementation tests.
 
-Tham khảo UI công khai: [Erly trên App Store](https://apps.apple.com/us/app/erly-wake-up-early/id6751428380), [Erly trên Google Play](https://play.google.com/store/apps/details?id=com.erly.myapp&hl=en). HiMorning là dự án riêng; Erly chỉ là nguồn tham khảo.
+Erly's public [App Store](https://apps.apple.com/us/app/erly-wake-up-early/id6751428380)
+and [Google Play](https://play.google.com/store/apps/details?id=com.erly.myapp&hl=en)
+pages informed the early research. HiMorning has its own copy, artwork and policies.

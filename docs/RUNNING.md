@@ -1,27 +1,96 @@
 # Run HiMorning
 
-## Backend (no account or API key required for tests)
+Start with local tests, then use a simulator to review the app. Real alarm, camera
+and sound behavior still needs an iPhone; no Firebase configuration is needed to
+review or use the local alarm flow.
 
-Use Node 22, npm and Java 21. `npm ci --ignore-scripts`, `npm run typecheck`, `npm run build`, `npm test`, then `npm run test:coverage`. Coverage starts only the local Firestore Emulator with project ID `demo-himorning`; it includes real transaction/rules tests. OpenAI is mocked. `npm run test:emulator` runs only the database integration suite. Local Node 24 also passed; deployed Functions are explicitly Node 22.
+**Status:** iOS 26+ pilot. Cloud verification is off by default.
 
-The three callable exports are in `functions/src/index.ts`. Production requires Firebase anonymous Auth and App Check on every call. Client UID, quota configuration, verdicts and model names are never accepted from request fields.
+## Prerequisites
 
-Cloud inference is off by default. The adapter explicitly uses `reasoning.effort: none`, low verbosity and 800 maximum output tokens; these are unbenchmarked candidates and may increase uncertain results. Successful provider responses emit only model and numeric token usage via the Firebase logger. Copy `functions/.env.example` to a private environment file only when preparing a real Firebase project. Bind `OPENAI_API_KEY` with Firebase Secret Manager; never put it in iOS or a tracked file. Deploy requires a real project, billing and App Attest registration. No deployment has been performed. Enabling inference is a deployment configuration change, not a remotely instantaneous kill switch; revoke the key or disable the function for an immediate emergency response. Add Firebase/GCP budget alerts before pilot traffic; the call caps do not cap every infrastructure charge.
+| Work | Tools |
+|---|---|
+| Backend/emulator tests | Node 22, npm, Java 21 |
+| Portable Swift checks | Apple Command Line Tools |
+| Native build/UI | Xcode 26+ and XcodeGen |
+| Physical iPhone | iOS 26+, development signing/team |
 
-Configure Firestore TTL for `deleteAt` on collection groups `verificationSessions`, `attempts`, and `quotaBuckets` in the real project. TTL cleanup is asynchronous and is not enabled by this repository. Request expiry is checked synchronously. Each attempt has its own deletion field. No Storage bucket or image/video persistence is provisioned.
+The working checkout is `~/Projects/HiMorning`. Run commands from its root.
 
-## Native iOS 26 pilot
+## Check the backend
 
-`ios/HiMorningCore` is a portable Swift package. `sh scripts/test-swift.sh` runs 13 domain/integration journeys with LLVM coverage using Command Line Tools, without XCTest. Full Xcode can also run the XCTest package suite.
+```sh
+npm ci --ignore-scripts
+npm run typecheck
+npm run build
+npm test
+npm run test:coverage
+```
 
-Install Xcode 26 or later and XcodeGen. Run `xcodegen generate --spec ios/project.yml`, then open `ios/HiMorning.xcodeproj`. Select a simulator for UI review or a real iOS 26+ iPhone for alarm/camera/audio testing. Code signing is disabled in the generated project for CI; set your development team and enable signing for a physical device. The native shell is a pilot integration, not a release-certified alarm app.
+`npm test` runs tests without Firestore. Coverage starts the real Firestore Emulator
+under the safe `demo-himorning` project, then adds transaction/rules tests. OpenAI
+uses SDK mocks. If the emulator cannot find Java, install/select Java 21 and check
+`JAVA_HOME`; do not count an environment failure as a behavior-test RED.
 
-The app works with local alarm scheduling and explicit self-confirm/stop without Firebase configuration. For cloud testing, register the bundle ID, enable anonymous Auth, configure App Attest and add an untracked `GoogleService-Info.plist` to the app's resources. Register a debug App Check provider separately for simulators if needed; production source uses App Attest and has no attestation bypass. SDK products are limited to Core, Auth, Functions and App Check. No analytics SDK, account signup, Firestore alarm sync or subscriptions are needed for the pilot.
+Production audit: `npm audit --omit=dev`. The historical full development audit had
+16 advisories in Firebase tooling dependencies; it was not claimed clean.
 
-Native screens: Vietnamese home, local alarm creation with weekday repeat and gentle/balanced/focused presets, on/off and deletion, three sound choices with bounded preview volume, explicit consent, foreground camera with provisional cycles, one bounded cloud submission, self-confirm and stop. A custom AlarmKit action opens the task; the OS Stop remains available. Backgrounding closes the camera and cancels cloud verification; it does not stop the OS alarm or declare success.
+## Check Swift and open the app
 
-Current limits: editing an existing alarm, native snooze/countdown UI, QR enrollment, progress history, expert form coaching and Android are not implemented in this pilot. Preset snooze policy is tested in the core but not connected to native countdowns; that requires a Live Activity extension and device validation. Camera sampling is a prototype, not a proven exercise/safety/liveness detector. A consented movement dataset, accuracy/latency/cost evaluation and real-device alarm checks are required before enabling AI for a user pilot.
+```sh
+sh scripts/test-swift.sh
+xcodegen generate --spec ios/project.yml
+open ios/HiMorning.xcodeproj
+```
 
-## Design prototype
+The portable harness reports core coverage without requiring local XCTest. Full
+Xcode can run `swift test --package-path ios/HiMorningCore` and the native scheme's
+UI tests. Hosted CI runs both paths.
 
-`python3 scripts/preview.py` serves the existing static mock at http://127.0.0.1:4173/design/. It remains a separate simulation and does not invoke the backend or camera.
+Select a simulator to review English/Vietnamese screens. Use the globe menu to
+follow the device language or save a choice. On a physical phone, set your team and
+enable signing; generated projects disable signing for CI.
+
+Native scope: create alarms, weekday repeats, three modes, on/off/delete, sound
+preview, language selection, rehearsal, consented camera, one cloud submission,
+self-confirm and stop. Editing, QR, native snooze/countdown and history are planned.
+
+## Optional Firebase setup
+
+Do this only when ready for real cloud testing:
+
+1. Register the app bundle ID in your Firebase project and enable anonymous Auth.
+2. Configure App Attest and add an untracked `GoogleService-Info.plist` to app resources.
+3. Configure backend values using `functions/.env.example`; keep OpenAI credentials
+   in Secret Manager and bind them only to verification.
+4. Review quotas, TTL, provider limits and billing before enabling cloud verification.
+
+A simulator may need a separately registered App Check debug provider. Production
+source uses App Attest and contains no attestation bypass. Missing Firebase config
+leaves cloud unavailable while local alarms remain usable.
+
+Enable TTL on `deleteAt` for `verificationSessions`, `attempts` and `quotaBuckets`.
+TTL is not enabled by this repo and cleanup is not immediate. No image Storage
+bucket is required. Deployment and billing have not been performed in this work.
+
+## Preview the earlier design study
+
+```sh
+python3 scripts/preview.py
+```
+
+Open http://127.0.0.1:4173/design/. This Vietnamese web simulation has extra planned
+screens and sample data; it does not schedule real alarms, open the camera or call
+OpenAI. It is separate from the bilingual native app.
+
+## Before inviting users
+
+Test locked/terminated/restarted states, permission changes, offline stops, sound
+routing and camera placement on devices. Benchmark consented movement evidence for
+false acceptance/rejection, uncertainty, delay and cost. Neither a green SDK build
+nor synthetic-image tests establish exercise accuracy or alarm delivery reliability.
+
+## Read next
+
+[Tech stack](TECH-STACK.md) · [Language guide](LOCALIZATION.md) · [Firebase](FIREBASE.md) ·
+[TDD evidence](tdd/cost-optimized-pilot.tdd.md)
