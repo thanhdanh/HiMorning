@@ -1,0 +1,16 @@
+rules_version = '2';
+service cloud.firestore {
+ match /databases/{database}/documents {
+  match /users/{uid} {
+   allow read: if request.auth != null && request.auth.uid == uid;
+   allow create, update: if request.auth != null && request.auth.uid == uid
+    && request.resource.data.keys().hasAll(['locale', 'theme', 'guidance'])
+    && request.resource.data.keys().hasOnly(['locale', 'theme', 'guidance'])
+    && request.resource.data.locale in ['vi', 'en']
+    && request.resource.data.theme in ['light', 'dark', 'system']
+    && request.resource.data.guidance is bool;
+   allow delete: if request.auth != null && request.auth.uid == uid;
+  }
+  match /{document=**} { allow read, write: if false; }
+ }
+}
