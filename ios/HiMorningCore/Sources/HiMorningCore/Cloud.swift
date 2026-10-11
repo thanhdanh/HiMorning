@@ -58,6 +58,11 @@ public enum ChallengeError: Error {case consentRequired,cloudUnavailable,expired
   if !rehearsal {try await scheduler.stop(id:alarm.id)}
   return session.applyVerified(generation:generation)
  }
+ public func suspend() async {
+  consent=false;session.interruptVerification()
+  if let remote=cloudSession {try? await cloud?.cancel(sessionID:remote.sessionID)}
+  cloudSession=nil
+ }
  public func finish(_ outcome:WakeOutcome) async throws {
   switch outcome {case .dismissed:session.stop();case .selfConfirmed:session.selfConfirm();case .openaiVerified:throw ChallengeError.unsupportedOutcome}
   consent=false

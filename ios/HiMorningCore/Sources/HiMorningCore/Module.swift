@@ -38,6 +38,7 @@ public struct WakeSession: Sendable {
   guard pending,outcome == nil,generation == self.generation else {return false}
   pending=false;outcome = .openaiVerified;return true
  }
+ public mutating func interruptVerification() {generation+=1;pending=false}
  public mutating func stop() {generation+=1;pending=false;if outcome == nil {outcome = .dismissed}}
  public mutating func selfConfirm() {generation+=1;pending=false;if outcome == nil {outcome = .selfConfirmed}}
  @discardableResult public mutating func snooze() -> Bool {
