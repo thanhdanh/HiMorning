@@ -7,7 +7,7 @@ up at your own pace, try a small movement challenge, or stop when you need to.
 The backend is built and tested, but cloud AI is off by default. This is not a
 released or device-validated alarm app.
 
-[GitHub repository](https://github.com/thanhdanh/HiMorning) · [Draft PR](https://github.com/thanhdanh/HiMorning/pull/1)
+[GitHub repository](https://github.com/thanhdanh/HiMorning) · [Pull request](https://github.com/thanhdanh/HiMorning/pull/1)
 
 ## Start here
 

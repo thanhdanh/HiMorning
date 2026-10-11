@@ -4,7 +4,7 @@ HiMorning is a practical case study in using an AI agent to build, test and expl
 a mobile product. The useful evidence is the chain from a user need to a decision,
 a test and a reviewable change—not the number of tools used.
 
-**Status:** Pilot source and a draft [PR #1](https://github.com/thanhdanh/HiMorning/pull/1).
+**Status:** Pilot source and [PR #1](https://github.com/thanhdanh/HiMorning/pull/1).
 No production deployment, paid inference benchmark or release certification.
 
 ## The problem and the human decisions
