@@ -6,7 +6,7 @@ import HiMorningCore
 @main struct HiMorningApp:App {
  @StateObject private var model=PilotModel()
  @AppStorage("appLanguage") private var language="system"
- var body:some Scene {WindowGroup {HomeView(model:model).environment(\.locale,appLocale())}}
+ var body:some Scene {WindowGroup {HomeView(model:model).environment(\.locale,Locale(identifier:(AppLanguage(rawValue:language) ?? .system).resolved(preferredLanguages:Locale.preferredLanguages)))}}
 }
 @MainActor final class PilotModel:ObservableObject {
  @Published var alarms:[SavedAlarm]=[]

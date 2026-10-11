@@ -2,8 +2,15 @@ import XCTest
 final class PilotUITests:XCTestCase {
  private func launch(language:String)->XCUIApplication {
   let app=XCUIApplication()
-  app.launchArguments=["-AppleLanguages","(en)","-AppleLocale","en_US","-appLanguage",language]
-  app.launch();return app
+  app.launchArguments=["-AppleLanguages","(en)","-AppleLocale","en_US"]
+  app.launch()
+  app.buttons["appLanguage"].tap()
+  if language == "en" {app.buttons["English"].tap()}
+  else {
+   let choice=app.buttons["Vietnamese"].exists ? app.buttons["Vietnamese"] : app.buttons["Tiếng Việt"]
+   choice.tap()
+  }
+  return app
  }
  func testEnglishGentleDefaultAndCancelWithoutPermissions() {
   let app=launch(language:"en")

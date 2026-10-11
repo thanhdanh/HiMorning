@@ -22,7 +22,7 @@ actor NativeAlarmScheduler: AlarmScheduler {
   let days:[Locale.Weekday] = [.sunday,.monday,.tuesday,.wednesday,.thursday,.friday,.saturday]
   let recurrence:Alarm.Schedule.Relative.Recurrence=alarm.time.weekdays.isEmpty ? .never : .weekly(alarm.time.weekdays.sorted().map {days[$0-1]})
   let relative=Alarm.Schedule.Relative(time:.init(hour:alarm.time.hour,minute:alarm.time.minute),repeats:recurrence)
-  let alert=AlarmPresentation.Alert(title:appText("Good morning ☀️"),stopButton:AlarmButton(text:appText("Stop"),textColor:.white,systemImageName:"stop.circle"),secondaryButton:AlarmButton(text:appText("Open HiMorning"),textColor:.black,systemImageName:"sun.max"),secondaryButtonBehavior:.custom)
+  let alert=AlarmPresentation.Alert(title:LocalizedStringResource(stringLiteral:appText("Good morning ☀️")),stopButton:AlarmButton(text:LocalizedStringResource(stringLiteral:appText("Stop")),textColor:.white,systemImageName:"stop.circle"),secondaryButton:AlarmButton(text:LocalizedStringResource(stringLiteral:appText("Open HiMorning")),textColor:.black,systemImageName:"sun.max"),secondaryButtonBehavior:.custom)
   let attributes=AlarmAttributes<MorningMetadata>(presentation:AlarmPresentation(alert:alert),metadata:MorningMetadata(alarmID:alarm.id.uuidString),tintColor:.yellow)
   let sound:AlertConfiguration.AlertSound = alarm.sound == .system ? .default : .named(alarm.sound.rawValue+".wav")
   let configuration=AlarmManager.AlarmConfiguration<MorningMetadata>.alarm(schedule:.relative(relative),attributes:attributes,secondaryIntent:OpenMorningIntent(id:alarm.id),sound:sound)
