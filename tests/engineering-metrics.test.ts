@@ -34,12 +34,17 @@ describe('AI engineering token evidence', () => {
  it('marks an incomplete ledger when the cumulative snapshot includes unobserved usage', () => {
   const report = summarizeUsage([record('a', { thread_token_usage: { ...usage, input_tokens: 200, total_tokens: 220 } })], options);
   expect(report.reconciliation.matches).toBe(false);
-  expect(report.reconciliation.delta.total_tokens).toBe(100);
+  expect(report.reconciliation.delta?.total_tokens).toBe(100);
  });
  it('preserves unavailable telemetry as null, not zero usage', () => {
   const report = summarizeUsage([{ type: 'event_msg', payload: {} }], options);
   expect(report.totals).toBeNull(); expect(report.reconciliation.matches).toBeNull();
   expect(() => summarizeUsage([record('missing', { usage: undefined })], options)).toThrow(/usage/i);
+ });
+ it('rejects missing request identity and handles a missing snapshot honestly', () => {
+  expect(() => summarizeUsage([], { threadID: '' })).toThrow(/threadID/);
+  expect(() => summarizeUsage([record('')], options)).toThrow(/identity/);
+  expect(summarizeUsage([record('a', { thread_token_usage: undefined })], options).reconciliation.matches).toBeNull();
  });
  it('ignores only an unfinished final JSONL record and rejects malformed complete lines', () => {
   expect(parseRollout(JSON.stringify(record()) + '\n{"unfinished":').incompleteFinalLine).toBe(true);
