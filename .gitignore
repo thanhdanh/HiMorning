@@ -1,0 +1,16 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+node_modules/
+.env
+.env.*
+!.env.example
+.secret.local
+*-firebase-adminsdk-*.json
+service-account*.json
+.firebase/
+*-debug.log
+coverage/
+.DerivedData/
+build/
+dist/
