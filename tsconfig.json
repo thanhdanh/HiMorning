@@ -9,11 +9,13 @@
     "types": [
       "node",
       "vitest/globals"
-    ]
+    ],
+    "allowJs": true
   },
   "include": [
     "functions/src/**/*.ts",
     "tests/**/*.ts",
-    "vitest.config.ts"
+    "vitest.config.ts",
+    "scripts/**/*.mjs"
   ]
 }
