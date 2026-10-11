@@ -68,8 +68,7 @@ struct HomeView:View {
    ScrollView {
     VStack(alignment:.leading,spacing:24) {
      Image(systemName:"sun.max.fill").font(.system(size:42)).foregroundStyle(.orange)
-     Text("Một ngày mới,
-nhẹ nhàng hơn.").font(.largeTitle.bold())
+     Text("Một ngày mới,\nnhẹ nhàng hơn.").font(.largeTitle.bold())
      Text("Bắt đầu từ một buổi sáng vừa sức.").foregroundStyle(.secondary)
      if model.alarms.isEmpty {ContentUnavailableView("Chưa có báo thức",systemImage:"alarm",description:Text("Đặt giờ đầu tiên cho ngày mai."))}
      ForEach(model.alarms) {alarm in
@@ -96,6 +95,7 @@ nhẹ nhàng hơn.").font(.largeTitle.bold())
    .fullScreenCover(item:$model.selected) {alarm in ChallengeView(alarm:alarm,model:model)}
    .alert("Cần kiểm tra",isPresented:Binding(get:{model.error != nil},set:{if !$0 {model.error=nil}})) {Button("Đã hiểu") {model.error=nil}} message:{Text(model.error ?? "")}
    .task {await model.refresh()}
+   .onReceive(NotificationCenter.default.publisher(for:UserDefaults.didChangeNotification).receive(on:RunLoop.main)) {_ in model.openPending()}
    .onChange(of:phase) {_,value in if value == .active {Task {await model.refresh()}}}
   }
  }
