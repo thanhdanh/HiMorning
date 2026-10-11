@@ -61,6 +61,21 @@ public actor AlarmLibrary {
    throw error
   }
  }
+ public func enable(id:UUID) async throws {
+  guard !busy else {throw LibraryError.busy}
+  guard let index=alarms.firstIndex(where:{$0.id==id}) else {throw LibraryError.notFound}
+  busy=true;defer {busy=false}
+  let before=alarms;alarms[index].enabled=true;alarms[index].state = .pending
+  do {try persistence.save(alarms)} catch {alarms=before;throw error}
+  do {try await scheduler.schedule(alarms[index]);alarms[index].state = .confirmed;try persistence.save(alarms)}
+  catch {alarms[index].state = .needsReview;try? persistence.save(alarms);throw error}
+ }
+ public func remove(id:UUID) async throws {
+  try await disable(id:id)
+  guard !busy else {throw LibraryError.busy}
+  let before=alarms;alarms.removeAll(where:{$0.id==id})
+  do {try persistence.save(alarms)} catch {alarms=before;throw error}
+ }
  public func disable(id:UUID) async throws {
   guard !busy else {throw LibraryError.busy}
   guard let index=alarms.firstIndex(where:{$0.id==id}) else {throw LibraryError.notFound}
