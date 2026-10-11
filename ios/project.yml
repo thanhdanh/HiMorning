@@ -1,5 +1,6 @@
 name: HiMorning
 options:
+  developmentLanguage: en
   bundleIdPrefix: com.himorning
   deploymentTarget:
     iOS: "26.0"
@@ -26,8 +27,8 @@ targets:
         CFBundleDisplayName: HiMorning
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
-        NSAlarmKitUsageDescription: HiMorning cần quyền đặt báo thức để giúp bạn bắt đầu ngày mới đúng giờ.
-        NSCameraUsageDescription: Camera chỉ mở khi bạn chọn nhiệm vụ. Một số khung hình được gửi đến OpenAI sau khi bạn đồng ý.
+        NSAlarmKitUsageDescription: HiMorning needs access to set your morning alarms.
+        NSCameraUsageDescription: The camera opens only for a challenge you choose. With your consent, movement photos are sent to OpenAI for checking.
     dependencies:
       - package: HiMorningCore
       - package: Firebase
