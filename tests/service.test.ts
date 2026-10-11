@@ -27,6 +27,12 @@ describe('verification lifecycle and cost controls', () => {
   await expect(s.service.verify(actor,{...data,frames:await frames(6)})).rejects.toMatchObject({code:'already-exists'});
   expect(JSON.stringify([...s.store.docs])).not.toContain(data.frames[0].jpegBase64);
  });
+ it('does not write Firestore again for duplicate cancellation',async()=>{
+  const s=setup();const session=await s.service.create(actor,createInput());
+  await s.service.cancel(actor,{sessionID:session.sessionID});const writes=s.store.writes;
+  expect(await s.service.cancel(actor,{sessionID:session.sessionID})).toEqual({status:'cancelled'});
+  expect(s.store.writes).toBe(writes);
+ });
  it('concurrent duplicate requests reserve only once, with pending for the second', async () => {
   const s=setup();let release!: (value:any)=>void; s.verify.mockImplementationOnce(()=>new Promise(resolve=>{release=resolve;}));
   const session=await s.service.create(actor,createInput()); const data=await submission(session);

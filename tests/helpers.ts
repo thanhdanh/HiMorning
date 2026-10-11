@@ -10,12 +10,13 @@ export const complete = (count = 1) => ({ status: 'complete', reps: Array.from({
 // Serial transaction double: no external model calls in this critical section.
 export class MemoryStore {
  docs = new Map<string, any>();
+ writes = 0;
  private tail: Promise<unknown> = Promise.resolve();
  transaction<T>(operation: (tx: any) => Promise<T>): Promise<T> {
   const run = this.tail.then(async () => {
-   const staged = new Map(this.docs);
-   const result = await operation({ get: async (path: string) => structuredClone(staged.get(path)), set: (path: string, value: unknown) => staged.set(path, structuredClone(value)) });
-   this.docs = staged; return result;
+   const staged = new Map(this.docs);let writes=0;
+   const result = await operation({ get: async (path: string) => structuredClone(staged.get(path)), set: (path: string, value: unknown) => {writes++;staged.set(path, structuredClone(value));} });
+   this.docs = staged; this.writes+=writes;return result;
   });
   this.tail = run.catch(() => undefined); return run;
  }
