@@ -26,22 +26,22 @@ import HiMorningCore
  }
  func refresh() async {
   guard let library else {return}
-  do {try await library.reconcile()} catch {error="Chưa kiểm tra được lịch hệ thống. Hãy kiểm tra quyền báo thức."}
+  do {try await library.reconcile()} catch {self.error="Chưa kiểm tra được lịch hệ thống. Hãy kiểm tra quyền báo thức."}
   alarms=await library.all();openPending()
  }
  func add(time:AlarmTime,mode:WakeMode,sound:AlarmSound) async {
   guard let library else {return}
-  do {try await library.add(SavedAlarm(time:time,mode:mode,sound:sound))} catch {error="Chưa xác nhận được lịch. Báo thức có thể vẫn tồn tại trong hệ thống; hãy kiểm tra trước khi dựa vào nó."}
+  do {try await library.add(SavedAlarm(time:time,mode:mode,sound:sound))} catch {self.error="Chưa xác nhận được lịch. Báo thức có thể vẫn tồn tại trong hệ thống; hãy kiểm tra trước khi dựa vào nó."}
   alarms=await library.all()
  }
  func toggle(_ alarm:SavedAlarm) async {
   guard let library else {return}
-  do {if alarm.enabled {try await library.disable(id:alarm.id)} else {try await library.enable(id:alarm.id)}} catch {error="Chưa xác nhận được thay đổi. Hãy kiểm tra lịch hệ thống."}
+  do {if alarm.enabled {try await library.disable(id:alarm.id)} else {try await library.enable(id:alarm.id)}} catch {self.error="Chưa xác nhận được thay đổi. Hãy kiểm tra lịch hệ thống."}
   alarms=await library.all()
  }
  func remove(_ alarm:SavedAlarm) async {
   guard let library else {return}
-  do {try await library.remove(id:alarm.id)} catch {error="Chưa xóa được báo thức. Lịch hệ thống có thể vẫn còn."}
+  do {try await library.remove(id:alarm.id)} catch {self.error="Chưa xóa được báo thức. Lịch hệ thống có thể vẫn còn."}
   alarms=await library.all()
  }
  func openPending() {
