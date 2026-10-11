@@ -1,13 +1,7 @@
 import XCTest
 @testable import HiMorningCore
 final class CoreTests: XCTestCase {
- func testLanguageSelectionAndFallback() {
-  XCTAssertEqual(AppLanguage.system.resolved(preferredLanguages:["vi-VN","en"]), "vi")
-  XCTAssertEqual(AppLanguage.system.resolved(preferredLanguages:["fr","en-GB"]), "en")
-  XCTAssertEqual(AppLanguage.system.resolved(preferredLanguages:[]), "en")
-  XCTAssertEqual(AppLanguage.english.resolved(preferredLanguages:["vi"]), "en")
-  XCTAssertEqual(AppLanguage.vietnamese.resolved(preferredLanguages:["en"]), "vi")
- }
+
 
  func testLanguageSelectionAndFallback() {
   XCTAssertEqual(AppLanguage.system.resolved(preferredLanguages:["vi-VN","en"]), "vi")
