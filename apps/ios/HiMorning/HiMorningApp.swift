@@ -102,7 +102,7 @@ struct HomeView:View {
       .buttonStyle(MorningButtonStyle()).accessibilityIdentifier("addAlarm")
      if model.alarms.isEmpty {
       Button(appText("Try a challenge")) {
-       if let time=try? AlarmTime(hour:6,minute:30) {
+       if let time=try? AlarmTime(hour:6,minute:30,weekdays:[]) {
         model.rehearsal=true;model.selected=SavedAlarm(time:time,mode:.balanced)
        }
       }.buttonStyle(MorningButtonStyle(primary:false))

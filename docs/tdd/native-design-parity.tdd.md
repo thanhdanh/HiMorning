@@ -28,3 +28,11 @@ visual/interaction failures, not missing SDK or test-compilation failures.
 The backend job and ten Swift package tests passed. The editor capture extension
 was added after this RED and has not yet run. Native UI coverage is not represented
 by the separately measured backend and Swift-core percentages.
+
+## SDK integration feedback
+
+The first fix build, [run 38157522962](https://github.com/thanhdanh/HiMorning/actions/runs/38157522962),
+failed SwiftUI type checking before UI execution. The trial's `AlarmTime` call
+omitted its required weekday set. The follow-up supplies an empty set; it does
+not change the domain constructor or bypass validation. This compiler failure
+is integration feedback, not an additional behavior RED.
