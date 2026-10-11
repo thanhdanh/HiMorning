@@ -45,7 +45,7 @@ export class VerificationService {
  }
  async cancel(actor: Actor, input: unknown) {
   authorize(actor); const data = parse(cancelSchema,input);const path=`verificationSessions/${data.sessionID}`;
-  await this.store.transaction(async tx => { const session=await tx.get<Session>(path); owned(session,actor);tx.set(path,{...session,state:'cancelled'}); });
+  await this.store.transaction(async tx => { const session=await tx.get<Session>(path); owned(session,actor);if(session.state!=='cancelled')tx.set(path,{...session,state:'cancelled'}); });
   return {status:'cancelled' as const};
  }
  async verify(actor: Actor, input: unknown): Promise<Result> {
