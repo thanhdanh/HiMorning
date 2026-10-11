@@ -22,3 +22,7 @@ functions/lib/
 *.xcodeproj/xcuserdata/
 playwright-report/
 test-results/
+
+ios/HiMorning.xcodeproj/
+ios/HiMorning/Info.plist
+GoogleService-Info.plist

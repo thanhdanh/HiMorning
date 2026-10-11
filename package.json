@@ -16,10 +16,10 @@
   "devDependencies": {
     "vitest": "5.0.3",
     "@vitest/coverage-v8": "5.0.3",
-    "typescript": "latest",
+    "typescript": "7.0.2",
     "@types/node": "^22",
     "firebase-tools": "15.33.0",
     "@firebase/rules-unit-testing": "6.0.0",
-    "firebase": "latest"
+    "firebase": "13.0.0"
   }
 }
