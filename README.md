@@ -1,37 +1,49 @@
 # HiMorning
 
-HiMorning là dự án ứng dụng báo thức dành cho người dùng Việt Nam. Repository hiện chứa bản kiến trúc đề xuất và mockup tương tác để review trước khi xây app native. Ngày cập nhật: 11/10/2026.
+Ứng dụng báo thức dành cho người dùng Việt Nam, màu vàng nắng và trải nghiệm thức dậy vừa sức. Pilot iOS 26+ đã được người dùng chọn. Mã nguồn ở `~/Projects/HiMorning`; repository GitHub riêng tư: [thanhdanh/HiMorning](https://github.com/thanhdanh/HiMorning).
 
-- [Kiến trúc Firebase được đề xuất](docs/FIREBASE.md)
-- [Tech stack và luồng xác minh bằng OpenAI](docs/TECH-STACK.md)
-- [Kiến trúc và các quyết định đề xuất](docs/ARCHITECTURE.md)
-- [Đặc tả UI/UX, màu sắc và âm thanh](docs/UI-DESIGN.md)
-- [Kế hoạch gợi ý động tác](docs/POSE-FEEDBACK-PLAN.md)
-- [Mở mockup](design/index.html)
+## Đã triển khai
 
-## Xem thử
+- `functions/src/`: Firebase Callable Functions, kiểm tra Auth/App Check, session có hạn dùng, Firestore transactions, idempotency, quota và OpenAI Responses adapter.
+- `ios/HiMorningCore/`: Swift domain, lịch theo múi giờ/ngày lặp, lưu lịch cục bộ, journal trước khi đặt native alarm, phục hồi, capture theo năm pha và kiểm soát consent/cancel/response đến muộn.
+- `ios/HiMorning/`: SwiftUI pilot tiếng Việt, AlarmKit, AVFoundation/Vision và Firebase client adapters. XcodeGen tạo project từ `ios/project.yml`.
+- `tests/`, `ios/HiMorningCore/TestsPortable/`: unit/integration tests; Firestore Emulator/rules tests và portable Swift tests. `.github/workflows/ci.yml` kiểm tra backend và native build/UI.
+- `design/`: mockup tương tác độc lập, không mở camera, không hẹn alarm và không gọi cloud.
 
-Mở `design/index.html` trực tiếp bằng trình duyệt, hoặc chạy từ thư mục dự án:
+Cloud AI **tắt mặc định**. Ảnh chỉ xử lý trong bộ nhớ, không lưu vào Firestore/Storage. Giới hạn 25 JPEG 512px, 50KB/ảnh, một paid attempt/session, không tự retry OpenAI; quota mặc định 3/user/ngày UTC và 100 toàn hệ thống/ngày. Output tối đa 800 tokens, reasoning `none`, verbosity thấp, metrics chỉ chứa số tokens/model. Model/ảnh giới hạn là ứng viên cần đánh giá, chưa chứng minh đủ chính xác cho release.
+
+## Chạy và kiểm thử
+
+Node 22, npm, Java 21:
 
 ```sh
-python3 scripts/preview.py
+npm ci --ignore-scripts
+npm run typecheck
+npm run build
+npm test
+npm run test:coverage
 ```
 
-Sau đó mở http://127.0.0.1:4173/design/.
+Swift domain với Command Line Tools:
 
-Mockup không cần cài dependency và không gửi dữ liệu ra mạng. Có thể chuyển màn hình, đổi chế độ thức dậy, đặt giờ/ngày lặp, nghe sáu mẫu âm tổng hợp, lưu báo thức mẫu và chạy thử luồng nhiệm vụ. Dữ liệu nằm trong bộ nhớ và được đặt lại khi tải lại trang.
+```sh
+sh scripts/test-swift.sh
+```
 
-Đây là prototype thiết kế, chưa phải app native: không hẹn báo thức hệ thống, không truy cập camera, không nhận diện người thật và không gọi OpenAI. Kiến trúc app phát hành có gửi khung hình đến OpenAI sau consent; trạng thái AI trong mock chỉ được giả lập. Các âm thanh là bản phác thảo để so sánh tính cách âm; chưa phải tài sản âm thanh phát hành.
+Native iOS cần Xcode 26+ và XcodeGen:
 
-Tham khảo UI công khai: [Erly trên App Store](https://apps.apple.com/us/app/erly-wake-up-early/id6751428380), [Erly trên Google Play](https://play.google.com/store/apps/details?id=com.erly.myapp&hl=en). HiMorning là tên của dự án; Erly chỉ là nguồn tham khảo UI công khai.
+```sh
+xcodegen generate --spec ios/project.yml
+open ios/HiMorning.xcodeproj
+```
 
-## Vị trí và trạng thái mã nguồn
+Xem [hướng dẫn chạy, cấu hình và giới hạn pilot](docs/RUNNING.md) và [bằng chứng TDD](docs/tdd/cost-optimized-pilot.tdd.md). Chưa tạo Firebase project, bật cloud billing, deploy hay gọi OpenAI tính phí. Native alarm/camera/audio cần kiểm tra trên iPhone thật trước phát hành. QR, native snooze/countdown, chỉnh sửa alarm và lịch sử tuần vẫn là các phần tiếp theo của kế hoạch; không được mô tả là đã hoàn thành.
 
-- Thư mục phát triển: `~/Projects/HiMorning`.
-- `design/index.html`, `design/styles.css`, `design/app.js`: prototype HTML/CSS/JavaScript, có sound preview và AI simulation.
-- `scripts/preview.py`: preview server cục bộ, không phải backend app phát hành.
-- `docs/`: đặc tả kiến trúc, Firebase, UI và posture feedback.
+## Thiết kế và kiến trúc
 
-Stack mục tiêu: SwiftUI/AlarmKit/Vision trên iOS; Kotlin/Compose/AlarmManager/CameraX trên Android; Firebase Authentication, Cloud Firestore, Cloud Functions for Firebase (TypeScript) và OpenAI Responses API.
+- [Firebase](docs/FIREBASE.md), [tech stack/OpenAI](docs/TECH-STACK.md), [kiến trúc sản phẩm](docs/ARCHITECTURE.md).
+- [UI/UX](docs/UI-DESIGN.md), [gợi ý tư thế](docs/POSE-FEEDBACK-PLAN.md), [kế hoạch triển khai pilot](docs/IMPLEMENTATION-PLAN.md).
 
-App native, Firebase Functions và kết nối OpenAI thật chưa được triển khai. Chưa tạo Firebase project, bật billing hoặc deploy cloud services.
+`python3 scripts/preview.py` mở mockup tại http://127.0.0.1:4173/design/. Các âm web là sketch tổng hợp. Native pilot có hai chime tự tổng hợp và âm hệ thống; âm lượng nghe thử tách biệt với âm báo hệ thống.
+
+Tham khảo UI công khai: [Erly trên App Store](https://apps.apple.com/us/app/erly-wake-up-early/id6751428380), [Erly trên Google Play](https://play.google.com/store/apps/details?id=com.erly.myapp&hl=en). HiMorning là dự án riêng; Erly chỉ là nguồn tham khảo.

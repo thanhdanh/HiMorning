@@ -1,6 +1,6 @@
 # HiMorning · Tech stack · Native alarm + Firebase + OpenAI
 
-**Ngày:** 11/10/2026. **Trạng thái:** kiến trúc đề xuất; prototype chưa gọi API, mở camera hay đặt báo thức thật. Đây là stack cho concept của dự án, không phải khẳng định stack nội bộ của Erly/Jake.
+**Ngày:** 11/10/2026. **Trạng thái:** đã có Firebase backend, Swift core và native pilot source; mockup web vẫn là simulation. Chưa deploy hoặc benchmark AI/device. Xem [trạng thái triển khai](RUNNING.md). Đây là stack cho concept của dự án, không phải khẳng định stack nội bộ của Erly/Jake.
 
 ## Stack đề xuất
 
@@ -76,7 +76,7 @@ cancelVerificationSession(sessionID)
 - Idempotency key + payload hash: lặp cùng request trả cùng kết quả; cùng key khác nội dung bị từ chối. Firestore transaction claim một attempt bằng document ID xác định; gọi OpenAI ngoài transaction callback vì callback có thể retry. Lease và payload hash tránh inference trùng khi nhiều worker; sau crash nếu không rõ provider đã xử lý thì trả uncertain, không giả định exactly-once ở nhà cung cấp.
 - Nonce/TTL giảm replay request cũ; không biến camera thành hệ thống phát hiện mọi video giả. Mọi client metadata được coi là dữ liệu chưa tin cậy.
 - Model trả JSON schema giới hạn, không được gọi tool hay trực tiếp điều khiển alarm. Backend kiểm tra evidence IDs, số rep trong giới hạn, tính nhất quán và trạng thái phiên. Structured Outputs bảo đảm cấu trúc trong các phản hồi phù hợp, không bảo đảm nhận định đúng. [Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs).
-- Timeout/deadline tổng, tối đa một retry có giới hạn cho lỗi tạm thời; xử lý 429 và circuit breaker. Ngưỡng thời gian/bytes/fps phải chốt bằng spike; không có cam kết phản hồi dưới một giây khi chưa đo.
+- Pilot dùng provider timeout 15 giây, lease 25 giây và zero automatic retry; 429 trả unavailable. Quota toàn hệ thống và cloud default-off giới hạn inference. Ngưỡng thời gian/bytes/fps phải chốt bằng spike; không có cam kết phản hồi dưới một giây khi chưa đo.
 - Cancel/stop tăng session generation; bỏ qua response đến muộn, không cộng thành tích hay tự bật lại alarm. Không tiếp tục upload khi app background hoặc người dùng rút consent.
 
 ## Trải nghiệm khi chờ và khi lỗi
@@ -113,4 +113,4 @@ Không ước tính giá theo “mỗi video” cố định. Đo token ảnh + 
 4. **Tích hợp native:** consent → camera → counter tạm → cloud pending → đúng outcome; kiểm thử mất mạng, 429, từ chối, app background, Stop trước response, response trùng.
 5. **Pilot + release gate:** đặt tiêu chí trước thử nghiệm; không phát hành AI verification nếu chưa đạt mức false accept/reject, latency và cảm giác phiền được thống nhất. Feedback tư thế sâu phát hành theo từng cue đã review.
 
-Các ngưỡng sampling, model snapshot, deadline và chi phí/phiên còn cần đo. Chưa xây backend hoặc thực hiện cuộc gọi OpenAI tính phí trong công việc thiết kế này.
+Backend và Swift domain đã được xây theo TDD; native adapter source có trong `ios/`. Ngưỡng 25 ảnh 512px, output 800 tokens, reasoning none là cấu hình pilot cần benchmark, không phải cam kết accuracy. Chưa thực hiện cuộc gọi OpenAI tính phí. Xem [bằng chứng kiểm thử](tdd/cost-optimized-pilot.tdd.md).

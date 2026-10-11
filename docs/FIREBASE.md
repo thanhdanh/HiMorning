@@ -1,6 +1,6 @@
 # HiMorning · Firebase architecture
 
-**Status:** proposed stack, updated 2026-10-11. No Firebase project, billing account, deployed function, or production database has been created. The current code is the web design prototype.
+**Status:** Firebase service, OpenAI adapter, rules and emulator tests implemented on 2026-10-11. No real Firebase project, billing account, deployed function or production database has been created. See [running instructions](RUNNING.md) and [TDD evidence](tdd/cost-optimized-pilot.tdd.md). The design below remains the broader roadmap; native pilot persistence currently uses an atomic local JSON journal rather than SwiftData, and remote alarm sync is deferred.
 
 ## Recommendation
 

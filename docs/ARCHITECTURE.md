@@ -1,12 +1,12 @@
 # Kiến trúc đề xuất · HiMorning
 
-**Trạng thái:** đề xuất để review, chưa triển khai app native. **Ngày:** 11/10/2026. **Cập nhật:** OpenAI tham gia xác minh challenge; xem [tech stack chi tiết](TECH-STACK.md).
+**Trạng thái:** kiến trúc mục tiêu; đã triển khai backend, Swift core và native pilot source. Phạm vi hiện tại và phần còn lại nằm trong [RUNNING.md](RUNNING.md). **Ngày:** 11/10/2026. **Cập nhật:** OpenAI tham gia xác minh challenge; xem [tech stack chi tiết](TECH-STACK.md).
 
 Workspace ban đầu trống; không có kiến trúc, quy ước đặt tên, logging, lưu dữ liệu hoặc kiểm thử sẵn có để kế thừa. Mockup web trong `design/` phục vụ review tương tác; không quyết định công nghệ của app phát hành.
 
 ## 1. Phạm vi và giả định
 
-- Pilot iOS 26+ bằng SwiftUI là giả định từ kế hoạch trước, chưa phải lựa chọn nền tảng đã được người dùng xác nhận. Android nằm trong lộ trình, với adapter native riêng.
+- Pilot iOS 26+ bằng SwiftUI đã được người dùng xác nhận. Android nằm trong lộ trình, với adapter native riêng.
 - Người dùng chọn cách thức dậy cho từng báo thức: nhẹ nhàng, cân bằng hoặc quyết tâm. Không phân loại tính cách, không tự tăng độ khó hay âm lượng sau một lần bỏ lỡ.
 - Báo thức thường hoạt động được ngay; nhiệm vụ vận động hoặc QR là tùy chọn. Báo thức, QR đã enroll và quyền dừng độc lập Internet; challenge xác minh qua OpenAI cần mạng và consent. Không yêu cầu đăng nhập ở onboarding.
 - Quyền camera chỉ được hỏi khi thử hoặc sử dụng nhiệm vụ có camera. Camera chỉ hoạt động khi app ở foreground và người dùng mở luồng tương ứng.

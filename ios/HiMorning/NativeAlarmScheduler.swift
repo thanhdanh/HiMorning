@@ -31,7 +31,7 @@ actor NativeAlarmScheduler: AlarmScheduler {
  func cancel(id:UUID) async throws {try AlarmManager.shared.cancel(id:id)}
  func stop(id:UUID) async throws {
   // A system Stop may already have removed a one-time alarm.
-  if try AlarmManager.shared.alarms.contains(where:{$0.id==id}) {try AlarmManager.shared.stop(id:id)}
+  if let alarm=try AlarmManager.shared.alarms.first(where:{$0.id==id}),alarm.state != .scheduled {try AlarmManager.shared.stop(id:id)}
  }
  func scheduledIDs() async throws -> Set<UUID> {guard AlarmManager.shared.authorizationState == .authorized else {return []};return Set(try AlarmManager.shared.alarms.map(\.id))}
 }
