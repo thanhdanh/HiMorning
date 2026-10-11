@@ -32,12 +32,19 @@ public enum ChallengeError: Error {case consentRequired,cloudUnavailable,expired
  private var cloudSession:CloudSession?
  private var consent=false
  private var submitted=false
+ private var starting=false
  public init(alarm:SavedAlarm,cloud:(any CloudVerification)?,scheduler:any AlarmScheduler,rehearsal:Bool=false) {
   self.alarm=alarm;self.cloud=cloud;self.scheduler=scheduler;self.rehearsal=rehearsal;session=WakeSession(mode:alarm.mode)
  }
  public func startCloud(consent:Bool) async throws {
   guard consent else {throw ChallengeError.consentRequired}
   guard let cloud,alarm.mode.policy.reps>0 else {throw ChallengeError.cloudUnavailable}
+  if let existing=cloudSession {
+   guard existing.expiresAt>Date().timeIntervalSince1970*1000 else {throw ChallengeError.expired}
+   return
+  }
+  guard !starting,!submitted,session.outcome == nil else {throw ChallengeError.alreadySubmitted}
+  starting=true;defer {starting=false}
   let generation=session.generation
   let created=try await cloud.create(target:alarm.mode.policy.reps,requestID:UUID())
   guard session.outcome == nil,session.generation==generation else {try? await cloud.cancel(sessionID:created.sessionID);return}
