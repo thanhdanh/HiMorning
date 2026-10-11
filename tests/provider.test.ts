@@ -9,10 +9,10 @@ describe('OpenAI bounded adapter',()=>{
  it('uses ordered images, strict schema, store false, capped output and zero SDK retries',async()=>{
   sdk.parse.mockResolvedValue({status:'completed',output_parsed:complete(),usage:{input_tokens:500,output_tokens:50}});
   const evidence=await prepareEvidence({sessionID:'a'.repeat(64),nonce:uuid(1),evidenceID:uuid(2),consentVersion:'2026-10-11',frames:await frames()},1);
-  const verifier=new OpenAIVerifier('not-a-real-key','test-model'); const result=await verifier.verify(evidence,1);
-  expect(result).toEqual(complete());expect(sdk.options).toHaveBeenCalledWith(expect.objectContaining({maxRetries:0,timeout:15000}));
+  const meter=vi.fn();const verifier=new OpenAIVerifier('not-a-real-key','test-model',meter); const result=await verifier.verify(evidence,1);
+  expect(result).toEqual(complete());expect(meter).toHaveBeenCalledWith({model:'test-model',inputTokens:500,outputTokens:50,reasoningTokens:0});expect(sdk.options).toHaveBeenCalledWith(expect.objectContaining({maxRetries:0,timeout:15000}));
   const request=sdk.parse.mock.calls[0][0];expect(request).toMatchObject({model:'test-model',store:false,max_output_tokens:800});
-  expect(request.text.format.strict).toBe(true);const content=request.input[1].content;
+  expect(request.reasoning).toEqual({effort:'none'});expect(request.text.verbosity).toBe('low');expect(request.text.format.strict).toBe(true);const content=request.input[1].content;
   expect(content.filter((c:any)=>c.type==='input_image')).toHaveLength(5);
   expect(content.filter((c:any)=>c.type==='input_text').map((c:any)=>c.text).join(' ')).toMatch(/f0.*0.*f1.*300.*f2/s);
   expect(request).not.toHaveProperty('tools');expect(sdk.parse).toHaveBeenCalledOnce();
