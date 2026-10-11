@@ -86,6 +86,19 @@ choice stays on this device. See [setup](docs/RUNNING.md) for signing and Fireba
 The working checkout is `~/Projects/HiMorning`. Run `python3 scripts/preview.py` to
 view the earlier design study at http://127.0.0.1:4173/design/.
 
+## Native screens
+
+Actual iOS simulator captures from the English and Vietnamese UI tests:
+
+| English | Vietnamese |
+|---|---|
+| <img src="docs/images/ui/home-en.png" width="260" alt="English home screen"> | <img src="docs/images/ui/home-vi.png" width="260" alt="Vietnamese home screen"> |
+| <img src="docs/images/ui/alarm-editor-en.png" width="260" alt="English alarm editor"> | <img src="docs/images/ui/alarm-editor-vi.png" width="260" alt="Vietnamese alarm editor"> |
+
+See the [UI guide](docs/UI-DESIGN.md#native-screens) and
+[capture details](docs/images/ui/README.md). These show the native pilot; the earlier
+web study explores additional planned features.
+
 ## Architecture at a glance
 
 ![HiMorning native apps, shared contracts and verification service](docs/images/architecture.svg)

@@ -66,7 +66,7 @@ terms consistent: **alarm**, **challenge**, **Gentle**, **Balanced**, **Focused*
 6. Run the checks, then review both languages in the simulator.
 
 ```sh
-ppnpm test tests/localization.test.ts
+pnpm test tests/localization.test.ts
 sh scripts/test-swift.sh
 ```
 

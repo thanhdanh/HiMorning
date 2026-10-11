@@ -17,11 +17,31 @@ The manually tagged `localization_english_docs` turn has **7,353,183 input**
 fixes together; it is not an exact split of those activities. The whole conversation
 still reconciles with the cumulative token snapshot. USD remains unknown.
 
+## pnpm, Android boundaries and visual documentation
+
+A separate [migration snapshot](ai-usage-pnpm-architecture.json) captures this work
+through **2026-10-11T16:28:53.004Z** (UTC). The two manually tagged
+`pnpm_android_architecture_visuals` turns include architecture, migration, tests,
+CI and documentation together:
+
+| Input | Cached within input | Uncached | Output | Total |
+|---:|---:|---:|---:|---:|
+| 5,904,238 | 5,756,416 | 147,822 | 42,406 | 5,946,644 |
+
+The conversation total at that cutoff is **44,463,945 tokens** across **314**
+responses and reconciles with the cumulative snapshot. This includes later work
+in earlier phases; the older baseline files stay frozen. The snapshot ends before
+the final screenshot-gallery and PR update, so it is not a final task invoice.
+USD and savings remain unmeasured. Reusing dependency resolutions, limiting the
+memory query scope and avoiding an Android rewrite are design choices, not a
+measured percentage reduction.
+
 ## Start with the evidence
 
 | File | What it records |
 |---|---|
 | [Agent usage](ai-usage-baseline.json) | Real Codex request tokens and reconciliation |
+| [Migration usage](ai-usage-pnpm-architecture.json) | Later mixed migration, test and visual-documentation work |
 | [Phase map](phase-map.json) | Manual categories for conversation turns |
 | [Quality baseline](quality-baseline.json) | Test/coverage results at the recorded commit |
 | [CI baseline](ci-baseline.json) | Runs and job times before the documentation push |
@@ -110,7 +130,7 @@ Pass the current conversation's exact rollout path. For a new conversation, upda
 
 ```sh
 node scripts/collect-ai-usage.mjs --log /absolute/path/to/current-rollout.jsonl > /private/tmp/ai-usage.json
-ppnpm test tests/engineering-metrics.test.ts
+pnpm test tests/engineering-metrics.test.ts
 ```
 
 Review the sanitized JSON, save it as a dated snapshot and update the reader-facing

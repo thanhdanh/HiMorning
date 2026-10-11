@@ -48,6 +48,25 @@ The fix includes the resource folder in the target sources; all three UI journey
 then passed in [CI](https://github.com/thanhdanh/HiMorning/actions/runs/38135338781).
 This shows why catalog checks and native runtime checks answer different questions.
 
+## A second example: a move that clients can check
+
+The pnpm migration moved Apple code into `apps/ios` and Firebase code into
+`backend/functions`. A JSON Schema and synthetic fixtures in `shared/contracts/v1`
+keep the wire format visible to future Android clients without pretending Swift
+and Kotlin share a runtime. TypeScript checks the exported schema against the live
+validators; the Swift harness decodes and encodes the same fixtures.
+
+The missing contract module and missing Swift fixture each produced an executed
+RED, followed by the same checks passing. A clean pnpm install and an isolated
+Firebase production install tested packaging separately. The first staging attempt
+failed because legacy deploy mode did not produce a lockfile; the current mode
+fixed it. Android remains a guide and reserved folder, not a working app.
+
+CI also captures named screenshots from the English and Vietnamese UI tests. The
+[gallery](UI-DESIGN.md#native-screens) links the actual simulator images and their
+source run. Architecture SVGs were authored as diagrams and visually inspected;
+they are not screenshots of an implemented Android app.
+
 ## Tools, skills and plugins
 
 An **MCP** exposes tools to the agent. A **skill** guides a workflow. A **plugin**
@@ -61,7 +80,7 @@ packages capabilities; installation alone is not evidence that they were used.
 | `openai-docs` | Consult official API material at the point of implementation | Documentation does not measure model accuracy |
 | ECC `cost-tracking` | Review cost-log availability and cumulative-snapshot pitfalls | Its Claude cost log was absent; Codex token records are the actual source here |
 | Codex app tools | Open artifacts and attach the PR to the conversation | Git/`gh` operations remain CLI work, not automatically MCP calls |
-| Computer use/CUA | Review the earlier prototype | Not proof of native camera or alarm behavior |
+| Computer use/CUA and Chrome DevTools MCP | Review the earlier prototype and render architecture SVGs | Not proof of native camera or alarm behavior |
 | pnpm (current), npm (earlier), Swift, Firebase CLI and Actions | Execute checks and preserve build feedback | SDK mocks and emulators are not production results |
 
 The JSON-oriented `i18n-sync` skill was reviewed for the language change. Native
@@ -83,6 +102,12 @@ fast index. Those counts describe that snapshot, not the final repo or token sav
 After localization, the `2026-10-11T11:19:16Z` fast index had 889 nodes and
 2,267 edges. The new language helper and policy paths matched metadata; the partial
 challenge-view parse and fast-mode exclusions still required source fallback.
+
+After the folder migration, the old index still named `ios/` paths. A requested
+`fast` refresh at `2026-10-11T16:28:17Z` reported 1,036 nodes and 2,478 edges.
+Coverage checks for six relocated contract/client/UI paths matched metadata; the
+challenge view still had a partial parse at line 66, so lines 45–85 were read
+from source. These are retrieval diagnostics, not measured token savings.
 
 Use this sequence: inspect readiness → query a small scope → check path coverage →
 read gaps → refresh if needed. A clean signal is not proof of completeness, and an

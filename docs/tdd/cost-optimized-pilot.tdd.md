@@ -147,6 +147,10 @@ lockfile. The current deploy mode with workspace injection produces that lockfil
 its frozen production install and entry-point import passed. This is packaging
 feedback, not a fabricated business-logic RED. No cloud deployment or paid call ran.
 
-Native screenshot attachments and relocated SDK/UI checks are validated in hosted
-CI; the resulting gallery records its source run. Android remains a documented
-extension point, not a built application.
+Hosted [run 38155392322](https://github.com/thanhdanh/HiMorning/actions/runs/38155392322)
+at `72e1bb9` passed both jobs: 56 Vitest tests, 15 portable Swift journeys,
+10 Swift package XCTest cases, the relocated native SDK build and all 3 UI journeys.
+The schema-drift check, isolated Firebase frozen install/import and production
+audit also passed. [Four native screenshots](../images/ui/README.md) were exported
+from that run, copied without edits and visually reviewed in both languages.
+Android remains a documented extension point, not a built application.
