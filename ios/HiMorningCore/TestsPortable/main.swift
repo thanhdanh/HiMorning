@@ -199,4 +199,26 @@ XCTAssertEqual(AppLanguage.system.resolved(preferredLanguages:["fr"]), "en")
 XCTAssertEqual(AppLanguage.english.resolved(preferredLanguages:["vi"]), "en")
 XCTAssertEqual(AppLanguage.vietnamese.resolved(preferredLanguages:["en"]), "vi")
 XCTAssertNil(AppLanguage(rawValue:"fr"))
-print("PASS: 14 portable Swift domain and integration journeys")
+func testSharedMobileFixtures() throws {
+ let root=URL(fileURLWithPath:CommandLine.arguments[1])
+ let data=try Data(contentsOf:root.appendingPathComponent("wire-fixtures.json"))
+ let wire=try JSONSerialization.jsonObject(with:data) as! [String:Any]
+ let session=try JSONDecoder().decode(CloudSession.self,from:JSONSerialization.data(withJSONObject:wire["CreateResponse"]!))
+ XCTAssertEqual(session.expiresAt,2000000000000)
+ let decision=try JSONDecoder().decode(CloudDecision.self,from:JSONSerialization.data(withJSONObject:wire["Decision"]!))
+ XCTAssertEqual(decision.status,"verified");XCTAssertEqual(decision.verifiedRepCount,1)
+ let submission=wire["SubmitRequest"] as! [String:Any]
+ let frames=submission["frames"] as! [[String:Any]]
+ let evidence=frames.map {EvidenceFrame(jpeg:Data(base64Encoded:$0["jpegBase64"] as! String)!,timestampMs:$0["timestampMs"] as! Int)}
+ let encoded=try JSONSerialization.jsonObject(with:JSONEncoder().encode(VerificationSubmission(session:session,evidenceID:UUID(uuidString:submission["evidenceID"] as! String)!,frames:evidence))) as! NSDictionary
+ XCTAssertEqual(encoded,submission as NSDictionary)
+ let modes=try JSONSerialization.jsonObject(with:Data(contentsOf:root.appendingPathComponent("wake-modes.json"))) as! [String:[String:Int]]
+ for mode in WakeMode.allCases {
+  let expected=modes[mode.rawValue]!
+  XCTAssertEqual(mode.policy.reps,expected["reps"]!)
+  XCTAssertEqual(mode.policy.snoozes,expected["snoozes"]!)
+ }
+}
+try testSharedMobileFixtures()
+
+print("PASS: 15 portable Swift domain and integration journeys")
