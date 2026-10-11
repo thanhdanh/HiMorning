@@ -140,7 +140,8 @@ actor FakeCloud: CloudVerification {
  var continuation:CheckedContinuation<CloudDecision,Error>?
  var started:CheckedContinuation<Void,Never>?
  var cancelled=false
- func create(target:Int,requestID:UUID) async throws -> CloudSession {CloudSession(sessionID:String(repeating:"a",count:64),nonce:UUID().uuidString,expiresAt:Date().addingTimeInterval(120).timeIntervalSince1970*1000)}
+ var creates=0
+ func create(target:Int,requestID:UUID) async throws -> CloudSession {creates+=1;return CloudSession(sessionID:String(repeating:"a",count:64),nonce:UUID().uuidString,expiresAt:Date().addingTimeInterval(120).timeIntervalSince1970*1000)}
  func verify(_ request:VerificationSubmission) async throws -> CloudDecision {
   return try await withCheckedThrowingContinuation {continuation=$0;started?.resume();started=nil}
  }
@@ -154,6 +155,8 @@ actor FakeCloud: CloudVerification {
  let flow=ChallengeCoordinator(alarm:alarm,cloud:cloud,scheduler:scheduler)
  do {try await flow.startCloud(consent:false);preconditionFailure("Consent required")} catch {}
  try await flow.startCloud(consent:true)
+ try await flow.startCloud(consent:true)
+ let creates=await cloud.creates;XCTAssertEqual(creates,1)
  let evidence=(0..<15).map {EvidenceFrame(jpeg:Data([UInt8($0+1)]),timestampMs:$0*300)}
  let pending=Task {try await flow.submit(evidence)}
  await cloud.waitStarted()
