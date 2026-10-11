@@ -57,3 +57,20 @@ All checkpoints remain reachable on `codex/cost-optimized-pilot`; none were squa
 Known limits: no real paid inference, no calibrated model accuracy/latency/cost result, no physical-device alarm/camera/audio test, no native adapter coverage percentage. Native thin-adapter source was added as an integration spike around the tested core; it has not itself completed a local RED/GREEN cycle. QR, native snooze/countdown, existing-alarm editing, weekly history, expert form coaching and Android are not implemented. Test code does not certify those features.
 
 `npm audit --omit=dev`: zero production advisories. Full audit reports 16 advisories in development Firebase SDK/CLI dependencies (4 moderate, 12 high); no forced major downgrades were applied. This is recorded, not claimed clean. Development services bind loopback and use the demo project.
+
+
+## Follow-up fixes and metrics, 11 October 2026
+
+| Cycle | RED | GREEN | Actual evidence |
+|---|---|---|---|
+| Repeated cloud consent | `ae04bd6` | `0bd50e0` | Runtime assertion found two sessions; same 13-journey portable suite passed after reusing the unexpired session |
+| Repeated cancellation | `7f9e286` | `2237e98` | Runtime RED `expected 5 to be 4` database writes; same service test target then passed 13/13 |
+| Token evidence collector | `bd975e1` | `9e975d6` | Intended absent business-module import RED; then 7 tests passed. Refactor `e6b1a35` added typecheck-safe assertion, an eighth case and library coverage gate |
+
+Latest combined `npm run test:coverage`: **50 tests passed** (42 backend + 8 engineering metrics). Backend alone: statements **97.54%**, branches **95.86%**, functions **92.50%**, lines **100%**. Collector library: statements/functions/lines **100%**, branches **98.14%**, with its own 80% threshold. Combined: statements **98.05%**, branches **96.48%**, functions **94.33%**, lines **100%**. Including the collector does not replace the separately reported backend scope. The small CLI wrapper is exercised on the real local rollout but is outside instrumented coverage.
+
+Latest portable Swift: **13 journeys passed**, regions **83.67%**, functions **98.55%**, lines **97.76%**, no instrumentable branch counters. `npm run typecheck`, `npm run build`, production audit and Swift source syntax parsing passed.
+
+Hosted [run 38131960302](https://github.com/thanhdanh/HiMorning/actions/runs/38131960302), head `39ecc17`: backend and iOS jobs **SUCCESS**. This includes Swift package XCTest, native simulator SDK build and the gentle-default XCUITest. Earlier runs correctly failed on a multiline string syntax mistake and catch-bound `error` shadowing UI state; `1694652` and `39ecc17` fixed those compile failures. These are recorded as SDK integration feedback, not claimed runtime behavior TDD cycles. The camera also uses monotonic uptime and defers session stop until the frame delegate returns; hardware behavior still needs device validation.
+
+[AI engineering case study](../AI-ENGINEERING.md) and [metrics baseline](../metrics/README.md) preserve token methodology, tool/skill provenance, local Git hook, CI history and scope limitations. All checkpoints above remain reachable on the current task branch.

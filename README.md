@@ -39,6 +39,10 @@ open ios/HiMorning.xcodeproj
 
 Xem [hướng dẫn chạy, cấu hình và giới hạn pilot](docs/RUNNING.md) và [bằng chứng TDD](docs/tdd/cost-optimized-pilot.tdd.md). Chưa tạo Firebase project, bật cloud billing, deploy hay gọi OpenAI tính phí. Native alarm/camera/audio cần kiểm tra trên iPhone thật trước phát hành. QR, native snooze/countdown, chỉnh sửa alarm và lịch sử tuần vẫn là các phần tiếp theo của kế hoạch; không được mô tả là đã hoàn thành.
 
+## Hồ sơ AI engineering
+
+Xem [cách dùng AI để plan/code/test, MCPs, skills, hooks và evidence phỏng vấn](docs/AI-ENGINEERING.md), cùng [baseline tokens và hiệu quả](docs/metrics/README.md). Token phát triển được đo từ đúng phiên Codex; không quy đổi thành hóa đơn OpenAI của app.
+
 ## Thiết kế và kiến trúc
 
 - [Firebase](docs/FIREBASE.md), [tech stack/OpenAI](docs/TECH-STACK.md), [kiến trúc sản phẩm](docs/ARCHITECTURE.md).
