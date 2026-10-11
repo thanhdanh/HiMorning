@@ -107,6 +107,10 @@ func testNativeLibrary() async throws {
  let restored=await restarted.all();XCTAssertEqual(restored.first?.id,alarm.id)
  try await library.disable(id:alarm.id)
  let disabled=await library.all();XCTAssertEqual(disabled.first?.state,.off)
+ try await library.enable(id:alarm.id)
+ let enabled=await library.all();XCTAssertEqual(enabled.first?.state,.confirmed)
+ try await library.remove(id:alarm.id)
+ let removed=await library.all();XCTAssertTrue(removed.isEmpty)
  await scheduler.failNext()
  do {try await library.add(SavedAlarm(time:alarm.time,mode:.balanced,sound:.system));preconditionFailure("Expected schedule failure")} catch {}
  let failed=await library.all();XCTAssertEqual(failed.last?.state,.needsReview)
