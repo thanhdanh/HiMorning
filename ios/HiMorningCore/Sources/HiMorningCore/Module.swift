@@ -13,6 +13,11 @@ public struct AlarmTime: Codable, Equatable, Sendable {
   guard (0...23).contains(hour),(0...59).contains(minute),weekdays.allSatisfy({(1...7).contains($0)}) else { throw DomainError.invalidAlarmTime }
   self.hour=hour;self.minute=minute;self.weekdays=weekdays
  }
+ private enum CodingKeys: String, CodingKey {case hour,minute,weekdays}
+ public init(from decoder:Decoder) throws {
+  let values=try decoder.container(keyedBy:CodingKeys.self)
+  try self.init(hour:values.decode(Int.self,forKey:.hour),minute:values.decode(Int.self,forKey:.minute),weekdays:values.decode(Set<Int>.self,forKey:.weekdays))
+ }
  public func next(after date:Date,calendar:Calendar = .current) -> Date? {
   if weekdays.isEmpty { return calendar.nextDate(after:date,matching:DateComponents(hour:hour,minute:minute,second:0),matchingPolicy:.nextTime,repeatedTimePolicy:.first) }
   return weekdays.compactMap { calendar.nextDate(after:date,matching:DateComponents(hour:hour,minute:minute,second:0,weekday:$0),matchingPolicy:.nextTime,repeatedTimePolicy:.first) }.min()
@@ -64,7 +69,7 @@ public struct EvidenceBuffer: Sendable {
  private let maxFrames:Int;private let maxBytes:Int
  public init(maxFrames:Int=25,maxBytes:Int=1250000) {self.maxFrames=maxFrames;self.maxBytes=maxBytes}
  @discardableResult public mutating func append(_ jpeg:Data,timestampMs:Int) -> Bool {
-  guard !jpeg.isEmpty,timestampMs>=0,timestampMs<=120000,frames.count<maxFrames,totalBytes+jpeg.count<=maxBytes,frames.last.map({timestampMs>$0.timestampMs}) ?? true else {return false}
+  guard !jpeg.isEmpty,jpeg.count<=50000,timestampMs>=0,timestampMs<=120000,frames.count<maxFrames,totalBytes+jpeg.count<=maxBytes,frames.last.map({timestampMs>$0.timestampMs}) ?? true else {return false}
   frames.append(EvidenceFrame(jpeg:jpeg,timestampMs:timestampMs));totalBytes+=jpeg.count;return true
  }
  public mutating func clear() {frames.removeAll(keepingCapacity:false);totalBytes=0}
