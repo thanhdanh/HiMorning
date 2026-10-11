@@ -1,0 +1,14 @@
+{
+  "gentle": {
+    "reps": 0,
+    "snoozes": 2
+  },
+  "balanced": {
+    "reps": 3,
+    "snoozes": 1
+  },
+  "focused": {
+    "reps": 5,
+    "snoozes": 0
+  }
+}

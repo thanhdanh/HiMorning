@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
-import { handlers } from '../functions/src/api.js';
-import { readConfig } from '../functions/src/config.js';
-import { Failure } from '../functions/src/errors.js';
-import * as entry from '../functions/src/index.js';
+import { handlers } from '../backend/functions/src/api.js';
+import { readConfig } from '../backend/functions/src/config.js';
+import { Failure } from '../backend/functions/src/errors.js';
+import * as entry from '../backend/functions/src/index.js';
 describe('callable boundary and deployment defaults',()=>{
  it('has zero warm instances and mandatory App Check on every callable',()=>{
   for(const fn of [entry.createVerificationSession,entry.verifyChallenge,entry.cancelVerificationSession]) {

@@ -15,5 +15,10 @@
     "openai": "7.32.0",
     "zod": "4.6.5",
     "sharp": "0.35.5"
-  }
+  },
+  "packageManager": "pnpm@10.34.6",
+  "files": [
+    "lib",
+    ".env.example"
+  ]
 }

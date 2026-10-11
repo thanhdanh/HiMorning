@@ -1,17 +1,15 @@
 import { randomUUID } from 'node:crypto';
-import { z } from 'zod';
+import { createSchema, cancelSchema, type VerificationResult as Result } from './contracts.js';
+export type { VerificationResult as Result } from './contracts.js';
 import { Failure, parse } from './errors.js';
 import { CONSENT_VERSION, POLICY_VERSION, LIMITS, sessionIDSchema, submissionSchema, prepareEvidence, decide, hash, type Evidence } from './evidence.js';
 import type { Config } from './config.js';
 import type { Store } from './store.js';
 export interface Actor { uid: string; appCheck: boolean }
 export interface Verifier { verify(evidence: Evidence, target: number): Promise<unknown> }
-export interface Result { status: 'verified'|'incomplete'|'uncertain'|'unavailable'|'pending'|'cancelled'|'expired'; reasonCode: string; decisionID: string; verifiedRepCount?: number; cue?: string }
 interface Session { ownerUID: string; nonce: string; target: number; requestHash: string; expiresAt: number; deleteAt: Date; state: 'open'|'processing'|'finished'|'cancelled'; attemptID?: string; consentVersion: string; policyVersion: string }
 interface Attempt { payloadHash: string; state: 'running'|'done'; leaseUntil: number; decisionID: string; deleteAt: Date; model: string; policyVersion: string; result?: Result }
 interface Bucket { used: number; deleteAt: Date }
-const createSchema = z.object({ requestID: z.uuid(), challenge: z.literal('pushup'), target: z.number().int().min(1).max(5), consentVersion: z.literal(CONSENT_VERSION) }).strict();
-const cancelSchema = z.object({ sessionID: sessionIDSchema }).strict();
 const expiry = (now: number) => new Date(now + 2 * 86400000);
 function authorize(actor: Actor) {
  if (!actor.uid) throw new Failure('unauthenticated', 'Sign in for cloud verification');

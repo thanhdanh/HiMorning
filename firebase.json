@@ -1,11 +1,11 @@
 {
   "functions": [
     {
-      "source": "functions",
+      "source": ".firebase/functions",
       "codebase": "himorning",
       "runtime": "nodejs22",
       "predeploy": [
-        "npm run build --workspace functions"
+        "pnpm run prepare:firebase"
       ]
     }
   ],

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { VerificationService } from '../functions/src/service.js';
+import { VerificationService } from '../backend/functions/src/service.js';
 import { actor, config, createInput, complete, frames, MemoryStore, uuid } from './helpers.js';
 function setup(overrides = {}, shared?: MemoryStore) {
  const store = shared ?? new MemoryStore(); let time = Date.UTC(2026,9,11);

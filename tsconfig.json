@@ -13,7 +13,7 @@
     "allowJs": true
   },
   "include": [
-    "functions/src/**/*.ts",
+    "backend/functions/src/**/*.ts",
     "tests/**/*.ts",
     "vitest.config.ts",
     "scripts/**/*.mjs"

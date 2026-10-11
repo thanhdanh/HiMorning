@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import sharp from 'sharp';
-import { prepareEvidence, decide } from '../functions/src/evidence.js';
+import { prepareEvidence, decide } from '../backend/functions/src/evidence.js';
 import { frames, uuid, complete } from './helpers.js';
 const request = async () => ({ sessionID: 'a'.repeat(64), nonce: uuid(1), evidenceID: uuid(2), consentVersion: '2026-10-11', frames: await frames() });
 describe('bounded evidence and conservative decision', () => {
