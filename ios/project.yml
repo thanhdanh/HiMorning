@@ -19,8 +19,7 @@ targets:
   HiMorning:
     type: application
     platform: iOS
-    sources: [HiMorning]
-    resources: [Resources]
+    sources: [HiMorning, Resources]
     info:
       path: HiMorning/Info.plist
       properties:
