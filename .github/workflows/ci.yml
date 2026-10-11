@@ -14,30 +14,36 @@ jobs:
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
+          cache: pnpm
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
-      - run: npm ci --ignore-scripts
-      - run: npm run typecheck
-      - run: npm run build
-      - run: npm run test:coverage
-      - run: npm audit --omit=dev
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run typecheck
+      - run: pnpm run build
+      - run: node scripts/export-contracts.mjs
+      - run: git diff --exit-code -- shared/contracts/v1/verification.schema.json
+      - run: node scripts/prepare-firebase.mjs
+      - run: pnpm --dir .firebase/functions install --prod --frozen-lockfile
+      - run: node -e "import('./.firebase/functions/lib/index.js')"
+      - run: pnpm run test:coverage
+      - run: pnpm audit --prod
   ios:
     runs-on: macos-latest
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - run: sh scripts/test-swift.sh
-      - run: swift test --package-path ios/HiMorningCore
+      - run: swift test --package-path apps/ios/HiMorningCore
       - run: brew install xcodegen
-      - run: xcodegen generate --spec ios/project.yml
+      - run: xcodegen generate --spec apps/ios/project.yml
       - name: Build native pilot with simulator SDK
-        run: xcodebuild -project ios/HiMorning.xcodeproj -scheme HiMorning -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath /tmp/himorning-derived CODE_SIGNING_ALLOWED=NO build
+        run: xcodebuild -project apps/ios/HiMorning.xcodeproj -scheme HiMorning -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath /tmp/himorning-derived CODE_SIGNING_ALLOWED=NO build
       - name: Select an available iPhone simulator
         id: simulator
         run: |
@@ -48,5 +54,18 @@ jobs:
           device=next(d for group in devices.values() for d in group if d.get('isAvailable') and d['name'].startswith('iPhone'))
           with open(os.environ['GITHUB_OUTPUT'],'a') as output: output.write('id='+device['udid']+'\n')
           PYDEVICE
-      - name: Test native gentle-default journey
-        run: xcodebuild -project ios/HiMorning.xcodeproj -scheme HiMorning -destination 'platform=iOS Simulator,id=${{ steps.simulator.outputs.id }}' -derivedDataPath /tmp/himorning-derived CODE_SIGNING_ALLOWED=NO test
+      - name: Test native language journeys
+        id: ui
+        run: xcodebuild -project apps/ios/HiMorning.xcodeproj -scheme HiMorning -destination 'platform=iOS Simulator,id=${{ steps.simulator.outputs.id }}' -derivedDataPath /tmp/himorning-derived CODE_SIGNING_ALLOWED=NO -resultBundlePath /tmp/himorning-ui.xcresult test
+      - name: Export UI screenshots
+        if: always()
+        run: |
+          if [ -d /tmp/himorning-ui.xcresult ]; then
+            xcrun xcresulttool export attachments --path /tmp/himorning-ui.xcresult --output-path /tmp/himorning-ui-attachments
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ios-ui-evidence
+          path: /tmp/himorning-ui-attachments
+          retention-days: 7

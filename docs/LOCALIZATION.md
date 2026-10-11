@@ -21,11 +21,11 @@ not change alarm times, weekdays, modes or challenge targets.
 
 | File | Purpose |
 |---|---|
-| `ios/Resources/en.lproj/Localizable.strings` | English source copy and keys |
-| `ios/Resources/vi.lproj/Localizable.strings` | Matching Vietnamese translations |
-| `ios/Resources/*/InfoPlist.strings` | Camera and alarm permission explanations |
-| `ios/HiMorning/Localization.swift` | Foundation bundle lookup and count formatting |
-| `ios/HiMorningCore/.../Language.swift` | Supported-language choice and fallback |
+| `apps/ios/Resources/en.lproj/Localizable.strings` | English source copy and keys |
+| `apps/ios/Resources/vi.lproj/Localizable.strings` | Matching Vietnamese translations |
+| `apps/ios/Resources/*/InfoPlist.strings` | Camera and alarm permission explanations |
+| `apps/ios/HiMorning/Localization.swift` | Foundation bundle lookup and count formatting |
+| `apps/ios/HiMorningCore/.../Language.swift` | Supported-language choice and fallback |
 
 SwiftUI uses the selected locale for date/time controls. App messages and newly
 scheduled AlarmKit labels use the same saved language. Existing OS alarm labels
@@ -61,12 +61,12 @@ terms consistent: **alarm**, **challenge**, **Gentle**, **Balanced**, **Focused*
    languages; the value comes from the selected target.
 4. Use `appText("English source copy")` in app code. Do not translate saved IDs or
    user-created content.
-5. Keep `Resources` in the app target's `sources` in `ios/project.yml`. XcodeGen
+5. Keep `Resources` in the app target's `sources` in `apps/ios/project.yml`. XcodeGen
    uses that list for localization and sound resources too.
 6. Run the checks, then review both languages in the simulator.
 
 ```sh
-npm test -- tests/localization.test.ts
+ppnpm test tests/localization.test.ts
 sh scripts/test-swift.sh
 ```
 

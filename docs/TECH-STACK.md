@@ -21,10 +21,10 @@ or real inference benchmark has been run.
 | AI | OpenAI Responses + structured output | Assess ordered image evidence; the backend checks the result |
 | Validation | Zod + sharp | Check schemas, decode images and strip metadata |
 | Tests | Vitest, Firestore Emulator, Swift harness/XCTest, XCUITest | Test rules, races, domain behavior and native UI |
-| Build | npm lockfile, XcodeGen, GitHub Actions | Repeatable dependencies, project generation and CI |
+| Build | pnpm workspace and lockfile, XcodeGen, GitHub Actions | Repeatable dependencies, project generation and CI |
 
 Pinned package versions are recorded in the manifests and lockfile. Firebase iOS
-is pinned to 13.0.1 in `ios/project.yml`. No analytics SDK, subscriptions or alarm
+is pinned to 13.0.1 in `apps/ios/project.yml`. No analytics SDK, subscriptions or alarm
 sync are required for the current pilot.
 
 ## What OpenAI receives

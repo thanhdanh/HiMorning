@@ -62,7 +62,7 @@ packages capabilities; installation alone is not evidence that they were used.
 | ECC `cost-tracking` | Review cost-log availability and cumulative-snapshot pitfalls | Its Claude cost log was absent; Codex token records are the actual source here |
 | Codex app tools | Open artifacts and attach the PR to the conversation | Git/`gh` operations remain CLI work, not automatically MCP calls |
 | Computer use/CUA | Review the earlier prototype | Not proof of native camera or alarm behavior |
-| npm, Swift, Firebase CLI and Actions | Execute checks and preserve build feedback | SDK mocks and emulators are not production results |
+| pnpm (current), npm (earlier), Swift, Firebase CLI and Actions | Execute checks and preserve build feedback | SDK mocks and emulators are not production results |
 
 The JSON-oriented `i18n-sync` skill was reviewed for the language change. Native
 `.strings` extraction is outside its scope, so the implementation uses Apple's

@@ -110,7 +110,7 @@ Pass the current conversation's exact rollout path. For a new conversation, upda
 
 ```sh
 node scripts/collect-ai-usage.mjs --log /absolute/path/to/current-rollout.jsonl > /private/tmp/ai-usage.json
-npm test -- tests/engineering-metrics.test.ts
+ppnpm test tests/engineering-metrics.test.ts
 ```
 
 Review the sanitized JSON, save it as a dated snapshot and update the reader-facing

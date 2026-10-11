@@ -5,7 +5,7 @@ import { spawnSync } from 'node:child_process';
 const target = new URL('../.firebase/functions/',import.meta.url);
 await mkdir(new URL('../.firebase/',import.meta.url),{recursive:true});
 await rm(target,{recursive:true,force:true});
-const result = spawnSync('pnpm',['--filter','@himorning/functions','deploy','--legacy','--prod',fileURLToPath(target)],{stdio:'inherit'});
+const result = spawnSync('pnpm',['--filter','@himorning/functions','deploy','--prod',fileURLToPath(target)],{stdio:'inherit'});
 if (result.status !== 0) process.exit(result.status ?? 1);
 await writeFile(new URL('pnpm-workspace.yaml',target),'packages: []\nonlyBuiltDependencies:\n  - sharp\n');
 await access(new URL('pnpm-lock.yaml',target));
