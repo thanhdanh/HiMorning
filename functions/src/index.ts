@@ -1,3 +1,4 @@
+import { info } from 'firebase-functions/logger';
 import { getApps, initializeApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { onCall } from 'firebase-functions/v2/https';
@@ -13,7 +14,7 @@ const options={region:'asia-southeast1',enforceAppCheck:true,minInstances:0,maxI
 function service(withAI=false) {
  if(!getApps().length)initializeApp();
  const config=readConfig(process.env);
- const provider=withAI&&config.enabled?new OpenAIVerifier(apiKey.value(),config.model):{verify:async()=>{throw new Error('Cloud disabled');}};
+ const provider=withAI&&config.enabled?new OpenAIVerifier(apiKey.value(),config.model,usage=>info('verification_token_usage',usage)):{verify:async()=>{throw new Error('Cloud disabled');}};
  return new VerificationService(new FirestoreStore(getFirestore()),provider,config);
 }
 const basic=handlers(()=>service()),ai=handlers(()=>service(true));
