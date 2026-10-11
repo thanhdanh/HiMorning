@@ -5,6 +5,18 @@ final class PilotUITests:XCTestCase {
   let attachment=XCTAttachment(screenshot:app.screenshot())
   attachment.name=name;attachment.lifetime = .keepAlways;add(attachment)
  }
+ private func captureEditorChoices(_ app:XCUIApplication,language:String) {
+  for mode in ["balanced","focused"] {
+   app.buttons["mode-"+mode].tap()
+   capture(app,name:mode+"-"+language)
+  }
+  app.buttons["chooseSound"].tap()
+  XCTAssertTrue(app.navigationBars[language == "vi" ? "Âm thanh" : "Sound"].waitForExistence(timeout:5))
+  app.buttons["sound-sunrise"].tap()
+  XCTAssertTrue(app.sliders["previewVolume"].exists)
+  capture(app,name:"sounds-"+language)
+  app.navigationBars.buttons.element(boundBy:0).tap()
+ }
  private func launch(language:String)->XCUIApplication {
   let app=XCUIApplication()
   app.launchArguments=["-AppleLanguages","(en)","-AppleLocale","en_US"]
@@ -24,6 +36,7 @@ final class PilotUITests:XCTestCase {
   XCTAssertTrue(app.navigationBars["New alarm"].waitForExistence(timeout:5))
   XCTAssertTrue(app.staticTexts["Wake up at your own pace"].exists)
   capture(app,name:"alarm-editor-en")
+  captureEditorChoices(app,language:"en")
   app.buttons["Cancel"].tap()
   XCTAssertTrue(app.buttons["addAlarm"].waitForExistence(timeout:5))
  }
@@ -34,6 +47,7 @@ final class PilotUITests:XCTestCase {
   XCTAssertTrue(app.navigationBars["Báo thức mới"].waitForExistence(timeout:5))
   XCTAssertTrue(app.staticTexts["Thức dậy theo nhịp của bạn"].exists)
   capture(app,name:"alarm-editor-vi")
+  captureEditorChoices(app,language:"vi")
   app.buttons["Hủy"].tap()
   XCTAssertTrue(app.buttons["addAlarm"].waitForExistence(timeout:5))
  }
@@ -79,7 +93,7 @@ final class PilotUITests:XCTestCase {
   trial.tap()
   XCTAssertTrue(app.buttons["stopAlarm"].waitForExistence(timeout:5))
   app.buttons["stopAlarm"].tap()
-  let stopped=vi ? "Đã dừng. Hẹn bạn một buổi sáng khác." : "Alarm stopped. Take care today."
+  let stopped=vi ? "Đã kết thúc buổi thử. Báo thức không thay đổi." : "Trial ended. Your alarms are unchanged."
   XCTAssertTrue(app.staticTexts[stopped].waitForExistence(timeout:5))
   capture(app,name:"stopped-"+language)
   app.buttons[vi ? "Về trang chính" : "Back to home"].tap()

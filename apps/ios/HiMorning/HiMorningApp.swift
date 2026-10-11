@@ -65,42 +65,52 @@ struct HomeView:View {
  @Environment(\.scenePhase) private var phase
  @State private var editor=false
  @AppStorage("appLanguage") private var language="system"
+ @ScaledMetric(relativeTo:.largeTitle) private var clockSize=58
  var body:some View {
   NavigationStack {
    ScrollView {
     VStack(alignment:.leading,spacing:24) {
-     Image(systemName:"sun.max.fill").font(.system(size:42)).foregroundStyle(.orange)
-     Text(appText("A fresh start,\nat your pace.")).font(.largeTitle.bold())
-     Text(appText("Start with a morning that feels right.")).foregroundStyle(.secondary)
-     if model.alarms.isEmpty {ContentUnavailableView(appText("No alarms yet"),systemImage:"alarm",description:Text(appText("Set your first alarm for tomorrow.")))}
-     ForEach(model.alarms) {alarm in
-      VStack(alignment:.leading,spacing:12) {
-       HStack {
-        Text(String(format:"%02d:%02d",alarm.time.hour,alarm.time.minute)).font(.system(size:42,weight:.semibold,design:.rounded)).monospacedDigit()
-        Spacer()
-        Button(alarm.enabled ? appText("Turn off") : appText("Turn on")) {Task {await model.toggle(alarm)}}.buttonStyle(.bordered)
+     HStack {
+      Label("HiMorning.",systemImage:"sunrise").font(.title2.bold()).labelStyle(.titleAndIcon)
+      Spacer()
+      Menu {
+       Picker(appText("Language"),selection:$language) {
+        Text(appText("Use device language")).tag("system")
+        Text(appText("English")).tag("en")
+        Text(appText("Vietnamese")).tag("vi")
        }
-       Text(alarm.mode.title+" · "+alarm.sound.title)
-       Text(alarm.state.title).font(.caption).foregroundStyle(alarm.state == .needsReview ? .red : .secondary)
-       HStack {
-        Button(appText("Try a challenge")) {model.rehearsal=true;model.selected=alarm}
-        Spacer()
-        Button(appText("Delete"),role:.destructive) {Task {await model.remove(alarm)}}
-       }.font(.subheadline)
-      }.padding(20).background(Color(.secondarySystemGroupedBackground),in:RoundedRectangle(cornerRadius:24))
+      } label: {Image(systemName:"globe").frame(width:44,height:44).background(MorningTheme.soft,in:Circle())}
+       .accessibilityIdentifier("appLanguage").accessibilityLabel(appText("Language"))
      }
-     Button {editor=true} label:{Label(appText("Add alarm"),systemImage:"plus").frame(maxWidth:.infinity).padding(8)}.buttonStyle(.borderedProminent).tint(.yellow).foregroundStyle(.black).accessibilityIdentifier("addAlarm")
-     Text(appText("You can always stop. A challenge is just a little help to start your day.")).font(.footnote).foregroundStyle(.secondary)
-    }.padding(24)
-   }.background(Color(.systemGroupedBackground)).navigationTitle("HiMorning")
-   .toolbar {ToolbarItem(placement:.topBarTrailing) {
-    Picker(selection:$language) {
-     Text(appText("Use device language")).tag("system")
-     Text(appText("English")).tag("en")
-     Text(appText("Vietnamese")).tag("vi")
-    } label: {Label(appText("Language"),systemImage:"globe")}
-    .pickerStyle(.menu).accessibilityIdentifier("appLanguage").accessibilityLabel(appText("Language"))
-   }}
+     VStack(alignment:.leading,spacing:8) {
+      Text(appText("A fresh start,\nat your pace.").replacingOccurrences(of:"\n",with:" ")).font(.title2.weight(.semibold))
+      Text(appText("Start with a morning that feels right.")).font(.subheadline).foregroundStyle(MorningTheme.muted)
+     }
+     if model.alarms.isEmpty {
+      HStack(spacing:16) {
+       VStack(alignment:.leading,spacing:10) {
+        Text(appText("No alarms yet")).font(.title3.weight(.semibold))
+        Text(appText("Set your first alarm for tomorrow.")).font(.subheadline)
+       }
+       Spacer(minLength:0)
+       MorningSun(size:88)
+      }.padding(24).frame(maxWidth:.infinity,minHeight:180).foregroundStyle(MorningTheme.onYellow)
+       .background(MorningTheme.hero,in:RoundedRectangle(cornerRadius:24))
+     }
+     ForEach(model.alarms) {alarm in alarmCard(alarm)}
+     Button {editor=true} label:{Label(appText("Add alarm"),systemImage:"plus")}
+      .buttonStyle(MorningButtonStyle()).accessibilityIdentifier("addAlarm")
+     if model.alarms.isEmpty {
+      Button(appText("Try a challenge")) {
+       if let time=try? AlarmTime(hour:6,minute:30) {
+        model.rehearsal=true;model.selected=SavedAlarm(time:time,mode:.balanced)
+       }
+      }.buttonStyle(MorningButtonStyle(primary:false))
+     }
+     Text(appText("You can always stop. A challenge is just a little help to start your day.")).font(.footnote).foregroundStyle(MorningTheme.muted)
+    }.padding(20)
+   }.background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink).tint(MorningTheme.accent)
+   .navigationTitle("HiMorning").toolbar(.hidden,for:.navigationBar)
    .sheet(isPresented:$editor) {AlarmEditor {time,mode,sound in Task {await model.add(time:time,mode:mode,sound:sound)}}}
    .fullScreenCover(item:$model.selected) {alarm in ChallengeView(alarm:alarm,model:model)}
    .alert(appText("Please check"),isPresented:Binding(get:{model.error != nil},set:{if !$0 {model.error=nil}})) {Button(appText("Got it")) {model.error=nil}} message:{Text(model.error ?? "")}
@@ -108,5 +118,25 @@ struct HomeView:View {
    .onReceive(NotificationCenter.default.publisher(for:UserDefaults.didChangeNotification).receive(on:RunLoop.main)) {_ in model.openPending()}
    .onChange(of:phase) {_,value in if value == .active {Task {await model.refresh()}}}
   }
+ }
+ private func alarmCard(_ alarm:SavedAlarm)->some View {
+  VStack(alignment:.leading,spacing:14) {
+   HStack {
+    Text(appText("Alarm")).font(.caption.weight(.semibold))
+    Spacer()
+    Button(alarm.enabled ? appText("Turn off") : appText("Turn on")) {Task {await model.toggle(alarm)}}
+     .buttonStyle(.plain).font(.subheadline.weight(.semibold)).padding(12).background(alarm.enabled ? Color.white.opacity(0.5) : MorningTheme.surface,in:Capsule())
+   }
+   Text(String(format:"%02d:%02d",alarm.time.hour,alarm.time.minute)).font(.system(size:clockSize,weight:.regular,design:.rounded)).monospacedDigit()
+   Text(alarm.mode.title+" · "+alarm.sound.title).font(.subheadline)
+   Text(alarm.state.title).font(.caption.weight(.semibold))
+   Divider()
+   HStack {
+    Button(appText("Try a challenge")) {model.rehearsal=true;model.selected=alarm}.buttonStyle(.plain).padding(.vertical,12)
+    Spacer()
+    Button(appText("Delete"),role:.destructive) {Task {await model.remove(alarm)}}.buttonStyle(.plain).padding(12)
+   }.font(.subheadline.weight(.medium))
+  }.padding(24).foregroundStyle(alarm.enabled ? MorningTheme.onYellow : MorningTheme.ink)
+   .background(alarm.enabled ? MorningTheme.hero : MorningTheme.soft,in:RoundedRectangle(cornerRadius:24))
  }
 }
