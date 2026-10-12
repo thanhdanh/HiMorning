@@ -18,7 +18,8 @@ released or device-validated alarm app.
 | Understand the system | [Architecture](docs/ARCHITECTURE.md) and [tech stack](docs/TECH-STACK.md) |
 | Review the experience | [UI guide](docs/UI-DESIGN.md) and [language guide](docs/LOCALIZATION.md) |
 | Understand AI costs and safeguards | [Firebase backend](docs/FIREBASE.md) |
-| Review cheaper AI and more challenge choices | [Qwen, self-hosting and offline challenges proposal](docs/AI-AND-CHALLENGES-PLAN.md) |
+| Review the product direction beyond price | [Short rhythm and English activities; validation plan](docs/PRODUCT-BRIEF.md) |
+| Review the proposed AI and challenge architecture | [Qwen 9B, self-hosting and local checks](docs/AI-AND-CHALLENGES-PLAN.md) |
 | See how AI helped build it | [AI engineering case study](docs/AI-ENGINEERING.md) and [metrics](docs/metrics/README.md) |
 | Check what the tests prove | [TDD evidence](docs/tdd/cost-optimized-pilot.tdd.md) |
 
@@ -114,7 +115,9 @@ and [setup](docs/RUNNING.md) for pnpm and Firebase packaging.
 ## What comes next?
 
 Test alarm delivery, camera placement and sounds on iPhone. Evaluate consented
-movement clips for accuracy, delay and cost before enabling AI for users. QR,
+movement clips for accuracy, delay and cost before enabling AI for users. The
+[product brief](docs/PRODUCT-BRIEF.md) proposes short rhythm and practical English
+activities to test with users; they are not native features yet. QR,
 existing-alarm editing, native snooze, weekly history, deeper form guidance and
 Android remain planned. No Firebase project, billing setup or paid OpenAI call was
 created during the implementation tests.

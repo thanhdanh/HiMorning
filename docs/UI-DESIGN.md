@@ -116,9 +116,13 @@ Gentle requires no exercise. Balanced suggests three push-ups, Focused five. The
 current native pilot does not offer target editing or QR. Modes never change the
 sound by themselves. A new choice should explain what changes before saving it.
 
-The [challenge expansion proposal](AI-AND-CHALLENGES-PLAN.md) prioritizes offline
-QR and short math, using one compact task selector and only its relevant goal.
-Those controls are planned and are not shown as working native screens here.
+The [product brief](PRODUCT-BRIEF.md) proposes a short rhythm activity and one
+practical English thought, with quiet/seated alternatives. Use one compact task
+selector before bed, preview the task, then show familiar progress and one clear
+recovery action in the morning. Keep the cream/yellow theme. QR remains a practical
+fallback; optional speech needs separate setup and checks. The
+[challenge architecture proposal](AI-AND-CHALLENGES-PLAN.md) describes those limits.
+These controls are planned and are not shown as working native screens here.
 
 The tested core has snooze budgets of two, one and zero five-minute periods.
 Native snooze/countdown still needs implementation and device testing. Do not show

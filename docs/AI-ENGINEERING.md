@@ -91,15 +91,25 @@ a visual acceptance check after text-only tests missed a product requirement.
 
 The user later requested a cheaper open model and more challenge choices. The
 [updated proposal](AI-AND-CHALLENGES-PLAN.md) keeps Firebase policy and the existing
-verifier port, evaluates vision-capable Qwen on an exact host/runtime, and adds
-QR/math locally. Official Jev documentation rules out a direct image replacement
-for TypeSafe's text-only model. The proposal also identifies provider-specific
+verifier port and evaluates the user-selected bartowski Qwen3.5-9B GGUF with its
+matching vision projector on an exact host/runtime. Local tasks remain separate
+from the cloud provider. Official Jev documentation rules out a direct image
+replacement for TypeSafe's text-only model. The proposal also identifies provider-specific
 consent and historical outcomes that a replacement must migrate together.
 
 This is architecture and evaluation work, not an implemented Qwen service. GPU
 cost, cold loading, morning concurrency, false decisions and uncertainty need
 measurement. No local model was installed and no production image was sent in
 this review. Avoid describing “open weights” as measured savings.
+
+The later [product brief](PRODUCT-BRIEF.md) applies ECC `product-lens` to compare
+primary competitor listings, separate facts from hypotheses and prioritize two
+small experiments. Math/QR variety already exists in the market, so the proposed
+value is a brief, enjoyable and useful morning activity. The architecture separates
+vision, speech and temporal scoring instead of assuming one model can verify them
+all. The brief defines usability, repeat-use and reliability measures; its priority
+scores are judgment, not user research or proof of superiority. This is an example
+of deciding what to test before asking an agent to write more code.
 
 ## Tools, skills and plugins
 
@@ -111,6 +121,7 @@ packages capabilities; installation alone is not evidence that they were used.
 | `codebase-memory` skill + MCP | Inspect index, architecture and path coverage; refresh stale data | Graph results need freshness checks and source fallback |
 | ECC 2.2.3 planning/ADR/frontend skills | Guide planning, architecture and the design study; skill paths appear in the trace | No subagents or parallel agent team were used |
 | ECC `tdd-workflow` | Require a valid RED, GREEN, checkpoints, coverage and evidence | Initial native adapters were an integration spike, not complete local native TDD |
+| ECC `product-lens` | Frame product hypotheses, rank small experiments and define outcomes | No hands-on competitor test or user research; scores are provisional judgment |
 | `openai-docs` | Consult official API material at the point of implementation | Documentation does not measure model accuracy |
 | ECC `cost-tracking` | Review cost-log availability and cumulative-snapshot pitfalls | Its Claude cost log was absent; Codex token records are the actual source here |
 | Codex app tools | Open artifacts and attach the PR to the conversation | Git/`gh` operations remain CLI work, not automatically MCP calls |

@@ -38,11 +38,14 @@ accuracy/latency evaluation, not blind reduction for a lower token count.
 
 ## Next decisions
 
-Validate the native alarm/camera/sound flow first. The updated direction is to
-benchmark an open vision model on existing hardware and add offline QR, then short
-math. See the [affordable AI and challenge plan](AI-AND-CHALLENGES-PLAN.md) for the
-provider migration, evaluation and saved-alarm compatibility scope. These are plans,
-not implemented features. Editing, native snooze, weekly history, deeper form advice,
+Validate the native alarm/camera/sound flow first. The [product brief](PRODUCT-BRIEF.md)
+proposes Read & Choose and short guided rhythm as differentiation experiments, with
+QR as a practical offline fallback. Validate repeated appeal and fair completion
+before expanding the catalog. Evaluate the user-selected Qwen3.5-9B GGUF with its
+vision projector separately from product appeal. See the
+[AI and challenge plan](AI-AND-CHALLENGES-PLAN.md) for provider migration, separate
+speech/timing checks and saved-alarm compatibility. These are plans, not implemented
+features. Editing, native snooze, weekly history, deeper form advice,
 Android, sync and subscriptions remain separate milestones.
 
 ## Read next

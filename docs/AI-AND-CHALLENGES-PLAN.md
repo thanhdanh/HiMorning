@@ -5,15 +5,17 @@ is not right for their morning. Keep the alarm and its exit controls local.
 
 **Status:** Proposed, 13 October 2026. **Audience:** Product and engineering.
 The running source still uses the OpenAI adapter with cloud verification off by
-default. Qwen, a self-hosted endpoint, QR and math are not implemented or benchmarked.
+default. Qwen, a self-hosted endpoint and the new challenges below are not
+implemented or benchmarked. The [product brief](PRODUCT-BRIEF.md) proposes rhythm
+and practical English activities as the main differentiation experiments.
 
 ## At a glance
 
 | Decision | Proposal | What still needs evidence |
 |---|---|---|
-| Movement model | Try Qwen3.5-4B with vision on existing hardware | Exact runtime/quantization, multi-image support, accuracy, RAM and delay |
+| Movement model | Evaluate the user-selected bartowski Qwen3.5-9B GGUF with its vision projector | Exact runtime/quantization, multi-image support, accuracy, RAM and delay |
 | Server | LM Studio's headless `llmster` for a small pilot | Availability, authentication, capacity and a reachable backend route |
-| Local challenges | Add QR first, then short math | Native flows, saved settings, accessibility and interruption tests |
+| Local challenges | Prototype Read & Choose and guided rhythm; QR is a practical fallback | Repeated appeal, fair completion, saved settings and interruption tests |
 | Exercise expansion | Evaluate one movement at a time | Its own capture phases, rules and representative recordings |
 | User experience | One challenge choice; short goal; clear exit | English/Vietnamese usability and device checks |
 
@@ -25,8 +27,11 @@ local model is a candidate, not evidence of lower total cost or adequate accurac
 ```mermaid
 flowchart TD
   ALARM[AlarmKit rings on the phone] --> CHOICE[Chosen challenge]
-  CHOICE --> LOCAL[QR or math: local rules]
-  CHOICE --> POSE[Movement: local pose preview]
+  CHOICE --> LOCAL[Read and Choose or QR: local rules]
+  CHOICE --> RHYTHM[Guided rhythm: local pose sequence and timing]
+  CHOICE --> SPEECH[Optional speaking: separate speech engine]
+  SPEECH --> WORDS[Content match and meaning choice]
+  CHOICE --> POSE[Push-ups: local pose preview]
   POSE --> CONSENT[Consent to bounded image upload]
   CONSENT --> FN[Firebase Auth + App Check + callable function]
   FN --> POLICY[Validate evidence and reserve one attempt]
@@ -35,15 +40,19 @@ flowchart TD
   MODEL --> CHECK[Backend validates the structured verdict]
   CHECK --> RESULT[Verified, incomplete, uncertain or unavailable]
   LOCAL --> FINISH[Finish locally]
+  RHYTHM --> FINISH
+  WORDS --> FINISH
   RESULT --> FINISH
   CHOICE --> EXIT[Self-confirm or Stop remains available]
 ```
 
 Firebase continues to own identity, sessions, quotas and the final decision policy.
-The app never holds the inference-server token. Send a single ordered JPEG batch,
-not a live video stream. Preserve the existing 25-frame and one-attempt bounds
-initially; reducing evidence needs an accuracy comparison of its own. An outage or
-unclear answer must offer another way to finish, without an automatic paid fallback.
+The app never holds the inference-server token. For push-ups, send a single ordered
+JPEG batch, not a live video stream. Preserve its existing 25-frame and one-attempt
+bounds initially; reducing evidence needs an accuracy comparison of its own. These
+five-phase cycle rules are specific to push-ups, not a general dance contract. An
+outage or unclear answer must offer another way to finish, without an automatic
+paid fallback. The local task branches are proposals, not existing native flows.
 
 `llmster` can run without the desktop UI, on a local machine or a server.
 [LM Studio's headless guide](https://lmstudio.ai/docs/developer/core/headless)
@@ -60,14 +69,36 @@ Studio does not require authentication by default.
 
 ## Choosing the model
 
-[Qwen3.5-4B](https://huggingface.co/Qwen/Qwen3.5-4B) has a vision encoder and
-Apache-2.0 licensed weights. Start with a vision-preserving quantization that the
-installed runtime supports; record its publisher, revision, hash and license.
-Compare 9B only if the smaller candidate misses the agreed quality target and the
-host can support it. Do not download a text-only conversion for camera verification.
-If the chosen runtime cannot serve this exact multimodal build, test a supported
-vision model such as [Qwen3-VL-4B-Instruct](https://huggingface.co/Qwen/Qwen3-VL-4B-Instruct)
-instead of silently dropping image input.
+The user is downloading [bartowski/Qwen_Qwen3.5-9B-GGUF](https://huggingface.co/bartowski/Qwen_Qwen3.5-9B-GGUF).
+Use that 9B build as the first compatibility candidate, rather than requiring a
+new 4B download. The [original Qwen3.5-9B model](https://huggingface.co/Qwen/Qwen3.5-9B)
+has a vision encoder and Apache-2.0 licensed weights. Record the exact quantization,
+revision, hashes, runtime version and host before comparing results. A smaller
+candidate is an optional later comparison if capacity or waiting becomes a problem.
+
+The [GGUF file listing](https://huggingface.co/bartowski/Qwen_Qwen3.5-9B-GGUF/tree/main)
+includes `Qwen_Qwen3.5-9B-Q4_K_M.gguf` (6.17 GB) and the companion
+`mmproj-Qwen_Qwen3.5-9B-f16.gguf` (918 MB), checked on 13 October 2026. These are
+file sizes, not runtime RAM/VRAM requirements. Use the matching vision projector;
+the loader may fetch it automatically. Confirm that an actual image changes the
+response. A text-only load or a vision badge does not establish working inference.
+The [llama.cpp multimodal guide](https://github.com/ggml-org/llama.cpp/blob/master/docs/multimodal.md)
+describes the model/projector pairing; validate the installed LM Studio runtime too.
+
+Vision input does not establish a working speech recognizer, precise beat scoring
+or reliable exercise judgment. Keep these proposed paths separate:
+
+| Activity | Primary check | Qwen's possible role |
+|---|---|---|
+| Push-ups | Movement-specific evidence plus conservative backend policy | Evaluate ordered images for observed cycles |
+| Guided rhythm | Local time-series pose observations against known moves/timing | Optional coarse visual check after a dedicated benchmark; not beat precision |
+| Read & Choose | Local reviewed content and answer matching | None in the live morning path |
+| Speak & Choose | Capability-gated platform speech recognition plus local meaning question | Vision path is not the speech engine |
+
+Speech must not silently become a cloud upload when on-device recognition is
+unavailable. Dance participation and spoken content are not exercise-safety,
+pronunciation-quality or liveness proofs. See the [product brief](PRODUCT-BRIEF.md)
+for the scope, quiet alternatives and user validation.
 
 If the user's “Jev” means TypeSafe's Jev, it is not a direct camera verifier:
 its documented inputs are text/JSON, without image, audio or video support.
@@ -121,8 +152,11 @@ These are product proposals; only the existing push-up evidence path is in sourc
 | Choice | Check | Suitable context | Scope |
 |---|---|---|---|
 | Push-ups | Local preview plus optional remote image verdict | People who choose exercise and have space | Current pilot; model accuracy unmeasured |
-| Scan a QR | Match a locally enrolled random code using the camera | A reason to reach a chosen place | First addition; offline, no AI |
-| Short math | Check a small arithmetic answer locally | Quiet/shared rooms, no camera or floor space | Second addition; offline, no AI |
+| Read & Choose | One reviewed English sentence and a local meaning question | A useful, quiet start without a camera or mic | First differentiation prototype; not implemented |
+| Guided rhythm | A few known moves with local pose/timing rules | People who enjoy a short playful movement; seated option | Second differentiation prototype; framing and timing uncalibrated |
+| Speak & Choose | Optional speech content check plus a meaning question | People who want to speak and have privacy | Later, after demand and device/locale checks |
+| Scan a QR | Match a locally enrolled random code using the camera | A reason to reach a chosen place | Practical offline fallback, not unique positioning |
+| Short math | Check a small arithmetic answer locally | Quiet/shared rooms, no camera or floor space | Defer until the first activities are evaluated |
 | Walk a little | Platform motion signals | People who prefer walking | Later; permissions and device calibration needed |
 | Other movements | A movement-specific pose/evidence policy | People who opt into that movement | Later; not a renamed push-up prompt |
 
@@ -138,8 +172,9 @@ escalating penalty after mistakes.
 
 Keep Gentle/Balanced/Focused as suggested effort levels. Add one compact challenge
 selector and only the relevant target, with a trial action before saving. QR needs
-no rep count; math needs a question count. Do not expose model/server settings in
-the morning flow. Local completion must never be labeled “AI verified”. Avoid
+no rep count; Read & Choose needs a level/topic, not exercise settings. Keep any
+optional speech setup before bed and provide a quiet alternative. Do not expose
+model/server settings in the morning flow. Local completion must never be labeled “AI verified”. Avoid
 requiring a water-drinking photo, face recognition or long exercise holds merely
 to add variety. Technique coaching remains a separate optional proposal in the
 [form-feedback plan](POSE-FEEDBACK-PLAN.md), not an alarm unlock condition.
@@ -164,8 +199,10 @@ ship together when the replacement is implemented:
 
 Use executed RED/GREEN cycles for: endpoint/config validation, multi-image request
 shape, invalid/refused/truncated output, timeout, quota/idempotency, late success
-and legacy outcome decoding. For QR/math, protect enrollment, wrong/correct input,
-cancel, offline completion, persistence, interruption and both languages. Do not
+and legacy outcome decoding. For local tasks, protect enrollment where relevant,
+wrong/correct input, cancel, offline completion, persistence, interruption and both
+languages. Rhythm adds movement/timing calibration and incomplete-sequence tests;
+speech adds capability/permission failure and background/alarm audio tests. Do not
 route local tasks through Firebase merely to reuse a cloud session.
 
 ## What we checked
@@ -178,14 +215,17 @@ and no hardware, model accuracy or inference price was measured in this review.
 
 ## Limits and next steps
 
-Obtain the intended Jev link and available GPU/RAM, then run a small multimodal
-compatibility check on that exact host. Evaluate consented recordings before
-replacing the verifier. Implement QR and math in separate reviewable changes, with
+Confirm the downloaded 9B quantization, matching projector, available GPU/RAM and
+runtime, then smoke-test one image and an ordered image batch on that exact host.
+Evaluate consented recordings before replacing the verifier. Prototype Read & Choose
+and guided rhythm to test appeal separately from model quality; keep QR as a small
+fallback milestone. Implement only the selected tasks in reviewable changes, with
 native captures and source evidence. Keep OpenAI disabled rather than automatically
 falling back to it. Cloud deployment remains a separate step after configuration
-and the image-processing disclosure are reviewable.
+and the image-processing disclosure are reviewable. A different Jev model can be
+revisited if its exact model card is supplied; it does not block this 9B evaluation.
 
 ## Read next
 
-[Current stack](TECH-STACK.md) · [Architecture](ARCHITECTURE.md) ·
+[Product direction](PRODUCT-BRIEF.md) · [Current stack](TECH-STACK.md) · [Architecture](ARCHITECTURE.md) ·
 [Implementation plan](IMPLEMENTATION-PLAN.md) · [Metrics](metrics/README.md)
