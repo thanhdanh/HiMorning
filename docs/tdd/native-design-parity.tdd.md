@@ -36,3 +36,9 @@ failed SwiftUI type checking before UI execution. The trial's `AlarmTime` call
 omitted its required weekday set. The follow-up supplies an empty set; it does
 not change the domain constructor or bypass validation. This compiler failure
 is integration feedback, not an additional behavior RED.
+
+The second build, [run 38157847898](https://github.com/thanhdanh/HiMorning/actions/runs/38157847898),
+compiled the app and passed the rendered-color and editor checks. Both rehearsal
+journeys failed because the adaptive confirmation dialog omitted its cancel-role
+action. Make “Choose another way” an explicit dismissal action so it remains
+visible in the popover presentation, then rerun the same journeys.

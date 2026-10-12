@@ -52,7 +52,7 @@ struct ChallengeView:View {
    }.tint(MorningTheme.accent)
    .confirmationDialog(appText("Movement photos go through HiMorning to OpenAI for checking. No audio is recorded. HiMorning does not save these photos; OpenAI data policies apply. You can stop at any time."),isPresented:$consentDialog,titleVisibility:.visible) {
     Button(appText("Agree and open camera")) {Task {await startCamera()}}
-    Button(appText("Choose another way"),role:.cancel) {}
+    Button(appText("Choose another way")) {consentDialog=false}
    }
    .task {coordinator=ChallengeCoordinator(alarm:alarm,cloud:model.cloud,scheduler:model.scheduler,rehearsal:model.rehearsal)}
    .onChange(of:scene) {_,value in if value != .active && !finished {consent=false;camera?.stop();camera=nil;message=appText("The challenge is paused. You can choose another way.");Task {await coordinator?.suspend()}}}
