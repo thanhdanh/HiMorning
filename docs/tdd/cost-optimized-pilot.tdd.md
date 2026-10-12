@@ -151,6 +151,13 @@ Hosted [run 38155392322](https://github.com/thanhdanh/HiMorning/actions/runs/381
 at `72e1bb9` passed both jobs: 56 Vitest tests, 15 portable Swift journeys,
 10 Swift package XCTest cases, the relocated native SDK build and all 3 UI journeys.
 The schema-drift check, isolated Firebase frozen install/import and production
-audit also passed. [Four native screenshots](../images/ui/README.md) were exported
+audit also passed. [Four native screenshots](https://github.com/thanhdanh/HiMorning/tree/9aa77d7/docs/images/ui) were exported
 from that run, copied without edits and visually reviewed in both languages.
 Android remains a documented extension point, not a built application.
+
+
+## Restoring the original visual direction
+
+See [native design parity evidence](native-design-parity.tdd.md) for the next
+user-feedback cycle: rendered palette checks, the expanded bilingual gallery and
+rehearsal recovery. Earlier counts and screenshots above describe their checkpoints.

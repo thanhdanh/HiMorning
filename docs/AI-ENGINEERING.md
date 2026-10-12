@@ -67,6 +67,40 @@ CI also captures named screenshots from the English and Vietnamese UI tests. The
 source run. Architecture SVGs were authored as diagrams and visually inspected;
 they are not screenshots of an implemented Android app.
 
+## Design feedback exposed a gap in the checks
+
+The first native UI used gray system surfaces and default yellow, while the
+approved web study used cream `#FFFCF6` and yellow `#F5C842`. Its four screenshots
+only showed two screens in two languages. Resource parity and interaction tests
+had not checked the rendered visual direction.
+
+Following user feedback, the agent reviewed the original screens with Chrome
+DevTools and applied ECC `frontend-design-direction`. Two native UI tests then
+reproduced the color mismatch by sampling screenshot pixels; they also found no
+rehearsal entry before creating an alarm. The [design evidence](tdd/native-design-parity.tdd.md)
+keeps the actual RED run separate from compilation or packaging feedback.
+
+A shared native theme, compact editor choices and a dedicated sound screen bring
+the existing flow back to that reference. The expanded gallery contains 20 actual
+captures across 10 states and two languages, including consent, unavailable AI,
+self-confirmation and trial exit. It does not present a generated camera image or
+an unmeasured AI verdict as real verification. This is a concrete example of adding
+a visual acceptance check after text-only tests missed a product requirement.
+
+## Revisit the model choice with evidence
+
+The user later requested a cheaper open model and more challenge choices. The
+[updated proposal](AI-AND-CHALLENGES-PLAN.md) keeps Firebase policy and the existing
+verifier port, evaluates vision-capable Qwen on an exact host/runtime, and adds
+QR/math locally. Official Jev documentation rules out a direct image replacement
+for TypeSafe's text-only model. The proposal also identifies provider-specific
+consent and historical outcomes that a replacement must migrate together.
+
+This is architecture and evaluation work, not an implemented Qwen service. GPU
+cost, cold loading, morning concurrency, false decisions and uncertainty need
+measurement. No local model was installed and no production image was sent in
+this review. Avoid describing “open weights” as measured savings.
+
 ## Tools, skills and plugins
 
 An **MCP** exposes tools to the agent. A **skill** guides a workflow. A **plugin**

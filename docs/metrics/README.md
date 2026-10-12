@@ -36,12 +36,31 @@ USD and savings remain unmeasured. Reusing dependency resolutions, limiting the
 memory query scope and avoiding an Android rewrite are design choices, not a
 measured percentage reduction.
 
+## Native design fixes and affordable-AI planning
+
+The [design/follow-up snapshot](ai-usage-native-design.json) ends at
+**2026-10-12T18:54:05.831Z** (UTC; 13 October in Vietnam). It preserves the earlier
+baselines. These are manual turn categories, each mixing several activities:
+
+| Category | Input | Cached within input | Uncached | Output | Total |
+|---|---:|---:|---:|---:|---:|
+| Native design and gallery | 6,406,590 | 6,302,848 | 103,742 | 39,161 | 6,445,751 |
+| Affordable AI proposal and design follow-up | 3,416,324 | 3,067,520 | 348,804 | 22,245 | 3,438,569 |
+
+The whole conversation reconciles at **58,352,000 tokens across 420 responses**.
+Repeated context is included; these are not unique project words. The cutoff
+precedes the final screenshot import, documentation commit and PR creation. It is
+not a final invoice or an exact split between design, coding, tests and research.
+USD remains `null`; neither a smaller model nor cache reuse establishes savings.
+The existing collector's eight tests passed for this capture.
+
 ## Start with the evidence
 
 | File | What it records |
 |---|---|
 | [Agent usage](ai-usage-baseline.json) | Real Codex request tokens and reconciliation |
 | [Migration usage](ai-usage-pnpm-architecture.json) | Later mixed migration, test and visual-documentation work |
+| [Design/follow-up usage](ai-usage-native-design.json) | Later UI fixes and model/challenge planning |
 | [Phase map](phase-map.json) | Manual categories for conversation turns |
 | [Quality baseline](quality-baseline.json) | Test/coverage results at the recorded commit |
 | [CI baseline](ci-baseline.json) | Runs and job times before the documentation push |

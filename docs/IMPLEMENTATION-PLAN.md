@@ -38,9 +38,12 @@ accuracy/latency evaluation, not blind reduction for a lower token count.
 
 ## Next decisions
 
-Validate the native alarm/camera/sound flow first. Then evaluate OpenAI on consented,
-person-separated fixtures. QR, editing, native snooze, weekly history, deeper form
-advice, Android, sync and subscriptions are separate future milestones.
+Validate the native alarm/camera/sound flow first. The updated direction is to
+benchmark an open vision model on existing hardware and add offline QR, then short
+math. See the [affordable AI and challenge plan](AI-AND-CHALLENGES-PLAN.md) for the
+provider migration, evaluation and saved-alarm compatibility scope. These are plans,
+not implemented features. Editing, native snooze, weekly history, deeper form advice,
+Android, sync and subscriptions remain separate milestones.
 
 ## Read next
 

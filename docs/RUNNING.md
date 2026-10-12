@@ -75,6 +75,13 @@ Enable TTL on `deleteAt` for `verificationSessions`, `attempts` and `quotaBucket
 TTL is not enabled by this repo and cleanup is not immediate. No image Storage
 bucket is required. Deployment and billing have not been performed in this work.
 
+## Rehearse without setting an alarm
+
+From an empty Home, choose **Try a challenge**. The sample uses Balanced mode and
+06:30 for display; it does not create or stop an OS alarm. Consent is still required
+before cloud/camera work. With no Firebase configuration, the unavailable state
+keeps self-confirm and end-trial actions available. See the [screen gallery](UI-DESIGN.md#native-screens).
+
 ## Preview the earlier design study
 
 ```sh

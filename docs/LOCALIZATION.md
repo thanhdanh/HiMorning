@@ -71,8 +71,8 @@ sh scripts/test-swift.sh
 ```
 
 Tests check key parity, nonempty text, format placeholders, native message coverage,
-permission resources and language fallback. XCUITest covers both editor languages
-and a choice that survives relaunch. Structural checks do not prove translation
+permission resources and language fallback. XCUITest covers both editor languages, mode/sound selection, rendered brand colors,
+rehearsal recovery and a choice that survives relaunch. Structural checks do not prove translation
 quality, layout fit or correct delivery of an OS alarm.
 
 ## Read next
@@ -82,3 +82,7 @@ quality, layout fit or correct delivery of an OS alarm.
 Native format references: [Apple strings files](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/MaintaingYourOwnStringsFiles/MaintaingYourOwnStringsFiles.html),
 [language resources](https://developer.apple.com/documentation/xcode/adding-support-for-languages-and-regions),
 [XcodeGen project options](https://github.com/yonaskolb/XcodeGen/blob/master/Docs/ProjectSpec.md).
+
+The expanded [design run](https://github.com/thanhdanh/HiMorning/actions/runs/38293447198)
+passed five UI tests, covering modes, sound choices, rendered brand colors and
+trial recovery in both languages. The [gallery](UI-DESIGN.md) preserves 20 captures.

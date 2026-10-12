@@ -18,6 +18,7 @@ released or device-validated alarm app.
 | Understand the system | [Architecture](docs/ARCHITECTURE.md) and [tech stack](docs/TECH-STACK.md) |
 | Review the experience | [UI guide](docs/UI-DESIGN.md) and [language guide](docs/LOCALIZATION.md) |
 | Understand AI costs and safeguards | [Firebase backend](docs/FIREBASE.md) |
+| Review cheaper AI and more challenge choices | [Qwen, self-hosting and offline challenges proposal](docs/AI-AND-CHALLENGES-PLAN.md) |
 | See how AI helped build it | [AI engineering case study](docs/AI-ENGINEERING.md) and [metrics](docs/metrics/README.md) |
 | Check what the tests prove | [TDD evidence](docs/tdd/cost-optimized-pilot.tdd.md) |
 
@@ -88,12 +89,16 @@ view the earlier design study at http://127.0.0.1:4173/design/.
 
 ## Native screens
 
-Actual iOS simulator captures from the English and Vietnamese UI tests:
+The native app follows the original cream/yellow palette. The
+[full gallery](docs/UI-DESIGN.md#native-screens) contains 20 simulator captures:
+10 screens/states in English and Vietnamese. A few highlights:
 
 | English | Vietnamese |
 |---|---|
 | <img src="docs/images/ui/home-en.png" width="260" alt="English home screen"> | <img src="docs/images/ui/home-vi.png" width="260" alt="Vietnamese home screen"> |
 | <img src="docs/images/ui/alarm-editor-en.png" width="260" alt="English alarm editor"> | <img src="docs/images/ui/alarm-editor-vi.png" width="260" alt="Vietnamese alarm editor"> |
+| <img src="docs/images/ui/sounds-en.png" width="260" alt="English sound selection"> | <img src="docs/images/ui/sounds-vi.png" width="260" alt="Vietnamese sound selection"> |
+| <img src="docs/images/ui/challenge-ready-en.png" width="260" alt="English challenge rehearsal"> | <img src="docs/images/ui/challenge-ready-vi.png" width="260" alt="Vietnamese challenge rehearsal"> |
 
 See the [UI guide](docs/UI-DESIGN.md#native-screens) and
 [capture details](docs/images/ui/README.md). These show the native pilot; the earlier

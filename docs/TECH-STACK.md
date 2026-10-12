@@ -6,6 +6,10 @@ backend, and OpenAI to check consented movement evidence. Each part has a clear 
 **Status:** Pilot source and contract tests are implemented. No cloud deployment
 or real inference benchmark has been run.
 
+The requested next direction is an open vision model served through LM Studio
+headless, plus local QR/math challenges. The [proposal](AI-AND-CHALLENGES-PLAN.md)
+separates that plan from the OpenAI implementation described below.
+
 ## Stack at a glance
 
 | Part | Choice | Why it is here |
