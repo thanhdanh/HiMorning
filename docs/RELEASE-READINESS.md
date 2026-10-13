@@ -2,7 +2,8 @@
 
 Use this review to choose the first App Store scope and the work needed to ship it.
 
-**Status:** Public release blocked as of 13 October 2026; subscriptions are planned.
+**Status:** Public release blocked as of 13 October 2026; monthly Pro is implemented
+in the pilot and still needs production setup and sandbox/TestFlight validation.
 **Audience:** Product owner, iOS/backend developers and release reviewer.
 
 ## At a glance
@@ -11,7 +12,9 @@ The native iOS 26+ pilot has a tested foundation. It is not yet a signed,
 device-validated App Store release. A green simulator build does not establish
 that an alarm will ring reliably on a locked or terminated iPhone.
 
-This snapshot covers commit `ca06de425fd81de3b94313c326871e8319ebf80b`.
+The original audit snapshot covers commit `ca06de425fd81de3b94313c326871e8319ebf80b`.
+The subscription row now includes the subsequent monthly Pro implementation;
+its current scope and validation are recorded in [the subscription guide](SUBSCRIPTIONS.md).
 [PR #3](https://github.com/thanhdanh/HiMorning/pull/3) is merged and its
 [backend and iOS CI run](https://github.com/thanhdanh/HiMorning/actions/runs/38334319009)
 succeeded. No App Store Connect account or deployed production environment was
@@ -24,7 +27,7 @@ inspected for this review.
 | Local Qwen | Ordered-image API smoke checks passed on synthetic fixtures | Connect it through the backend; provide an authenticated, reachable service and measure real challenge accuracy and latency |
 | Distribution | CI builds with code signing disabled | Add release signing configuration, app icon and versioning; validate an archive and upload a TestFlight build |
 | Privacy and support | Camera consent exists; anonymous Firebase accounts are created when cloud features are used | Add accessible privacy/support links, account/data deletion and a privacy/API inventory for the release archive |
-| Subscriptions | No StoreKit purchase, restore, entitlement or server-notification implementation was found | Required only if the first release includes paid features; implement and test the complete purchase lifecycle |
+| Subscriptions | StoreKit monthly Pro and local progress are now implemented; see [setup](SUBSCRIPTIONS.md) | Configure real products/offers and validate sandbox/TestFlight lifecycle; add server verification before selling paid cloud AI |
 
 AI integration is a blocker for an **AI-enabled** launch. Subscriptions are a
 blocker for a **paid** launch. A smaller free release can defer both, provided the
@@ -48,17 +51,22 @@ Android can follow a complete first challenge.
 ## Subscription choices
 
 Use **StoreKit 2** directly for the iOS pilot. Keep one Pro entitlement with monthly
-and annual products in one subscription group. Apple explains that customers can
+and annual products in one subscription group as the longer-term plan. The pilot
+implements monthly only, targeting US $2.99. Apple explains that customers can
 hold one subscription in a group at a time. The first subscription submission
 must accompany a new app version. See [Apple's subscription setup guide](https://developer.apple.com/help/app-store-connect/manage-subscriptions/offer-auto-renewable-subscriptions/).
 
 Keep basic alarm scheduling, Stop and recovery free. Pro should offer ongoing
 value, such as regularly maintained activity content or a bounded AI service.
-Only sell benefits that are implemented. Prices, trial eligibility, included AI
-usage and renewal terms remain product decisions. For the Vietnam iOS launch,
+Only sell benefits that are implemented. The working monthly US price is $2.99;
+actual storefront prices and introductory eligibility require App Store setup.
+Paid AI quotas and annual pricing remain product decisions. For the Vietnam iOS launch,
 use Apple's in-app purchase flow for in-app digital features; review any future
 alternative payment proposal against the relevant storefront rules.
 [App Review Guidelines](https://developer.apple.com/app-store/review/guidelines/)
+
+The server responsibilities below apply when paid cloud benefits are introduced.
+The current local progress subscription only needs the StoreKit layer.
 
 | Layer | Responsibility |
 |---|---|
@@ -113,23 +121,26 @@ Apple asks for a complete app and accessible backend services during review.
 
 - Source inspection: native alarm flow, editor, camera/challenge lifecycle,
   Firebase adapter, callable configuration, contracts, Firestore rules and CI.
-- Scoped source searches: no current purchase/restore/server-billing flow,
-  in-app account-deletion flow, app icon asset or app-owned privacy manifest was
-  found. SDK-provided privacy manifests were not assessed in an archive.
+- Original audit searches found no billing flow. Monthly StoreKit billing and
+  local progress have since been added; server billing is still absent. In-app
+  account deletion, an app icon asset and an app-owned privacy manifest were not
+  found in the audited source. SDK manifests were not assessed in an archive.
 - Latest CI: backend and simulator iOS jobs succeeded. UI tests cover both
   languages and rehearsal/recovery states; they do not prove physical alarm
   delivery, successful live camera verification or purchases.
 - [Qwen smoke evidence](evaluations/lmstudio-smoke-2026-10-13.json): image API
   compatibility checks only, not real exercise or video-stream validation.
 
-No new test suite was run for this documentation-only review. Missing evidence is
-an open release gate, not a claim that the corresponding runtime test failed.
+No new test suite was run for the original documentation-only audit. The later
+subscription implementation has separate [TDD evidence](tdd/monthly-pro.tdd.md).
+Missing release evidence is an open gate, not a claim that a runtime test failed.
 
 ## Next steps
 
 1. Complete one release-quality alarm/challenge journey and physical-device checks.
 2. If AI ships, finish the Qwen/provider migration, consent and service validation.
-3. Implement StoreKit purchases and server entitlements for the agreed Pro benefits.
+3. Configure and validate the implemented monthly Pro. Add server entitlements
+   before including cloud AI as a paid benefit.
 4. Complete privacy, deletion, signing and store metadata; run a TestFlight pilot
    with sandbox billing before submitting the paid release.
 
@@ -139,6 +150,7 @@ remains Apple's decision.
 
 ## Read next
 
+- [Monthly Pro implementation and setup](SUBSCRIPTIONS.md)
 - [Free, Pro, retention and friend invitations](BUSINESS-MODEL.md)
 - [Run the pilot](RUNNING.md)
 - [AI and challenge plan](AI-AND-CHALLENGES-PLAN.md)

@@ -84,8 +84,8 @@
 "Your saved alarms could not be read. Changes are paused." = "Your saved alarms could not be read. Changes are paused.";
 "Choose a sound for your morning." = "Choose a sound for your morning.";
 "Practice only. Your alarms stay as they are." = "Practice only. Your alarms stay as they are.";
-"End trial" = "End trial";
-"Trial ended. Your alarms are unchanged." = "Trial ended. Your alarms are unchanged.";
+"End practice" = "End practice";
+"Practice ended. Your alarms are unchanged." = "Practice ended. Your alarms are unchanged.";
 "This purchase could not be verified. Please try restoring it." = "This purchase could not be verified. Please try restoring it.";
 "Waiting for purchase approval. Your alarms are unchanged." = "Waiting for purchase approval. Your alarms are unchanged.";
 "The purchase could not finish. Please try again." = "The purchase could not finish. Please try again.";

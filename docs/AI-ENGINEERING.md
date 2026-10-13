@@ -30,6 +30,14 @@ hand-written, or claim every line received human review unless that review happe
 | Measure | Extract actual token records, reconcile totals and label limits | [Metrics](metrics/README.md), tested collector library |
 | Refine | Add language resources and rewrite reader-facing guides | [Language guide](LOCALIZATION.md), [doc template](DOC-TEMPLATE.md) |
 
+## Monthly Pro: use the platform before adding services
+
+The owner set a $2–3 monthly budget; the pilot targets US $2.99. AI-assisted work
+used failing Swift history journeys and a missing-StoreKit-adapter Xcode RED, then
+implemented verified local access with Apple's native subscription view. Paid
+cloud AI and rewarded referrals remain separate work. The [monthly Pro evidence](tdd/monthly-pro.tdd.md)
+records checkpoints, coverage and validation gaps without inventing token savings.
+
 ## A concrete example: cost bugs that tests caught
 
 Accepting camera consent twice created two cloud sessions. A runtime test reproduced

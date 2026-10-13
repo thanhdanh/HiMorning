@@ -93,7 +93,7 @@ final class PilotUITests:XCTestCase {
   trial.tap()
   XCTAssertTrue(app.buttons["stopAlarm"].waitForExistence(timeout:5))
   app.buttons["stopAlarm"].tap()
-  let stopped=vi ? "Đã kết thúc buổi thử. Báo thức không thay đổi." : "Trial ended. Your alarms are unchanged."
+  let stopped=vi ? "Đã kết thúc buổi thử. Báo thức không thay đổi." : "Practice ended. Your alarms are unchanged."
   XCTAssertTrue(app.staticTexts[stopped].waitForExistence(timeout:5))
   capture(app,name:"stopped-"+language)
   app.buttons[vi ? "Về trang chính" : "Back to home"].tap()

@@ -47,7 +47,7 @@ struct ChallengeView:View {
      if finished {Button(appText("Back to home")) {dismiss()}.buttonStyle(MorningButtonStyle())}
      else {
       Button(appText("I’m awake")) {finish(.selfConfirmed)}.buttonStyle(MorningButtonStyle(primary:alarm.mode.policy.reps==0))
-      Button(model.rehearsal ? appText("End trial") : appText("Stop alarm"),role:.destructive) {finish(.dismissed)}
+      Button(model.rehearsal ? appText("End practice") : appText("Stop alarm"),role:.destructive) {finish(.dismissed)}
        .buttonStyle(.plain).font(.subheadline).underline().foregroundStyle(MorningTheme.muted).frame(maxWidth:.infinity,minHeight:44).accessibilityIdentifier("stopAlarm")
      }
     }.padding(.horizontal,24).padding(.vertical,12).background(MorningTheme.canvas)
@@ -88,7 +88,7 @@ struct ChallengeView:View {
   consent=false;camera?.stop();camera=nil
   Task {@MainActor in
    defer {stopping=false}
-   do {try await coordinator.finish(outcome);model.recordMorning(id:historyID,outcome:coordinator.session.outcome ?? outcome,rehearsal:model.rehearsal);finished=true;result=outcome == .selfConfirmed ? appText("You confirmed you are awake. Have a good morning!") : (model.rehearsal ? appText("Trial ended. Your alarms are unchanged.") : appText("Alarm stopped. Take care today."))}
+   do {try await coordinator.finish(outcome);model.recordMorning(id:historyID,outcome:coordinator.session.outcome ?? outcome,rehearsal:model.rehearsal);finished=true;result=outcome == .selfConfirmed ? appText("You confirmed you are awake. Have a good morning!") : (model.rehearsal ? appText("Practice ended. Your alarms are unchanged.") : appText("Alarm stopped. Take care today."))}
    catch {message=appText("The alarm could not be stopped here. Please use the system Stop button.")}
   }
  }

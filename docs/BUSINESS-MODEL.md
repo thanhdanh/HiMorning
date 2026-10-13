@@ -3,9 +3,9 @@
 Give people a useful free start, a clear reason to keep returning and an optional
 paid upgrade. Grow through friends without turning the alarm into a sales screen.
 
-**Status:** Proposed on 13 October 2026; not implemented or validated with users.
-**Audience:** Product, design and engineering. Prices and offer configuration are
-not approved or created by this plan.
+**Status:** Partially implemented on 13 October 2026; not validated with users.
+**Audience:** Product, design and engineering. The owner approved a $2–3 monthly
+range; the working US price is $2.99. Production offers have not been created.
 
 ## At a glance
 
@@ -20,9 +20,12 @@ Do not add a points wallet, cash stakes or several paid tiers to the first relea
 | Pro monthly | A maintained activity collection, richer progress and bounded cloud AI where validated | A lower commitment paid option |
 | Pro annual | The same Pro features with a lower effective monthly price, if selected | Support people who already find lasting value |
 
-These are proposed benefits. The current pilot does not yet include this Free/Pro
-split, progress tracking, activity collection, purchases or referrals. Only list
-features on a paywall after they work.
+The first implementation is deliberately smaller: seven-day Free progress,
+thirty-day Pro history, a custom Pro weekly goal, one monthly StoreKit product and
+optional progress sharing. The local test offer is one introductory week. Activity
+collections, paid cloud AI, annual billing and rewarded referral attribution remain
+planned. See [monthly Pro](SUBSCRIPTIONS.md) for implemented benefits and setup.
+Only advertise features that work in the submitted build.
 
 Apple supports a one-week introductory free trial for monthly and annual
 subscriptions. Eligibility is limited to one introductory offer per subscription
@@ -87,7 +90,9 @@ can also provide a free offer that does not auto-renew; test eligibility, durati
 and redemption in the sandbox before advertising it.
 [Apple offer codes](https://developer.apple.com/help/app-store-connect/manage-subscriptions/set-up-subscription-offer-codes/)
 
-Before adding valuable rewards, define one inviter per new participant, no
+Local progress is private, editable device data; it must not authorize referral
+credit or a paid offer. Before adding valuable rewards, define server-verified
+qualification, one inviter per new participant, no
 self-referrals, a small campaign cap and idempotent qualification/redemption.
 Use durable account ownership for rewards; reinstalling with another anonymous
 Firebase UID must not repeatedly earn the same offer. Do not reward ratings,

@@ -30,6 +30,7 @@ price is $2.99/month. [Business model](../BUSINESS-MODEL.md) and
 | `5cbe7a9` / [expiry RED](https://github.com/thanhdanh/HiMorning/actions/runs/38404079724) | Compatible runtime loaded products: purchase/restore/refund and wrong-product checks passed, but expiration still left Pro active |
 | `dcaf3ab` | Portable expiry/grace boundaries failed because `MorningAccess.verifiedPeriod` was missing |
 | `923f9b7` | Added signed-period checks and subscription-status updates; all 21 portable journeys passed |
+| `3fc76d6` | Serialized shared refresh calls, fixed the local test clock to real time and retained explicit expiry/refund mutations; native revalidation pending |
 | [Native restore feedback](https://github.com/thanhdanh/HiMorning/actions/runs/38405867640) | Expiry and automatic refund updates passed; the restore/refund journey had two state assertions fail. Revalidation follows serialized refresh and an explicit real-time test clock |
 
 An initial compiler module-cache permission error was an environment preflight

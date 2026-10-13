@@ -15,7 +15,7 @@ released or device-validated alarm app.
 |---|---|
 | Run the app or tests | [Setup guide](docs/RUNNING.md) |
 | Check App Store readiness and subscription scope | [Release review](docs/RELEASE-READINESS.md) |
-| Review Free, Pro, trials and friend invitations | [Business model](docs/BUSINESS-MODEL.md) |
+| Review Free, Pro, trials and friend invitations | [Business model](docs/BUSINESS-MODEL.md) and [monthly Pro setup](docs/SUBSCRIPTIONS.md) |
 | Extend the project to Android | [Android guide](docs/ANDROID.md) and [shared contracts](shared/contracts/README.md) |
 | Understand the system | [Architecture](docs/ARCHITECTURE.md) and [tech stack](docs/TECH-STACK.md) |
 | Review the experience | [UI guide](docs/UI-DESIGN.md) and [language guide](docs/LOCALIZATION.md) |
@@ -40,6 +40,12 @@ awake or stop. A cloud error must not take away that choice.
 | Gentle — the default | No exercise required | 2 × 5 minutes |
 | Balanced | 3 push-ups | 1 × 5 minutes |
 | Focused | 5 push-ups | None |
+
+The chart button opens local morning progress. Free shows seven days with a goal
+of three mornings; verified Pro access adds thirty days and a custom weekly goal.
+The optional Apple subscription screen uses live store prices. The working US
+price is $2.99/month; real products and sandbox/TestFlight billing still need setup.
+See [monthly Pro](docs/SUBSCRIPTIONS.md) for the current benefits and limits.
 
 Native snooze/countdown UI is still planned. Core policy tests do not prove it is
 connected to AlarmKit. The app includes system sound and two original chime sketches;
