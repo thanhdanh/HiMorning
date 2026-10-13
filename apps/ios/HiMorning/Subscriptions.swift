@@ -7,6 +7,7 @@ import HiMorningCore
  @Published private(set) var access:MorningAccess = .free
  @Published private(set) var message:String?
  private var updates:Task<Void,Never>?
+ private var statuses:Task<Void,Never>?
  private var generation=0
  var isPro:Bool {access == .pro}
  func start() {
@@ -18,17 +19,35 @@ import HiMorningCore
     await self.refresh();await transaction.finish()
    }
   }
+  statuses=Task { [weak self] in
+   for await status in Product.SubscriptionInfo.Status.updates {
+    guard let self else {return}
+    guard case .verified(let transaction)=status.transaction,transaction.productID==Self.monthlyProductID else {continue}
+    await self.refresh()
+   }
+  }
  }
  func refresh() async {
   generation+=1;let request=generation
   var next=MorningAccess.free
-  // StoreKit includes billing grace periods; a past transaction expiry alone is not a denial.
   for await result in Transaction.currentEntitlements {
-   if case .verified(let transaction)=result,transaction.productID==Self.monthlyProductID,
-    transaction.productType == .autoRenewable,transaction.revocationDate == nil,!transaction.isUpgraded {next = .pro}
+   guard case .verified(let transaction)=result,transaction.productID==Self.monthlyProductID,
+    transaction.productType == .autoRenewable,transaction.revocationDate == nil,!transaction.isUpgraded else {continue}
+   var current=transaction
+   var grace:Date?
+   if let status=await transaction.subscriptionStatus {
+    guard status.state == .subscribed || status.state == .inGracePeriod,
+     case .verified(let latest)=status.transaction,latest.productID==Self.monthlyProductID,
+     latest.revocationDate == nil,!latest.isUpgraded else {continue}
+    current=latest
+    // A verified grace period can outlive the original signed transaction expiry.
+    if status.state == .inGracePeriod,case .verified(let renewal)=status.renewalInfo {grace=renewal.gracePeriodExpirationDate}
+   }
+   if MorningAccess.verifiedPeriod(expiresAt:current.expirationDate,graceUntil:grace) == .pro {next = .pro}
   }
   guard request==generation else {return}
   access=next
+  if isPro {message=nil}
  }
  func complete(_ result:Product.PurchaseResult) async {
   message=nil
@@ -42,5 +61,5 @@ import HiMorningCore
   @unknown default:message=appText("The purchase could not finish. Please try again.")
   }
  }
- deinit {updates?.cancel()}
+ deinit {updates?.cancel();statuses?.cancel()}
 }

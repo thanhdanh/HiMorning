@@ -1,4 +1,5 @@
 import XCTest
+import Combine
 import StoreKit
 import StoreKitTest
 @testable import HiMorning
@@ -41,7 +42,12 @@ import StoreKitTest
   await store.refresh()
   XCTAssertTrue(store.isPro)
   try session.expireSubscription(productIdentifier:SubscriptionStore.monthlyProductID)
-  await store.refresh()
+  // StoreKit propagates the test-session mutation asynchronously.
+  let deadline=Date().addingTimeInterval(5)
+  repeat {
+   await store.refresh()
+   if store.isPro {try await Task.sleep(for:.milliseconds(100))}
+  } while store.isPro && Date()<deadline
   XCTAssertFalse(store.isPro)
  }
  func testPendingCancellationAndUnverifiedResultsDoNotGrantAccess() async throws {
@@ -59,6 +65,20 @@ import StoreKitTest
    await store.complete(.success(.unverified(transaction,.invalidSignature)))
    XCTAssertFalse(store.isPro)
   } else {XCTFail("Expected a verified local StoreKit test purchase")}
+ }
+ func testExternalRefundUpdateRemovesAccessWithoutManualRefresh() async throws {
+  let session=try session(),store=SubscriptionStore()
+  defer {session.clearTransactions()}
+  store.start()
+  try await purchase(store)
+  XCTAssertTrue(store.isPro)
+  let revoked=expectation(description:"Refund updates Pro access")
+  let observer=store.$access.dropFirst().filter {$0 == .free}.prefix(1).sink {_ in revoked.fulfill()}
+  defer {observer.cancel()}
+  let transaction=try XCTUnwrap(session.allTransactions().first)
+  try session.refundTransaction(identifier:transaction.identifier)
+  await fulfillment(of:[revoked],timeout:5)
+  XCTAssertFalse(store.isPro)
  }
  func testUnrelatedProductCannotUnlockPro() async throws {
   let session=try session()

@@ -1,7 +1,12 @@
 import Foundation
 
-public enum MorningAccess:Sendable {
+public enum MorningAccess:Equatable,Sendable {
  case free,pro
+ public static func verifiedPeriod(expiresAt:Date?,graceUntil:Date?=nil,now:Date=Date())->MorningAccess {
+  if let expiresAt,expiresAt>now {return .pro}
+  if let graceUntil,graceUntil>now {return .pro}
+  return .free
+ }
  public var historyDays:Int {self == .pro ? 30 : 7}
  public func weeklyGoal(stored:Int)->Int {self == .pro ? stored : 3}
 }
