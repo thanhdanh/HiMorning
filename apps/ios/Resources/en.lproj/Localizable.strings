@@ -109,7 +109,7 @@
 "Manage subscription" = "Manage subscription";
 "Past 30 days" = "Past 30 days";
 "Your next morning is a fresh start." = "Your next morning is a fresh start.";
-"%lld mornings this week with HiMorning. A fresh start, at my pace." = "%lld mornings this week with HiMorning. A fresh start, at my pace.";
+"%lld mornings in the past 7 days with HiMorning. A fresh start, at my pace." = "%lld mornings in the past 7 days with HiMorning. A fresh start, at my pace.";
 "Share my progress" = "Share my progress";
 "Clear history" = "Clear history";
 "Your progress" = "Your progress";

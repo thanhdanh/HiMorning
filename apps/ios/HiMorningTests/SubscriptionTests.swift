@@ -17,6 +17,7 @@ import StoreKitTest
  }
  func testPurchaseRestoresAcrossStoreInstancesAndRefundRemovesAccess() async throws {
   let session=try session(),store=SubscriptionStore()
+  defer {session.clearTransactions()}
   await store.refresh()
   XCTAssertFalse(store.isPro)
   try await purchase(store)
@@ -33,6 +34,7 @@ import StoreKitTest
  }
  func testTurningOffRenewalKeepsAccessUntilExpiry() async throws {
   let session=try session(),store=SubscriptionStore()
+  defer {session.clearTransactions()}
   try await purchase(store)
   let transaction=try XCTUnwrap(session.allTransactions().first)
   try session.disableAutoRenewForTransaction(identifier:transaction.identifier)
@@ -43,7 +45,8 @@ import StoreKitTest
   XCTAssertFalse(store.isPro)
  }
  func testPendingCancellationAndUnverifiedResultsDoNotGrantAccess() async throws {
-  _=try session()
+  let session=try session()
+  defer {session.clearTransactions()}
   let store=SubscriptionStore()
   await store.complete(.pending)
   XCTAssertFalse(store.isPro)
@@ -58,7 +61,8 @@ import StoreKitTest
   } else {XCTFail("Expected a verified local StoreKit test purchase")}
  }
  func testUnrelatedProductCannotUnlockPro() async throws {
-  _=try session()
+  let session=try session()
+  defer {session.clearTransactions()}
   let store=SubscriptionStore()
   let products=try await Product.products(for:["com.himorning.test.unrelated"])
   let product=try XCTUnwrap(products.first)

@@ -41,7 +41,7 @@ struct MorningProgressView:View {
      }
     }
     Section {
-     ShareLink(item:appText("%lld mornings this week with HiMorning. A fresh start, at my pace.",count:days)) {
+     ShareLink(item:appText("%lld mornings in the past 7 days with HiMorning. A fresh start, at my pace.",count:days)) {
       Label(appText("Share my progress"),systemImage:"square.and.arrow.up")
      }
      Button(appText("Clear history"),role:.destructive) {clear=true}.disabled(model.journal == nil)

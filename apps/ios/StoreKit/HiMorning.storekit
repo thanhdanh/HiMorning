@@ -39,7 +39,8 @@
           "introductoryOffer": {
             "internalID": "TRIAL_WEEK",
             "paymentMode": "free",
-            "subscriptionPeriod": "P1W"
+            "subscriptionPeriod": "P1W",
+            "numberOfPeriods": 1
           },
           "localizations": [
             {

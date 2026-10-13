@@ -44,14 +44,17 @@ jobs:
       - run: xcodegen generate --spec apps/ios/project.yml
       - name: Build native pilot with simulator SDK
         run: xcodebuild -project apps/ios/HiMorning.xcodeproj -scheme HiMorning -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath /tmp/himorning-derived CODE_SIGNING_ALLOWED=NO build
-      - name: Select an available iPhone simulator
+      - name: Select iOS 26.2 for StoreKitTest compatibility
         id: simulator
         run: |
           xcrun simctl list devices available -j > /tmp/himorning-devices.json
           python3 - <<'PYDEVICE'
           import json,os
           devices=json.load(open('/tmp/himorning-devices.json'))['devices']
-          device=next(d for group in devices.values() for d in group if d.get('isAvailable') and d['name'].startswith('iPhone'))
+          # shortcut: iOS 26.2 avoids the StoreKitTest CLI regression; upgrade when a fixed simulator is available.
+          runtime='com.apple.CoreSimulator.SimRuntime.iOS-26-2'
+          device=next(d for d in devices.get(runtime,[]) if d.get('isAvailable') and d['name'].startswith('iPhone'))
+          print('Selected '+device['name']+' on '+runtime)
           with open(os.environ['GITHUB_OUTPUT'],'a') as output: output.write('id='+device['udid']+'\n')
           PYDEVICE
       - name: Test native language journeys

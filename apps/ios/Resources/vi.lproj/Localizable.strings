@@ -109,7 +109,7 @@
 "Manage subscription" = "Quản lý gói đăng ký";
 "Past 30 days" = "30 ngày qua";
 "Your next morning is a fresh start." = "Buổi sáng tới là một khởi đầu mới.";
-"%lld mornings this week with HiMorning. A fresh start, at my pace." = "%lld buổi sáng tuần này cùng HiMorning. Khởi đầu mới, theo nhịp của mình.";
+"%lld mornings in the past 7 days with HiMorning. A fresh start, at my pace." = "%lld buổi sáng trong 7 ngày qua cùng HiMorning. Khởi đầu mới, theo nhịp của mình.";
 "Share my progress" = "Chia sẻ tiến độ";
 "Clear history" = "Xóa lịch sử";
 "Your progress" = "Tiến độ của bạn";
