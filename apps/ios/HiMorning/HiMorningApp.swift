@@ -13,6 +13,9 @@ import HiMorningCore
  @Published var error:String?
  @Published var selected:SavedAlarm?
  @Published var rehearsal=false
+ let subscriptions=SubscriptionStore()
+ @Published var journal:MorningJournal?
+ @Published var progressError:String?
  let scheduler=NativeAlarmScheduler()
  let cloud:(any CloudVerification)?
  private let library:AlarmLibrary?
@@ -24,6 +27,24 @@ import HiMorningCore
    let url=try FileManager.default.url(for:.applicationSupportDirectory,in:.userDomainMask,appropriateFor:nil,create:true).appendingPathComponent("HiMorning/alarms.json")
    library=try AlarmLibrary(persistence:FileAlarmPersistence(url:url),scheduler:scheduler)
   } catch {library=nil;self.error=appText("Your saved alarms could not be read. Changes are paused.")}
+  do {
+   let url=try FileManager.default.url(for:.applicationSupportDirectory,in:.userDomainMask,appropriateFor:nil,create:true).appendingPathComponent("HiMorning/mornings.json")
+   journal=try MorningJournal(url:url)
+  } catch {progressError=appText("Your progress could not be read. Your alarms are unchanged.")}
+ }
+ func recordMorning(id:UUID,outcome:WakeOutcome,rehearsal:Bool) {
+  guard journal != nil else {return}
+  do {try journal?.record(MorningEntry(id:id,outcome:outcome),rehearsal:rehearsal)}
+  catch {progressError=appText("Your progress could not be saved. Your alarm is already stopped.")}
+ }
+ func setGoal(_ goal:Int) {
+  guard subscriptions.isPro,journal != nil else {return}
+  do {try journal?.setWeeklyGoal(goal);progressError=nil}
+  catch {progressError=appText("Your goal could not be saved. Please try again.")}
+ }
+ func clearHistory() {
+  do {try journal?.clear();progressError=nil}
+  catch {progressError=appText("Your history could not be cleared. Please try again.")}
  }
  func refresh() async {
   guard let library else {return}
@@ -64,6 +85,8 @@ struct HomeView:View {
  @ObservedObject var model:PilotModel
  @Environment(\.scenePhase) private var phase
  @State private var editor=false
+ @State private var progress=false
+ @State private var pro=false
  @AppStorage("appLanguage") private var language="system"
  @ScaledMetric(relativeTo:.largeTitle) private var clockSize=58
  var body:some View {
@@ -73,6 +96,10 @@ struct HomeView:View {
      HStack {
       Label("HiMorning.",systemImage:"sunrise").font(.title2.bold()).labelStyle(.titleAndIcon)
       Spacer()
+      Button {progress=true} label:{Image(systemName:"chart.bar").frame(width:44,height:44)}
+       .accessibilityIdentifier("morningProgress").accessibilityLabel(appText("Your progress"))
+      Button {pro=true} label:{Image(systemName:"sun.max").frame(width:44,height:44)}
+       .accessibilityIdentifier("hiMorningPro").accessibilityLabel("HiMorning Pro")
       Menu {
        Picker(appText("Language"),selection:$language) {
         Text(appText("Use device language")).tag("system")
@@ -112,11 +139,14 @@ struct HomeView:View {
    }.background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink).tint(MorningTheme.accent)
    .navigationTitle("HiMorning").toolbar(.hidden,for:.navigationBar)
    .sheet(isPresented:$editor) {AlarmEditor {time,mode,sound in Task {await model.add(time:time,mode:mode,sound:sound)}}}
+   .sheet(isPresented:$progress) {MorningProgressView(model:model,store:model.subscriptions)}
+   .sheet(isPresented:$pro) {ProView(store:model.subscriptions)}
    .fullScreenCover(item:$model.selected) {alarm in ChallengeView(alarm:alarm,model:model)}
    .alert(appText("Please check"),isPresented:Binding(get:{model.error != nil},set:{if !$0 {model.error=nil}})) {Button(appText("Got it")) {model.error=nil}} message:{Text(model.error ?? "")}
    .task {await model.refresh()}
+   .task {model.subscriptions.start();await model.subscriptions.refresh()}
    .onReceive(NotificationCenter.default.publisher(for:UserDefaults.didChangeNotification).receive(on:RunLoop.main)) {_ in model.openPending()}
-   .onChange(of:phase) {_,value in if value == .active {Task {await model.refresh()}}}
+   .onChange(of:phase) {_,value in if value == .active {Task {await model.refresh();await model.subscriptions.refresh()}}}
   }
  }
  private func alarmCard(_ alarm:SavedAlarm)->some View {

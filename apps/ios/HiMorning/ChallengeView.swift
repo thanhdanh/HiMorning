@@ -20,6 +20,8 @@ struct ChallengeView:View {
  @State private var busy=false
  @State private var consentDialog=false
  @State private var finished=false
+ @State private var historyID=UUID()
+ @State private var stopping=false
  @State private var result:String?
  var body:some View {
   ScrollView {
@@ -76,14 +78,17 @@ struct ChallengeView:View {
   guard let coordinator,!busy else {return};busy=true
   defer {busy=false}
   do {
-   if try await coordinator.submit(frames) {finished=true;consent=false;camera?.stop();camera=nil;result=appText("Movement checked. Have a good morning!")}
+   if try await coordinator.submit(frames) {finished=true;consent=false;camera?.stop();camera=nil;result=appText("Movement checked. Have a good morning!");model.recordMorning(id:historyID,outcome:.openaiVerified,rehearsal:model.rehearsal)}
    else if coordinator.session.outcome == nil {message=appText("The movement could not be fully checked. You can choose another way.")}
   } catch {message=appText("The movement could not be checked right now. You can still stop.")}
  }
  private func finish(_ outcome:WakeOutcome) {
+  guard !finished,!stopping,let coordinator else {return}
+  stopping=true
   consent=false;camera?.stop();camera=nil
   Task {@MainActor in
-   do {try await coordinator?.finish(outcome);finished=true;result=outcome == .selfConfirmed ? appText("You confirmed you are awake. Have a good morning!") : (model.rehearsal ? appText("Trial ended. Your alarms are unchanged.") : appText("Alarm stopped. Take care today."))}
+   defer {stopping=false}
+   do {try await coordinator.finish(outcome);model.recordMorning(id:historyID,outcome:coordinator.session.outcome ?? outcome,rehearsal:model.rehearsal);finished=true;result=outcome == .selfConfirmed ? appText("You confirmed you are awake. Have a good morning!") : (model.rehearsal ? appText("Trial ended. Your alarms are unchanged.") : appText("Alarm stopped. Take care today."))}
    catch {message=appText("The alarm could not be stopped here. Please use the system Stop button.")}
   }
  }
