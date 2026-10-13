@@ -63,4 +63,5 @@ schemes:
       targets:
         HiMorning: all
     test:
+      gatherCoverageData: true
       targets: [HiMorningTests, HiMorningUITests]

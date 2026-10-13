@@ -28,6 +28,7 @@ struct ProView:View {
     .navigationTitle("HiMorning Pro").navigationBarTitleDisplayMode(.inline)
     .toolbar {ToolbarItem(placement:.cancellationAction) {Button(appText("Close")) {dismiss()}.accessibilityIdentifier("closePro")}}
     .task {await store.refresh()}
+    .onDisappear {Task {await store.refresh()}}
   }
  }
 }

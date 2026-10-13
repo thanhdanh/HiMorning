@@ -22,6 +22,7 @@ import StoreKitTest
   try await purchase(store)
   XCTAssertTrue(store.isPro)
   let restored=SubscriptionStore()
+  restored.start()
   try await AppStore.sync()
   await restored.refresh()
   XCTAssertTrue(restored.isPro)
@@ -52,7 +53,7 @@ import StoreKitTest
   let products=try await Product.products(for:[SubscriptionStore.monthlyProductID])
   let product=try XCTUnwrap(products.first)
   if case .success(.verified(let transaction))=try await product.purchase() {
-   await store.complete(.success(.unverified(transaction,NSError(domain:"test",code:1))))
+   await store.complete(.success(.unverified(transaction,.invalidSignature)))
    XCTAssertFalse(store.isPro)
   } else {XCTFail("Expected a verified local StoreKit test purchase")}
  }
