@@ -17,10 +17,10 @@ struct MorningProgressView:View {
    List {
     Section {
      Text(appText("Past 7 days")).font(.headline)
-     Text(appText("%lld mornings",count:days)).font(.largeTitle.bold())
+     Text(morningCountText(days)).font(.largeTitle.bold())
      ProgressView(value:Double(min(days,goal)),total:Double(goal)).tint(MorningTheme.accent)
      Picker(appText("Weekly goal"),selection:Binding(get:{goal},set:{model.setGoal($0)})) {
-      ForEach(1...7,id:\.self) {value in Text(appText("%lld mornings",count:value)).tag(value)}
+      ForEach(1...7,id:\.self) {value in Text(morningCountText(value)).tag(value)}
      }.disabled(!store.isPro || model.journal == nil)
      Text(appText("Self-confirmed mornings count too. Stopping an alarm does not count as completion.")).font(.footnote).foregroundStyle(MorningTheme.muted)
     }
@@ -41,7 +41,7 @@ struct MorningProgressView:View {
      }
     }
     Section {
-     ShareLink(item:appText("%lld mornings in the past 7 days with HiMorning. A fresh start, at my pace.",count:days)) {
+     ShareLink(item:appText(days == 1 ? "%lld morning in the past 7 days with HiMorning. A fresh start, at my pace." : "%lld mornings in the past 7 days with HiMorning. A fresh start, at my pace.",count:days)) {
       Label(appText("Share my progress"),systemImage:"square.and.arrow.up")
      }
      Button(appText("Clear history"),role:.destructive) {clear=true}.disabled(model.journal == nil)

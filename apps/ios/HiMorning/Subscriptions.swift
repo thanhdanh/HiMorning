@@ -9,6 +9,7 @@ import HiMorningCore
  private var updates:Task<Void,Never>?
  private var statuses:Task<Void,Never>?
  private var generation=0
+ private var refreshing:Task<Void,Never>?
  var isPro:Bool {access == .pro}
  func start() {
   guard updates == nil else {return}
@@ -29,6 +30,17 @@ import HiMorningCore
  }
  func refresh() async {
   generation+=1;let request=generation
+  let previous=refreshing
+  let task=Task { [weak self] in
+   await previous?.value
+   guard let self else {return}
+   await self.refreshOnce()
+  }
+  refreshing=task
+  await task.value
+  if request==generation {refreshing=nil}
+ }
+ private func refreshOnce() async {
   var next=MorningAccess.free
   for await result in Transaction.currentEntitlements {
    guard case .verified(let transaction)=result,transaction.productID==Self.monthlyProductID,
@@ -45,7 +57,6 @@ import HiMorningCore
    }
    if MorningAccess.verifiedPeriod(expiresAt:current.expirationDate,graceUntil:grace) == .pro {next = .pro}
   }
-  guard request==generation else {return}
   access=next
   if isPro {message=nil}
  }
@@ -61,5 +72,5 @@ import HiMorningCore
   @unknown default:message=appText("The purchase could not finish. Please try again.")
   }
  }
- deinit {updates?.cancel();statuses?.cancel()}
+ deinit {updates?.cancel();statuses?.cancel();refreshing?.cancel()}
 }

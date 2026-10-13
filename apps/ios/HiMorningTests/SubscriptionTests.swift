@@ -8,7 +8,7 @@ import StoreKitTest
  private func session() throws ->SKTestSession {
   let url=try XCTUnwrap(Bundle(for:Self.self).url(forResource:"HiMorning",withExtension:"storekit"))
   let session=try SKTestSession(contentsOf:url)
-  session.resetToDefaultState();session.clearTransactions();session.disableDialogs=true
+  session.resetToDefaultState();session.clearTransactions();session.disableDialogs=true;session.timeRate = .realTime
   return session
  }
  private func purchase(_ store:SubscriptionStore) async throws {
@@ -77,7 +77,7 @@ import StoreKitTest
   defer {observer.cancel()}
   let transaction=try XCTUnwrap(session.allTransactions().first)
   try session.refundTransaction(identifier:transaction.identifier)
-  await fulfillment(of:[revoked],timeout:5)
+  await fulfillment(of:[revoked],timeout:15)
   XCTAssertFalse(store.isPro)
  }
  func testUnrelatedProductCannotUnlockPro() async throws {

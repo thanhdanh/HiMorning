@@ -121,3 +121,5 @@
 "Your progress could not be saved. Your alarm is already stopped." = "Your progress could not be saved. Your alarm is already stopped.";
 "Your goal could not be saved. Please try again." = "Your goal could not be saved. Please try again.";
 "Your history could not be cleared. Please try again." = "Your history could not be cleared. Please try again.";
+"%lld morning" = "%lld morning";
+"%lld morning in the past 7 days with HiMorning. A fresh start, at my pace." = "%lld morning in the past 7 days with HiMorning. A fresh start, at my pace.";

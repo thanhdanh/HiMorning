@@ -121,3 +121,5 @@
 "Your progress could not be saved. Your alarm is already stopped." = "Không lưu được tiến độ. Báo thức đã dừng.";
 "Your goal could not be saved. Please try again." = "Không lưu được mục tiêu. Bạn thử lại nhé.";
 "Your history could not be cleared. Please try again." = "Không xóa được lịch sử. Bạn thử lại nhé.";
+"%lld morning" = "%lld buổi sáng";
+"%lld morning in the past 7 days with HiMorning. A fresh start, at my pace." = "%lld buổi sáng trong 7 ngày qua cùng HiMorning. Khởi đầu mới, theo nhịp của mình.";
