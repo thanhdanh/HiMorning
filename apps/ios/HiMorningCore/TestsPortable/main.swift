@@ -221,4 +221,5 @@ func testSharedMobileFixtures() throws {
 }
 try testSharedMobileFixtures()
 
-print("PASS: 15 portable Swift domain and integration journeys")
+try runMorningTests()
+print("PASS: 20 portable Swift domain and integration journeys")
