@@ -28,8 +28,12 @@ import StoreKitTest
   try await AppStore.sync()
   await restored.refresh()
   XCTAssertTrue(restored.isPro)
+  let refunded=expectation(description:"Restored access is revoked")
+  let observer=restored.$access.dropFirst().filter {$0 == .free}.prefix(1).sink {_ in refunded.fulfill()}
+  defer {observer.cancel()}
   let transaction=try XCTUnwrap(session.allTransactions().first)
   try session.refundTransaction(identifier:transaction.identifier)
+  await fulfillment(of:[refunded],timeout:15)
   await restored.refresh()
   XCTAssertFalse(restored.isPro)
  }
