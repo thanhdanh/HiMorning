@@ -4,7 +4,8 @@ HiMorning uses native iOS code for alarms and camera access, Firebase for a smal
 backend, and OpenAI to check consented movement evidence. Each part has a clear job.
 
 **Status:** Pilot source and contract tests are implemented. No cloud deployment
-or real inference benchmark has been run.
+or exercise-accuracy benchmark has been run. A separate [local Qwen check](LM-STUDIO.md)
+confirms synthetic image/JSON compatibility; the app adapter remains unchanged.
 
 The proposed next direction evaluates the user-selected bartowski Qwen3.5-9B GGUF
 with its vision projector through LM Studio headless. Short rhythm and English

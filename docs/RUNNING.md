@@ -57,6 +57,13 @@ Native scope: create alarms, weekday repeats, three modes, on/off/delete, sound
 preview, language selection, rehearsal, consented camera, one cloud submission,
 self-confirm and stop. Editing, QR, native snooze/countdown and history are planned.
 
+## Local Qwen integration
+
+The user's LM Studio server at `http://localhost:1235/v1` passed synthetic vision
+and JSON checks. See the [local server guide](LM-STUDIO.md) for tested request
+settings and the remaining adapter/emulator work. The native app still uses the
+current default-off OpenAI path; starting LM Studio alone does not switch it.
+
 ## Optional Firebase setup
 
 Do this only when ready for real cloud testing:

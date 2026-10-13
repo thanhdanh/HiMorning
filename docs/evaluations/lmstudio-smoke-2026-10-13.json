@@ -1,0 +1,193 @@
+{
+  "status": "Local compatibility smoke check, not exercise accuracy benchmark or deployed integration",
+  "captured_at_utc": "2026-10-13T01:53:07.230740+00:00",
+  "local_date": "2026-10-13",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "source_commit": "95ca78c753d4b136d6d008a1b3deafd7d7ff3a7a",
+  "base_url": "http://localhost:1235/v1",
+  "model_id": "qwen_qwen3.5-9b",
+  "quantization_reported_by_v0": "Q4_K_S",
+  "vision_reported_by_v1": true,
+  "reasoning_options_reported_by_v1": [
+    "off",
+    "on"
+  ],
+  "reasoning_default_reported_by_v1": "on",
+  "context_observations": {
+    "v0_loaded_context_length_while_loading": 8192,
+    "v1_loaded_instance_config_context_length": 262144,
+    "note": "Different endpoints/states reported different values. Actual allocation and effective request context were not independently verified."
+  },
+  "remaining_ttl_seconds_observed": 3599,
+  "unrecorded": [
+    "LM Studio/runtime version",
+    "GGUF and projector hashes",
+    "hardware RAM/VRAM allocation",
+    "cold-load/inference timing breakdown"
+  ],
+  "fixtures": "Synthetic 512x256 JPEGs: red circle and blue square on a light background; reversed left/right positions for ordering; five distinct no-person variations for the negative case. No user media.",
+  "cases": [
+    {
+      "id": "single",
+      "goal": "Single image with default reasoning and strict schema",
+      "endpoint": "/v1/chat/completions",
+      "http_status": 200,
+      "elapsed_seconds": 24.919542,
+      "finish_reason": "length",
+      "strict_json_content": false,
+      "parsed_output": null,
+      "usage": {
+        "prompt_tokens": 181,
+        "completion_tokens": 256,
+        "reasoning_tokens": 256,
+        "total_tokens": 437
+      },
+      "request_sha256": "313b7b30fc886119a45e272b79ea48c4208f7b677dd183e48f0888f1feaaae91",
+      "matches_expected_shape_answers": false
+    },
+    {
+      "id": "ordered",
+      "goal": "Two ordered images with default reasoning and strict schema",
+      "endpoint": "/v1/chat/completions",
+      "http_status": 200,
+      "elapsed_seconds": 6.946677,
+      "finish_reason": "stop",
+      "strict_json_content": true,
+      "parsed_output": {
+        "first_circle_side": "left",
+        "second_circle_side": "right"
+      },
+      "usage": {
+        "prompt_tokens": 312,
+        "completion_tokens": 206,
+        "reasoning_tokens": 187,
+        "total_tokens": 518
+      },
+      "request_sha256": "2074ff9b714b443c568676df6bc34a37036ad5f83865f3cede3f4cb550cca0c5",
+      "matches_expected_shape_answers": true
+    },
+    {
+      "id": "single-no-thinking",
+      "goal": "Single image with chat_template_kwargs.enable_thinking=false",
+      "endpoint": "/v1/chat/completions",
+      "http_status": 200,
+      "elapsed_seconds": 6.235284,
+      "finish_reason": "length",
+      "strict_json_content": false,
+      "parsed_output": null,
+      "usage": {
+        "prompt_tokens": 181,
+        "completion_tokens": 256,
+        "reasoning_tokens": 256,
+        "total_tokens": 437
+      },
+      "request_sha256": "6d7957c5b7bb81e68d9e527f45be8fedea80e469fbfecafcf39b7a7a17728f92",
+      "matches_expected_shape_answers": false
+    },
+    {
+      "id": "native-no-thinking",
+      "goal": "Native API reasoning=off, JSON requested in prompt only",
+      "endpoint": "/api/v1/chat",
+      "http_status": 200,
+      "elapsed_seconds": 3.50794,
+      "finish_reason": null,
+      "strict_json_content": false,
+      "parsed_output": null,
+      "usage": {
+        "prompt_tokens": 183,
+        "completion_tokens": 41,
+        "reasoning_tokens": 0,
+        "total_tokens": 224
+      },
+      "request_sha256": "71521a32f60fc2b5703823f26b5ac26a3864500b64272133983105dd7db12c09",
+      "format_observed": "Markdown-fenced array; did not meet the requested bare object format"
+    },
+    {
+      "id": "effort-none",
+      "goal": "Single image with reasoning_effort=none and strict schema",
+      "endpoint": "/v1/chat/completions",
+      "http_status": 200,
+      "elapsed_seconds": 1.892208,
+      "finish_reason": "stop",
+      "strict_json_content": true,
+      "parsed_output": {
+        "circle_color": "red",
+        "circle_side": "left",
+        "square_color": "blue",
+        "square_side": "right"
+      },
+      "usage": {
+        "prompt_tokens": 183,
+        "completion_tokens": 40,
+        "reasoning_tokens": 0,
+        "total_tokens": 223
+      },
+      "request_sha256": "c29473a45ebf9b4ca47288d4718037422d59c3c2d5e7f6b4f6f62489250da4e2",
+      "matches_expected_shape_answers": true
+    },
+    {
+      "id": "ordered-no-thinking",
+      "goal": "Two ordered images with reasoning_effort=none and strict schema",
+      "endpoint": "/v1/chat/completions",
+      "http_status": 200,
+      "elapsed_seconds": 1.423475,
+      "finish_reason": "stop",
+      "strict_json_content": true,
+      "parsed_output": {
+        "first_circle_side": "left",
+        "second_circle_side": "right"
+      },
+      "usage": {
+        "prompt_tokens": 314,
+        "completion_tokens": 17,
+        "reasoning_tokens": 0,
+        "total_tokens": 331
+      },
+      "request_sha256": "9fac42b0e1681a90b790b8a5fc73a3a0ef5c21058097efea8847116f4ac11395",
+      "matches_expected_shape_answers": true
+    },
+    {
+      "id": "negative",
+      "goal": "Five non-human frames with existing push-up prompt/schema",
+      "endpoint": "/v1/chat/completions",
+      "http_status": 200,
+      "elapsed_seconds": 6.083368,
+      "finish_reason": "stop",
+      "strict_json_content": true,
+      "parsed_output": {
+        "status": "uncertain",
+        "reps": [],
+        "cue": "adjust_camera"
+      },
+      "usage": {
+        "prompt_tokens": 871,
+        "completion_tokens": 30,
+        "reasoning_tokens": 0,
+        "total_tokens": 901
+      },
+      "request_sha256": "63ee17d72880fc5400840bc83efd1eaa3cabe5d156a6d2bcbca4fc46fdc391bb",
+      "backend_decision": {
+        "status": "uncertain",
+        "reasonCode": "unclear_evidence",
+        "verifiedRepCount": 0,
+        "cue": "adjust_camera"
+      },
+      "backend_decision_check": "Executed existing verdictSchema.safeParse and decide with five synthetic evidence frames; no verified result"
+    }
+  ],
+  "inference_usage": {
+    "prompt_tokens": 2225,
+    "completion_tokens": 846,
+    "reasoning_tokens": 699,
+    "total_tokens": 3071
+  },
+  "development_agent_tokens": "Separate; not collected by this smoke check",
+  "usd_cost": null,
+  "limits": [
+    "One observation per case; no p50/p95 or controlled speed comparison",
+    "No real exercise clips, liveness proof, pose safety, speech or dance evaluation",
+    "No 15/25-frame or concurrency load test",
+    "No Firebase adapter/config/consent/outcome migration or iPhone connection",
+    "No automatic provider retry or OpenAI fallback was used"
+  ]
+}

@@ -3,10 +3,11 @@
 Reduce the cost of movement checks and give people a useful choice when exercise
 is not right for their morning. Keep the alarm and its exit controls local.
 
-**Status:** Proposed, 13 October 2026. **Audience:** Product and engineering.
-The running source still uses the OpenAI adapter with cloud verification off by
-default. Qwen, a self-hosted endpoint and the new challenges below are not
-implemented or benchmarked. The [product brief](PRODUCT-BRIEF.md) proposes rhythm
+**Status:** Proposed integration; local API compatibility checked on 13 October
+2026. **Audience:** Product and engineering. The running source still uses the
+OpenAI adapter with cloud verification off by default. The user's LM Studio server
+passed bounded synthetic vision/JSON checks; Qwen is not wired into the app and
+exercise accuracy is unmeasured. The new challenges below are not implemented. The [product brief](PRODUCT-BRIEF.md) proposes rhythm
 and practical English activities as the main differentiation experiments.
 
 ## At a glance
@@ -211,12 +212,18 @@ Reviewed the existing provider port, OpenAI adapter, Firebase entry point, evide
 contract and Swift outcomes, plus the primary sources linked above. The current
 consent and `openai_verified` outcome are provider-specific, so swapping only a URL
 would leave misleading behavior. No server was installed, no user frames were sent,
-and no hardware, model accuracy or inference price was measured in this review.
+and no hardware, model accuracy or inference price was measured in the original
+review. A later [local compatibility check](LM-STUDIO.md) exercised the user's
+`localhost:1235` server with synthetic shapes, preserved truncated-output failures,
+and found working vision/JSON with `reasoning_effort: "none"`. It is not an
+exercise benchmark or a completed provider migration.
 
 ## Limits and next steps
 
-Confirm the downloaded 9B quantization, matching projector, available GPU/RAM and
-runtime, then smoke-test one image and an ordered image batch on that exact host.
+The local server reports `qwen_qwen3.5-9b`, `Q4_K_S` and working synthetic vision.
+Record the exact runtime/model hashes and hardware, then benchmark real recordings
+and 5/15/25-frame batches. Follow the [local integration steps](LM-STUDIO.md) for
+the adapter, consent/outcome migration, warm-model behavior and emulator route.
 Evaluate consented recordings before replacing the verifier. Prototype Read & Choose
 and guided rhythm to test appeal separately from model quality; keep QR as a small
 fallback milestone. Implement only the selected tasks in reviewable changes, with
