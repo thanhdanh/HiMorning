@@ -2,7 +2,8 @@
 
 Keep the path from the owner's $2–3 monthly budget to tested access rules visible.
 
-**Status:** Local progress and expiry/grace policy GREEN; native billing validation in progress.
+**Status:** GREEN for the pilot scope. [Source CI](https://github.com/thanhdanh/HiMorning/actions/runs/38409856341)
+passed at `7cede1f8e942e650d1ccfc83ab6292c0f68b09a6`.
 **Audience:** Reviewer and AI-engineering case-study reader. **Date:** 13 October 2026.
 
 ## Source and journeys
@@ -34,6 +35,11 @@ price is $2.99/month. [Business model](../BUSINESS-MODEL.md) and
 | [Refund notification timing](https://github.com/thanhdanh/HiMorning/actions/runs/38408494007) | Restore, expiry and automatic refund updates passed; one post-refund assertion ran before asynchronous revocation arrived. The restore journey now awaits the actual access update before asserting |
 | [Native restore feedback](https://github.com/thanhdanh/HiMorning/actions/runs/38405867640) | Expiry and automatic refund updates passed; the restore/refund journey had two state assertions fail. Revalidation follows serialized refresh and an explicit real-time test clock |
 
+The final source run passed **21 portable Swift journeys, 10 Swift package tests,
+5 native StoreKit tests and 6 bilingual UI tests**. Both CI jobs succeeded.
+The native StoreKit suite completed in 2.446 seconds; this test-environment timing
+is not a real-device purchase latency benchmark.
+
 An initial compiler module-cache permission error was an environment preflight
 failure and is not counted as RED. Retrying the approved Swift harness with cache
 access produced the intended missing-feature compile failure.
@@ -50,8 +56,8 @@ access produced the intended missing-feature compile failure.
 | Corrupt storage is not silently reset; failed writes do not change memory | Fourth/fifth journeys | PASS locally |
 | Copy keys and placeholders match in English/Vietnamese | `pnpm exec vitest run tests/localization.test.ts` | 3 tests PASS locally |
 | Existing backend checks remain intact | Pre-push `pnpm run typecheck` and `pnpm test` | PASS; 52 non-emulator tests |
-| Purchase/restore/refund, cancellation versus expiry, pending/cancel, unverified and wrong products, automatic refund updates | `HiMorningTests/SubscriptionTests.swift` | Native CI pending |
-| Progress/Pro discovery in both languages, plus existing alarm/rehearsal recovery | `HiMorningUITests/PilotUITests.swift` | Native CI pending |
+| Purchase/restore/refund, cancellation versus expiry, pending/cancel, unverified and wrong products, automatic refund updates | `HiMorningTests/SubscriptionTests.swift` | PASS in source CI |
+| Progress/Pro discovery in both languages, plus existing alarm/rehearsal recovery | `HiMorningUITests/PilotUITests.swift` | PASS in source CI |
 
 Paths in the table are under `apps/ios/HiMorningCore` or `apps/ios` unless a command
 names a root test. Native tests use StoreKitTest's local configuration, not real
@@ -66,9 +72,12 @@ Executed locally with `sh scripts/test-swift.sh`:
 | New `Morning.swift` | 100% (49 lines) | 97.87% |
 | Swift core total | 98.23% (283 lines) | 86.45% |
 
-LLVM reports regions here, not branch coverage. Native application coverage is
-exported separately in the successful Xcode job's `native-coverage.json`; no
-native percentage is claimed until that report is available.
+LLVM reports regions here, not branch coverage. Native coverage is a separate instrumented run: **Subscriptions.swift 98.82%
+(84/85 lines)** and **HiMorning.app 78.60% overall**. The broader app remains below
+80%, including hardware paths; these results do not certify a public release.
+The native UI run alone covers less of the Swift core than the independent
+portable harness. Do not combine their percentages or relabel core coverage as
+whole-app coverage. See [coverage evidence](../evaluations/monthly-pro-coverage-2026-10-13.json).
 
 The first native implementation run built successfully and passed all six UI
 journeys, but StoreKitTest could not save its configuration on the selected iOS
