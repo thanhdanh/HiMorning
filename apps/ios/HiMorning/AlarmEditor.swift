@@ -10,35 +10,113 @@ struct AlarmEditor:View {
  @State private var volume:Double=0.3
  @State private var player:AVAudioPlayer?
  let save:(AlarmTime,WakeMode,AlarmSound)->Void
+ private let weekdays=[2,3,4,5,6,7,1]
+ private var dayNames:[String] {[appText("Sun"),appText("Mon"),appText("Tue"),appText("Wed"),appText("Thu"),appText("Fri"),appText("Sat")]}
  var body:some View {
   NavigationStack {
-   Form {
-    DatePicker(appText("Wake-up time"),selection:$time,displayedComponents:.hourAndMinute).datePickerStyle(.wheel)
-    Section(appText("Your morning")) {
-     Picker(appText("Mode"),selection:$mode) {ForEach(WakeMode.allCases,id:\.self) {Text($0.title).tag($0)}}
-     Text(mode.explanation).font(.footnote)
-     Text(appText("You can always confirm you are awake or stop.")).font(.footnote).foregroundStyle(.secondary)
-    }
-    Section(appText("Repeat")) {
-     ForEach(Array([appText("Sun"),appText("Mon"),appText("Tue"),appText("Wed"),appText("Thu"),appText("Fri"),appText("Sat")].enumerated()),id:\.offset) {i,name in Toggle(name,isOn:Binding(get:{days.contains(i+1)},set:{if $0 {days.insert(i+1)} else {days.remove(i+1)}}))}
-     Text(days.isEmpty ? appText("Rings once") : appText("Uses your phone’s local time")).font(.footnote)
-    }
-    Section(appText("Sound")) {
-     Picker(appText("Alarm sound"),selection:$sound) {ForEach(AlarmSound.allCases,id:\.self) {Text($0.title).tag($0)}}
-     if sound != .system {
-      Button(appText("Preview sound")) {preview()}
-      Slider(value:$volume,in:0...0.7).accessibilityLabel(appText("Preview volume")).onChange(of:volume) {_,value in player?.volume=Float(value)}
+   ScrollView {
+    VStack(alignment:.leading,spacing:20) {
+     Text(appText("Wake-up time")).font(.subheadline.weight(.semibold)).foregroundStyle(MorningTheme.muted)
+     DatePicker(appText("Wake-up time"),selection:$time,displayedComponents:.hourAndMinute)
+      .datePickerStyle(.wheel).labelsHidden().frame(height:150).clipped()
+      .frame(maxWidth:.infinity).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:20))
+     VStack(alignment:.leading,spacing:10) {
+      Text(appText("Repeat")).font(.subheadline.weight(.semibold)).foregroundStyle(MorningTheme.muted)
+      LazyVGrid(columns:[GridItem(.adaptive(minimum:44),spacing:4)],spacing:8) {
+       ForEach(weekdays,id:\.self) {day in
+        Button {if days.contains(day) {days.remove(day)} else {days.insert(day)}} label: {
+         Text(dayNames[day-1]).font(.subheadline.weight(.semibold)).frame(maxWidth:.infinity,minHeight:44)
+          .foregroundStyle(days.contains(day) ? MorningTheme.onYellow : MorningTheme.muted)
+          .background(days.contains(day) ? MorningTheme.yellow : MorningTheme.soft,in:Circle())
+        }.buttonStyle(.plain).accessibilityAddTraits(days.contains(day) ? .isSelected : [])
+       }
+      }
+      Text(days.isEmpty ? appText("Rings once") : appText("Uses your phone’s local time")).font(.caption).foregroundStyle(MorningTheme.muted)
      }
-     Text(appText("This slider changes the preview only. The alarm uses system volume. Please check it on your phone.")).font(.footnote).foregroundStyle(.secondary)
-    }
-   }.navigationTitle(appText("New alarm"))
-   .toolbar {ToolbarItem(placement:.cancellationAction) {Button(appText("Cancel")) {player?.stop();dismiss()}};ToolbarItem(placement:.confirmationAction) {Button(appText("Save")) {let c=Calendar.current.dateComponents([.hour,.minute],from:time);if let value=try? AlarmTime(hour:c.hour ?? 6,minute:c.minute ?? 30,weekdays:days) {save(value,mode,sound);player?.stop();dismiss()}}}}
-   .onDisappear {player?.stop()}
+     VStack(alignment:.leading,spacing:12) {
+      Text(appText("Your morning")).font(.subheadline.weight(.semibold)).foregroundStyle(MorningTheme.muted)
+      HStack(spacing:4) {
+       ForEach(WakeMode.allCases,id:\.self) {value in
+        Button {mode=value} label: {
+         VStack(spacing:8) {
+          Image(systemName:value == .gentle ? "leaf" : value == .balanced ? "sun.max" : "bolt")
+          Text(value.title).font(.subheadline.weight(.semibold)).multilineTextAlignment(.center)
+         }.padding(10).frame(maxWidth:.infinity,minHeight:72)
+          .background(mode == value ? MorningTheme.surface : .clear,in:RoundedRectangle(cornerRadius:12))
+        }.buttonStyle(.plain).accessibilityIdentifier("mode-"+value.rawValue)
+         .accessibilityAddTraits(mode == value ? .isSelected : [])
+       }
+      }.padding(4).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:16))
+      Text(mode.explanation).font(.subheadline).accessibilityIdentifier("modeExplanation")
+      Text(appText("You can always confirm you are awake or stop.")).font(.footnote).foregroundStyle(MorningTheme.muted)
+     }
+     NavigationLink {
+      SoundSelection(sound:$sound,volume:$volume,preview:preview,stopPreview:{player?.stop()})
+     } label: {
+      HStack(spacing:12) {
+       Image(systemName:"music.note")
+       Text(appText("Sound"))
+       Spacer()
+       Text(sound.title).font(.subheadline).foregroundStyle(MorningTheme.muted)
+       Image(systemName:"chevron.right").font(.caption)
+      }.padding(16).background(MorningTheme.surface,in:RoundedRectangle(cornerRadius:16))
+       .overlay {RoundedRectangle(cornerRadius:16).strokeBorder(MorningTheme.line)}
+     }.buttonStyle(.plain).accessibilityIdentifier("chooseSound")
+    }.padding(20)
+   }.background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink)
+   .navigationTitle(appText("New alarm")).navigationBarTitleDisplayMode(.inline)
+   .toolbar(.visible,for:.navigationBar).toolbarBackground(MorningTheme.canvas,for:.navigationBar).toolbarBackground(.visible,for:.navigationBar)
+   .toolbar {ToolbarItem(placement:.cancellationAction) {Button(appText("Cancel")) {player?.stop();dismiss()}}}
+   .safeAreaInset(edge:.bottom) {
+    Button(appText("Save")) {
+     let c=Calendar.current.dateComponents([.hour,.minute],from:time)
+     if let value=try? AlarmTime(hour:c.hour ?? 6,minute:c.minute ?? 30,weekdays:days) {save(value,mode,sound);player?.stop();dismiss()}
+    }.buttonStyle(MorningButtonStyle()).padding(.horizontal,20).padding(.vertical,12).background(MorningTheme.canvas)
+   }
+   .tint(MorningTheme.accent).onDisappear {player?.stop()}
+   .onChange(of:volume) {_,value in player?.volume=Float(value)}
   }
  }
  private func preview() {
   player?.stop()
   guard let url=Bundle.main.url(forResource:sound.rawValue,withExtension:"wav"),let audio=try? AVAudioPlayer(contentsOf:url) else {return}
   player=audio;audio.volume=Float(volume);audio.play()
+ }
+}
+private struct SoundSelection:View {
+ @Binding var sound:AlarmSound
+ @Binding var volume:Double
+ let preview:()->Void
+ let stopPreview:()->Void
+ var body:some View {
+  ScrollView {
+   VStack(alignment:.leading,spacing:24) {
+    Text(appText("Choose a sound for your morning.")).font(.title2.weight(.semibold))
+    VStack(spacing:0) {
+     ForEach(AlarmSound.allCases,id:\.self) {value in
+      Button {stopPreview();sound=value} label: {
+       HStack(spacing:14) {
+        Image(systemName:value == .system ? "alarm" : value == .sunrise ? "sunrise" : "music.note")
+         .frame(width:44,height:44).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:12))
+        Text(value.title).font(.body.weight(.medium))
+        Spacer()
+        Image(systemName:sound == value ? "checkmark.circle.fill" : "circle").foregroundStyle(MorningTheme.accent)
+       }.padding(.vertical,14).contentShape(Rectangle())
+      }.buttonStyle(.plain).accessibilityIdentifier("sound-"+value.rawValue).accessibilityAddTraits(sound == value ? .isSelected : [])
+      Divider().overlay(MorningTheme.line)
+     }
+    }
+    if sound != .system {
+     Button(action:preview) {Label(appText("Preview sound"),systemImage:"play.fill")}.buttonStyle(MorningButtonStyle(primary:false))
+     VStack(alignment:.leading,spacing:12) {
+      Text(appText("Preview volume")).font(.subheadline.weight(.semibold))
+      Slider(value:$volume,in:0...0.7).accessibilityLabel(appText("Preview volume")).accessibilityIdentifier("previewVolume")
+     }
+    }
+    Text(appText("This slider changes the preview only. The alarm uses system volume. Please check it on your phone.")).font(.footnote).foregroundStyle(MorningTheme.muted)
+   }.padding(20)
+  }.background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink)
+   .navigationTitle(appText("Sound")).navigationBarTitleDisplayMode(.inline).tint(MorningTheme.accent)
+   .onDisappear(perform:stopPreview)
  }
 }

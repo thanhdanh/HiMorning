@@ -57,6 +57,13 @@ Native scope: create alarms, weekday repeats, three modes, on/off/delete, sound
 preview, language selection, rehearsal, consented camera, one cloud submission,
 self-confirm and stop. Editing, QR, native snooze/countdown and history are planned.
 
+## Local Qwen integration
+
+The user's LM Studio server at `http://localhost:1235/v1` passed synthetic vision
+and JSON checks. See the [local server guide](LM-STUDIO.md) for tested request
+settings and the remaining adapter/emulator work. The native app still uses the
+current default-off OpenAI path; starting LM Studio alone does not switch it.
+
 ## Optional Firebase setup
 
 Do this only when ready for real cloud testing:
@@ -74,6 +81,13 @@ leaves cloud unavailable while local alarms remain usable.
 Enable TTL on `deleteAt` for `verificationSessions`, `attempts` and `quotaBuckets`.
 TTL is not enabled by this repo and cleanup is not immediate. No image Storage
 bucket is required. Deployment and billing have not been performed in this work.
+
+## Rehearse without setting an alarm
+
+From an empty Home, choose **Try a challenge**. The sample uses Balanced mode and
+06:30 for display; it does not create or stop an OS alarm. Consent is still required
+before cloud/camera work. With no Firebase configuration, the unavailable state
+keeps self-confirm and end-trial actions available. See the [screen gallery](UI-DESIGN.md#native-screens).
 
 ## Preview the earlier design study
 

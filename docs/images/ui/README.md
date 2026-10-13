@@ -1,33 +1,55 @@
 # Native screen captures
 
-These images let reviewers see the current pilot in English and Vietnamese.
+See the implemented pilot before bed and through a safe rehearsal, in both
+English and Vietnamese.
 
-**Status:** Actual, unedited XCUITest screenshots. **Audience:** Product and code
-reviewers. The editor images show the top of a scrollable form; remaining weekdays
-and sound controls are below the viewport.
+**Status:** 20 actual, unedited XCUITest screenshots: 10 screens/states in two
+languages. **Audience:** Product and code reviewers. These are simulator captures,
+not generated mockups or a claim of 20 distinct product screens.
 
 ## Capture details
 
 | Field | Source |
 |---|---|
-| CI | [Run 38155392322](https://github.com/thanhdanh/HiMorning/actions/runs/38155392322), both jobs passed |
-| Source commit | `72e1bb9b7b1396c75bee8bfe6e7276952003e05d` |
-| Capture date | 11 October 2026, 16:28–16:29 UTC |
-| Simulator | iPhone 17 Pro, iOS 26.4; Xcode 26.6 |
+| CI | [Run 38293447198](https://github.com/thanhdanh/HiMorning/actions/runs/38293447198), both jobs passed |
+| Source commit | `f648f9151c38abe40190dc69a8d09d601e22ebb6` |
+| Capture date | 12 October 2026, 18:52:46–18:54:18 UTC; 13 October in Vietnam |
+| Simulator | iPhone 17 Pro, iOS 26.4.1; Xcode 26.6 |
 | Artifact | `ios-ui-evidence`, exported from `/tmp/himorning-ui.xcresult` |
-| Image size | 1206 × 2622 PNG, copied without resizing or retouching |
+| Image size | 1206 × 2622 PNG; copied byte-for-byte without resizing or retouching |
+
+The artifact's `manifest.json` connects attachment names, exported filenames and
+test identifiers. All 20 expected names were present, were not marked as failure
+attachments, and matched the committed PNG bytes. The files remain in Git after
+the temporary CI artifact expires. Earlier four-image evidence remains available
+at [commit 9aa77d7](https://github.com/thanhdanh/HiMorning/tree/9aa77d7/docs/images/ui).
 
 ## What each image shows
 
-| Image / attachment name | UI test |
-|---|---|
-| [home-en](home-en.png), [alarm-editor-en](alarm-editor-en.png) | `testEnglishGentleDefaultAndCancelWithoutPermissions` |
-| [home-vi](home-vi.png), [alarm-editor-vi](alarm-editor-vi.png) | `testVietnameseGentleDefaultAndCancelWithoutPermissions` |
+| State | English | Vietnamese |
+|---|---|---|
+| Empty home | [home-en](home-en.png) | [home-vi](home-vi.png) |
+| New alarm, Gentle | [alarm-editor-en](alarm-editor-en.png) | [alarm-editor-vi](alarm-editor-vi.png) |
+| Balanced mode | [balanced-en](balanced-en.png) | [balanced-vi](balanced-vi.png) |
+| Focused mode | [focused-en](focused-en.png) | [focused-vi](focused-vi.png) |
+| Sound choices and preview volume | [sounds-en](sounds-en.png) | [sounds-vi](sounds-vi.png) |
+| Rehearsal ready | [challenge-ready-en](challenge-ready-en.png) | [challenge-ready-vi](challenge-ready-vi.png) |
+| Camera/cloud consent | [consent-en](consent-en.png) | [consent-vi](consent-vi.png) |
+| AI unavailable | [ai-unavailable-en](ai-unavailable-en.png) | [ai-unavailable-vi](ai-unavailable-vi.png) |
+| Self-confirmed | [self-confirmed-en](self-confirmed-en.png) | [self-confirmed-vi](self-confirmed-vi.png) |
+| Trial ended | [stopped-en](stopped-en.png) | [stopped-vi](stopped-vi.png) |
 
-The attachment names map to exported filenames through the artifact's
-`manifest.json`. Both journeys open the editor, check the Gentle copy and cancel.
-A third test checks that the chosen language survives relaunch. The four committed
-images remain available after the temporary CI artifact expires.
+The first five states come from `testEnglishGentleDefaultAndCancelWithoutPermissions`
+and `testVietnameseGentleDefaultAndCancelWithoutPermissions`. The remaining states
+come from `testEnglishBrandAndRehearsalRecovery` and
+`testVietnameseBrandAndRehearsalRecovery`. A fifth test checks saved language after
+relaunch. All five passed with zero failures.
+
+Rehearsal uses a transient Balanced sample at 06:30, without scheduling an alarm.
+The unavailable state comes from the real unconfigured cloud path, not a fake AI
+answer. Self-confirmation and ending the trial are explicit local outcomes. The
+consent screen names OpenAI because that remains the implemented adapter; the
+[Qwen replacement](../../AI-AND-CHALLENGES-PLAN.md) is proposed, not deployed.
 
 ## Reproduce
 
@@ -41,8 +63,10 @@ xcrun xcresulttool export attachments --path /tmp/himorning-ui.xcresult \
   --output-path /tmp/himorning-ui-attachments
 ```
 
-Use a fresh result-bundle path for each run. Status-bar times can differ. No
-camera, alarm permission or cloud inference is involved in these captures.
+Use a fresh result-bundle path for each run. Status-bar times can differ. None of
+these journeys grants camera or alarm permission or sends frames for inference.
+Selecting a custom sound exposes the preview controls; screenshots do not prove
+that the sound plays correctly on a physical device.
 
 ## Limits and next steps
 
@@ -50,4 +74,5 @@ These images do not validate physical-device alarm delivery, camera accuracy,
 sound, VoiceOver, large text or dark mode. They show the native pilot, not every
 screen in the earlier web concept or a planned Android app.
 
-[UI guide](../../UI-DESIGN.md) · [Architecture](../../ARCHITECTURE.md)
+[UI guide](../../UI-DESIGN.md) · [Architecture](../../ARCHITECTURE.md) ·
+[Executed design RED/GREEN](../../tdd/native-design-parity.tdd.md)

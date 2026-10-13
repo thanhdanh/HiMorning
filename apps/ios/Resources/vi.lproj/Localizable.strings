@@ -82,3 +82,7 @@
 "Your alarms could not be checked. Please check alarm access." = "Chưa kiểm tra được lịch hệ thống. Hãy kiểm tra quyền báo thức.";
 "Your morning" = "Nhịp buổi sáng";
 "Your saved alarms could not be read. Changes are paused." = "Không đọc được lịch đã lưu. Chưa thể thay đổi báo thức.";
+"Choose a sound for your morning." = "Chọn âm thanh cho buổi sáng của bạn.";
+"Practice only. Your alarms stay as they are." = "Chỉ là buổi thử. Báo thức của bạn không thay đổi.";
+"End trial" = "Kết thúc buổi thử";
+"Trial ended. Your alarms are unchanged." = "Đã kết thúc buổi thử. Báo thức không thay đổi.";

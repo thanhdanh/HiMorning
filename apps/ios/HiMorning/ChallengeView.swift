@@ -22,23 +22,37 @@ struct ChallengeView:View {
  @State private var finished=false
  @State private var result:String?
  var body:some View {
-  VStack(spacing:24) {
-   Text(model.rehearsal ? appText("Try a challenge") : appText("Good morning ☀️")).font(.title.bold())
-   if let camera {CameraPreview(capture:camera).clipShape(RoundedRectangle(cornerRadius:28)).overlay(alignment:.bottom){Text("\(reps) / \(alarm.mode.policy.reps)").font(.largeTitle.bold()).padding().background(.regularMaterial,in:Capsule()).padding()}}
-   else {Image(systemName:"sun.max.fill").font(.system(size:80)).foregroundStyle(.orange).frame(maxHeight:.infinity)}
-   Text(result ?? message).multilineTextAlignment(.center).accessibilityIdentifier("challengeMessage")
-   if alarm.mode.policy.reps>0 && camera == nil && !finished {
-    Button(appText("Start AI challenge")) {consentDialog=true}.buttonStyle(.borderedProminent).tint(.yellow).foregroundStyle(.black).disabled(busy)
-   }
-   if finished {Button(appText("Back to home")) {dismiss()}.buttonStyle(.borderedProminent)}
-   else {
-    Button(appText("I’m awake")) {finish(.selfConfirmed)}.buttonStyle(.bordered)
-    Button(appText("Stop alarm"),role:.destructive) {finish(.dismissed)}.accessibilityIdentifier("stopAlarm")
-   }
-  }.padding(24).background(Color(.systemGroupedBackground))
+  ScrollView {
+   VStack(spacing:24) {
+    Text(model.rehearsal ? appText("Try a challenge") : appText("Good morning ☀️")).font(.headline)
+    if model.rehearsal {Text(appText("Practice only. Your alarms stay as they are.")).font(.footnote).foregroundStyle(MorningTheme.muted)}
+    if let camera {
+     CameraPreview(capture:camera).frame(height:280).clipShape(RoundedRectangle(cornerRadius:24))
+      .overlay(alignment:.bottom) {Text("\(reps) / \(alarm.mode.policy.reps)").font(.largeTitle.bold()).padding(12).background(.regularMaterial,in:Capsule()).padding()}
+    } else {
+     MorningSun()
+     Text(String(format:"%02d:%02d",alarm.time.hour,alarm.time.minute)).font(.system(.largeTitle,design:.rounded).weight(.regular)).monospacedDigit()
+    }
+    Text(alarm.mode.title).font(.subheadline.weight(.medium)).padding(.horizontal,14).padding(.vertical,8).background(MorningTheme.soft,in:Capsule())
+    Text(result ?? message).font(.title3.weight(.medium)).multilineTextAlignment(.center).accessibilityIdentifier("challengeMessage")
+   }.padding(24).frame(maxWidth:.infinity)
+  }.background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink)
+   .safeAreaInset(edge:.bottom) {
+    VStack(spacing:12) {
+     if alarm.mode.policy.reps>0 && camera == nil && !finished {
+      Button(appText("Start AI challenge")) {consentDialog=true}.buttonStyle(MorningButtonStyle()).disabled(busy).accessibilityIdentifier("startChallenge")
+     }
+     if finished {Button(appText("Back to home")) {dismiss()}.buttonStyle(MorningButtonStyle())}
+     else {
+      Button(appText("I’m awake")) {finish(.selfConfirmed)}.buttonStyle(MorningButtonStyle(primary:alarm.mode.policy.reps==0))
+      Button(model.rehearsal ? appText("End trial") : appText("Stop alarm"),role:.destructive) {finish(.dismissed)}
+       .buttonStyle(.plain).font(.subheadline).underline().foregroundStyle(MorningTheme.muted).frame(maxWidth:.infinity,minHeight:44).accessibilityIdentifier("stopAlarm")
+     }
+    }.padding(.horizontal,24).padding(.vertical,12).background(MorningTheme.canvas)
+   }.tint(MorningTheme.accent)
    .confirmationDialog(appText("Movement photos go through HiMorning to OpenAI for checking. No audio is recorded. HiMorning does not save these photos; OpenAI data policies apply. You can stop at any time."),isPresented:$consentDialog,titleVisibility:.visible) {
     Button(appText("Agree and open camera")) {Task {await startCamera()}}
-    Button(appText("Choose another way"),role:.cancel) {}
+    Button(appText("Choose another way")) {consentDialog=false}
    }
    .task {coordinator=ChallengeCoordinator(alarm:alarm,cloud:model.cloud,scheduler:model.scheduler,rehearsal:model.rehearsal)}
    .onChange(of:scene) {_,value in if value != .active && !finished {consent=false;camera?.stop();camera=nil;message=appText("The challenge is paused. You can choose another way.");Task {await coordinator?.suspend()}}}
@@ -69,7 +83,7 @@ struct ChallengeView:View {
  private func finish(_ outcome:WakeOutcome) {
   consent=false;camera?.stop();camera=nil
   Task {@MainActor in
-   do {try await coordinator?.finish(outcome);finished=true;result=outcome == .selfConfirmed ? appText("You confirmed you are awake. Have a good morning!") : appText("Alarm stopped. Take care today.")}
+   do {try await coordinator?.finish(outcome);finished=true;result=outcome == .selfConfirmed ? appText("You confirmed you are awake. Have a good morning!") : (model.rehearsal ? appText("Trial ended. Your alarms are unchanged.") : appText("Alarm stopped. Take care today."))}
    catch {message=appText("The alarm could not be stopped here. Please use the system Stop button.")}
   }
  }

@@ -186,3 +186,10 @@ contract tests do not measure exercise accuracy.
 Platform references: [AlarmKit](https://developer.apple.com/videos/play/wwdc2025/230/),
 [Vision body pose](https://developer.apple.com/documentation/vision/detecting-human-body-poses-in-images),
 [Android alarms](https://developer.android.com/develop/background-work/services/alarms).
+
+## Proposed model and challenge update
+
+The current diagrams describe implemented source. The new
+[affordable AI and challenge plan](AI-AND-CHALLENGES-PLAN.md) adds a proposed
+Qwen/LM Studio path behind the existing verifier port, with QR and math checked
+on the phone. That server and those challenges are not implemented yet.

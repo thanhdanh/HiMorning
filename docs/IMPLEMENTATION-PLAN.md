@@ -38,9 +38,15 @@ accuracy/latency evaluation, not blind reduction for a lower token count.
 
 ## Next decisions
 
-Validate the native alarm/camera/sound flow first. Then evaluate OpenAI on consented,
-person-separated fixtures. QR, editing, native snooze, weekly history, deeper form
-advice, Android, sync and subscriptions are separate future milestones.
+Validate the native alarm/camera/sound flow first. The [product brief](PRODUCT-BRIEF.md)
+proposes Read & Choose and short guided rhythm as differentiation experiments, with
+QR as a practical offline fallback. Validate repeated appeal and fair completion
+before expanding the catalog. Evaluate the user-selected Qwen3.5-9B GGUF with its
+vision projector separately from product appeal. See the
+[AI and challenge plan](AI-AND-CHALLENGES-PLAN.md) for provider migration, separate
+speech/timing checks and saved-alarm compatibility. These are plans, not implemented
+features. Editing, native snooze, weekly history, deeper form advice,
+Android, sync and subscriptions remain separate milestones.
 
 ## Read next
 
