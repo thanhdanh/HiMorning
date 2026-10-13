@@ -38,6 +38,17 @@ targets:
         product: FirebaseFunctions
       - package: Firebase
         product: FirebaseAppCheck
+  HiMorningTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - HiMorningTests
+      - path: StoreKit/HiMorning.storekit
+        buildPhase: resources
+    dependencies:
+      - target: HiMorning
+    settings:
+      GENERATE_INFOPLIST_FILE: YES
   HiMorningUITests:
     type: bundle.ui-testing
     platform: iOS
@@ -52,4 +63,4 @@ schemes:
       targets:
         HiMorning: all
     test:
-      targets: [HiMorningUITests]
+      targets: [HiMorningTests, HiMorningUITests]

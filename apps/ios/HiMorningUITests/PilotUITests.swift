@@ -102,6 +102,21 @@ final class PilotUITests:XCTestCase {
  }
  func testEnglishBrandAndRehearsalRecovery() {challengeJourney(language:"en")}
  func testVietnameseBrandAndRehearsalRecovery() {challengeJourney(language:"vi")}
+ func testFreeProgressAndProDiscoveryInBothLanguages() {
+  for language in ["en","vi"] {
+   let app=launch(language:language)
+   app.buttons["morningProgress"].tap()
+   XCTAssertTrue(app.staticTexts[language == "vi" ? "7 ngày qua" : "Past 7 days"].waitForExistence(timeout:5))
+   capture(app,name:"progress-"+language)
+   app.buttons["closeProgress"].tap()
+   app.buttons["hiMorningPro"].tap()
+   XCTAssertTrue(app.staticTexts[language == "vi" ? "Lịch sử 30 ngày" : "30-day morning history"].waitForExistence(timeout:5))
+   capture(app,name:"pro-"+language)
+   app.buttons["closePro"].tap()
+   XCTAssertTrue(app.buttons["addAlarm"].exists)
+   app.terminate()
+  }
+ }
  func testLanguageChoiceSurvivesRelaunch() {
   let app=launch(language:"en")
   app.buttons["appLanguage"].tap()
