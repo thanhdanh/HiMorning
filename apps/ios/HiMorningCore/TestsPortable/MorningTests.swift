@@ -73,3 +73,11 @@ func runMorningTests() throws {
   XCTAssertEqual(blocked.weeklyGoal,3)
  }
 }
+
+func runSubscriptionPeriodTests() {
+ XCTAssertEqual(MorningAccess.verifiedPeriod(expiresAt:morningNow.addingTimeInterval(1),now:morningNow),.pro)
+ XCTAssertEqual(MorningAccess.verifiedPeriod(expiresAt:morningNow,now:morningNow),.free)
+ XCTAssertEqual(MorningAccess.verifiedPeriod(expiresAt:morningNow.addingTimeInterval(-1),graceUntil:morningNow.addingTimeInterval(60),now:morningNow),.pro)
+ XCTAssertEqual(MorningAccess.verifiedPeriod(expiresAt:morningNow.addingTimeInterval(-1),graceUntil:morningNow,now:morningNow),.free)
+ XCTAssertEqual(MorningAccess.verifiedPeriod(expiresAt:nil,now:morningNow),.free)
+}
