@@ -14,6 +14,8 @@ released or device-validated alarm app.
 | You want to… | Read |
 |---|---|
 | Run the app or tests | [Setup guide](docs/RUNNING.md) |
+| Check App Store readiness and subscription scope | [Release review](docs/RELEASE-READINESS.md) |
+| Review Free, Pro, trials and friend invitations | [Business model](docs/BUSINESS-MODEL.md) |
 | Extend the project to Android | [Android guide](docs/ANDROID.md) and [shared contracts](shared/contracts/README.md) |
 | Understand the system | [Architecture](docs/ARCHITECTURE.md) and [tech stack](docs/TECH-STACK.md) |
 | Review the experience | [UI guide](docs/UI-DESIGN.md) and [language guide](docs/LOCALIZATION.md) |
