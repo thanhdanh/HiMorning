@@ -49,7 +49,8 @@ import StoreKitTest
   XCTAssertNotNil(store.message)
   await store.complete(.userCancelled)
   XCTAssertFalse(store.isPro)
-  let product=try XCTUnwrap(try await Product.products(for:[SubscriptionStore.monthlyProductID]).first)
+  let products=try await Product.products(for:[SubscriptionStore.monthlyProductID])
+  let product=try XCTUnwrap(products.first)
   if case .success(.verified(let transaction))=try await product.purchase() {
    await store.complete(.success(.unverified(transaction,NSError(domain:"test",code:1))))
    XCTAssertFalse(store.isPro)
