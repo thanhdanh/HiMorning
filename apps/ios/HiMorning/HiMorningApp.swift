@@ -29,10 +29,10 @@ import HiMorningCore
   do {
    var url=try FileManager.default.url(for:.applicationSupportDirectory,in:.userDomainMask,appropriateFor:nil,create:true).appendingPathComponent("HiMorning/alarms.json")
    #if DEBUG
-   if ProcessInfo.processInfo.arguments.contains("--ui-testing"),ProcessInfo.processInfo.arguments.contains("--ui-disabled-alarm") {
-    url=FileManager.default.temporaryDirectory.appendingPathComponent("himorning-ui-disabled-alarm.json")
+   if ProcessInfo.processInfo.arguments.contains("--ui-testing"),ProcessInfo.processInfo.arguments.contains("--ui-disabled-alarm") || ProcessInfo.processInfo.arguments.contains("--ui-enabled-alarm") {
+    url=FileManager.default.temporaryDirectory.appendingPathComponent("himorning-ui-edit-alarm.json")
     var fixture=SavedAlarm(id:UUID(uuidString:"00000000-0000-0000-0000-000000000001")!,time:try AlarmTime(hour:7,minute:15,weekdays:[2,4,6]),mode:.balanced,sound:.sunrise,challenge:.guidedRhythm(variant:.seated))
-    fixture.enabled=false;fixture.state = .off
+    fixture.enabled=ProcessInfo.processInfo.arguments.contains("--ui-enabled-alarm");fixture.state = fixture.enabled ? .confirmed : .off
     try FileAlarmPersistence(url:url).save([fixture])
    }
    #endif

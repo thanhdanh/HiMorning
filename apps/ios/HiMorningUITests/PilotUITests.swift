@@ -21,12 +21,13 @@ final class PilotUITests:XCTestCase {
   capture(app,name:"sounds-"+language)
   app.navigationBars.buttons.element(boundBy:0).tap()
  }
- private func launch(language:String,expired:Bool=false)->XCUIApplication {
+ private func launch(language:String,expired:Bool=false,awakeReady:Bool=false)->XCUIApplication {
   let app=XCUIApplication()
   app.terminate()
   app.launchArguments=["-AppleLanguages","(en)","-AppleLocale","en_US","--ui-testing"]
   if language == "vi" {app.launchArguments.append("--ui-language-vi")}
   if expired {app.launchArguments.append("--preview-expired")}
+  if awakeReady {app.launchArguments.append("--ui-awake-ready")}
   app.launch()
   for identifier in ["closeProgress","closePro"] {
    if app.buttons[identifier].exists {app.buttons[identifier].tap()}
@@ -73,7 +74,7 @@ final class PilotUITests:XCTestCase {
   for (actual,expected) in zip(primary,[245,200,66]) {XCTAssertEqual(Int(actual),expected,accuracy:3,"Primary must match the original sunshine yellow")}
  }
  private func challengeJourney(language:String) {
-  let app=launch(language:language),vi=language == "vi"
+  let app=launch(language:language,awakeReady:true),vi=language == "vi"
   assertBrandColors(app)
   let trial=app.buttons["practiceChallenges"]
   guard trial.waitForExistence(timeout:5) else {XCTFail("A rehearsal must be available before setting an alarm");return}
@@ -91,7 +92,7 @@ final class PilotUITests:XCTestCase {
   let unavailable=vi ? "AI chưa sẵn sàng. Bạn có thể tự xác nhận hoặc dừng ngay." : "AI is not available. You can confirm you are awake or stop."
   XCTAssertTrue(app.staticTexts[unavailable].waitForExistence(timeout:5))
   capture(app,name:"ai-unavailable-"+language)
-  app.buttons[vi ? "Tôi đã thức dậy" : "I’m awake"].tap()
+  app.buttons["confirmAwake"].tap()
   let confirmed=vi ? "Bạn đã tự xác nhận thức dậy. Chúc buổi sáng tốt lành!" : "You confirmed you are awake. Have a good morning!"
   XCTAssertTrue(app.staticTexts[confirmed].waitForExistence(timeout:5))
   capture(app,name:"self-confirmed-"+language)
