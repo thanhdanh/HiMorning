@@ -78,6 +78,27 @@ public actor AlarmLibrary {
    throw error
   }
  }
+ public func update(_ alarm:SavedAlarm) async throws {
+  guard !busy else {throw LibraryError.busy}
+  guard let index=alarms.firstIndex(where:{$0.id==alarm.id}) else {throw LibraryError.notFound}
+  busy=true;defer {busy=false}
+  let previous=alarms[index]
+  var replacement=alarm;replacement.enabled=previous.enabled
+  replacement.state=previous.enabled ? .pending : previous.state == .off ? .off : .needsReview
+  alarms[index]=replacement
+  do {try persistence.save(alarms)} catch {alarms[index]=previous;throw error}
+  guard replacement.enabled else {return}
+  do {try await scheduler.schedule(replacement)} catch {
+   alarms[index]=previous;alarms[index].state = .needsReview
+   try? persistence.save(alarms)
+   throw error
+  }
+  alarms[index].state = .confirmed
+  do {try persistence.save(alarms)} catch {
+   alarms[index].state = .needsReview;try? persistence.save(alarms)
+   throw error
+  }
+ }
  public func enable(id:UUID) async throws {
   guard !busy else {throw LibraryError.busy}
   guard let index=alarms.firstIndex(where:{$0.id==id}) else {throw LibraryError.notFound}

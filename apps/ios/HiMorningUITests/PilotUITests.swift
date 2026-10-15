@@ -10,8 +10,9 @@ final class PilotUITests:XCTestCase {
    app.buttons["mode-"+mode].tap()
    capture(app,name:mode+"-"+language)
   }
-  app.swipeUp()
-  app.buttons["chooseSound"].tap()
+  let chooseSound=app.buttons["chooseSound"]
+  for _ in 0..<6 where !chooseSound.isHittable {app.swipeUp()}
+  chooseSound.tap()
   XCTAssertTrue(app.navigationBars[language == "vi" ? "Âm thanh" : "Sound"].waitForExistence(timeout:5))
   app.buttons["sound-sunrise"].tap()
   let slider=app.sliders["previewVolume"]
@@ -178,14 +179,14 @@ final class PilotUITests:XCTestCase {
    XCTAssertTrue(example.waitForExistence(timeout:5))
    example.tap()
    XCTAssertEqual(app.alerts.count,0,"The example must not request microphone access")
-   XCTAssertFalse(app.staticTexts[language == "vi" ? "Đã hoàn thành đọc thành tiếng. Chúc buổi sáng tốt lành!" : "Read aloud completed. Have a good morning!"].exists)
+   XCTAssertFalse(app.staticTexts[language == "vi" ? "Đã ghi nhận bài đọc. Chúc bạn buổi sáng tốt lành!" : "Reading recorded. Have a good morning!"].exists)
    XCTAssertTrue(app.buttons["stopAlarm"].isHittable)
    XCUIDevice.shared.press(.home)
    app.activate()
    let ready=XCTNSPredicateExpectation(predicate:NSPredicate(format:"enabled == true"),object:start)
    wait(for:[ready],timeout:5)
    XCTAssertTrue(example.exists)
-   XCTAssertFalse(app.staticTexts[language == "vi" ? "Đã hoàn thành đọc thành tiếng. Chúc buổi sáng tốt lành!" : "Read aloud completed. Have a good morning!"].exists)
+   XCTAssertFalse(app.staticTexts[language == "vi" ? "Đã ghi nhận bài đọc. Chúc bạn buổi sáng tốt lành!" : "Reading recorded. Have a good morning!"].exists)
    app.buttons["stopAlarm"].tap()
    XCTAssertTrue(app.staticTexts[language == "vi" ? "Đã kết thúc buổi thử. Báo thức không thay đổi." : "Practice ended. Your alarms are unchanged."].waitForExistence(timeout:5))
    app.terminate()
@@ -207,7 +208,7 @@ final class PilotUITests:XCTestCase {
   XCTAssertTrue(app.staticTexts["Read one short sentence and choose its meaning."].waitForExistence(timeout:3))
   for _ in 0..<3 where !app.buttons["challenge-readAloud"].isHittable {app.swipeUp()}
   app.buttons["challenge-readAloud"].tap()
-  XCTAssertTrue(app.staticTexts["Read the sentence aloud. 80% recognized-word match completes it."].waitForExistence(timeout:3))
+  XCTAssertTrue(app.staticTexts["Read a longer sentence aloud. On-device AI records your reading without grading pronunciation."].waitForExistence(timeout:3))
   app.buttons["Cancel"].tap()
  }
  func testReadingPracticeCompletesOfflineInBothLanguages() {

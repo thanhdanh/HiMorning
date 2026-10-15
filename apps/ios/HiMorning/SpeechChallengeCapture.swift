@@ -4,17 +4,36 @@ import HiMorningCore
 
 struct SpeechUpdate:Sendable {
  let transcript:String
- let score:Double
+ let progress:Double
  let completed:Bool
  let ended:Bool
+ let finishing:Bool
  let message:String
+}
+
+private actor SpeechAudioSession {
+ static let shared=SpeechAudioSession()
+ private var owner:UUID?
+ func activate(owner:UUID) throws {
+  try Task.checkCancellation()
+  let session=AVAudioSession.sharedInstance()
+  try session.setCategory(.playAndRecord,mode:.measurement,options:[.mixWithOthers,.defaultToSpeaker])
+  try session.setActive(true)
+  self.owner=owner
+ }
+ func deactivate(owner:UUID) {
+  guard self.owner == owner else {return}
+  try? AVAudioSession.sharedInstance().setActive(false,options:.notifyOthersOnDeactivation)
+  self.owner=nil
+ }
 }
 
 /// Streams microphone buffers to Apple's on-device analyzer. No audio is saved.
 @MainActor final class SpeechChallengeCapture {
- private let target:String
+ private var reading:ReadAloudAttempt
  private let onUpdate:@Sendable(SpeechUpdate)->Void
  private let audioEngine=AVAudioEngine()
+ private let audioSessionID=UUID()
  private var analyzer:SpeechAnalyzer?
  private var installation:AssetInstallationRequest?
  private var inputContinuation:AsyncStream<AnalyzerInput>.Continuation?
@@ -22,18 +41,21 @@ struct SpeechUpdate:Sendable {
  private var analysisTask:Task<Void,Never>?
  private var resultsTask:Task<Void,Never>?
  private var timeoutTask:Task<Void,Never>?
+ private var idleTask:Task<Void,Never>?
+ private var finishTask:Task<Void,Never>?
+ private var finalizationTimeoutTask:Task<Void,Never>?
  private var teardownTask:Task<Void,Never>?
  private var observers:[NSObjectProtocol]=[]
  private var transcript=SpeechTranscript()
  private var tapInstalled=false
- private var ownsAudioSession=false
  private var active=false
  private var started=false
  private var stopped=false
+ private var finishing=false
  private var generation=0
 
  init(target:String,onUpdate:@escaping @Sendable(SpeechUpdate)->Void) {
-  self.target=target
+  reading=ReadAloudAttempt(target:target)
   self.onUpdate=onUpdate
  }
 
@@ -51,26 +73,50 @@ struct SpeechUpdate:Sendable {
  func stop() {
   guard !stopped else {return}
   stopped=true;generation+=1;active=false
-  startupTask?.cancel();timeoutTask?.cancel();resultsTask?.cancel();analysisTask?.cancel()
+  reading.stop()
+  startupTask?.cancel();timeoutTask?.cancel();idleTask?.cancel();finishTask?.cancel();finalizationTimeoutTask?.cancel();resultsTask?.cancel();analysisTask?.cancel()
   installation?.progress.cancel();installation=nil
-  if audioEngine.isRunning {audioEngine.stop()}
-  if tapInstalled {audioEngine.inputNode.removeTap(onBus:0);tapInstalled=false}
-  inputContinuation?.finish();inputContinuation=nil
+  closeInput()
   for observer in observers {NotificationCenter.default.removeObserver(observer)}
   observers=[]
-  if ownsAudioSession {
-   try? AVAudioSession.sharedInstance().setActive(false,options:.notifyOthersOnDeactivation)
-   ownsAudioSession=false
-  }
-  if let analyzer {
-   self.analyzer=nil
-   teardownTask=Task {await analyzer.cancelAndFinishNow()}
+  let analyzer=self.analyzer;self.analyzer=nil
+  let audioSessionID=audioSessionID
+  teardownTask=Task {
+   await SpeechAudioSession.shared.deactivate(owner:audioSessionID)
+   if let analyzer {await analyzer.cancelAndFinishNow()}
   }
  }
 
  func stopAndWait() async {
   stop()
+  await startupTask?.value
   await teardownTask?.value
+ }
+
+ func finishReading() {
+  guard active,!finishing,isCurrent(generation),let analyzer else {return}
+  let token=generation
+  finishing=true
+  closeInput()
+  publish(token:token,message:"Finishing your reading…")
+  timeoutTask?.cancel();idleTask?.cancel()
+  finalizationTimeoutTask=Task {[weak self] in
+   do {try await Task.sleep(for:.seconds(6))} catch {return}
+   self?.completeReading(token:token)
+  }
+  finishTask=Task {[weak self] in
+   do {
+    try await analyzer.finalizeAndFinishThroughEndOfInput()
+    await self?.resultsTask?.value
+   } catch {}
+   self?.completeReading(token:token)
+  }
+ }
+
+ private func closeInput() {
+  if audioEngine.isRunning {audioEngine.stop()}
+  if tapInstalled {audioEngine.inputNode.removeTap(onBus:0);tapInstalled=false}
+  inputContinuation?.finish();inputContinuation=nil
  }
 
  private func prepareAndStart(token:Int) async {
@@ -122,7 +168,7 @@ struct SpeechUpdate:Sendable {
     return
    }
    openingMicrophone=true
-   try startAudio(format:format,analyzer:analyzer,token:token)
+   try await startAudio(format:format,analyzer:analyzer,token:token)
    guard isCurrent(token) else {return}
    observeResults()
   } catch {
@@ -133,11 +179,13 @@ struct SpeechUpdate:Sendable {
   }
  }
 
- private func startAudio(format:AVAudioFormat,analyzer:SpeechAnalyzer,token:Int) throws {
+ private func startAudio(format:AVAudioFormat,analyzer:SpeechAnalyzer,token:Int) async throws {
   let session=AVAudioSession.sharedInstance()
-  try session.setCategory(.playAndRecord,mode:.measurement,options:[.mixWithOthers,.defaultToSpeaker])
-  try session.setActive(true)
-  ownsAudioSession=true
+  try await SpeechAudioSession.shared.activate(owner:audioSessionID)
+  guard isCurrent(token) else {
+   await SpeechAudioSession.shared.deactivate(owner:audioSessionID)
+   return
+  }
   let input=audioEngine.inputNode
   let converter=try SpeechBufferConverter(inputFormat:input.outputFormat(forBus:0),outputFormat:format)
   let (stream,continuation)=AsyncStream<AnalyzerInput>.makeStream()
@@ -153,11 +201,18 @@ struct SpeechUpdate:Sendable {
   active=true
   analysisTask=Task {[weak self] in
    do {try await analyzer.start(inputSequence:stream)}
-   catch {self?.end(token:token,message:"Speech recognition stopped. Try again or choose another challenge.")}
+   catch {
+    guard let self,self.isCurrent(token) else {return}
+    if self.finishing {self.completeReading(token:token)}
+    else {self.end(token:token,message:"Speech recognition stopped. Try again or choose another challenge.")}
+   }
   }
   for (name,object) in [(AVAudioSession.interruptionNotification,session as AnyObject),(Notification.Name.AVAudioEngineConfigurationChange,audioEngine as AnyObject)] {
    observers.append(NotificationCenter.default.addObserver(forName:name,object:object,queue:nil) {[weak self] _ in
-    Task {@MainActor in self?.end(token:token,message:"Speech recognition stopped. Try again or choose another challenge.")}
+    Task {@MainActor in
+     guard let self,!self.finishing else {return}
+     self.end(token:token,message:"Speech recognition stopped. Try again or choose another challenge.")
+    }
    })
   }
   audioEngine.prepare()
@@ -165,8 +220,9 @@ struct SpeechUpdate:Sendable {
   publish(token:token,message:"Listening… Read the sentence aloud.")
   guard isCurrent(token) else {return}
   timeoutTask=Task {[weak self] in
-   do {try await Task.sleep(for:.seconds(20))} catch {return}
-   self?.end(token:token,message:"Listening timed out. Try again or choose another challenge.")
+   guard let duration=self?.reading.listeningDuration else {return}
+   do {try await Task.sleep(for:.seconds(duration))} catch {return}
+   self?.finishReading()
   }
  }
 
@@ -176,16 +232,33 @@ struct SpeechUpdate:Sendable {
     for try await result in results {
      guard let self,self.active,self.isCurrent(token) else {return}
      self.transcript.update(text:text(result),range:result.range,isFinal:result.isFinal)
-     let score=RecognizedWordMatch.score(target:self.target,recognized:self.transcript.text)
-     if score>=RecognizedWordMatch.passingScore {
-      self.end(token:token,message:"Great reading. Challenge complete.",completed:true)
-      return
+     self.reading.observe(self.transcript.text)
+     self.idleTask?.cancel()
+     if self.finishing {continue}
+     if self.reading.hasEnoughSpeech {
+      self.idleTask=Task {[weak self] in
+       do {try await Task.sleep(for:.seconds(1.8))} catch {return}
+       self?.finishReading()
+      }
      }
-     self.publish(token:token,message:"Keep going. Match at least 80% of the words.")
+     self.publish(token:token,message:"Keep reading. Tap Finish reading when you are done.")
     }
-    self?.end(token:token,message:"Speech recognition stopped. Try again or choose another challenge.")
-   } catch {self?.end(token:token,message:"Speech recognition stopped. Try again or choose another challenge.")}
+    self?.completeReading(token:token)
+   } catch {
+    guard let self,self.isCurrent(token) else {return}
+    if self.finishing {self.completeReading(token:token)}
+    else {self.end(token:token,message:"Speech recognition stopped. Try again or choose another challenge.")}
+   }
   }
+ }
+
+ private func completeReading(token:Int) {
+  guard isCurrent(token) else {return}
+  let completed=reading.finish()
+  let message=completed ? "Reading recorded. Challenge complete." : reading.progress == 0
+   ? "No speech was recognized. Try again and speak near the microphone."
+   : "Only part of the reading was recorded. Read the whole sentence and try again."
+  end(token:token,message:message,completed:completed)
  }
 
  private func end(token:Int,message:String,completed:Bool=false) {
@@ -196,7 +269,7 @@ struct SpeechUpdate:Sendable {
 
  private func publish(token:Int,message:String,completed:Bool=false,ended:Bool=false) {
   guard isCurrent(token) else {return}
-  onUpdate(.init(transcript:transcript.text,score:RecognizedWordMatch.score(target:target,recognized:transcript.text),completed:completed,ended:ended,message:appText(message)))
+  onUpdate(.init(transcript:transcript.text,progress:reading.progress,completed:completed,ended:ended,finishing:finishing,message:appText(message)))
  }
 
  private func isCurrent(_ token:Int) -> Bool {!stopped && generation == token && !Task.isCancelled}

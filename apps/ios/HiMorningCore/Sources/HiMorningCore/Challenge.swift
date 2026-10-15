@@ -73,10 +73,37 @@ public enum EnglishChallengeContent {
   ReadAndChoosePrompt(id:"small-step",sentence:"A small step can begin a great day.",choices:["You must do everything at once.","Small actions never matter.","One little action can start a good day."],correctChoiceIndex:2)
  ]
  public static let readAloud:[ReadAloudPrompt]=[
-  ReadAloudPrompt(id:"ready-for-day",text:"I am ready for a bright new day."),
-  ReadAloudPrompt(id:"steady-progress",text:"Small steps create steady progress."),
-  ReadAloudPrompt(id:"morning-energy",text:"This morning is full of new energy.")
+  ReadAloudPrompt(id:"ready-for-day",text:"Before the world asks for my attention, I will take a quiet breath and choose one meaningful thing to begin."),
+  ReadAloudPrompt(id:"steady-progress",text:"Progress rarely arrives all at once; it grows when we return with patience, curiosity, and the courage to try again."),
+  ReadAloudPrompt(id:"morning-energy",text:"Beyond the familiar path, a small discovery may be waiting, so today I will leave a little room for wonder.")
  ]
+}
+
+/// shortcut: speech length records a reading without checking its words, add semantic checking when accuracy is required.
+public struct ReadAloudAttempt:Sendable {
+ private let expectedWords:Int
+ public private(set) var transcript=""
+ public private(set) var ended=false
+ public private(set) var completed=false
+
+ public init(target:String) {expectedWords=RecognizedWordMatch.tokens(in:target).count}
+ public var listeningDuration:TimeInterval {max(45,Double(expectedWords)*3+15)}
+ public var progress:Double {
+  guard expectedWords>0 else {return 0}
+  return min(1,Double(RecognizedWordMatch.tokens(in:transcript).count)/Double(expectedWords))
+ }
+ public var hasEnoughSpeech:Bool {progress>=0.8}
+
+ public mutating func observe(_ text:String) {
+  guard !ended else {return}
+  transcript=text
+ }
+ @discardableResult public mutating func finish()->Bool {
+  guard !ended else {return completed}
+  completed=hasEnoughSpeech;ended=true
+  return completed
+ }
+ public mutating func stop() {ended=true;completed=false}
 }
 
 /// Deterministic similarity of recognized word tokens. This does not grade accent quality.
