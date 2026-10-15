@@ -132,6 +132,12 @@ actor FakeCloud: CloudVerification {
  try await noCloud.finish(.selfConfirmed);XCTAssertEqual(noCloud.session.outcome,.selfConfirmed)
 }
 
+let pushUps=PushUpTests()
+pushUps.testCompleteCyclesCountOnceWithoutImages()
+pushUps.testStandingBentBodyOcclusionAndStaleFramesCannotComplete()
+try await pushUps.testLocalCameraCompletionNeedsTheTargetAndNeverCallsCloud()
+try await pushUps.testStopWinsWhileCameraCompletionIsWaitingForTheAlarm()
+try await pushUps.testFailedNativeStopCannotRecordCameraSuccess()
 let suite = CoreTests()
 suite.testLanguageSelectionAndFallback()
 suite.testPresetsAreGentleAndBounded()

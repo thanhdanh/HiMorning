@@ -6,7 +6,8 @@ review or use the local alarm flow.
 
 **Status:** iOS 26+ pilot. Cloud verification is off by default.
 The private free staging deployment is enabled and has passed a real synthetic
-Gemini request; camera movement verification remains a separate evaluation.
+Gemini request. The product camera challenge now checks push-ups locally; see
+[on-device camera setup](PUSH-UP-CAMERA.md). Movement accuracy still needs calibration.
 
 ## Prerequisites
 
@@ -21,8 +22,8 @@ The working checkout is `~/Projects/HiMorning`. Run commands from its root.
 
 ## Free remote demo
 
-Use [Workers + Gemini free setup](FREE-REMOTE-DEMO.md) for the current native
-remote test. It sends generated images only, keeps the camera off and needs no
+Use [Workers + Gemini free setup](FREE-REMOTE-DEMO.md) for the separate server
+connectivity reference. It sends generated images only, keeps the camera off and needs no
 Firebase Functions billing. The paid Qwen backend commands below remain available
 for separate evaluation.
 

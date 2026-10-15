@@ -4,8 +4,9 @@ A calmer way to start the day. HiMorning is an alarm app with simple choices: wa
 up at your own pace, try a small movement challenge, or stop when you need to.
 
 **Status:** iOS 26+ pilot. English and Vietnamese are supported in the native app.
-The free remote demo uses Workers/Gemini with generated images; cloud AI is off by default. This is not a
-released or device-validated alarm app.
+Camera challenges use on-device pose recognition without cloud setup. The separate
+Workers/Gemini demo remains a generated-image connectivity reference. This is not
+a released or device-validated alarm app.
 
 [GitHub repository](https://github.com/thanhdanh/HiMorning) · [Pull request](https://github.com/thanhdanh/HiMorning/pull/1)
 
@@ -13,7 +14,8 @@ released or device-validated alarm app.
 
 | You want to… | Read |
 |---|---|
-| Test remote AI using free services | [Free remote demo](docs/FREE-REMOTE-DEMO.md) |
+| Check camera push-ups | [Camera challenge](docs/PUSH-UP-CAMERA.md) |
+| Review the separate free server demo | [Free remote demo](docs/FREE-REMOTE-DEMO.md) |
 | Review the earlier $20 Qwen backend | [Paid backend reference](docs/REMOTE-PILOT.md) |
 | Run the app or tests | [Setup guide](docs/RUNNING.md) |
 | Manage the local CI runner | [Self-hosted CI](docs/SELF-HOSTED-CI.md) |
@@ -40,7 +42,7 @@ experiments; implemented features still need physical-device and user validation
 | Alarms | AlarmKit scheduling, saved weekday choices and recovery checks |
 | Challenge choice | No challenge, Push-ups, Read & Choose, Guided Rhythm, or Read Aloud; saved separately from the mode |
 | Local challenges | Meaning questions, standing/seated pose sequences, and on-device English speech recognition with spoken examples |
-| Remote AI test | Generated images sent through Workers to Gemini; camera stays off and no movement is marked verified; deployment pending |
+| Push-ups | Front camera pose recognition counts complete cycles on the iPhone; video is not saved or uploaded |
 | Sounds | System default and 14 bundled sounds with individual previews |
 | Progress and access | Local history and goals, a 30-day preview, and optional monthly/annual Pro |
 
@@ -50,10 +52,11 @@ remain planned.
 Set a time, choose a mode and pick a sound. The phone's alarm system keeps the
 schedule. A regular alarm works without cloud sign-in.
 
-The free remote AI demo asks before sending generated color images to Gemini.
-It keeps the camera off and never marks a movement verified. You can always
-confirm you are awake or stop. The earlier paid Qwen service remains in the repo
-for separate live-camera evaluation.
+Push-ups ask before opening the front camera. Place the phone to the side with
+your whole body visible; complete down-and-up movements count toward your target.
+No video or sound is saved or uploaded. Completion is recorded locally, not as a
+server-verified outcome. Real movement accuracy still needs iPhone calibration.
+The free generated-image demo and paid Qwen service remain developer references.
 
 | Mode | Suggested challenge | Snooze policy in the core |
 |---|---|---|
