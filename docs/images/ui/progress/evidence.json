@@ -1,0 +1,73 @@
+{
+  "contract": "contract.json: Native iPhone progress uses existing MorningTheme, monthly rating first, seven recent daily scores next, and no history deletion.",
+  "targetViewports": [
+    "402x874",
+    "390x844"
+  ],
+  "accessibility": {
+    "status": "pass",
+    "evidence": "Inspected the 402-point Vietnamese accessibility-size captures: header, rating, points, all seven daily rows and weekly goal wrap without overlap. Daily accessibility elements expose a localized full date and score/no-record label; controls use native SwiftUI accessibility. No chart animation is added."
+  },
+  "responsive": {
+    "status": "untested",
+    "evidence": "402x874 default English and Vietnamese accessibility-size screenshots inspected. 390x844 direct launch also stalled in CoreSimulator; only SpringBoard rendered, so that capture was discarded."
+  },
+  "contentStates": {
+    "loading": {
+      "status": "not-applicable",
+      "reason": "Journal loading and scoring are synchronous; asynchronous StoreKit refresh does not replace locally rendered progress."
+    },
+    "permission": {
+      "status": "not-applicable",
+      "reason": "Viewing the local journal and scores requests no alarm, camera or microphone permission; existing paid access gating is preserved."
+    },
+    "empty": {
+      "status": "untested",
+      "evidence": "Initial empty screen rendered in the interrupted run; final copy replaces 0/0 with an invitation to complete the first challenge. Final rendered check pending."
+    },
+    "error": {
+      "status": "untested",
+      "evidence": "Read-error fixture and assertion are implemented, but XCTest runner launch failed before this check could run."
+    },
+    "partial": {
+      "status": "untested",
+      "evidence": "Core tests verify recorded/unrecorded local dates and 0/50/100 scores. The final debug fixture includes an unrecorded day; rendered check pending."
+    },
+    "success": {
+      "status": "pass",
+      "evidence": "Inspected the earlier 402x874 fixture: monthly 75/100 with 6/8 completions, clear rating and daily 0/50/100 scores. Final fixture has one less recorded success (71/100), with unchanged score layout."
+    }
+  },
+  "renderedEvidence": [
+    {
+      "viewport": "402x874",
+      "artifact": "progress-en-wide.png",
+      "observation": "Earlier English fixture: month rating and seven labeled daily bars are legible; weekly goal follows below. This capture predates the final missing-day fixture and empty-state copy."
+    },
+    {
+      "viewport": "402x874",
+      "artifact": "progress-vi-large-month.png",
+      "observation": "Earlier Vietnamese accessibility-size fixture: month header and long explanatory text wrap cleanly. Appearance is light; the attempted dark-mode launch argument was ignored."
+    },
+    {
+      "viewport": "402x874",
+      "artifact": "progress-vi-large-week.png",
+      "observation": "Vietnamese accessibility sizes switch the seven bars to labeled daily rows; dates, scores and goal stay readable."
+    }
+  ],
+  "validation": {
+    "portableSwift": "PASS on the isolated PR branch based on main: sh scripts/test-swift.sh, including four scoring tests.",
+    "swiftPM": "PASS on the isolated PR branch based on main: swift test --package-path apps/ios/HiMorningCore, 51 tests, 0 failures.",
+    "localization": "PASS on the isolated PR branch based on main: tests/localization.test.ts, 4 tests, 0 failures.",
+    "build": "ARM64 simulator build for the isolated PR: /private/tmp/himorning-progress-pr-build.log.",
+    "uiAutomation": "NOT PASSED: initial shared-device run terminated with signal kill. Isolated simulator runner failed to install/launch with Mach error -308. These failures are not counted as passed UI tests.",
+    "physicalDevice": "Not checked.",
+    "directPreview": "The app installed, but direct launch on the compact simulator stalled; no progress-screen capture was obtained.",
+    "isolation": "The PR is based on main and uses its existing openaiVerified outcome; unrelated pending remote-provider changes are excluded."
+  },
+  "limits": [
+    "Monthly scores measure recorded attempts; missed scheduled alarms are not inferred.",
+    "Existing data already pruned by the old 30-day retention cannot be recovered.",
+    "Compact, dark-mode, final empty/error/partial rendering, and the full UI automation run remain unverified because the simulator runner/server failed."
+  ]
+}

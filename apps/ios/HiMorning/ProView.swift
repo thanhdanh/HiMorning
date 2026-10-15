@@ -42,7 +42,7 @@ struct MorningPrivacyView:View {
  var body:some View {
   ScrollView {
    VStack(alignment:.leading,spacing:20) {
-    Text(appText("Your morning history and goal are saved on this device. New entries keep the most recent 30 days. You can clear all history from Progress at any time."))
+    Text(appText("Your morning history and goal are saved on this device. New entries keep the most recent 31 days, so monthly ratings include every day of the month."))
     Text(appText("Apple handles subscription payments. HiMorning uses verified purchases to unlock Pro and does not receive your card or wallet details."))
     Text(appText("Cloud challenges use a guest Firebase account. Movement photos are sent to OpenAI only after you agree. Progress history contains dates and outcomes, not camera photos or audio."))
     Link(appText("OpenAI data policies"),destination:URL(string:"https://platform.openai.com/docs/guides/your-data")!)
