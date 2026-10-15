@@ -5,6 +5,7 @@
 "Agree and open camera" = "Agree and open camera";
 "Alarm" = "Alarm";
 "Alarm is set" = "Alarm is set";
+"Completed today" = "Completed today";
 "Alarm sound" = "Alarm sound";
 "Alarm stopped. Take care today." = "Alarm stopped. Take care today.";
 "Back to home" = "Back to home";
@@ -318,3 +319,12 @@
 "Making time for breakfast is a small promise to myself that my energy, comfort, and health deserve a place in a busy schedule." = "Making time for breakfast is a small promise to myself that my energy, comfort, and health deserve a place in a busy schedule.";
 "Across a quiet lake, even a small ripple travels far, just as a thoughtful word can influence a day in ways we cannot see." = "Across a quiet lake, even a small ripple travels far, just as a thoughtful word can influence a day in ways we cannot see.";
 "Today I will ask one thoughtful question, try one unfamiliar thing, and leave enough space to appreciate what happens between my plans." = "Today I will ask one thoughtful question, try one unfamiliar thing, and leave enough space to appreciate what happens between my plans.";
+"Alarms" = "Alarms";
+"Next: %@" = "Next: %@";
+"Try" = "Try";
+"Challenge modes" = "Challenge modes";
+"Mixed modes" = "Mixed modes";
+"Challenge details not recorded" = "Challenge details not recorded";
+"No challenges recorded" = "No challenges recorded";
+"Completed challenges" = "Completed challenges";
+"View this day’s challenges" = "View this day’s challenges";

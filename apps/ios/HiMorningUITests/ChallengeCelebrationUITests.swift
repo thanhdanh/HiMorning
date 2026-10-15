@@ -6,8 +6,55 @@ final class ChallengeCelebrationUITests:XCTestCase {
   app.launchArguments=["-AppleLanguages","(en)","-AppleLocale","en_US","--ui-testing"]+arguments
   if vietnamese {app.launchArguments.append("--ui-language-vi")}
   app.launch()
-  XCTAssertTrue(app.buttons["practiceChallenges"].waitForExistence(timeout:5))
+  if !arguments.contains("--ui-open-alarm") {XCTAssertTrue(app.buttons["practiceChallenges"].waitForExistence(timeout:5))}
   return app
+ }
+ func testRealAlarmCompletionReturnsHomeAndMarksOnlyThatAlarmInBothLanguages() {
+  let first="00000000-0000-0000-0000-000000000001",second="00000000-0000-0000-0000-000000000002"
+  for vietnamese in [false,true] {
+   let largeText=vietnamese ? ["-UIPreferredContentSizeCategoryName","UICTContentSizeCategoryAccessibilityM"] : []
+   let app=launch(["--ui-home-alarms","--ui-open-alarm"]+largeText,vietnamese:vietnamese)
+   let choice=app.buttons["readChoice-0"]
+   XCTAssertTrue(choice.waitForExistence(timeout:5));choice.tap()
+   let completed=app.staticTexts["alarmCompleted-"+first]
+   XCTAssertTrue(completed.waitForExistence(timeout:5),"A real completed challenge must return Home automatically")
+   XCTAssertEqual(completed.label,vietnamese ? "Đã xong hôm nay" : "Completed today")
+   XCTAssertFalse(app.descendants(matching:.any)["alarmCompleted-"+second].exists)
+   XCTAssertTrue(app.staticTexts["nextAlarm-"+first].exists,"Completion must preserve the repeating alarm's next ring")
+   XCTAssertEqual(app.switches["toggleAlarm-"+first].value as? String,"1")
+   XCTAssertFalse(app.staticTexts[vietnamese ? "Đã đặt với hệ thống" : "Alarm is set"].exists)
+   let attachment=XCTAttachment(screenshot:app.screenshot())
+   attachment.name="alarm-home-completed-\(vietnamese ? "vi-large" : "en")"
+   attachment.lifetime = .keepAlways;add(attachment)
+   XCTAssertEqual(app.alerts.count,0)
+   app.buttons["morningProgress"].tap()
+   let history=app.otherElements["selectedDayChallenges"]
+   XCTAssertTrue(history.waitForExistence(timeout:5))
+   XCTAssertTrue(history.staticTexts.matching(NSPredicate(format:"identifier BEGINSWITH %@","historyMode-")).firstMatch.label.contains(vietnamese ? "Cân bằng" : "Balanced"))
+   XCTAssertTrue(history.staticTexts.matching(NSPredicate(format:"identifier BEGINSWITH %@","historyChallenge-")).firstMatch.label.contains(vietnamese ? "Đọc và chọn" : "Read & Choose"))
+   app.terminate()
+  }
+ }
+ func testRealAlarmProgressSaveFailureReturnsHomeWithAnHonestWarning() {
+  let app=launch(["--ui-home-alarms","--ui-open-alarm","--ui-progress-save-error"])
+  let choice=app.buttons["readChoice-0"]
+  XCTAssertTrue(choice.waitForExistence(timeout:5));choice.tap()
+  XCTAssertTrue(app.staticTexts["homeProgressError"].waitForExistence(timeout:5))
+  XCTAssertFalse(app.descendants(matching:.any)["alarmCompleted-00000000-0000-0000-0000-000000000001"].exists)
+  app.terminate()
+ }
+ func testCompletionDoesNotHideSchedulingWarningsOrMarkPractice() {
+  let id="00000000-0000-0000-0000-000000000001"
+  let app=launch(["--ui-enabled-alarm","--ui-completed-alarm"])
+  XCTAssertTrue(app.staticTexts["alarmCompleted-"+id].waitForExistence(timeout:5))
+  XCTAssertTrue(app.descendants(matching:.any)["alarmState-"+id].label.contains("Check system alarms"))
+  app.terminate()
+  let practice=launch(["--ui-home-alarms","--ui-complete-challenge"])
+  for _ in 0..<8 where !practice.buttons["practiceChallenges"].isHittable {practice.swipeUp()}
+  practice.buttons["practiceChallenges"].tap();practice.buttons["practice-readAndChoose"].tap()
+  checkCelebration(practice)
+  XCTAssertEqual(practice.descendants(matching:.any).matching(NSPredicate(format:"identifier BEGINSWITH %@","alarmCompleted-")).count,0)
+  practice.terminate()
  }
  private func checkCelebration(_ app:XCUIApplication,vietnamese:Bool=false) {
   XCTAssertTrue(app.staticTexts[vietnamese ? "Hoan hô!" : "Hooray!"].waitForExistence(timeout:5))

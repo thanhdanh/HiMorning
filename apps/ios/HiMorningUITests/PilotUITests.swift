@@ -141,9 +141,9 @@ final class PilotUITests:XCTestCase {
     app.buttons["morningProgress"].tap()
     XCTAssertTrue(app.staticTexts["monthlyScore"].waitForExistence(timeout:5))
     XCTAssertEqual(app.staticTexts["monthlyScore"].label == "—",!fixture)
-    XCTAssertEqual(app.otherElements.matching(NSPredicate(format:"identifier BEGINSWITH %@","morningScore-")).count,7)
+    XCTAssertEqual(app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@","morningScore-")).count,7)
     if fixture {
-     XCTAssertTrue(app.otherElements.matching(NSPredicate(format:"identifier BEGINSWITH %@ AND label CONTAINS %@","morningScore-","50")).firstMatch.exists)
+     XCTAssertTrue(app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@ AND label CONTAINS %@","morningScore-","50")).firstMatch.exists)
     } else {
      XCTAssertEqual(app.staticTexts["monthlyRating"].label,language == "vi" ? "Khởi đầu mới" : "A fresh start")
     }
@@ -152,6 +152,48 @@ final class PilotUITests:XCTestCase {
     XCTAssertFalse(app.buttons[language == "vi" ? "Xóa lịch sử" : "Clear history"].exists)
     app.terminate()
    }
+  }
+ }
+ func testProgressDayModesAndChallengeDetailsInBothLanguages() {
+  for language in ["en","vi"] {
+   let app=XCUIApplication(),vi=language == "vi"
+   app.launchArguments=["-AppleLanguages","(en)","-AppleLocale","en_US","--ui-testing","--ui-progress-fixture"]
+   if vi {app.launchArguments.append("--ui-language-vi")}
+   app.launch()
+   XCTAssertTrue(app.buttons["morningProgress"].waitForExistence(timeout:5))
+   let check=app.alerts[vi ? "Cần kiểm tra" : "Please check"]
+   if check.waitForExistence(timeout:1) {check.buttons[vi ? "Đã hiểu" : "Got it"].tap()}
+   app.buttons["morningProgress"].tap()
+   let calendar=Calendar.current,now=Date()
+   func dayButton(_ offset:Int)->XCUIElement {
+    let date=calendar.date(byAdding:.day,value:offset,to:now)!
+    return app.buttons["morningScore-\(calendar.component(.day,from:date))"]
+   }
+   let today=dayButton(0),mixed=dayButton(-2),legacy=dayButton(-6),empty=dayButton(-5)
+   XCTAssertTrue(today.waitForExistence(timeout:5))
+   XCTAssertTrue(today.label.contains(vi ? "Tập trung" : "Focused"))
+   XCTAssertTrue(today.isSelected)
+   let details=app.otherElements["selectedDayChallenges"]
+   XCTAssertTrue(details.staticTexts[vi ? "5 lần chống đẩy" : "5 push-ups"].exists)
+   XCTAssertTrue(details.staticTexts[vi ? "Tập trung" : "Focused"].exists)
+   XCTAssertTrue(mixed.label.contains(vi ? "Nhiều mức" : "Mixed modes"))
+   for _ in 0..<4 where !mixed.isHittable {app.swipeUp()}
+   mixed.tap()
+   XCTAssertTrue(mixed.isSelected)
+   XCTAssertTrue(details.staticTexts[vi ? "Đọc và chọn" : "Read & Choose"].exists)
+   XCTAssertTrue(details.staticTexts[vi ? "Cân bằng" : "Balanced"].exists)
+   XCTAssertTrue(details.staticTexts[vi ? "Nhẹ nhàng" : "Gentle"].exists)
+   XCTAssertTrue(details.staticTexts[vi ? "Đã dừng" : "Stopped"].exists)
+   XCTAssertTrue(details.staticTexts[vi ? "Chưa lưu chi tiết thử thách" : "Challenge details not recorded"].exists)
+   capture(app,name:"progress-\(language)-mixed-day")
+   XCTAssertTrue(legacy.label.contains(vi ? "Nhẹ nhàng" : "Gentle"))
+   XCTAssertTrue(legacy.label.contains(vi ? "Chưa lưu chi tiết thử thách" : "Challenge details not recorded"))
+   legacy.tap()
+   XCTAssertTrue(details.staticTexts[vi ? "Chưa lưu chi tiết thử thách" : "Challenge details not recorded"].exists)
+   XCTAssertFalse(details.staticTexts[vi ? "Tập trung" : "Focused"].exists,"Legacy history must not borrow the current alarm mode")
+   empty.tap()
+   XCTAssertTrue(details.staticTexts[vi ? "Chưa có thử thách được ghi nhận" : "No challenges recorded"].exists)
+   app.terminate()
   }
  }
  func testExpiredProgressHasNoHistoryDeletionInBothLanguages() {
@@ -175,27 +217,40 @@ final class PilotUITests:XCTestCase {
   app.buttons["morningProgress"].tap()
   XCTAssertTrue(app.staticTexts["Your progress could not be read. Your alarms are unchanged."].waitForExistence(timeout:5))
   XCTAssertFalse(app.staticTexts["monthlyScore"].exists)
-  XCTAssertEqual(app.otherElements.matching(NSPredicate(format:"identifier BEGINSWITH %@","morningScore-")).count,0)
+  XCTAssertEqual(app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@","morningScore-")).count,0)
   capture(app,name:"progress-read-error")
   app.buttons["closeProgress"].tap()
   XCTAssertTrue(app.buttons["morningProgress"].exists)
  }
  func testProgressSupportsLargeText() {
-  let app=XCUIApplication()
-  app.launchArguments=["-AppleLanguages","(vi)","-AppleLocale","vi_VN","--ui-testing","--ui-language-vi","--ui-progress-fixture","-UIPreferredContentSizeCategoryName","UICTContentSizeCategoryAccessibilityM"]
-  app.launch()
-  XCTAssertTrue(app.buttons["morningProgress"].waitForExistence(timeout:5))
-  let check=app.alerts["Cần kiểm tra"]
-  if check.waitForExistence(timeout:1) {check.buttons["Đã hiểu"].tap()}
-  app.buttons["morningProgress"].tap()
-  XCTAssertTrue(app.staticTexts["monthlyScore"].waitForExistence(timeout:5))
-  capture(app,name:"progress-vi-large-month")
-  app.swipeUp()
-  let scores=app.otherElements.matching(NSPredicate(format:"identifier BEGINSWITH %@","morningScore-"))
-  XCTAssertGreaterThan(scores.count,0)
-  capture(app,name:"progress-vi-large-week")
-  app.buttons["closeProgress"].tap()
-  XCTAssertTrue(app.buttons["morningProgress"].waitForExistence(timeout:5))
+  for language in ["en","vi"] {
+   let app=XCUIApplication(),vi=language == "vi"
+   app.launchArguments=["-AppleLanguages","(en)","-AppleLocale","en_US","--ui-testing","--ui-progress-fixture","-UIPreferredContentSizeCategoryName","UICTContentSizeCategoryAccessibilityM"]
+   if vi {app.launchArguments.append("--ui-language-vi")}
+   app.launch()
+   XCTAssertTrue(app.buttons["morningProgress"].waitForExistence(timeout:5))
+   let check=app.alerts[vi ? "Cần kiểm tra" : "Please check"]
+   if check.waitForExistence(timeout:1) {check.buttons[vi ? "Đã hiểu" : "Got it"].tap()}
+   app.buttons["morningProgress"].tap()
+   XCTAssertTrue(app.staticTexts["monthlyScore"].waitForExistence(timeout:5))
+   capture(app,name:"progress-\(language)-large-month")
+   app.swipeUp()
+   let scores=app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@","morningScore-"))
+   XCTAssertGreaterThan(scores.count,0)
+   let today=app.buttons["morningScore-\(Calendar.current.component(.day,from:Date()))"]
+   for _ in 0..<6 where !today.isHittable {app.swipeUp()}
+   XCTAssertTrue(today.isHittable)
+   XCTAssertGreaterThanOrEqual(today.frame.height,44)
+   XCTAssertTrue(today.label.contains(vi ? "Tập trung" : "Focused"))
+   today.tap()
+   let challenge=app.otherElements["selectedDayChallenges"].staticTexts[vi ? "5 lần chống đẩy" : "5 push-ups"]
+   for _ in 0..<4 where !challenge.isHittable {app.swipeUp()}
+   XCTAssertTrue(challenge.exists)
+   capture(app,name:"progress-\(language)-large-week")
+   app.buttons["closeProgress"].tap()
+   XCTAssertTrue(app.buttons["morningProgress"].waitForExistence(timeout:5))
+   app.terminate()
+  }
  }
  func testSoundPreviewKeepsEditorUsable() {
   let app=launch(language:"en")

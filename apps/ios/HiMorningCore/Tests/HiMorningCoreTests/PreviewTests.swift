@@ -105,6 +105,91 @@ final class MorningScoreTests:XCTestCase {
   return calendar
  }
  private func date(_ value:String)->Date {ISO8601DateFormatter().date(from:value)!}
+ func testTodayCompletionMatchesOnlySuccessfulAlarmAndSurvivesReload() throws {
+  let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+  defer {try? FileManager.default.removeItem(at:root)}
+  let url=root.appendingPathComponent("mornings.json")
+  var journal=try MorningJournal(url:url)
+  let now=date("2026-10-15T06:30:00+07:00"),pendingID=UUID()
+  for outcome:WakeOutcome in [.selfConfirmed,.dismissed] {
+   _=try journal.record(MorningEntry(alarmID:pendingID,date:now,outcome:outcome),now:now,calendar:calendar)
+  }
+  _=try journal.record(MorningEntry(date:now,outcome:.localCompleted),now:now,calendar:calendar)
+  XCTAssertFalse(journal.completedToday(alarmID:pendingID,now:now,calendar:calendar))
+  for outcome:WakeOutcome in [.localCompleted,.openaiVerified,.aiVerified] {
+   let completedID=UUID()
+   _=try journal.record(MorningEntry(alarmID:completedID,date:now,outcome:outcome),now:now,calendar:calendar)
+   XCTAssertTrue(journal.completedToday(alarmID:completedID,now:now,calendar:calendar))
+   XCTAssertFalse(journal.completedToday(alarmID:pendingID,now:now,calendar:calendar))
+   let restored=try MorningJournal(url:url)
+   XCTAssertTrue(restored.completedToday(alarmID:completedID,now:now,calendar:calendar))
+   XCTAssertFalse(restored.completedToday(alarmID:pendingID,now:now,calendar:calendar))
+  }
+ }
+ func testTodayCompletionUsesLocalMidnightAndExcludesFuture() throws {
+  let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+  defer {try? FileManager.default.removeItem(at:root)}
+  var journal=try MorningJournal(url:root.appendingPathComponent("mornings.json"))
+  let yesterday=date("2026-10-14T23:59:59+07:00"),midnight=date("2026-10-15T00:00:00+07:00")
+  let future=midnight.addingTimeInterval(60),previousID=UUID(),currentID=UUID(),futureID=UUID()
+  for (alarmID,time) in [(previousID,yesterday),(currentID,midnight),(futureID,future)] {
+   _=try journal.record(MorningEntry(alarmID:alarmID,date:time,outcome:.localCompleted),now:future,calendar:calendar)
+  }
+  XCTAssertTrue(journal.completedToday(alarmID:previousID,now:yesterday,calendar:calendar))
+  XCTAssertFalse(journal.completedToday(alarmID:currentID,now:yesterday,calendar:calendar))
+  XCTAssertFalse(journal.completedToday(alarmID:previousID,now:midnight,calendar:calendar))
+  XCTAssertTrue(journal.completedToday(alarmID:currentID,now:midnight,calendar:calendar))
+  XCTAssertFalse(journal.completedToday(alarmID:futureID,now:midnight,calendar:calendar))
+  XCTAssertTrue(journal.completedToday(alarmID:futureID,now:future,calendar:calendar))
+  XCTAssertFalse(journal.completedToday(alarmID:currentID,now:date("2026-10-16T00:00:00+07:00"),calendar:calendar))
+ }
+ func testLegacyMorningEntriesKeepProgressWithoutGuessingAlarmIdentity() throws {
+  let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+  defer {try? FileManager.default.removeItem(at:root)}
+  let url=root.appendingPathComponent("mornings.json"),now=date("2026-10-15T06:30:00+07:00"),entryID=UUID()
+  try FileManager.default.createDirectory(at:root,withIntermediateDirectories:true)
+  let legacy:[String:Any]=["entries":[["id":entryID.uuidString,"date":now.timeIntervalSinceReferenceDate,"outcome":"local_completed"]],"weeklyGoal":5]
+  try JSONSerialization.data(withJSONObject:legacy).write(to:url)
+  let journal=try MorningJournal(url:url)
+  XCTAssertEqual(journal.entries.first?.id,entryID)
+  XCTAssertNil(journal.entries.first?.alarmID)
+  XCTAssertNil(journal.entries.first?.mode)
+  XCTAssertNil(journal.entries.first?.challenge)
+  XCTAssertEqual(journal.weeklyGoal,5)
+  XCTAssertEqual(journal.completedDays(inLast:7,now:now,calendar:calendar),1)
+  let day=try XCTUnwrap(journal.weeklyScores(now:now,calendar:calendar).last)
+  XCTAssertEqual(day.score,100)
+  XCTAssertEqual(day.entries.first?.id,entryID)
+  XCTAssertNil(day.entries.first?.mode)
+  XCTAssertNil(day.entries.first?.challenge)
+  XCTAssertFalse(journal.completedToday(alarmID:UUID(),now:now,calendar:calendar))
+ }
+ func testDayEntriesKeepRecordedModesAndChallengeTargetsAfterAlarmEditsAndReload() throws {
+  let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+  defer {try? FileManager.default.removeItem(at:root)}
+  let url=root.appendingPathComponent("mornings.json"),now=date("2026-10-15T08:00:00+07:00")
+  var journal=try MorningJournal(url:url)
+  var alarm=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),mode:.gentle,challenge:.pushUps(repetitions:2))
+  let first=MorningEntry(alarmID:alarm.id,mode:alarm.mode,challenge:alarm.challenge,date:now.addingTimeInterval(-3600),outcome:.localCompleted)
+  _=try journal.record(first,now:now,calendar:calendar)
+  alarm=SavedAlarm(id:alarm.id,time:alarm.time,mode:.focused,challenge:.pushUps(repetitions:5))
+  let second=MorningEntry(alarmID:alarm.id,mode:alarm.mode,challenge:alarm.challenge,date:now,outcome:.openaiVerified)
+  _=try journal.record(second,now:now,calendar:calendar)
+  let previous=MorningEntry(alarmID:alarm.id,mode:.balanced,challenge:.readAndChoose,date:date("2026-10-14T07:00:00+07:00"),outcome:.selfConfirmed)
+  _=try journal.record(previous,now:now,calendar:calendar)
+  let restored=try MorningJournal(url:url)
+  let week=restored.weeklyScores(now:now,calendar:calendar),today=try XCTUnwrap(week.last)
+  XCTAssertEqual(today.entries.map(\.id),[second.id,first.id])
+  XCTAssertEqual(today.entries.map(\.mode),[.focused,.gentle])
+  XCTAssertEqual(today.entries.map(\.challenge),[.pushUps(repetitions:5),.pushUps(repetitions:2)])
+  XCTAssertEqual(today.entries.map(\.outcome),[.openaiVerified,.localCompleted])
+  XCTAssertEqual(today.attempts,2);XCTAssertEqual(today.completed,2);XCTAssertEqual(today.score,100)
+  XCTAssertEqual(week[5].entries.first?.id,previous.id)
+  XCTAssertEqual(week[5].entries.first?.mode,.balanced)
+  XCTAssertEqual(week[5].entries.first?.challenge,.readAndChoose)
+  XCTAssertEqual(week[5].score,0)
+  XCTAssertEqual(restored.monthlyScore(now:now,calendar:calendar).entries.count,3)
+ }
  func testOnlyCompletedChallengesEarnPointsAndEmptyIsUnrated() {
   let now=date("2026-10-15T06:30:00+07:00")
   let empty=MorningScore(date:now,entries:[])
