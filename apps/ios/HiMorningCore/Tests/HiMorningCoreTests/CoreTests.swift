@@ -78,7 +78,7 @@ final class CoreTests: XCTestCase {
  func testChallengeDefaultsUseModeFloorsButRemainIndependent() throws {
   let time=try AlarmTime(hour:6,minute:30,weekdays:[])
   XCTAssertEqual(SavedAlarm(time:time,mode:.gentle).challenge,.none)
-  XCTAssertEqual(SavedAlarm(time:time,mode:.balanced).challenge,.pushUps(repetitions:5))
+  XCTAssertEqual(SavedAlarm(time:time,mode:.balanced).challenge,.readAndChoose)
   XCTAssertEqual(SavedAlarm(time:time,mode:.focused).challenge,.pushUps(repetitions:10))
   XCTAssertEqual(ChallengeSelection.pushUps(repetitions:0).repetitions,1)
   XCTAssertEqual(ChallengeSelection.pushUps(repetitions:99).repetitions,50)
@@ -110,6 +110,56 @@ final class CoreTests: XCTestCase {
    let data=Data("{\"kind\":\"push_ups\",\"repetitions\":\(target)}".utf8)
    XCTAssertEqual(try JSONDecoder().decode(ChallengeSelection.self,from:data).repetitions,target)
   }
+ }
+ func testModeChallengeCatalogAndPreferredDefaults() throws {
+  XCTAssertEqual(ChallengeKind.available(in:.gentle),[.none,.waveHand,.neckRotation])
+  XCTAssertEqual(ChallengeKind.available(in:.balanced),[.readAloud,.readAndChoose,.riddle])
+  XCTAssertEqual(ChallengeKind.available(in:.focused),[.pushUps,.jumpingJacks,.stretching])
+  XCTAssertEqual(ChallengeKind.waveHand.rawValue,"wave_hand")
+  XCTAssertEqual(ChallengeKind.neckRotation.rawValue,"neck_rotation")
+  XCTAssertEqual(ChallengeKind.jumpingJacks.rawValue,"jumping_jacks")
+  XCTAssertEqual(ChallengeKind.waveHand.localMovementTarget,3)
+  XCTAssertEqual(ChallengeKind.jumpingJacks.localMovementTarget,10)
+  XCTAssertTrue(ChallengeKind.stretching.usesLocalMovement)
+  XCTAssertEqual(ChallengeKind.riddle.preferredMode,.balanced)
+  let time=try AlarmTime(hour:6,minute:30,weekdays:[])
+  XCTAssertEqual(SavedAlarm(time:time,mode:.gentle).challenge,.none)
+  XCTAssertEqual(SavedAlarm(time:time,mode:.balanced).challenge,.readAndChoose)
+  XCTAssertEqual(SavedAlarm(time:time,mode:.focused).challenge,.pushUps(repetitions:10))
+ }
+ func testLocalMovementRequiresStableOrderedVisiblePoses() {
+  var staticPose=MovementChallengeProgress(kind:.jumpingJacks,target:1)
+  for timestamp in stride(from:0,through:3_000,by:300) {_ = staticPose.observe(.jumpingJack(open:true),timestampMs:timestamp)}
+  XCTAssertEqual(staticPose.completed,0)
+
+  var jumping=MovementChallengeProgress(kind:.jumpingJacks,target:1)
+  for (pose,time) in [(false,0),(false,300),(true,600),(true,900)] {
+   _ = jumping.observe(.jumpingJack(open:pose),timestampMs:time)
+  }
+  _ = jumping.observe(.unavailable,timestampMs:1_200)
+  for (pose,time) in [(false,1_500),(false,1_800),(true,2_100),(true,2_400),(false,2_700),(false,3_000)] {
+   _ = jumping.observe(.jumpingJack(open:pose),timestampMs:time)
+  }
+  XCTAssertEqual(jumping.completed,1)
+
+  var partial=MovementChallengeProgress(kind:.jumpingJacks,target:1)
+  for (pose,time) in [(false,0),(false,300)] {_ = partial.observe(.jumpingJack(open:pose),timestampMs:time)}
+  for time in [600,900] {_ = partial.observe(.transition,timestampMs:time)}
+  XCTAssertEqual(partial.completed,0)
+  for (pose,time) in [(true,1_200),(true,1_500),(false,1_800),(false,2_100)] {_ = partial.observe(.jumpingJack(open:pose),timestampMs:time)}
+  XCTAssertEqual(partial.completed,1)
+
+  var head=MovementChallengeProgress(kind:.neckRotation,target:1)
+  for (observation,time) in [ (MovementObservation.headYaw(0),0),(.headYaw(0),300),(.transition,450),(.headYaw(-0.5),600),(.headYaw(-0.5),900),(.headYaw(0),1_200),(.headYaw(0),1_500),(.transition,1_650),(.headYaw(0.5),1_800),(.headYaw(0.5),2_100),(.headYaw(0),2_400),(.headYaw(0),2_700)] {
+   _ = head.observe(observation,timestampMs:time)
+  }
+  XCTAssertTrue(head.ready)
+
+  var stretch=MovementChallengeProgress(kind:.stretching,target:1)
+  for (pose,time) in [(false,0),(false,300),(true,600),(true,1_000),(true,1_300),(false,1_600),(false,1_900)] {
+   _ = stretch.observe(.stretch(overhead:pose),timestampMs:time)
+  }
+  XCTAssertTrue(stretch.ready)
  }
  func testCaptureStoresFiftyCompleteCyclesWithinEvidenceBounds() {
   var capture=CycleCapture(target:50)

@@ -6,6 +6,34 @@ public enum ChallengeKind: String, Codable, CaseIterable, Sendable {
  case readAndChoose = "read_and_choose"
  case guidedRhythm = "guided_rhythm"
  case readAloud = "read_aloud"
+ case waveHand = "wave_hand"
+ case neckRotation = "neck_rotation"
+ case riddle
+ case jumpingJacks = "jumping_jacks"
+ case stretching
+
+ public static func available(in mode:WakeMode)->[ChallengeKind] {
+  switch mode {
+  case .gentle:[.none,.waveHand,.neckRotation]
+  case .balanced:[.readAloud,.readAndChoose,.riddle]
+  case .focused:[.pushUps,.jumpingJacks,.stretching]
+  }
+ }
+ public var preferredMode:WakeMode {
+  switch self {
+  case .none,.waveHand,.neckRotation,.guidedRhythm:return .gentle
+  case .readAloud,.readAndChoose,.riddle:return .balanced
+  case .pushUps,.jumpingJacks,.stretching:return .focused
+  }
+ }
+ public var usesLocalMovement:Bool {localMovementTarget != nil}
+ public var localMovementTarget:Int? {
+  switch self {
+  case .waveHand,.neckRotation,.stretching:return 3
+  case .jumpingJacks:return 10
+  default:return nil
+  }
+ }
 }
 
 public enum GuidedRhythmVariant: String, Codable, CaseIterable, Sendable {
@@ -34,7 +62,7 @@ public struct ChallengeSelection: Codable, Equatable, Sendable {
  public static func legacyDefault(for mode:WakeMode) -> ChallengeSelection {
   switch mode {
   case .gentle:return .none
-  case .balanced:return .pushUps(repetitions:5)
+  case .balanced:return .readAndChoose
   case .focused:return .pushUps(repetitions:10)
   }
  }

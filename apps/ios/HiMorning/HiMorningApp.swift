@@ -190,16 +190,21 @@ extension AlarmSound {
  ]}
 }
 extension ChallengeKind {
- var editorIdentifier:String {switch self {case .none:return "none";case .pushUps:return "pushUps";case .readAndChoose:return "readAndChoose";case .guidedRhythm:return "guidedRhythm";case .readAloud:return "readAloud"}}
- var title:String {switch self {case .none:return appText("No challenge");case .pushUps:return appText("Push-ups");case .readAndChoose:return appText("Read & Choose");case .guidedRhythm:return appText("Guided Rhythm");case .readAloud:return appText("Read Aloud")}}
+ var editorIdentifier:String {switch self {case .none:return "none";case .pushUps:return "pushUps";case .readAndChoose:return "readAndChoose";case .guidedRhythm:return "guidedRhythm";case .readAloud:return "readAloud";case .waveHand:return "waveHand";case .neckRotation:return "neckRotation";case .riddle:return "riddle";case .jumpingJacks:return "jumpingJacks";case .stretching:return "stretching"}}
+ var title:String {switch self {case .none:return appText("No challenge");case .pushUps:return appText("Push-ups");case .readAndChoose:return appText("Read & Choose");case .guidedRhythm:return appText("Guided Rhythm");case .readAloud:return appText("Read Aloud");case .waveHand:return appText("Wave hello");case .neckRotation:return appText("Neck turns");case .riddle:return appText("Riddle");case .jumpingJacks:return appText("Jumping jacks");case .stretching:return appText("Reach up")}}
  var summary:String {switch self {
   case .none:return appText("Confirm you are awake when you are ready.")
   case .pushUps:return appText("Complete a short camera-checked movement challenge.")
   case .readAndChoose:return appText("Read one short sentence and choose its meaning.")
   case .guidedRhythm:return appText("Follow a simple standing or seated rhythm on camera.")
   case .readAloud:return appText("Read the English sentence aloud. See your score and matching words as you read.")
+  case .waveHand:return appText("Wave your hand side to side while your camera checks locally.")
+  case .neckRotation:return appText("Turn your head left and right while your camera checks locally.")
+  case .riddle:return appText("Solve a short riddle in your language.")
+  case .jumpingJacks:return appText("Complete 10 gentle jumping jacks. Checked on this device.")
+  case .stretching:return appText("Raise both hands above your shoulders, then lower them.")
  }}
- var icon:String {switch self {case .none:return "hand.tap";case .pushUps:return "figure.strengthtraining.traditional";case .readAndChoose:return "text.book.closed";case .guidedRhythm:return "figure.cooldown";case .readAloud:return "waveform"}}
+ var icon:String {switch self {case .none:return "hand.tap";case .pushUps:return "figure.strengthtraining.traditional";case .readAndChoose:return "text.book.closed";case .guidedRhythm:return "figure.cooldown";case .readAloud:return "waveform";case .waveHand:return "hand.wave";case .neckRotation:return "person.crop.circle";case .riddle:return "lightbulb";case .jumpingJacks:return "figure.jumping";case .stretching:return "figure.cooldown"}}
 }
 extension ChallengeSelection {
  var displayTitle:String {
@@ -277,7 +282,8 @@ struct HomeView:View {
        ForEach(ChallengeKind.allCases,id:\.self) {kind in
         Button(kind.title) {
          if let time=try? AlarmTime(hour:6,minute:30,weekdays:[]) {
-          model.rehearsal=true;model.selected=SavedAlarm(time:time,mode:.balanced,challenge:ChallengeSelection(kind:kind))
+          let mode=kind.preferredMode
+          model.rehearsal=true;model.selected=SavedAlarm(time:time,mode:mode,challenge:kind == .none ? .none : kind == .pushUps ? .pushUps(repetitions:kind.localMovementTarget ?? 10) : ChallengeSelection(kind:kind))
          }
         }.accessibilityIdentifier("practice-"+kind.editorIdentifier)
        }

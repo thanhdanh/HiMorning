@@ -60,6 +60,21 @@ func testCaptureSelectsCompleteCyclesAndDiscardsInterruptedEvidence() {
  var oversize=EvidenceBuffer()
  XCTAssertFalse(oversize.append(Data(repeating:1,count:50001),timestampMs:0))
 }
+func testMovementRequiresStableOrderedPoses() {
+ var still=MovementChallengeProgress(kind:.jumpingJacks,target:1)
+ for timestamp in stride(from:0,through:3_000,by:300) {_ = still.observe(.jumpingJack(open:true),timestampMs:timestamp)}
+ XCTAssertEqual(still.completed,0)
+ var capture=MovementChallengeProgress(kind:.jumpingJacks,target:1)
+ for (open,time) in [(false,0),(false,300),(true,600),(true,900)] {_ = capture.observe(.jumpingJack(open:open),timestampMs:time)}
+ _ = capture.observe(.unavailable,timestampMs:1_200)
+ for (open,time) in [(false,1_500),(false,1_800),(true,2_100),(true,2_400),(false,2_700),(false,3_000)] {_ = capture.observe(.jumpingJack(open:open),timestampMs:time)}
+ XCTAssertEqual(capture.completed,1)
+ var partial=MovementChallengeProgress(kind:.jumpingJacks,target:1)
+ for (open,time) in [(false,0),(false,300)] {_ = partial.observe(.jumpingJack(open:open),timestampMs:time)}
+ for time in [600,900] {_ = partial.observe(.transition,timestampMs:time)}
+ for (open,time) in [(true,1_200),(true,1_500),(false,1_800),(false,2_100)] {_ = partial.observe(.jumpingJack(open:open),timestampMs:time)}
+ XCTAssertEqual(partial.completed,1)
+}
 func testPersistedTimeCannotBypassValidation() {
  XCTAssertThrowsError(try JSONDecoder().decode(AlarmTime.self,from:Data(#"{"hour":24,"minute":30,"weekdays":[]}"#.utf8)))
 }
@@ -81,7 +96,7 @@ actor FakeCloud: CloudVerification {
 @MainActor func testLocalChallengePrivacyBoundariesAndExplicitPushUpTarget() async throws {
  let time=try AlarmTime(hour:6,minute:30,weekdays:[])
  let cloud=FakeCloud();let scheduler=FakeScheduler()
- let localSelections:[ChallengeSelection]=[.none,.readAndChoose,.guidedRhythm(variant:.standing),.readAloud]
+ let localSelections:[ChallengeSelection]=[.none,.readAndChoose,.guidedRhythm(variant:.standing),.readAloud,.init(kind:.riddle),.init(kind:.waveHand),.init(kind:.neckRotation),.init(kind:.jumpingJacks),.init(kind:.stretching)]
  for challenge in localSelections {
   let flow=ChallengeCoordinator(alarm:SavedAlarm(time:time,mode:.focused,challenge:challenge),cloud:cloud,scheduler:scheduler)
   do {try await flow.startCloud(consent:true);preconditionFailure("Local challenge must not create a cloud session")} catch {}
@@ -92,6 +107,14 @@ actor FakeCloud: CloudVerification {
  try await local.finish(.localCompleted)
  XCTAssertEqual(local.session.outcome,.localCompleted)
  XCTAssertEqual(await scheduler.stops,1)
+
+ let localScheduler=FakeScheduler()
+ for challenge in [ChallengeSelection(kind:.riddle),.init(kind:.waveHand),.init(kind:.neckRotation),.init(kind:.jumpingJacks),.init(kind:.stretching)] {
+  let flow=ChallengeCoordinator(alarm:SavedAlarm(time:time,mode:challenge.kind.preferredMode,challenge:challenge),cloud:cloud,scheduler:localScheduler)
+  try await flow.finish(.localCompleted)
+  XCTAssertEqual(flow.session.outcome,.localCompleted)
+ }
+ XCTAssertEqual(await localScheduler.stops,5)
 
  for challenge in [ChallengeSelection.none,.pushUps(repetitions:2)] {
   let unsupported=ChallengeCoordinator(alarm:SavedAlarm(time:time,mode:.gentle,challenge:challenge),cloud:cloud,scheduler:scheduler)
@@ -212,6 +235,7 @@ try RemoteDemoTests().testGeneratedFramesShareTheServerFixtureAndBounds()
 try await RemoteDemoTests().testDemoCannotStopAnAlarmOrRecordVerifiedEvenWithAMaliciousSuccess()
 try await testNativeLibrary()
 testCaptureSelectsCompleteCyclesAndDiscardsInterruptedEvidence()
+testMovementRequiresStableOrderedPoses()
 testPersistedTimeCannotBypassValidation()
 try await testCloudStopRaceAndConsent()
 try await testLocalChallengePrivacyBoundariesAndExplicitPushUpTarget()

@@ -21,12 +21,13 @@ final class PilotUITests:XCTestCase {
   capture(app,name:"sounds-"+language)
   app.buttons["chooseSound"].tap()
  }
- private func launch(language:String,expired:Bool=false,awakeReady:Bool=false)->XCUIApplication {
+ private func launch(language:String,expired:Bool=false,awakeReady:Bool=false,editorFixture:Bool=false)->XCUIApplication {
   let app=XCUIApplication()
   app.terminate()
   app.launchArguments=["-AppleLanguages","(en)","-AppleLocale","en_US","--ui-testing","--ui-camera-denied"]
   if language == "vi" {app.launchArguments.append("--ui-language-vi")}
   if expired {app.launchArguments.append("--preview-expired")}
+  if editorFixture {app.launchArguments.append("--ui-disabled-alarm")}
   if awakeReady {app.launchArguments.append("--ui-awake-ready")}
   app.launch()
   for identifier in ["closeProgress","closePro"] {
@@ -322,22 +323,26 @@ final class PilotUITests:XCTestCase {
   }
  }
  func testAlarmEditorOffersDiverseChallengeChoices() {
-  let app=launch(language:"en")
-  app.buttons["addAlarm"].tap()
-  app.swipeUp()
-  let readChoice=app.buttons["challenge-readAndChoose"]
-  for _ in 0..<4 where !readChoice.isHittable {app.swipeUp()}
-  XCTAssertTrue(readChoice.exists)
-  for id in ["none","pushUps","readAndChoose","guidedRhythm","readAloud"] {
-   XCTAssertTrue(app.buttons["challenge-"+id].exists,"Missing challenge choice: \(id)")
+  let app=launch(language:"en",editorFixture:true)
+  app.buttons["editAlarm-00000000-0000-0000-0000-000000000001"].tap()
+  XCTAssertTrue(app.navigationBars["Edit alarm"].waitForExistence(timeout:5))
+  XCTAssertTrue(app.buttons["challenge-guidedRhythm"].exists,"The historical saved choice remains available")
+  func selectMode(_ mode:String) {
+   let button=app.buttons["mode-"+mode]
+   for _ in 0..<8 {
+    let frame=button.frame
+    if frame.minY<app.buttons["editorChallengeSection"].frame.maxY {app.scrollViews.firstMatch.swipeDown()}
+    else if !button.isHittable || frame.midY>app.buttons["saveAlarm"].frame.minY {app.scrollViews.firstMatch.swipeUp()}
+    else {break}
+   }
+   button.tap()
   }
-  readChoice.tap()
-  let readSummary=app.staticTexts["Read one short sentence and choose its meaning."]
-  for _ in 0..<3 where !readSummary.exists {app.swipeUp()}
-  XCTAssertTrue(app.staticTexts["Read one short sentence and choose its meaning."].waitForExistence(timeout:3))
-  for _ in 0..<3 where !app.buttons["challenge-readAloud"].isHittable {app.swipeUp()}
-  app.buttons["challenge-readAloud"].tap()
-  XCTAssertTrue(app.staticTexts["Read the English sentence aloud. See your score and matching words as you read."].waitForExistence(timeout:3))
+  for (mode,choices) in [("gentle",["none","waveHand","neckRotation"]),("balanced",["readAndChoose","readAloud","riddle"]),("focused",["pushUps","jumpingJacks","stretching"])] {
+   selectMode(mode)
+   for id in choices {XCTAssertTrue(app.buttons["challenge-"+id].exists,"Missing challenge: \(id)")}
+   XCTAssertFalse(app.buttons["challenge-guidedRhythm"].exists,"Switching modes replaces the legacy choice")
+  }
+  capture(app,name:"energized-challenge-catalog")
   app.buttons["Cancel"].tap()
  }
  func testReadingPracticeCompletesOfflineInBothLanguages() {
@@ -362,52 +367,38 @@ final class PilotUITests:XCTestCase {
    app.terminate()
   }
  }
- func testModeDefaultsMatchTargetAndKeepAnExplicitChallenge() {
+ func testModeDefaultsSelectACompatibleChallenge() {
   let app=launch(language:"en")
   app.buttons["addAlarm"].tap()
+  app.buttons["mode-balanced"].tap()
+  let readChoice=app.buttons["challenge-readAndChoose"]
+  XCTAssertTrue(readChoice.waitForExistence(timeout:3))
+  XCTAssertTrue(readChoice.isSelected)
+  for _ in 0..<6 where !app.buttons["mode-focused"].isHittable || app.buttons["mode-focused"].frame.minY<app.buttons["editorChallengeSection"].frame.maxY {app.swipeDown()}
   app.buttons["mode-focused"].tap()
   app.swipeUp()
   let target=app.staticTexts["pushUpTarget"]
   XCTAssertTrue(target.waitForExistence(timeout:3))
   XCTAssertTrue(target.label.contains("10"))
-  app.buttons["challenge-readAndChoose"].tap()
-  app.swipeDown()
-  app.buttons["mode-balanced"].tap()
-  app.swipeUp()
-  XCTAssertTrue(app.buttons["challenge-readAndChoose"].isSelected)
-  XCTAssertFalse(app.staticTexts["pushUpTarget"].exists)
+  XCTAssertFalse(app.buttons["challenge-readAndChoose"].exists)
   app.buttons["Cancel"].tap()
  }
  func testPushUpTargetRespectsModeFloorsAndMaximum() {
   let app=launch(language:"en")
   app.buttons["addAlarm"].tap()
-  app.buttons["mode-balanced"].tap()
+  app.buttons["mode-focused"].tap()
   let target=app.staticTexts["pushUpTarget"],increase=app.buttons["increasePushUpTarget"],decrease=app.buttons["decreasePushUpTarget"]
   for _ in 0..<6 where !increase.isHittable {app.swipeUp()}
-  XCTAssertTrue(target.label.contains("5"))
-  XCTAssertTrue(decrease.exists)
-  XCTAssertFalse(decrease.isEnabled,"Awake cannot go below 5")
-  increase.tap()
-  XCTAssertTrue(target.label.contains("6"))
-  decrease.tap()
-  XCTAssertTrue(target.label.contains("5"))
-  XCTAssertFalse(decrease.isEnabled)
-  increase.tap()
-  for _ in 0..<6 where !app.buttons["mode-focused"].isHittable || app.buttons["mode-focused"].frame.minY<app.buttons["editorChallengeSection"].frame.maxY {app.swipeDown()}
-  app.buttons["mode-focused"].tap()
-  for _ in 0..<6 where !increase.isHittable {app.swipeUp()}
   XCTAssertTrue(target.label.contains("10"))
+  XCTAssertTrue(decrease.exists)
   XCTAssertFalse(decrease.isEnabled,"Energized cannot go below 10")
   increase.tap()
+  XCTAssertTrue(target.label.contains("11"))
   decrease.tap()
   XCTAssertTrue(target.label.contains("10"))
   XCTAssertFalse(decrease.isEnabled)
   increase.tap()
   XCTAssertTrue(target.label.contains("11"))
-  for _ in 0..<6 where !app.buttons["mode-balanced"].isHittable || app.buttons["mode-balanced"].frame.minY<app.buttons["editorChallengeSection"].frame.maxY {app.swipeDown()}
-  app.buttons["mode-balanced"].tap()
-  for _ in 0..<6 where !increase.isHittable {app.swipeUp()}
-  XCTAssertTrue(target.label.contains("11"),"Switching to an easier mode must preserve the chosen target")
   for _ in 0..<39 {increase.tap()}
   XCTAssertTrue(target.label.contains("50"))
   XCTAssertFalse(increase.isEnabled,"The target must stop at the supported maximum")
@@ -418,7 +409,7 @@ final class PilotUITests:XCTestCase {
  }
  func testLocalPracticeCanReturnHomeBeforeRequestingPermissions() {
   let app=launch(language:"en")
-  for (kind,startButton) in [("none",""),("readAloud","startReadAloud"),("guidedRhythm","startGuidedRhythm")] {
+  for (kind,startButton) in [("none",""),("readAloud","startReadAloud"),("guidedRhythm","startGuidedRhythm"),("waveHand","startLocalMovement"),("riddle","")] {
    app.buttons["practiceChallenges"].tap()
    app.buttons["practice-"+kind].tap()
    XCTAssertTrue(app.buttons["backToHome"].waitForExistence(timeout:5))
@@ -434,7 +425,7 @@ final class PilotUITests:XCTestCase {
    let app=launch(language:language,expired:true)
    app.buttons["addAlarm"].tap()
    app.buttons["mode-balanced"].tap()
-   XCTAssertEqual(app.staticTexts["modeExplanation"].label,language == "vi" ? "Gợi ý 5 lần chống đẩy" : "Try 5 push-ups")
+   XCTAssertEqual(app.staticTexts["modeExplanation"].label,language == "vi" ? "Đọc một câu ngắn rồi chọn nghĩa phù hợp." : "Read one short sentence and choose its meaning.")
    app.buttons["mode-focused"].tap()
    XCTAssertTrue(app.buttons["closePro"].waitForExistence(timeout:5))
    capture(app,name:"expired-pro-"+language)
@@ -469,21 +460,17 @@ final class PilotUITests:XCTestCase {
    app.terminate()
   }
  }
- func testExpiredPreviewCapsPushUpsAndKeepsLocalChallengeChoice() {
+ func testExpiredPreviewKeepsBasicChallengeCatalog() {
   let app=launch(language:"en",expired:true)
   app.buttons["addAlarm"].tap()
-  app.buttons["mode-balanced"].tap()
-  app.swipeUp()
-  let target=app.staticTexts["pushUpTarget"]
-  XCTAssertTrue(target.waitForExistence(timeout:3))
-  XCTAssertTrue(target.label.contains("5"))
-  XCTAssertFalse(app.buttons["increasePushUpTarget"].isEnabled)
-  app.buttons["challenge-readAndChoose"].tap()
-  app.swipeDown()
   app.buttons["mode-gentle"].tap()
   app.swipeUp()
+  XCTAssertTrue(app.buttons["challenge-none"].isSelected)
+  XCTAssertTrue(app.buttons["challenge-waveHand"].exists)
+  app.swipeDown()
+  app.buttons["mode-balanced"].tap()
+  app.swipeUp()
   XCTAssertTrue(app.buttons["challenge-readAndChoose"].isSelected)
-  XCTAssertFalse(target.exists)
   app.buttons["Cancel"].tap()
   app.buttons["practiceChallenges"].tap()
   app.buttons["practice-readAndChoose"].tap()

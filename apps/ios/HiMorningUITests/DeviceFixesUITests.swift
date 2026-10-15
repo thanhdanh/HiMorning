@@ -253,6 +253,7 @@ final class DeviceFixesUITests:XCTestCase {
  func testChallengeSummaryAndSettingsAreInsideSelectedCard() {
   let app=launch()
   app.buttons["addAlarm"].tap()
+  reveal(app.buttons["mode-focused"],in:app);app.buttons["mode-focused"].tap()
   reveal(app.buttons["challenge-pushUps"],in:app);app.buttons["challenge-pushUps"].tap()
   let card=app.otherElements["challenge-card-pushUps"]
   let summary=app.staticTexts["challenge-summary-pushUps"],target=app.staticTexts["pushUpTarget"]
