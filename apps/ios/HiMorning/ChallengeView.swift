@@ -4,7 +4,7 @@ import HiMorningCore
 struct CameraPreview:UIViewRepresentable {
  let session:AVCaptureSession
  final class Preview:UIView {override class var layerClass:AnyClass {AVCaptureVideoPreviewLayer.self}}
- func makeUIView(context:Context)->Preview {let view=Preview();let layer=view.layer as! AVCaptureVideoPreviewLayer;layer.session=session;layer.videoGravity = .resizeAspect;return view}
+ func makeUIView(context:Context)->Preview {let view=Preview();let layer=view.layer as! AVCaptureVideoPreviewLayer;layer.session=session;layer.videoGravity = .resizeAspectFill;return view}
  func updateUIView(_ uiView:Preview,context:Context) {}
 }
 struct ChallengeView:View {
@@ -17,6 +17,7 @@ struct ChallengeView:View {
  @Environment(\.scenePhase) private var scene
  @State private var coordinator:ChallengeCoordinator?
  @State private var camera:CameraCapture?
+ @State private var movementCamera:MovementChallengeCapture?
  @State private var rhythmCamera:GuidedRhythmCapture?
  @State private var speech:SpeechChallengeCapture?
  @StateObject private var spokenExample=SpokenExample()
@@ -29,13 +30,18 @@ struct ChallengeView:View {
  @State private var speechListening=false
  @State private var awakeAvailableAt=Date().addingTimeInterval(120)
  @Environment(\.accessibilityReduceMotion) private var reduceMotion
- @State private var readPrompt=EnglishChallengeContent.readAndChoose[0]
+ @State private var readPrompt=ChallengePrompts.readAndChoose()!
+ @State private var riddlePrompt=ChallengePrompts.riddle()!
+ @State private var lastReadPromptID:String?
+ @State private var lastRiddlePromptID:String?
  @State private var readAloudPrompt=EnglishChallengeContent.readAloud[0]
  @State private var message=appText("Good morning. Choose what feels right today.")
  @State private var reps=0
  @State private var consent=false
  @State private var busy=false
  @State private var consentDialog=false
+ @State private var demoSubmitted=false
+ private var isDemoOnly:Bool {model.cloud?.isDemoOnly ?? true}
  @State private var completion:WakeOutcome?
  @State private var retrying=false
  private var practicing:Bool {model.rehearsal || retrying}
@@ -56,6 +62,9 @@ struct ChallengeView:View {
     if let camera {
      CameraPreview(session:camera.session).frame(height:280).clipShape(RoundedRectangle(cornerRadius:24))
       .overlay(alignment:.bottom) {Text("\(reps) / \(challenge.repetitions ?? 0)").font(.largeTitle.bold()).padding(12).background(.regularMaterial,in:Capsule()).padding()}
+    } else if let movementCamera {
+     CameraPreview(session:movementCamera.session).frame(height:280).clipShape(RoundedRectangle(cornerRadius:24))
+      .overlay(alignment:.bottom) {Text("\(reps) / \(challenge.kind.localMovementTarget ?? 0)").font(.largeTitle.bold()).padding(12).background(.regularMaterial,in:Capsule()).padding()}
     } else if let rhythmCamera {
      CameraPreview(session:rhythmCamera.session).frame(height:280).clipShape(RoundedRectangle(cornerRadius:24))
       .overlay(alignment:.bottom) {Text("\(rhythmCycles) / 3").font(.largeTitle.bold()).padding(12).background(.regularMaterial,in:Capsule()).padding()}
@@ -70,10 +79,11 @@ struct ChallengeView:View {
     if effectiveAlarm.mode != alarm.mode || challenge != alarm.challenge {Text(appText("Your preview has ended. This morning uses the basic challenge. Your saved choice stays the same.")).font(.footnote).foregroundStyle(MorningTheme.muted)}
     Text(result ?? message).font(.title3.weight(.medium)).multilineTextAlignment(.center).accessibilityIdentifier("challengeMessage")
     if !finished && (busy || stopping || speechFinishing || preparingExample) {ProgressView().accessibilityLabel(message)}
-    if challenge.kind == .readAndChoose && !finished {
-     Text(appText(readPrompt.sentence)).font(.title2.weight(.semibold)).multilineTextAlignment(.center)
-     ForEach(Array(readPrompt.choices.enumerated()),id:\.offset) {index,key in
-      Button(appText(key)) {chooseMeaning(index)}.buttonStyle(MorningButtonStyle(primary:false)).accessibilityIdentifier("readChoice-\(index)")
+    if (challenge.kind == .readAndChoose || challenge.kind == .riddle) && !finished {
+     let prompt=challenge.kind == .riddle ? riddlePrompt : readPrompt
+     Text(appText(prompt.text)).font(.title2.weight(.semibold)).multilineTextAlignment(.center)
+     ForEach(Array(prompt.choices.enumerated()),id:\.offset) {index,key in
+      Button(appText(key)) {chooseMeaning(index,prompt:prompt)}.buttonStyle(MorningButtonStyle(primary:false)).accessibilityIdentifier("readChoice-\(index)")
      }
     }
     if challenge.kind == .readAloud {
@@ -90,11 +100,15 @@ struct ChallengeView:View {
      }
     }
     if challenge.kind == .pushUps && camera == nil && !finished {
-     Button {consentDialog=true} label: {ChallengeStartLabel(title:"Start challenge")}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startChallenge")
-     Text(appText("The camera counts push-ups on this iPhone. Video is not saved or uploaded.")).font(.footnote).foregroundStyle(MorningTheme.muted)
+     Button {consentDialog=true} label: {ChallengeStartLabel(title:isDemoOnly ? "Test remote AI":"Start AI challenge")}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping || demoSubmitted).accessibilityIdentifier("startChallenge")
+     if isDemoOnly {Text(appText("Remote demo uses generated images. It does not verify your movement.")).font(.footnote).foregroundStyle(MorningTheme.muted)}
     }
     if challenge.kind == .guidedRhythm && rhythmCamera == nil && !finished {
      Button {Task {await startRhythm()}} label: {ChallengeStartLabel(title:"Start guided rhythm")}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startGuidedRhythm")
+    }
+    if challenge.kind.usesLocalMovement && movementCamera == nil && !finished {
+     Button {Task {await startMovement()}} label: {ChallengeStartLabel(title:"Start on-device challenge")}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startLocalMovement")
+     Text(appText("Camera video stays on this device.")).font(.footnote).foregroundStyle(MorningTheme.muted)
     }
    }.padding(24).frame(maxWidth:.infinity).id("challengeTop")
   }.background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink)
@@ -136,8 +150,8 @@ struct ChallengeView:View {
      }
     }.padding(.horizontal,24).padding(.vertical,12).background(MorningTheme.canvas)
    }.tint(MorningTheme.accent)
-   .confirmationDialog(appText("Allow the camera to check your push-ups on this iPhone. Video and sound are not saved or uploaded. You can stop at any time."),isPresented:$consentDialog,titleVisibility:.visible) {
-    Button(appText("Open camera")) {Task {await startCamera()}}
+   .confirmationDialog(appText(isDemoOnly ? "This test sends generated color images to Gemini through Cloudflare. Your camera stays off. Google may use demo inputs and outputs to improve its products. No movement will be verified.":"Movement photos go through HiMorning to Qwen on Modal. Modal may retain inputs and outputs for up to 7 days. No audio is uploaded. You can stop at any time."),isPresented:$consentDialog,titleVisibility:.visible) {
+    Button(appText(isDemoOnly ? "Agree and run test":"Agree and open camera")) {Task {if isDemoOnly {await startDemo()} else {await startCamera()}}}
     Button(appText("Choose another way")) {consentDialog=false}
    }
    .task {
@@ -145,8 +159,8 @@ struct ChallengeView:View {
     model.preview.refresh()
     // Keep one target throughout an active challenge, including at preview expiry.
     sessionAlarm=model.access.effectiveAlarm(alarm)
-    coordinator=ChallengeCoordinator(alarm:effectiveAlarm,cloud:nil,scheduler:model.scheduler,rehearsal:practicing)
-    preparePrompt()
+    coordinator=ChallengeCoordinator(alarm:effectiveAlarm,cloud:model.cloud,scheduler:model.scheduler,rehearsal:practicing)
+    preparePrompt(newReadingPrompt:true,newReadAloudPrompt:true)
     #if DEBUG
     let arguments=ProcessInfo.processInfo.arguments
     if arguments.contains("--ui-testing") {
@@ -162,13 +176,14 @@ struct ChallengeView:View {
     }
     if arguments.contains("--ui-testing"),model.rehearsal,arguments.contains("--ui-complete-challenge") {
      switch challenge.kind {
-     case .pushUps:complete(.localCompleted,success:appText("Push-ups complete. Have a good morning!"))
+     case .pushUps:complete(.aiVerified)
      case .guidedRhythm:complete(.localCompleted,success:appText("Guided rhythm completed. Have a good morning!"))
      case .readAloud:
       if transcript.isEmpty {transcript=appText(readAloudPrompt.text)}
       speechEnded=true
       complete(.localCompleted,success:appText("Great reading. Have a good morning!"))
-     case .readAndChoose:complete(.localCompleted,success:appText("Correct. Challenge completed!"))
+     case .readAndChoose,.riddle:complete(.localCompleted,success:appText("Correct. Challenge completed!"))
+     case .waveHand,.neckRotation,.jumpingJacks,.stretching:complete(.localCompleted,success:appText("Local challenge completed. Have a good morning!"))
      case .none:break
      }
     }
@@ -189,33 +204,45 @@ struct ChallengeView:View {
   }
  }
  @MainActor private func startCamera() async {
-  guard !busy,!finished,!stopping,scene == .active,let coordinator,let target=challenge.repetitions else {return}
-  busy=true;reps=0;message=appText("Getting the camera ready…")
-  let generation=UUID();captureGeneration=generation;consent=true
-  defer {busy=false}
-  let capture=CameraCapture(target:target) {update in Task {@MainActor in
-   guard captureGeneration == generation,consent,!finished,!stopping else {return}
-   reps=update.reps;message=update.message
-   if update.ready {await completePushUps(update.counter)}
-   else if update.ended {camera?.stop();camera=nil;consent=false;await coordinator.suspend()}
-  }}
-  camera=capture
-  #if DEBUG
-  if ProcessInfo.processInfo.arguments.contains("--ui-testing"),ProcessInfo.processInfo.arguments.contains("--ui-camera-denied") {
-   await capture.start(requestAccess:{false});return
-  }
-  #endif
-  await capture.start()
- }
- @MainActor private func completePushUps(_ counter:PushUpCounter) async {
-  guard let coordinator,!busy,!stopping,!finished,consent,scene == .active else {return}
-  busy=true;let generation=captureGeneration
+  guard !isDemoOnly else {return}
+  guard !busy,!finished,!stopping,scene == .active,let coordinator,let target=challenge.repetitions else {return};busy=true;message=appText("Getting the camera ready…")
+  let generation=UUID();captureGeneration=generation
   defer {busy=false}
   do {
-   let applied=try await coordinator.completePushUps(counter)
-   guard captureGeneration == generation,!stopping,scene == .active else {return}
-   if applied {complete(.localCompleted,success:appText("Push-ups complete. Have a good morning!"))}
-  } catch {message=appText("The alarm could not be stopped here. Please use the system Stop button.")}
+   try await coordinator.startCloud(consent:true)
+   guard coordinator.session.outcome == nil,captureGeneration == generation,scene == .active,!stopping else {return}
+   consent=true
+   let capture=CameraCapture(target:target) {update in Task {@MainActor in
+    guard captureGeneration == generation,consent,!finished,!stopping else {return};reps=update.reps;message=update.message
+    if update.ready {await submit(update.frames)}
+    else if update.ended {camera?.stop();camera=nil;consent=false;await coordinator.suspend()}
+   }}
+   camera=capture;await capture.start()
+  } catch {message=appText("AI is not available. You can confirm you are awake or stop.")}
+ }
+ @MainActor private func startDemo() async {
+  guard isDemoOnly,!busy,!finished,!stopping,!demoSubmitted,scene == .active,let coordinator,let target=challenge.repetitions else {return}
+  busy=true;let generation=UUID();captureGeneration=generation
+  defer {busy=false}
+  do {
+   guard let url=Bundle.main.url(forResource:"free-demo-frames",withExtension:"json") else {throw ChallengeError.insufficientEvidence}
+   let frames=try RemoteDemo.frames(from:Data(contentsOf:url),target:target)
+   try await coordinator.startCloud(consent:true)
+   guard coordinator.session.outcome == nil,captureGeneration==generation,scene == .active,!stopping else {return}
+   demoSubmitted=true;message=appText("Waiting for the AI server. You can still stop.")
+   _ = try await coordinator.submit(frames)
+   guard coordinator.session.outcome == nil,captureGeneration==generation,scene == .active,!stopping else {return}
+   if let decision=coordinator.lastDecision,["uncertain","incomplete"].contains(decision.status),!decision.decisionID.isEmpty {message=appText("The remote AI replied. Demo complete; no movement was verified.")}
+   else {message=appText("The remote test is unavailable. You can still stop.")}
+  } catch {if captureGeneration==generation,!finished,!stopping {message=appText("The remote test is unavailable. You can still stop.")}}
+ }
+ @MainActor private func submit(_ frames:[EvidenceFrame]) async {
+  guard let coordinator,!busy else {return};busy=true;message=appText("Waiting for the AI server. You can still stop.")
+  defer {busy=false}
+  do {
+   if try await coordinator.submit(frames) {complete(coordinator.session.outcome ?? .aiVerified)}
+   else if coordinator.session.outcome == nil {message=appText("The movement could not be fully checked. You can choose another way.")}
+  } catch {message=appText("The movement could not be checked right now. You can still stop.")}
  }
  private func finish(_ outcome:WakeOutcome,success:String?=nil) {
   guard !finished,!stopping,let coordinator else {return}
@@ -245,28 +272,38 @@ struct ChallengeView:View {
   pauseResources()
   // A passed alarm stays completed; further attempts are practice only.
   retrying=true
-  coordinator=ChallengeCoordinator(alarm:effectiveAlarm,cloud:nil,scheduler:model.scheduler,rehearsal:true)
-  transcript="";speechEnded=false;reps=0;rhythmCycles=0;consentDialog=false
+  coordinator=ChallengeCoordinator(alarm:effectiveAlarm,cloud:model.cloud,scheduler:model.scheduler,rehearsal:true)
+  transcript="";speechEnded=false;reps=0;rhythmCycles=0;demoSubmitted=false;consentDialog=false
+  preparePrompt(newReadingPrompt:true)
   result=nil;completion=nil;message=challengeInstructions
  }
- private func preparePrompt() {
-  let index=Int(alarm.id.uuid.0)
-  readPrompt=EnglishChallengeContent.readAndChoose[index % EnglishChallengeContent.readAndChoose.count]
-  readAloudPrompt=EnglishChallengeContent.readAloud.randomElement() ?? readAloudPrompt
+ private func preparePrompt(newReadingPrompt:Bool=false,newReadAloudPrompt:Bool=false) {
+  if newReadingPrompt {
+   readPrompt=ChallengePrompts.readAndChoose(previousID:lastReadPromptID) ?? readPrompt
+   lastReadPromptID=readPrompt.id
+   riddlePrompt=ChallengePrompts.riddle(previousID:lastRiddlePromptID) ?? riddlePrompt
+   lastRiddlePromptID=riddlePrompt.id
+  }
+  if newReadAloudPrompt {readAloudPrompt=EnglishChallengeContent.readAloud.randomElement() ?? readAloudPrompt}
   message=challengeInstructions
  }
  private var challengeInstructions:String {
   switch challenge.kind {
   case .none:return appText("You can confirm you’re awake when the countdown ends.")
-  case .pushUps:return appText("Place your phone to the side so your whole body is visible. Start the camera, then do your push-ups. Each full down-and-up movement counts once.")
+  case .pushUps:return appText(isDemoOnly ? "Remote demo uses generated images. It does not verify your movement.":"Place your phone to the side so your whole body is visible. Start the camera, then do your push-ups. Each full down-and-up movement counts once.")
   case .readAndChoose:return appText("Read the sentence, then choose the closest meaning. You can try again.")
+  case .riddle:return appText("Solve the riddle, then choose your answer. You can try again.")
+  case .waveHand:return appText("Place your hand in view and wave it side to side. Video stays on this device.")
+  case .neckRotation:return appText("Keep your face visible and turn your head left and right. Video stays on this device.")
+  case .jumpingJacks:return appText("Keep your whole body visible and complete 10 gentle jumping jacks. Video stays on this device.")
+  case .stretching:return appText("Raise both hands above your shoulders, then lower them. Video stays on this device.")
   case .guidedRhythm:return challenge.rhythmVariant == .seated ? appText("Stay seated. Lower your arms, raise them, then lower them. Complete 3 cycles. Video stays on this device.") : appText("Stand, bend your knees gently, then stand again. Complete 3 cycles. Video stays on this device.")
   case .readAloud:return appText("Tap Start reading, then read the English sentence aloud. Match at least 80% of the words.")
   }
  }
- private func chooseMeaning(_ index:Int) {
-  if readPrompt.isCorrect(choiceIndex:index) {finish(.localCompleted,success:appText("Correct. Challenge completed!"))}
-  else {message=appText("Not quite. Read the sentence and try again.")}
+ private func chooseMeaning(_ index:Int,prompt:ChallengePrompt) {
+  if prompt.isCorrect(choiceIndex:index) {finish(.localCompleted,success:appText("Correct. Challenge completed!"))}
+  else {message=appText(challenge.kind == .riddle ? "Not quite. Think it over and try again." : "Not quite. Read the sentence and try again.")}
  }
  @MainActor private func startRhythm() async {
   guard rhythmCamera == nil,!busy,!finished,!stopping,scene == .active else {return};busy=true;message=appText("Getting the camera ready…")
@@ -278,6 +315,18 @@ struct ChallengeView:View {
    else if update.ended {rhythmCamera?.stop();rhythmCamera=nil}
   }}
   rhythmCamera=capture;await capture.start();busy=false
+ }
+ @MainActor private func startMovement() async {
+  guard movementCamera == nil,!busy,!finished,!stopping,scene == .active,challenge.kind.usesLocalMovement else {return}
+  busy=true;message=appText("Getting the camera ready…")
+  let generation=UUID();captureGeneration=generation
+  let capture=MovementChallengeCapture(kind:challenge.kind) {update in Task {@MainActor in
+   guard captureGeneration == generation,!finished,!stopping else {return}
+   reps=update.reps;message=update.message
+   if update.ready {finish(.localCompleted,success:appText("Local challenge completed. Have a good morning!"))}
+   else if update.ended {movementCamera?.stop();movementCamera=nil}
+  }}
+  movementCamera=capture;await capture.start();busy=false
  }
  @MainActor private func startSpeech() async {
   guard speech == nil,!busy,!finished,!stopping,!preparingExample,!spokenExample.isSpeaking,scene == .active else {return};busy=true
@@ -306,6 +355,7 @@ struct ChallengeView:View {
  private func pauseResources() {
   captureGeneration=UUID();consent=false;speechListening=false;speechFinishing=false
   camera?.stop();camera=nil
+  movementCamera?.stop();movementCamera=nil
   rhythmCamera?.stop();rhythmCamera=nil
   speech?.stop();speech=nil
   spokenExample.stop()

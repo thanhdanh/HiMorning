@@ -12,7 +12,7 @@ struct AlarmEditor:View {
  @State private var mode:WakeMode = .gentle
  @State private var sound:AlarmSound = .system
  @State private var challenge:ChallengeSelection = .none
- @State private var pushUpTarget=5
+ @State private var pushUpTarget=10
  @State private var rhythmVariant:GuidedRhythmVariant = .standing
  @State private var choseChallenge=false
  @State private var days:Set<Int>=[2,3,4,5,6]
@@ -72,11 +72,12 @@ struct AlarmEditor:View {
         modeButton(value)
        }
       }.padding(4).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:16))
-      Text(challenge.kind == .pushUps ? appText("Try %lld push-ups",count:pushUpTarget) : appText("Wake up at your own pace")).font(.subheadline).accessibilityIdentifier("modeExplanation")
+      Text(challenge.kind == .pushUps ? appText("Try %lld push-ups",count:pushUpTarget) : challenge.kind == .none ? appText("Wake up at your own pace") : challenge.kind.summary).font(.subheadline).accessibilityIdentifier("modeExplanation")
      }.id("editorOptions")
      VStack(alignment:.leading,spacing:12) {
       Text(appText("Challenge")).font(.subheadline.weight(.semibold)).foregroundStyle(MorningTheme.muted)
-      ForEach(ChallengeKind.allCases,id:\.self) {kind in
+      if !ChallengeKind.available(in:mode).contains(challenge.kind) {challengeButton(challenge.kind,legacy:true)}
+      ForEach(ChallengeKind.available(in:mode),id:\.self) {kind in
        challengeButton(kind)
       }
      }
@@ -174,7 +175,7 @@ struct AlarmEditor:View {
   }.buttonStyle(.plain).accessibilityIdentifier(id)
    .accessibilityLabel(title+", "+summary).accessibilityValue(appText(expanded == section ? "Expanded" : "Collapsed"))
  }
- private func challengeButton(_ kind:ChallengeKind)->some View {
+ private func challengeButton(_ kind:ChallengeKind,legacy:Bool=false)->some View {
   VStack(alignment:.leading,spacing:0) {
    Button {
     choseChallenge=true
@@ -185,12 +186,14 @@ struct AlarmEditor:View {
      challenge = .pushUps(repetitions:pushUpTarget)
     case .readAndChoose:challenge = .readAndChoose
     case .guidedRhythm:challenge = .guidedRhythm(variant:rhythmVariant)
+    case .waveHand,.neckRotation,.riddle,.jumpingJacks,.stretching:challenge=ChallengeSelection(kind:kind)
     case .readAloud:challenge = .readAloud
     }
    } label: {
     HStack(spacing:14) {
      Image(systemName:kind.icon).frame(width:32)
-     Text(kind.title).font(.body.weight(.medium))
+     Text(legacy ? String(format:appText("%@ · saved choice"),kind.title) : kind.title).font(.body.weight(.medium))
+     if kind.usesLocalMovement {Text(appText("On-device camera")).font(.caption).foregroundStyle(MorningTheme.muted)}
      Spacer()
      Image(systemName:challenge.kind == kind ? "checkmark.circle.fill" : "circle").foregroundStyle(MorningTheme.accent)
     }.padding(14).contentShape(Rectangle())
@@ -213,7 +216,7 @@ struct AlarmEditor:View {
         pushUpTarget=max(mode == .focused ? 10 : 5,pushUpTarget+1);challenge = .pushUps(repetitions:pushUpTarget)
        } label:{Image(systemName:"plus").frame(width:44,height:44).contentShape(Rectangle())}
         .buttonStyle(.plain).background(MorningTheme.soft,in:Circle())
-        .disabled(pushUpTarget >= (preview.access.hasFullAccess ? ChallengeSelection.maximumPushUps : 5))
+       .disabled(pushUpTarget >= (preview.access.hasFullAccess ? ChallengeSelection.maximumPushUps : 5))
         .accessibilityLabel(appText("Increase push-up target")).accessibilityIdentifier("increasePushUpTarget")
       }
      }
@@ -234,12 +237,14 @@ struct AlarmEditor:View {
   Button {
    preview.refresh()
    if preview.access.allows(mode:value) {
-    mode=value
-    if !choseChallenge {challenge = .legacyDefault(for:value)}
-    if challenge.kind == .pushUps {
-     pushUpTarget=max(value == .focused ? 10 : 5,pushUpTarget)
-     challenge = .pushUps(repetitions:pushUpTarget)
-    }
+     guard value != mode else {return}
+     let oldMode=mode
+     mode=value
+    if value != oldMode && !ChallengeKind.available(in:value).contains(challenge.kind) {
+     challenge=value == .gentle ? .none : value == .balanced ? .readAndChoose : .pushUps(repetitions:10)
+     pushUpTarget=challenge.repetitions ?? pushUpTarget
+    } else if !choseChallenge {challenge=value == .gentle ? .none : value == .balanced ? .readAndChoose : .pushUps(repetitions:10);pushUpTarget=challenge.repetitions ?? pushUpTarget}
+     if challenge.kind == .pushUps {pushUpTarget=min(ChallengeSelection.maximumPushUps,max(value == .focused ? 10 : 5,pushUpTarget));challenge = .pushUps(repetitions:pushUpTarget)}
    } else {pro=true}
   } label: {
    VStack(spacing:8) {
@@ -250,7 +255,7 @@ struct AlarmEditor:View {
       Capsule().fill(index < (value == .gentle ? 1 : value == .balanced ? 2 : 3) ? MorningTheme.accent : MorningTheme.line).frame(width:14,height:4)
      }
     }.accessibilityHidden(true)
-    Text(appText(value == .gentle ? "Default: No challenge" : value == .balanced ? "Default: 5 push-ups" : "Default: 10 push-ups"))
+    Text(appText(value == .gentle ? "Default: No challenge" : value == .balanced ? "Default: Read & Choose" : "Default: 10 push-ups"))
      .font(.caption).multilineTextAlignment(.center).fixedSize(horizontal:false,vertical:true)
     if !preview.access.allows(mode:value) {Image(systemName:"lock.fill").font(.caption)}
    }.padding(10).frame(maxWidth:.infinity,minHeight:128)

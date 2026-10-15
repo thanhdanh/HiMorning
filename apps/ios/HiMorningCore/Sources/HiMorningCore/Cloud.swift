@@ -125,7 +125,7 @@ public enum ChallengeError: Error {case consentRequired,cloudUnavailable,expired
   case .dismissed:session.stop()
   case .selfConfirmed:session.selfConfirm()
   case .localCompleted:
-   guard [.readAndChoose,.guidedRhythm,.readAloud].contains(alarm.challenge.kind) else {throw ChallengeError.unsupportedOutcome}
+   guard [.readAndChoose,.guidedRhythm,.readAloud,.riddle].contains(alarm.challenge.kind) || alarm.challenge.kind.usesLocalMovement else {throw ChallengeError.unsupportedOutcome}
    _ = session.completeLocally()
   case .openaiVerified,.aiVerified:throw ChallengeError.unsupportedOutcome
   }
