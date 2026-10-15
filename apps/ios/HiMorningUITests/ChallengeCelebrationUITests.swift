@@ -12,6 +12,9 @@ final class ChallengeCelebrationUITests:XCTestCase {
  private func checkCelebration(_ app:XCUIApplication,vietnamese:Bool=false) {
   XCTAssertTrue(app.staticTexts[vietnamese ? "Hoan hô!" : "Hooray!"].waitForExistence(timeout:5))
   XCTAssertTrue(app.staticTexts[vietnamese ? "Đã hoàn thành thử thách!" : "Challenge complete!"].exists)
+  let retry=app.buttons["retryChallenge"]
+  XCTAssertTrue(retry.isHittable,"A passed challenge must still allow another attempt")
+  XCTAssertEqual(retry.label,vietnamese ? "Thử lại" : "Try again")
   let home=app.buttons["backToHome"]
   XCTAssertTrue(home.isHittable,"Exit must be usable while the celebration is visible")
   XCTAssertTrue(app.windows.firstMatch.frame.contains(home.frame),"Exit must fit on screen")
@@ -29,10 +32,57 @@ final class ChallengeCelebrationUITests:XCTestCase {
    for index in 0..<3 {
     let choice=app.buttons["readChoice-\(index)"]
     if choice.exists {choice.tap()}
-    if app.buttons[vietnamese ? "Về trang chính" : "Back to home"].waitForExistence(timeout:1) {break}
+    if app.buttons["retryChallenge"].waitForExistence(timeout:1) {break}
+   }
+   for _ in 0..<2 {
+    let retry=app.buttons["retryChallenge"]
+    XCTAssertTrue(retry.waitForExistence(timeout:5))
+    retry.tap()
+    XCTAssertFalse(app.staticTexts["Hooray!"].exists)
+    XCTAssertTrue(app.buttons["readChoice-0"].waitForExistence(timeout:5))
+    for index in 0..<3 {
+     let choice=app.buttons["readChoice-\(index)"]
+     if choice.exists {choice.tap()}
+     if retry.waitForExistence(timeout:1) {break}
+    }
    }
    checkCelebration(app,vietnamese:vietnamese)
    XCTAssertEqual(app.alerts.count,0)
+   app.terminate()
+  }
+ }
+ func testReadAloudRetryKeepsTheSentenceAndClearsThePreviousScore() {
+  let app=launch(["--ui-complete-challenge","--ui-reading-transcript","small steps create steady","--ui-reading-finished"])
+  app.buttons["practiceChallenges"].tap();app.buttons["practice-readAloud"].tap()
+  XCTAssertTrue(app.buttons["retryChallenge"].waitForExistence(timeout:5))
+  let prompt=app.staticTexts["readingPrompt"].label
+  XCTAssertEqual(app.staticTexts["readingScore"].label,"Word match: 80/100")
+  app.buttons["retryChallenge"].tap()
+  XCTAssertTrue(app.buttons["startReadAloud"].waitForExistence(timeout:5))
+  XCTAssertEqual(app.staticTexts["readingPrompt"].label,prompt)
+  XCTAssertEqual(app.staticTexts["readingScore"].label,"Word match: 0/100")
+  XCTAssertFalse(app.staticTexts["speechTranscript"].exists)
+  XCTAssertFalse(app.staticTexts["readingIncorrectWords"].exists)
+  XCTAssertFalse(app.staticTexts["listeningIndicator"].exists)
+  XCTAssertFalse(app.buttons["retryChallenge"].exists)
+  XCTAssertEqual(app.alerts.count,0)
+  XCTAssertFalse(app.buttons["stopAlarm"].exists)
+  XCTAssertFalse(app.buttons["End practice"].exists)
+  app.buttons["backToHome"].tap()
+  XCTAssertTrue(app.buttons["practiceChallenges"].waitForExistence(timeout:5))
+  app.terminate()
+ }
+ func testMovementRetryRestoresStartControlsWithoutRequestingPermissions() {
+  for (kind,start) in [("pushUps","startChallenge"),("guidedRhythm","startGuidedRhythm")] {
+   let app=launch(["--ui-complete-challenge"])
+   app.buttons["practiceChallenges"].tap();app.buttons["practice-"+kind].tap()
+   XCTAssertTrue(app.buttons["retryChallenge"].waitForExistence(timeout:5))
+   app.buttons["retryChallenge"].tap()
+   XCTAssertTrue(app.buttons[start].waitForExistence(timeout:5))
+   XCTAssertTrue(app.buttons[start].isEnabled)
+   XCTAssertEqual(app.alerts.count,0)
+   app.buttons["backToHome"].tap()
+   XCTAssertTrue(app.buttons["practiceChallenges"].waitForExistence(timeout:5))
    app.terminate()
   }
  }
@@ -46,17 +96,20 @@ final class ChallengeCelebrationUITests:XCTestCase {
    app.terminate()
   }
  }
- func testStoppingAndSelfConfirmationKeepTheirOwnMessages() {
+ func testPracticeExitReturnsHomeAndSelfConfirmationKeepsItsOwnMessage() {
   let app=launch(["--ui-awake-ready"])
   app.buttons["practiceChallenges"].tap();app.buttons["practice-readAloud"].tap()
-  app.buttons["stopAlarm"].tap()
-  XCTAssertTrue(app.staticTexts["Practice ended. Your alarms are unchanged."].waitForExistence(timeout:5))
-  XCTAssertFalse(app.staticTexts["Hooray!"].exists)
+  XCTAssertTrue(app.buttons["backToHome"].waitForExistence(timeout:5))
+  XCTAssertFalse(app.buttons["stopAlarm"].exists)
   app.buttons["backToHome"].tap()
+  XCTAssertTrue(app.buttons["practiceChallenges"].waitForExistence(timeout:5))
+  XCTAssertFalse(app.staticTexts["Hooray!"].exists)
+  XCTAssertFalse(app.buttons["retryChallenge"].exists)
   app.buttons["practiceChallenges"].tap();app.buttons["practice-none"].tap()
   app.buttons["confirmAwake"].tap()
   XCTAssertTrue(app.staticTexts["You confirmed you are awake. Have a good morning!"].waitForExistence(timeout:5))
   XCTAssertFalse(app.staticTexts["Challenge complete!"].exists)
+  XCTAssertFalse(app.buttons["retryChallenge"].exists)
   XCTAssertTrue(app.buttons["backToHome"].isHittable)
   app.terminate()
  }
@@ -67,7 +120,7 @@ final class ChallengeCelebrationUITests:XCTestCase {
   XCTAssertTrue(awake.waitForExistence(timeout:5))
   XCTAssertFalse(awake.isEnabled)
   XCTAssertTrue(awake.label.contains("Available in 1:") || awake.label.contains("Available in 2:00"))
-  XCTAssertTrue(app.buttons["stopAlarm"].isEnabled)
+  XCTAssertTrue(app.buttons["backToHome"].isEnabled)
   app.terminate()
   let nearEnd=launch(["--ui-awake-countdown-near-end"],vietnamese:true)
   nearEnd.buttons["practiceChallenges"].tap();nearEnd.buttons["practice-none"].tap()
@@ -77,7 +130,7 @@ final class ChallengeCelebrationUITests:XCTestCase {
   XCTAssertEqual(XCTWaiter.wait(for:[enabled],timeout:8),.completed)
   XCTAssertFalse(confirm.label.contains(":"),"Countdown disappears when confirmation becomes available")
   confirm.tap()
-  XCTAssertTrue(nearEnd.buttons["backToHome"].waitForExistence(timeout:5))
+  XCTAssertTrue(nearEnd.staticTexts["Bạn đã tự xác nhận thức dậy. Chúc buổi sáng tốt lành!"].waitForExistence(timeout:5))
   nearEnd.terminate()
  }
  func testReadAloudListeningIndicatorNeedsNoAudioPermissionToPresent() {
@@ -85,8 +138,8 @@ final class ChallengeCelebrationUITests:XCTestCase {
   app.buttons["practiceChallenges"].tap();app.buttons["practice-readAloud"].tap()
   XCTAssertTrue(app.staticTexts["listeningIndicator"].waitForExistence(timeout:5))
   XCTAssertEqual(app.alerts.count,0)
-  app.buttons["stopAlarm"].tap()
-  XCTAssertTrue(app.buttons["backToHome"].waitForExistence(timeout:5))
+  app.buttons["backToHome"].tap()
+  XCTAssertTrue(app.buttons["practiceChallenges"].waitForExistence(timeout:5))
   XCTAssertFalse(app.staticTexts["listeningIndicator"].exists)
   app.terminate()
  }

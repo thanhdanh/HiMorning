@@ -94,8 +94,6 @@
 "Your saved alarms could not be read. Changes are paused." = "Your saved alarms could not be read. Changes are paused.";
 "Choose a sound for your morning." = "Choose a sound for your morning.";
 "Practice only. Your alarms stay as they are." = "Practice only. Your alarms stay as they are.";
-"End practice" = "End practice";
-"Practice ended. Your alarms are unchanged." = "Practice ended. Your alarms are unchanged.";
 "This purchase could not be verified. Please try restoring it." = "This purchase could not be verified. Please try restoring it.";
 "Waiting for purchase approval. Your alarms are unchanged." = "Waiting for purchase approval. Your alarms are unchanged.";
 "The purchase could not finish. Please try again." = "The purchase could not finish. Please try again.";
@@ -290,7 +288,8 @@
 "Available in %d:%02d" = "Available in %d:%02d";
 "You can confirm you’re awake when the countdown ends." = "You can confirm you’re awake when the countdown ends.";
 "Challenge complete!" = "Challenge complete!";
-"Tap Back to home when you’re ready." = "Tap Back to home when you’re ready.";
+"Try again, or head home when you’re ready." = "Try again, or head home when you’re ready.";
+"Try again" = "Try again";
 "Getting the camera ready…" = "Getting the camera ready…";
 "Checking your movement… You can still stop." = "Checking your movement… You can still stop.";
 "Finishing your challenge…" = "Finishing your challenge…";

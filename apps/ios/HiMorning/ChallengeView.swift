@@ -39,6 +39,8 @@ struct ChallengeView:View {
  @State private var demoSubmitted=false
  private var isDemoOnly:Bool {model.cloud?.isDemoOnly ?? true}
  @State private var completion:WakeOutcome?
+ @State private var retrying=false
+ private var practicing:Bool {model.rehearsal || retrying}
  private var finished:Bool {completion != nil}
  private var celebrates:Bool {completion == .localCompleted || completion == .openaiVerified || completion == .aiVerified}
  @State private var historyID=UUID()
@@ -51,8 +53,8 @@ struct ChallengeView:View {
     if celebrates {
      ChallengeCelebrationView()
     } else {
-    Text(model.rehearsal ? appText("Try a challenge") : appText("Good morning ☀️")).font(.headline)
-    if model.rehearsal {Text(appText("Practice only. Your alarms stay as they are.")).font(.footnote).foregroundStyle(MorningTheme.muted)}
+    Text(practicing ? appText("Try a challenge") : appText("Good morning ☀️")).font(.headline)
+    if practicing {Text(appText("Practice only. Your alarms stay as they are.")).font(.footnote).foregroundStyle(MorningTheme.muted)}
     if let camera {
      CameraPreview(session:camera.session).frame(height:280).clipShape(RoundedRectangle(cornerRadius:24))
       .overlay(alignment:.bottom) {Text("\(reps) / \(challenge.repetitions ?? 0)").font(.largeTitle.bold()).padding(12).background(.regularMaterial,in:Capsule()).padding()}
@@ -98,11 +100,17 @@ struct ChallengeView:View {
     }
    }.padding(24).frame(maxWidth:.infinity).id("challengeTop")
   }.background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink)
-   .onChange(of:finished) {_,value in if value {scroll.scrollTo("challengeTop",anchor:.top)}}
+   .onChange(of:finished) {_,_ in scroll.scrollTo("challengeTop",anchor:.top)}
    .sensoryFeedback(.success,trigger:celebrates) {_,value in value}
    .safeAreaInset(edge:.bottom) {
     VStack(spacing:12) {
-     if finished {Button(appText("Back to home")) {dismiss()}.buttonStyle(MorningButtonStyle()).accessibilityIdentifier("backToHome")}
+     if finished {
+      if celebrates {
+       Button(appText("Try again")) {retryChallenge()}.buttonStyle(MorningButtonStyle(primary:false))
+        .disabled(busy || stopping || preparingExample).accessibilityIdentifier("retryChallenge")
+      }
+      Button(appText("Back to home")) {dismiss()}.buttonStyle(MorningButtonStyle()).accessibilityIdentifier("backToHome")
+     }
      else {
       if challenge.kind == .readAloud {
        if let speech {
@@ -120,8 +128,13 @@ struct ChallengeView:View {
         }
        }.buttonStyle(MorningButtonStyle(primary:challenge.kind == .none)).disabled(remaining>0 || stopping).accessibilityIdentifier("confirmAwake")
       }
-      Button(model.rehearsal ? appText("End practice") : appText("Stop alarm"),role:.destructive) {finish(.dismissed)}
-       .buttonStyle(.plain).font(.subheadline).underline().foregroundStyle(MorningTheme.muted).frame(maxWidth:.infinity,minHeight:44).accessibilityIdentifier("stopAlarm")
+      if practicing {
+       Button(appText("Back to home")) {dismiss()}
+        .buttonStyle(.plain).font(.subheadline).underline().foregroundStyle(MorningTheme.muted).frame(maxWidth:.infinity,minHeight:44).accessibilityIdentifier("backToHome")
+      } else {
+       Button(appText("Stop alarm"),role:.destructive) {finish(.dismissed)}
+        .buttonStyle(.plain).font(.subheadline).underline().foregroundStyle(MorningTheme.muted).frame(maxWidth:.infinity,minHeight:44).accessibilityIdentifier("stopAlarm")
+      }
      }
     }.padding(.horizontal,24).padding(.vertical,12).background(MorningTheme.canvas)
    }.tint(MorningTheme.accent)
@@ -134,7 +147,7 @@ struct ChallengeView:View {
     model.preview.refresh()
     // Keep one target throughout an active challenge, including at preview expiry.
     sessionAlarm=model.access.effectiveAlarm(alarm)
-    coordinator=ChallengeCoordinator(alarm:effectiveAlarm,cloud:model.cloud,scheduler:model.scheduler,rehearsal:model.rehearsal)
+    coordinator=ChallengeCoordinator(alarm:effectiveAlarm,cloud:model.cloud,scheduler:model.scheduler,rehearsal:practicing)
     preparePrompt()
     #if DEBUG
     let arguments=ProcessInfo.processInfo.arguments
@@ -154,7 +167,8 @@ struct ChallengeView:View {
      case .pushUps:complete(.aiVerified)
      case .guidedRhythm:complete(.localCompleted,success:appText("Guided rhythm completed. Have a good morning!"))
      case .readAloud:
-      transcript=appText(readAloudPrompt.text);speechEnded=true
+      if transcript.isEmpty {transcript=appText(readAloudPrompt.text)}
+      speechEnded=true
       complete(.localCompleted,success:appText("Great reading. Have a good morning!"))
      case .readAndChoose:complete(.localCompleted,success:appText("Correct. Challenge completed!"))
      case .none:break
@@ -171,6 +185,9 @@ struct ChallengeView:View {
     if let raw=notification.userInfo?[AVAudioSessionRouteChangeReasonKey] as? UInt,AVAudioSession.RouteChangeReason(rawValue:raw) == .oldDeviceUnavailable {spokenExample.stop()}
    }
    .onDisappear {pauseResources();if !finished {Task {await coordinator?.suspend()}}}
+  }
+  .overlay {
+   if celebrates,!reduceMotion {ChallengeConfetti().ignoresSafeArea()}
   }
  }
  @MainActor private func startCamera() async {
@@ -228,24 +245,36 @@ struct ChallengeView:View {
  private func complete(_ outcome:WakeOutcome,success:String?=nil) {
   guard !finished else {return}
   pauseResources();completion=outcome
-  model.recordMorning(id:historyID,outcome:outcome,rehearsal:model.rehearsal)
+  model.recordMorning(id:historyID,outcome:outcome,rehearsal:practicing)
   switch outcome {
   case .localCompleted:result=success ?? appText("Local challenge completed. Have a good morning!")
   case .openaiVerified,.aiVerified:result=appText("Movement checked. Have a good morning!")
   case .selfConfirmed:result=appText("You confirmed you are awake. Have a good morning!")
-  case .dismissed:result=model.rehearsal ? appText("Practice ended. Your alarms are unchanged.") : appText("Alarm stopped. Take care today.")
+  case .dismissed:result=appText("Alarm stopped. Take care today.")
   }
+ }
+ private func retryChallenge() {
+  guard celebrates,!busy,!stopping,!preparingExample,scene == .active else {return}
+  pauseResources()
+  // A passed alarm stays completed; further attempts are practice only.
+  retrying=true
+  coordinator=ChallengeCoordinator(alarm:effectiveAlarm,cloud:model.cloud,scheduler:model.scheduler,rehearsal:true)
+  transcript="";speechEnded=false;reps=0;rhythmCycles=0;demoSubmitted=false;consentDialog=false
+  result=nil;completion=nil;message=challengeInstructions
  }
  private func preparePrompt() {
   let index=Int(alarm.id.uuid.0)
   readPrompt=EnglishChallengeContent.readAndChoose[index % EnglishChallengeContent.readAndChoose.count]
   readAloudPrompt=EnglishChallengeContent.readAloud.randomElement() ?? readAloudPrompt
+  message=challengeInstructions
+ }
+ private var challengeInstructions:String {
   switch challenge.kind {
-  case .none:message=appText("You can confirm you’re awake when the countdown ends.")
-  case .pushUps:message=appText(isDemoOnly ? "Remote demo uses generated images. It does not verify your movement.":"Place your phone so your whole body is visible, then tap Start AI challenge.")
-  case .readAndChoose:message=appText("Read the sentence, then choose the closest meaning. You can try again.")
-  case .guidedRhythm:message=challenge.rhythmVariant == .seated ? appText("Stay seated. Lower your arms, raise them, then lower them. Complete 3 cycles. Video stays on this device.") : appText("Stand, bend your knees gently, then stand again. Complete 3 cycles. Video stays on this device.")
-  case .readAloud:message=appText("Tap Start reading, then read the English sentence aloud. Match at least 80% of the words.")
+  case .none:return appText("You can confirm you’re awake when the countdown ends.")
+  case .pushUps:return appText(isDemoOnly ? "Remote demo uses generated images. It does not verify your movement.":"Place your phone so your whole body is visible, then tap Start AI challenge.")
+  case .readAndChoose:return appText("Read the sentence, then choose the closest meaning. You can try again.")
+  case .guidedRhythm:return challenge.rhythmVariant == .seated ? appText("Stay seated. Lower your arms, raise them, then lower them. Complete 3 cycles. Video stays on this device.") : appText("Stand, bend your knees gently, then stand again. Complete 3 cycles. Video stays on this device.")
+  case .readAloud:return appText("Tap Start reading, then read the English sentence aloud. Match at least 80% of the words.")
   }
  }
  private func chooseMeaning(_ index:Int) {
