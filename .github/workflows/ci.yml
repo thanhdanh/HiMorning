@@ -26,13 +26,26 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm run typecheck
       - run: pnpm run build
+      - run: pnpm run build:worker
       - run: node scripts/export-contracts.mjs
-      - run: git diff --exit-code -- shared/contracts/v1/verification.schema.json
+      - run: git diff --exit-code -- shared/contracts/v1/verification.schema.json backend/inference/verdict.schema.json
       - run: node scripts/prepare-firebase.mjs
       - run: pnpm --dir .firebase/functions install --prod --frozen-lockfile
       - run: node -e "import('./.firebase/functions/lib/index.js')"
       - run: pnpm run test:coverage
       - run: pnpm audit --prod
+  inference:
+    runs-on: [self-hosted, macOS, ARM64, himorning]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m venv backend/inference/.venv
+      - run: backend/inference/.venv/bin/python -m pip install -r backend/inference/requirements.lock
+      - run: backend/inference/.venv/bin/python -m unittest discover -s backend/inference -p 'test_*.py' -v
+      - run: cd backend/inference && .venv/bin/python -c "import app"
   ios:
     needs: backend
     runs-on: [self-hosted, macOS, ARM64, himorning]

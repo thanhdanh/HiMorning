@@ -4,7 +4,7 @@ A calmer way to start the day. HiMorning is an alarm app with simple choices: wa
 up at your own pace, try a small movement challenge, or stop when you need to.
 
 **Status:** iOS 26+ pilot. English and Vietnamese are supported in the native app.
-The backend is built and tested, but cloud AI is off by default. This is not a
+The free remote demo uses Workers/Gemini with generated images; cloud AI is off by default. This is not a
 released or device-validated alarm app.
 
 [GitHub repository](https://github.com/thanhdanh/HiMorning) · [Pull request](https://github.com/thanhdanh/HiMorning/pull/1)
@@ -13,6 +13,8 @@ released or device-validated alarm app.
 
 | You want to… | Read |
 |---|---|
+| Test remote AI using free services | [Free remote demo](docs/FREE-REMOTE-DEMO.md) |
+| Review the earlier $20 Qwen backend | [Paid backend reference](docs/REMOTE-PILOT.md) |
 | Run the app or tests | [Setup guide](docs/RUNNING.md) |
 | Manage the local CI runner | [Self-hosted CI](docs/SELF-HOSTED-CI.md) |
 | Check App Store readiness and subscription scope | [Release review](docs/RELEASE-READINESS.md) |
@@ -38,20 +40,20 @@ experiments; implemented features still need physical-device and user validation
 | Alarms | AlarmKit scheduling, saved weekday choices and recovery checks |
 | Challenge choice | No challenge, Push-ups, Read & Choose, Guided Rhythm, or Read Aloud; saved separately from the mode |
 | Local challenges | Meaning questions, standing/seated pose sequences, and on-device English speech recognition with spoken examples |
-| Push-up verification | Bounded photos sent to OpenAI after consent; cloud verification is off by default |
+| Remote AI test | Generated images sent through Workers to Gemini; camera stays off and no movement is marked verified; deployment pending |
 | Sounds | System default and 14 bundled sounds with individual previews |
 | Progress and access | Local history and goals, a 30-day preview, and optional monthly/annual Pro |
 
-QR, math, native snooze/countdown, existing-alarm editing, Android and Qwen/LM Studio
-integration remain planned.
+QR, math, native snooze/countdown, existing-alarm editing, Android and remote deployment
+remain planned.
 
 Set a time, choose a mode and pick a sound. The phone's alarm system keeps the
 schedule. A regular alarm works without cloud sign-in.
 
-If you choose an AI challenge, the app asks before opening the camera or sending
-movement photos to OpenAI. Local movement counts are a preview; the backend must
-validate the evidence before reporting AI success. You can always confirm you are
-awake or stop. A cloud error must not take away that choice.
+The free remote AI demo asks before sending generated color images to Gemini.
+It keeps the camera off and never marks a movement verified. You can always
+confirm you are awake or stop. The earlier paid Qwen service remains in the repo
+for separate live-camera evaluation.
 
 | Mode | Suggested challenge | Snooze policy in the core |
 |---|---|---|
@@ -113,7 +115,9 @@ choice stays on this device. See [setup](docs/RUNNING.md) for signing and Fireba
 | `apps/ios/HiMorningCore/` | Alarm domain, local journal, evidence capture and cloud lifecycle |
 | `apps/ios/HiMorning/` | SwiftUI, AlarmKit, camera and Firebase adapters |
 | `apps/ios/Resources/` | English/Vietnamese strings, permission text and sound sketches |
-| `backend/functions/src/` | Firebase callables, OpenAI adapter, session policy and quotas |
+| `backend/functions/src/` | Firebase callables, async Modal adapter, session policy and quotas |
+| `backend/worker/` | Free Workers/Gemini demo, Firebase JWT checks and SQLite metadata |
+| `backend/inference/` | Pinned Qwen/llama.cpp GPU service, Modal gateway and Python checks |
 | `apps/android/` | Reserved future Android root and extension guide |
 | `shared/contracts/v1/` | Language-neutral API schema, wire fixtures and mode presets |
 | `tests/` | Backend, emulator, localization and engineering-metrics tests |

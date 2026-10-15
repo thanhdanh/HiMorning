@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "himorning-free-staging",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-10-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "vars": {
+    "AI_VERIFICATION_ENABLED": "false",
+    "FIREBASE_PROJECT_ID": "himorning-staging-0109",
+    "FIREBASE_PROJECT_NUMBER": "574230907604",
+    "FIREBASE_APP_ID": "1:574230907604:ios:e608269b5dd865fe878941"
+  },
+  "durable_objects": {"bindings": [{"name": "VERIFICATIONS", "class_name": "VerificationHub"}]},
+  "migrations": [{"tag": "v1", "new_sqlite_classes": ["VerificationHub"]}],
+  "observability": {"enabled": true}
+}

@@ -1,0 +1,8 @@
+{
+  "indexes": [],
+  "fieldOverrides": [
+    {"collectionGroup": "verificationSessions", "fieldPath": "deleteAt", "ttl": true, "indexes": []},
+    {"collectionGroup": "attempts", "fieldPath": "deleteAt", "ttl": true, "indexes": []},
+    {"collectionGroup": "quotaBuckets", "fieldPath": "deleteAt", "ttl": true, "indexes": []}
+  ]
+}

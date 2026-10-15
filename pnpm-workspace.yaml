@@ -1,6 +1,8 @@
 packages:
   - backend/functions
+  - backend/worker
 onlyBuiltDependencies:
   - esbuild
   - sharp
+  - workerd
 injectWorkspacePackages: true

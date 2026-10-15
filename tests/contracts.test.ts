@@ -16,7 +16,7 @@ describe('platform-neutral verification contract', () => {
  });
  it('accepts shared wire fixtures, including ordered synthetic JPEG evidence', async () => {
   const fixtures = read('wire-fixtures');
-  for (const [name, schema] of Object.entries(contractSchemas)) expect(schema.safeParse(fixtures[name]).success, name).toBe(true);
+  for(const file of ['wire-fixtures','free-demo-wire'])for (const [name, schema] of Object.entries(contractSchemas)) expect(schema.safeParse(read(file)[name]).success, `${file}: ${name}`).toBe(true);
   const evidence = await prepareEvidence(fixtures.SubmitRequest, fixtures.CreateRequest.target);
   expect(evidence.sufficient).toBe(true);
   expect(evidence.frames).toHaveLength(5);

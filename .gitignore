@@ -26,3 +26,8 @@ test-results/
 apps/ios/HiMorning.xcodeproj/
 apps/ios/HiMorning/Info.plist
 GoogleService-Info.plist
+HiMorningCloud-Info.plist
+.venv/
+.wrangler/
+.dev.vars
+.dev.vars.*

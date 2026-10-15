@@ -1,8 +1,8 @@
 import sharp from 'sharp';
 export const uuid = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 export const actor = { uid: 'guest-1', appCheck: true };
-export const config = { enabled: true, model: 'test-model', userDailyLimit: 3, globalDailyLimit: 100 };
-export const createInput = (n = 1, target = 1) => ({ requestID: uuid(n), challenge: 'pushup', target, consentVersion: '2026-10-11' });
+export const config = { enabled: true, model: 'test-model', baseURL:'https://test.modal.run', userDailyLimit: 3, globalDailyLimit: 100 };
+export const createInput = (n = 1, target = 1) => ({ requestID: uuid(n), challenge: 'pushup', target, consentVersion: '2026-10-15' });
 export async function frames(count = 5) {
  return Promise.all(Array.from({ length: count }, async (_, i) => ({ id: `f${i}`, timestampMs: i * 300, jpegBase64: (await sharp({ create: { width: 40, height: 40, channels: 3, background: { r: 20 + i * 5, g: 40, b: 80 } } }).jpeg().toBuffer()).toString('base64') })));
 }

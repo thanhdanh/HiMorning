@@ -1,5 +1,9 @@
 # Affordable AI and more morning choices
 
+> Current integration: the async Qwen/Modal staging implementation supersedes the
+> proposed LM Studio deployment route below. See [remote pilot](REMOTE-PILOT.md).
+> The dated local compatibility observations remain historical evidence.
+
 Reduce the cost of movement checks and give people a useful choice when exercise
 is not right for their morning. Keep the alarm and its exit controls local.
 

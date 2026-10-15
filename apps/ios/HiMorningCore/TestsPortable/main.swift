@@ -74,6 +74,7 @@ actor FakeCloud: CloudVerification {
   return try await withCheckedThrowingContinuation {continuation=$0;started?.resume();started=nil}
  }
  func waitStarted() async {if continuation != nil {return};await withCheckedContinuation {started=$0}}
+ func getResult(sessionID:String,evidenceID:String) async throws ->CloudDecision {throw ChallengeError.cloudUnavailable}
  func cancel(sessionID:String) async throws {cancelled=true}
  func release() {continuation?.resume(returning:CloudDecision(status:"verified",decisionID:UUID().uuidString,verifiedRepCount:3));continuation=nil}
 }
@@ -183,6 +184,13 @@ preview.testPaidVerificationNeverReturnsPreview()
 preview.testAccessPreservesExplicitLocalChallengesAndCapsOnlyFreePushUps()
 try preview.testEffectiveAlarmPreservesIdentityStateAndSavedPreferences()
 try await CloudTests().testRestartDuringCancellationKeepsTheNewSessionAndConsent()
+try await CloudTests().testColdStartPollsWithoutResubmittingAndRecordsNeutralSuccess()
+try await CloudTests().testStopCancelsSleepingPollWithoutWaitingForItsNextInterval()
+try await CloudTests().testPollingDeadlineCancelsRemoteJobAndNeverMarksSuccess()
+try CloudTests().testBothHistoricalAndNewVerifiedOutcomesDecodeWithoutMigration()
+try RemoteDemoTests().testEndpointRejectsUntrustedURLs()
+try RemoteDemoTests().testGeneratedFramesShareTheServerFixtureAndBounds()
+try await RemoteDemoTests().testDemoCannotStopAnAlarmOrRecordVerifiedEvenWithAMaliciousSuccess()
 try await testNativeLibrary()
 testCaptureSelectsCompleteCyclesAndDiscardsInterruptedEvidence()
 testPersistedTimeCannotBypassValidation()

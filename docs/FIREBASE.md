@@ -1,126 +1,103 @@
-# Firebase backend
+# Firebase verification backend
 
-Firebase handles identity, metadata and the small amount of server work needed for
-AI checking. It does not keep time for the alarm; the phone's OS does that.
+The current [free remote demo](FREE-REMOTE-DEMO.md) uses Firebase Spark for Auth
+and App Check and Cloudflare for metadata/inference dispatch. The Functions and
+Firestore flow below is the retained paid-backend reference, not the native default.
 
-**Status:** Functions, rules and emulator tests are implemented. No real Firebase
-project, billing account, database or function deployment has been created.
+Firebase protects the boundary between the native app and paid inference. The GPU
+model runs on Modal; Firebase owns identity, sessions, evidence policy and quota.
 
-## Responsibilities
+**Status:** Async backend source and local tests implemented; no remote deployment
+claimed. **Audience:** Backend and native developers.
 
-| Service | Current job |
+## At a glance
+
+| Component | Responsibility |
 |---|---|
-| Anonymous Auth | Give cloud requests a UID without a sign-up flow |
-| App Check | Require attestation in addition to user identity |
-| Callable Functions v2 | Check ownership, validate evidence, reserve quota and call OpenAI |
-| Firestore | Store sessions, attempts and quota metadata |
-| Secret Manager | Bind the OpenAI key only to the verification function |
-| Emulator Suite | Test transactions and rules without production deployment |
+| Anonymous Auth | A server-known UID for cloud verification |
+| App Check | Attestation on every callable, including result lookup and cancellation |
+| Functions v2 | Validate evidence, reserve quota, dispatch/read/cancel Modal work |
+| Firestore | Owned sessions, one attempt, quota buckets and final results |
+| Emulator | Real transaction/rules tests using `demo-himorning`, without paid inference |
 
-Auth and attestation do not prove that a person exercised. Local alarms and explicit
-stops remain usable when cloud sign-in fails. No Storage bucket, analytics SDK,
-remote alarm sync or subscription service is provisioned for this pilot.
+## How it works
 
-## Data and authority
+The create callable snapshots target, consent and policy for ten minutes. Submit
+checks owner/nonce/consent and bounded JPEGs, force-decodes them and strips EXIF/GPS.
+It reserves one attempt and UTC daily quotas in a transaction. Modal dispatch is
+outside that transaction because Firestore may replay transaction callbacks.
 
-```text
-users/{uid}                                  allowed preference document
-verificationSessions/{sessionID}             owner, nonce, target, expiry, state
-verificationSessions/{sessionID}/attempts/{evidenceID}
-                                              hash, lease, decision, model/policy version
-quotaBuckets/{bucketID}                       server-owned counters
-```
+The attempt stores only normalized frame IDs, sufficiency, hashes, model/policy,
+a 180-second deadline and a private provider job ID. An accepted job returns
+`pending`. An uncertain dispatch acknowledgement is not retried. An identical
+submission returns its current/cached result; different data under an existing
+ID is rejected. A second evidence ID cannot claim another attempt for that session.
 
-Client rules allow only an owner's preference document with exactly `locale`,
-`theme` and `guidance`. Locale is `en` or `vi`. Every other client path is denied.
-The current native app stores its language locally; it does not sync preferences.
+`getVerificationResult` checks owner and App Check on each call, fetches an existing
+job without photos, and applies the same ordered, non-overlapping five-phase-cycle
+policy. Model confidence or valid JSON alone never verifies a challenge. Refused,
+truncated, malformed, expired or missing results remain non-success.
 
-Functions use the Admin SDK, so they enforce ownership and inputs themselves.
-Clients cannot set a verified outcome or change quotas. Images, labels and raw
-request bodies are not stored in these documents.
+Cancel marks the session first, then best-effort cancels the remote job. A verdict
+arriving after cancellation, deadline or expiry cannot overwrite the terminal state.
+The iOS native Stop happens before cloud cleanup and remains available offline.
 
-## One verification, step by step
+## Key choices
 
-1. Create a deterministic session ID from UID and request ID. Matching creates
-   reuse the session; a changed request under the same ID is rejected.
-2. Check auth, App Check, owner, nonce, consent and expiry. Decode JPEG evidence and
-   validate byte/dimension/frame/order limits.
-3. Atomically claim an attempt and reserve the user's and global daily quota.
-4. Call OpenAI **outside** the transaction callback. Firestore may run that callback
-   again; paid work inside it could duplicate spending.
-5. Finalize only the current, active lease. Cancellation and expiry win even over
-   cached results or a response that arrives later.
+All callables run in `asia-southeast1`, with zero minimum and one maximum instance.
+Create has a ten-second timeout; submit/status/cancel have thirty seconds. Provider
+dispatch uses a twenty-second HTTP timeout; status/cancellation use eight seconds.
+All provider calls reject redirects and do not retry. Status
+requests are throttled before reaching Modal. The default AI cap is three attempts
+per user/day and ten globally/day, in UTC.
 
-One attempt is allowed per session. A running replay returns pending, a finished
-matching replay returns its decision, and changed payloads are rejected. A stale
-lease becomes uncertain and is never reclaimed automatically. This avoids blind
-retries, but it is not a promise of exactly-once provider billing after a crash.
+The cloud kill switch defaults off. Modal credentials are needed only for actual
+inference operations and remain in Secret Manager. No image Storage bucket is
+required. Firestore client rules deny all access to sessions, attempts and quotas;
+clients cannot write their own verified result.
 
-Repeated consent reuses the current client session. Repeated cancellation performs
-no second Firestore write. Both cost edges have regression tests.
+Firestore TTL is configured for `deleteAt` on sessions, attempts and quota buckets
+in the staging index file. Metadata is scheduled for deletion after two days;
+TTL is asynchronous and has separate billing. Modal Functions may retain image
+inputs and outputs for up to seven days under its own policy. Consent version
+`2026-10-15` discloses Qwen/Modal. New local history writes `ai_verified`, with
+historical `openai_verified` decoding retained.
 
-## Operating limits
-
-| Setting | Current default |
-|---|---|
-| Region | `asia-southeast1` |
-| Runtime | Node 22, 256MiB, concurrency 8 |
-| Instances | Minimum 0, maximum 2 |
-| Timeouts | Create/cancel 10s; verify 30s; provider 15s |
-| Session / lease | 120s / 25s |
-| AI quota | 3 per user/day UTC, 100 globally/day UTC |
-| Create quota | 20 per user/day UTC, 1,000 globally/day UTC |
-| Cloud AI | Disabled unless configured |
-
-These are pilot limits, not a latency or monthly-cost forecast. A region near users
-does not determine OpenAI's processing location. Measure cold starts and delay
-before paying for warm instances.
-
-Each metadata document has a `deleteAt` field two days ahead. Enable TTL separately
-for sessions, attempts and quota buckets in a real project. Cleanup is asynchronous;
-request expiry is checked synchronously. Parent deletion does not replace retention
-for attempt documents.
-
-## Run it locally
-
-See [setup](RUNNING.md) for prerequisites and environment variables:
+## Try it
 
 ```sh
-corepack enable
 pnpm install --frozen-lockfile
+pnpm run typecheck
+pnpm run build
 pnpm run test:coverage
 ```
 
-This uses `demo-himorning` and the Firestore Emulator. The suite checks real
-transactions, concurrent claims, global quotas and deny-by-default rules. OpenAI
-is mocked; no paid inference is needed.
+Java 21 must be on PATH for the emulator. Cloud deployment needs a separate real
+staging project, Blaze billing, proxy secrets and confirmed budgets. Follow
+[remote staging](REMOTE-PILOT.md); the safe emulator default is never changed.
 
-## Before deployment
+`pnpm run prepare:firebase` copies the production package into ignored
+`.firebase/functions` with its own generated pnpm lockfile. For staging it also
+copies the ignored, non-secret `.env.<project>` file selected explicitly through
+`FIREBASE_STAGING_PROJECT`. Use `pnpm run deploy:staging -- --check` to validate the
+target/config without deployment, then `pnpm run deploy:staging` for the actual deploy.
 
-Review project configuration, access permissions, secret binding, TTL, provider
-limits and billing. Deployment needs a real project and a supported billing plan;
-none is enabled by this repo. Keep cloud off until consented evaluation meets agreed
-accuracy, latency and cost gates. A cloud kill switch must leave local alarms usable.
+## What we checked
 
-Account linking, anonymous-account cleanup, deletion workflows and sync conflict
-rules remain future work. Adding sync must never make FCM or a cloud job the alarm
-clock, or change an active challenge midway.
+Tests cover callable identity/attestation, strict contracts, normalization, shared
+quota races, one-job dispatch, acknowledgement failure, polling, cancellation and
+late results. Firestore Emulator checks rules and real concurrent transactions.
+No live accuracy, latency or Firebase bill is implied by those tests.
 
-## Deployment packaging
+## Limits and next steps
 
-`pnpm run prepare:firebase` builds the backend and uses pnpm deploy to produce
-`.firebase/functions`. This isolated source has a production package and generated
-lockfile; it does not depend on workspace symlinks outside the upload. See
-[setup](RUNNING.md) for the preparation and validation commands. No cloud deployment
-has been performed.
+Firebase has free quotas, but deploying Functions needs Blaze billing. Build
+storage, network, secrets and TTL can incur charges independently. The $5 allowance
+is a monitoring target, not a hard cap. Run the cellular-device smoke checks and
+inspect the first invoice before inviting more users.
 
 ## Read next
 
-[Tech stack](TECH-STACK.md) · [Architecture](ARCHITECTURE.md) · [Evidence](tdd/cost-optimized-pilot.tdd.md)
-
-Platform references: [callable functions](https://firebase.google.com/docs/functions/callable),
-[anonymous Auth](https://firebase.google.com/docs/auth/ios/anonymous-auth),
-[App Check](https://firebase.google.com/docs/app-check/cloud-functions),
-[transactions](https://firebase.google.com/docs/firestore/manage-data/transactions),
-[TTL](https://firebase.google.com/docs/firestore/ttl),
-[secret parameters](https://firebase.google.com/docs/functions/config-env).
+[Remote pilot](REMOTE-PILOT.md) · [Shared contracts](../shared/contracts/README.md) ·
+[Functions](https://firebase.google.com/docs/functions/callable) ·
+[TTL](https://firebase.google.com/docs/firestore/ttl)

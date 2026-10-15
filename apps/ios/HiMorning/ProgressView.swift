@@ -63,7 +63,7 @@ struct MorningProgressView:View {
 extension WakeOutcome {
  var progressTitle:String {
   switch self {
-  case .openaiVerified:return appText("AI checked")
+  case .openaiVerified,.aiVerified:return appText("AI checked")
   case .selfConfirmed:return appText("You confirmed")
   case .localCompleted:return appText("Local challenge completed")
   case .dismissed:return appText("Stopped")

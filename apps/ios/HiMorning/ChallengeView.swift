@@ -33,6 +33,8 @@ struct ChallengeView:View {
  @State private var consent=false
  @State private var busy=false
  @State private var consentDialog=false
+ @State private var demoSubmitted=false
+ private var isDemoOnly:Bool {model.cloud?.isDemoOnly ?? true}
  @State private var finished=false
  @State private var historyID=UUID()
  @State private var stopping=false
@@ -71,9 +73,11 @@ struct ChallengeView:View {
       }.buttonStyle(MorningButtonStyle(primary:false)).disabled(busy || stopping || preparingExample || speech != nil).accessibilityIdentifier("hearSentence")
      }
     }
+    if busy && challenge.kind == .pushUps {ProgressView().accessibilityLabel(appText("Waiting for the AI server. You can still stop."))}
     Text(result ?? message).font(.title3.weight(.medium)).multilineTextAlignment(.center).accessibilityIdentifier("challengeMessage")
     if challenge.kind == .pushUps && camera == nil && !finished {
-     Button(appText("Start AI challenge")) {consentDialog=true}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startChallenge")
+     Button(appText(isDemoOnly ? "Test remote AI":"Start AI challenge")) {consentDialog=true}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping || demoSubmitted).accessibilityIdentifier("startChallenge")
+     if isDemoOnly {Text(appText("Remote demo uses generated images. It does not verify your movement.")).font(.footnote).foregroundStyle(MorningTheme.muted)}
     }
     if challenge.kind == .guidedRhythm && rhythmCamera == nil && !finished {
      Button(appText("Start guided rhythm")) {Task {await startRhythm()}}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startGuidedRhythm")
@@ -97,8 +101,8 @@ struct ChallengeView:View {
      }
     }.padding(.horizontal,24).padding(.vertical,12).background(MorningTheme.canvas)
    }.tint(MorningTheme.accent)
-   .confirmationDialog(appText("Movement photos go through HiMorning to OpenAI for checking. No audio is recorded. HiMorning does not save these photos; OpenAI data policies apply. You can stop at any time."),isPresented:$consentDialog,titleVisibility:.visible) {
-    Button(appText("Agree and open camera")) {Task {await startCamera()}}
+   .confirmationDialog(appText(isDemoOnly ? "This test sends generated color images to Gemini through Cloudflare. Your camera stays off. Google may use demo inputs and outputs to improve its products. No movement will be verified.":"Movement photos go through HiMorning to Qwen on Modal. Modal may retain inputs and outputs for up to 7 days. No audio is uploaded. You can stop at any time."),isPresented:$consentDialog,titleVisibility:.visible) {
+    Button(appText(isDemoOnly ? "Agree and run test":"Agree and open camera")) {Task {if isDemoOnly {await startDemo()} else {await startCamera()}}}
     Button(appText("Choose another way")) {consentDialog=false}
    }
    .task {
@@ -127,6 +131,7 @@ struct ChallengeView:View {
    .onDisappear {pauseResources();if !finished {Task {await coordinator?.suspend()}}}
  }
  @MainActor private func startCamera() async {
+  guard !isDemoOnly else {return}
   guard !busy,!finished,!stopping,scene == .active,let coordinator,let target=challenge.repetitions else {return};busy=true
   let generation=UUID();captureGeneration=generation
   defer {busy=false}
@@ -142,11 +147,28 @@ struct ChallengeView:View {
    camera=capture;await capture.start()
   } catch {message=appText("AI is not available. You can confirm you are awake or stop.")}
  }
+ @MainActor private func startDemo() async {
+  guard isDemoOnly,!busy,!finished,!stopping,!demoSubmitted,scene == .active,let coordinator,let target=challenge.repetitions else {return}
+  busy=true;let generation=UUID();captureGeneration=generation
+  defer {busy=false}
+  do {
+   guard let url=Bundle.main.url(forResource:"free-demo-frames",withExtension:"json") else {throw ChallengeError.insufficientEvidence}
+   let frames=try RemoteDemo.frames(from:Data(contentsOf:url),target:target)
+   try await coordinator.startCloud(consent:true)
+   guard coordinator.session.outcome == nil,captureGeneration==generation,scene == .active,!stopping else {return}
+   demoSubmitted=true;message=appText("Waiting for the AI server. You can still stop.")
+   _ = try await coordinator.submit(frames)
+   guard coordinator.session.outcome == nil,captureGeneration==generation,scene == .active,!stopping else {return}
+   if let decision=coordinator.lastDecision,["uncertain","incomplete"].contains(decision.status),!decision.decisionID.isEmpty {message=appText("The remote AI replied. Demo complete; no movement was verified.")}
+   else {message=appText("The remote test is unavailable. You can still stop.")}
+  } catch {if captureGeneration==generation,!finished,!stopping {message=appText("The remote test is unavailable. You can still stop.")}}
+ }
  @MainActor private func submit(_ frames:[EvidenceFrame]) async {
   guard let coordinator,!busy else {return};busy=true
   defer {busy=false}
+  message=appText("Waiting for the AI server. You can still stop.")
   do {
-   if try await coordinator.submit(frames) {finished=true;pauseResources();result=appText("Movement checked. Have a good morning!");model.recordMorning(id:historyID,outcome:.openaiVerified,rehearsal:model.rehearsal)}
+   if try await coordinator.submit(frames) {finished=true;pauseResources();result=appText("Movement checked. Have a good morning!");model.recordMorning(id:historyID,outcome:.aiVerified,rehearsal:model.rehearsal)}
    else if coordinator.session.outcome == nil {message=appText("The movement could not be fully checked. You can choose another way.")}
   } catch {message=appText("The movement could not be checked right now. You can still stop.")}
  }
@@ -161,7 +183,7 @@ struct ChallengeView:View {
     case .localCompleted:result=success ?? appText("Local challenge completed. Have a good morning!")
     case .selfConfirmed:result=appText("You confirmed you are awake. Have a good morning!")
     case .dismissed:result=model.rehearsal ? appText("Practice ended. Your alarms are unchanged.") : appText("Alarm stopped. Take care today.")
-    case .openaiVerified:break
+    case .openaiVerified,.aiVerified:break
     }
    }
    catch {message=appText("The alarm could not be stopped here. Please use the system Stop button.")}

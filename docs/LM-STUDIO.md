@@ -1,5 +1,9 @@
 # Connect the local Qwen server
 
+> Current integration: the async Qwen/Modal staging implementation supersedes the
+> proposed LM Studio deployment route below. See [remote pilot](REMOTE-PILOT.md).
+> The dated local compatibility observations remain historical evidence.
+
 Use the working LM Studio endpoint as the first step toward replacing the movement
 verifier. Start with compatibility, then a backend adapter and real exercise tests.
 

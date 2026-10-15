@@ -3,7 +3,7 @@
     "requestID": "00000000-0000-4000-8000-000000000001",
     "challenge": "pushup",
     "target": 1,
-    "consentVersion": "2026-10-11"
+    "consentVersion": "2026-10-15"
   },
   "CreateResponse": {
     "sessionID": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
@@ -21,7 +21,7 @@
     "sessionID": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
     "nonce": "00000000-0000-4000-8000-000000000002",
     "evidenceID": "00000000-0000-4000-8000-000000000003",
-    "consentVersion": "2026-10-11",
+    "consentVersion": "2026-10-15",
     "frames": [
       {
         "id": "f0",
@@ -62,5 +62,9 @@
   },
   "CancelResponse": {
     "status": "cancelled"
+  },
+  "ResultRequest": {
+    "sessionID": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "evidenceID": "00000000-0000-4000-8000-000000000003"
   }
 }
