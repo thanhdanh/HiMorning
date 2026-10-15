@@ -22,7 +22,7 @@ final class ChallengeCelebrationUITests:XCTestCase {
   let first="00000000-0000-0000-0000-000000000001",second="00000000-0000-0000-0000-000000000002"
   for vietnamese in [false,true] {
    let largeText=vietnamese ? ["-UIPreferredContentSizeCategoryName","UICTContentSizeCategoryAccessibilityM"] : []
-   let app=launch(["--ui-home-alarms","--ui-open-alarm"]+largeText,vietnamese:vietnamese)
+   let app=launch(["--ui-home-alarms","--ui-open-alarm","--ui-reading-correct-first"]+largeText,vietnamese:vietnamese)
    let completed=app.staticTexts["alarmCompleted-"+first]
    answerReadAndChoose(in:app,until:completed)
    XCTAssertTrue(completed.waitForExistence(timeout:5),"A real completed challenge must return Home automatically")
@@ -44,7 +44,7 @@ final class ChallengeCelebrationUITests:XCTestCase {
   }
  }
  func testRealAlarmProgressSaveFailureReturnsHomeWithAnHonestWarning() {
-  let app=launch(["--ui-home-alarms","--ui-open-alarm","--ui-progress-save-error"])
+  let app=launch(["--ui-home-alarms","--ui-open-alarm","--ui-progress-save-error","--ui-reading-correct-first"])
   let progressError=app.staticTexts["homeProgressError"]
   answerReadAndChoose(in:app,until:progressError)
   XCTAssertTrue(progressError.waitForExistence(timeout:5))
@@ -81,7 +81,7 @@ final class ChallengeCelebrationUITests:XCTestCase {
  }
  func testReadingSuccessCelebratesAndReturnsHomeInBothLanguages() {
   for vietnamese in [false,true] {
-   let app=launch(vietnamese:vietnamese)
+   let app=launch(["--ui-reading-correct-first"],vietnamese:vietnamese)
    app.buttons["practiceChallenges"].tap();app.buttons["practice-readAndChoose"].tap()
    XCTAssertTrue(app.buttons["readChoice-0"].waitForExistence(timeout:5))
    for index in 0..<3 {

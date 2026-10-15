@@ -161,6 +161,12 @@ struct ChallengeView:View {
     preparePrompt(newReadingPrompt:true,newReadAloudPrompt:true)
     #if DEBUG
     let arguments=ProcessInfo.processInfo.arguments
+    if arguments.contains("--ui-testing"),arguments.contains("--ui-reading-correct-first") {
+     let prompt=readPrompt
+     let correct=prompt.choices[prompt.correctChoiceIndex]
+     let choices=[correct]+prompt.choices.enumerated().filter {$0.offset != prompt.correctChoiceIndex}.map(\.element)
+     readPrompt=ChallengePrompt(id:prompt.id,text:prompt.text,choices:choices,correctChoiceIndex:0)
+    }
     if arguments.contains("--ui-testing") {
      if arguments.contains("--ui-awake-ready") {awakeAvailableAt = .distantPast}
      else if arguments.contains("--ui-awake-countdown-near-end") {awakeAvailableAt=Date().addingTimeInterval(5)}
