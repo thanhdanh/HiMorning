@@ -15,7 +15,7 @@ released or device-validated alarm app.
 |---|---|
 | Run the app or tests | [Setup guide](docs/RUNNING.md) |
 | Check App Store readiness and subscription scope | [Release review](docs/RELEASE-READINESS.md) |
-| Review Free, Pro, trials and friend invitations | [Business model](docs/BUSINESS-MODEL.md) and [monthly Pro setup](docs/SUBSCRIPTIONS.md) |
+| Review the free preview, Pro and friend invitations | [Business model](docs/BUSINESS-MODEL.md) and [subscription setup](docs/SUBSCRIPTIONS.md) |
 | Extend the project to Android | [Android guide](docs/ANDROID.md) and [shared contracts](shared/contracts/README.md) |
 | Understand the system | [Architecture](docs/ARCHITECTURE.md) and [tech stack](docs/TECH-STACK.md) |
 | Review the experience | [UI guide](docs/UI-DESIGN.md) and [language guide](docs/LOCALIZATION.md) |
@@ -41,11 +41,16 @@ awake or stop. A cloud error must not take away that choice.
 | Balanced | 3 push-ups | 1 × 5 minutes |
 | Focused | 5 push-ups | None |
 
-The chart button opens local morning progress. Free shows seven days with a goal
-of three mornings; verified Pro access adds thirty days and a custom weekly goal.
-The optional Apple subscription screen uses live store prices. The working US
-price is $2.99/month; real products and sandbox/TestFlight billing still need setup.
-See [monthly Pro](docs/SUBSCRIPTIONS.md) for the current benefits and limits.
+The first successfully saved alarm starts a **30-day full preview**. No card or
+subscription signup is needed, and it ends without a charge. Preview and Pro
+include Focused mode, extra sounds, thirty days of local history and a custom
+weekly goal. After the preview, Free keeps alarm scheduling, Gentle mode,
+Balanced's three push-ups, system sound and every Stop/recovery choice.
+
+Pro is optional, with target US prices of **$2/month or $20/year**. The Apple
+purchase screen shows live localized prices and renewal terms. Production products
+and sandbox/TestFlight billing still need setup. See [subscriptions](docs/SUBSCRIPTIONS.md)
+for preview storage, saved-alarm behavior and validation limits.
 
 Native snooze/countdown UI is still planned. Core policy tests do not prove it is
 connected to AlarmKit. The app includes system sound and two original chime sketches;
@@ -99,8 +104,9 @@ view the earlier design study at http://127.0.0.1:4173/design/.
 ## Native screens
 
 The native app follows the original cream/yellow palette. The
-[full gallery](docs/UI-DESIGN.md#native-screens) contains 20 simulator captures:
-10 screens/states in English and Vietnamese. A few highlights:
+[full gallery](docs/UI-DESIGN.md#native-screens) contains 20 original simulator
+captures plus four newer preview/Free states in English and Vietnamese. A few
+highlights:
 
 | English | Vietnamese |
 |---|---|
@@ -126,7 +132,7 @@ Test alarm delivery, camera placement and sounds on iPhone. Evaluate consented
 movement clips for accuracy, delay and cost before enabling AI for users. The
 [product brief](docs/PRODUCT-BRIEF.md) proposes short rhythm and practical English
 activities to test with users; they are not native features yet. QR,
-existing-alarm editing, native snooze, weekly history, deeper form guidance and
+existing-alarm editing, native snooze, deeper form guidance and
 Android remain planned. No Firebase project, billing setup or paid OpenAI call was
 created during the implementation tests.
 

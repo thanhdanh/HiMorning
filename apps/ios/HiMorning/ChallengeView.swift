@@ -9,6 +9,9 @@ struct CameraPreview:UIViewRepresentable {
 }
 struct ChallengeView:View {
  let alarm:SavedAlarm
+ @State private var sessionAlarm:SavedAlarm?
+ private var effectiveAlarm:SavedAlarm {sessionAlarm ?? model.access.effectiveAlarm(alarm)}
+ private var challenge:ChallengeSelection {effectiveAlarm.challenge}
  @ObservedObject var model:PilotModel
  @Environment(\.dismiss) private var dismiss
  @Environment(\.scenePhase) private var scene
@@ -38,7 +41,7 @@ struct ChallengeView:View {
     if model.rehearsal {Text(appText("Practice only. Your alarms stay as they are.")).font(.footnote).foregroundStyle(MorningTheme.muted)}
     if let camera {
      CameraPreview(session:camera.session).frame(height:280).clipShape(RoundedRectangle(cornerRadius:24))
-      .overlay(alignment:.bottom) {Text("\(reps) / \(alarm.challenge.repetitions ?? 0)").font(.largeTitle.bold()).padding(12).background(.regularMaterial,in:Capsule()).padding()}
+      .overlay(alignment:.bottom) {Text("\(reps) / \(challenge.repetitions ?? 0)").font(.largeTitle.bold()).padding(12).background(.regularMaterial,in:Capsule()).padding()}
     } else if let rhythmCamera {
      CameraPreview(session:rhythmCamera.session).frame(height:280).clipShape(RoundedRectangle(cornerRadius:24))
       .overlay(alignment:.bottom) {Text("\(rhythmCycles) / 3").font(.largeTitle.bold()).padding(12).background(.regularMaterial,in:Capsule()).padding()}
@@ -46,14 +49,15 @@ struct ChallengeView:View {
      MorningSun()
      Text(String(format:"%02d:%02d",alarm.time.hour,alarm.time.minute)).font(.system(.largeTitle,design:.rounded).weight(.regular)).monospacedDigit()
     }
-    Text(alarm.challenge.displayTitle).font(.subheadline.weight(.medium)).padding(.horizontal,14).padding(.vertical,8).background(MorningTheme.soft,in:Capsule())
-    if alarm.challenge.kind == .readAndChoose && !finished {
+    Text(challenge.displayTitle).font(.subheadline.weight(.medium)).padding(.horizontal,14).padding(.vertical,8).background(MorningTheme.soft,in:Capsule())
+    if effectiveAlarm.mode != alarm.mode || challenge != alarm.challenge {Text(appText("Your preview has ended. This morning uses the basic challenge. Your saved choice stays the same.")).font(.footnote).foregroundStyle(MorningTheme.muted)}
+    if challenge.kind == .readAndChoose && !finished {
      Text(appText(readPrompt.sentence)).font(.title2.weight(.semibold)).multilineTextAlignment(.center)
      ForEach(Array(readPrompt.choices.enumerated()),id:\.offset) {index,key in
       Button(appText(key)) {chooseMeaning(index)}.buttonStyle(MorningButtonStyle(primary:false)).accessibilityIdentifier("readChoice-\(index)")
      }
     }
-    if alarm.challenge.kind == .readAloud && !finished {
+    if challenge.kind == .readAloud && !finished {
      Text(appText(readAloudPrompt.text)).font(.title2.weight(.semibold)).multilineTextAlignment(.center)
      if !transcript.isEmpty {Text(transcript).foregroundStyle(MorningTheme.muted).accessibilityIdentifier("speechTranscript")}
      if speechScore>0 {ProgressView(value:speechScore,total:1).accessibilityLabel(appText("Recognized-word match"))}
@@ -63,18 +67,18 @@ struct ChallengeView:View {
   }.background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink)
    .safeAreaInset(edge:.bottom) {
     VStack(spacing:12) {
-     if alarm.challenge.kind == .pushUps && camera == nil && !finished {
+     if challenge.kind == .pushUps && camera == nil && !finished {
       Button(appText("Start AI challenge")) {consentDialog=true}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startChallenge")
      }
-     if alarm.challenge.kind == .guidedRhythm && rhythmCamera == nil && !finished {
+     if challenge.kind == .guidedRhythm && rhythmCamera == nil && !finished {
       Button(appText("Start guided rhythm")) {Task {await startRhythm()}}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startGuidedRhythm")
      }
-     if alarm.challenge.kind == .readAloud && speech == nil && !finished {
+     if challenge.kind == .readAloud && speech == nil && !finished {
       Button(appText("Start reading")) {Task {await startSpeech()}}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startReadAloud")
      }
      if finished {Button(appText("Back to home")) {dismiss()}.buttonStyle(MorningButtonStyle())}
      else {
-      Button(appText("I’m awake")) {finish(.selfConfirmed)}.buttonStyle(MorningButtonStyle(primary:alarm.challenge.kind == .none))
+      Button(appText("I’m awake")) {finish(.selfConfirmed)}.buttonStyle(MorningButtonStyle(primary:challenge.kind == .none))
       Button(model.rehearsal ? appText("End practice") : appText("Stop alarm"),role:.destructive) {finish(.dismissed)}
        .buttonStyle(.plain).font(.subheadline).underline().foregroundStyle(MorningTheme.muted).frame(maxWidth:.infinity,minHeight:44).accessibilityIdentifier("stopAlarm")
      }
@@ -84,12 +88,19 @@ struct ChallengeView:View {
     Button(appText("Agree and open camera")) {Task {await startCamera()}}
     Button(appText("Choose another way")) {consentDialog=false}
    }
-   .task {coordinator=ChallengeCoordinator(alarm:alarm,cloud:model.cloud,scheduler:model.scheduler,rehearsal:model.rehearsal);preparePrompt()}
+   .task {
+    guard coordinator == nil else {return}
+    model.preview.refresh()
+    // Keep one target throughout an active challenge, including at preview expiry.
+    sessionAlarm=model.access.effectiveAlarm(alarm)
+    coordinator=ChallengeCoordinator(alarm:effectiveAlarm,cloud:model.cloud,scheduler:model.scheduler,rehearsal:model.rehearsal)
+    preparePrompt()
+   }
    .onChange(of:scene) {_,value in if value == .background && !finished {pauseResources();message=appText("The challenge is paused. You can choose another way.");Task {await coordinator?.suspend()}}}
    .onDisappear {pauseResources();if !finished {Task {await coordinator?.suspend()}}}
  }
  @MainActor private func startCamera() async {
-  guard !busy,!finished,!stopping,scene == .active,let coordinator,let target=alarm.challenge.repetitions else {return};busy=true
+  guard !busy,!finished,!stopping,scene == .active,let coordinator,let target=challenge.repetitions else {return};busy=true
   let generation=UUID();captureGeneration=generation
   defer {busy=false}
   do {
@@ -132,11 +143,11 @@ struct ChallengeView:View {
   let index=Int(alarm.id.uuid.0)
   readPrompt=EnglishChallengeContent.readAndChoose[index % EnglishChallengeContent.readAndChoose.count]
   readAloudPrompt=EnglishChallengeContent.readAloud[index % EnglishChallengeContent.readAloud.count]
-  switch alarm.challenge.kind {
+  switch challenge.kind {
   case .none:message=appText("Confirm you are awake when you are ready.")
   case .pushUps:message=appText("Complete the selected push-ups in view of the camera.")
   case .readAndChoose:message=appText("Choose the closest meaning.")
-  case .guidedRhythm:message=alarm.challenge.rhythmVariant == .seated ? appText("Stay seated. Lower your arms, raise them, then lower them. Complete 3 cycles. Video stays on this device.") : appText("Stand, bend your knees gently, then stand again. Complete 3 cycles. Video stays on this device.")
+  case .guidedRhythm:message=challenge.rhythmVariant == .seated ? appText("Stay seated. Lower your arms, raise them, then lower them. Complete 3 cycles. Video stays on this device.") : appText("Stand, bend your knees gently, then stand again. Complete 3 cycles. Video stays on this device.")
   case .readAloud:message=appText("Speech is recognized on this device. This checks words, not accent quality.")
   }
  }
@@ -147,7 +158,7 @@ struct ChallengeView:View {
  @MainActor private func startRhythm() async {
   guard rhythmCamera == nil,!busy,!finished,!stopping,scene == .active else {return};busy=true
   let generation=UUID();captureGeneration=generation
-  let capture=GuidedRhythmCapture(variant:alarm.challenge.rhythmVariant ?? .standing,targetCycles:3) {update in Task {@MainActor in
+  let capture=GuidedRhythmCapture(variant:challenge.rhythmVariant ?? .standing,targetCycles:3) {update in Task {@MainActor in
    guard captureGeneration == generation,!finished,!stopping else {return}
    rhythmCycles=update.cycles;message=update.message
    if update.completed {finish(.localCompleted,success:appText("Guided rhythm completed. Have a good morning!"))}

@@ -3,52 +3,54 @@
 Give people a useful free start, a clear reason to keep returning and an optional
 paid upgrade. Grow through friends without turning the alarm into a sales screen.
 
-**Status:** Partially implemented on 13 October 2026; not validated with users.
-**Audience:** Product, design and engineering. The owner approved a $2–3 monthly
-range; the working US price is $2.99. Production offers have not been created.
+**Status:** Revised model approved on 15 October 2026; pilot implementation is
+complete with local checks passing; user value and production billing remain
+unvalidated.
+**Audience:** Product, design and engineering. Target US prices are the owner's
+requested $2/month and $20/year. Production products have not been created.
 
 ## At a glance
 
-Start with **freemium + one Pro subscription + an optional friend invitation**.
-Habit progress supports repeated use; a trial lets people judge the paid value.
+Start with **a no-card full preview, useful Free access and optional Pro**.
+People need evidence of value before they can reasonably decide to subscribe.
 Do not add a points wallet, cash stakes or several paid tiers to the first release.
 
-| Experience | Proposed scope | Why it exists |
+| Experience | Approved scope | Why it exists |
 |---|---|---|
-| Free | Reliable alarms, Stop/recovery, a small sound selection, one complete basic challenge and simple weekly progress | Useful indefinitely, including for people who never subscribe |
-| Pro trial | A proposed 7-day introductory trial for eligible users, started explicitly | Try the implemented Pro experience across several mornings |
-| Pro monthly | A maintained activity collection, richer progress and bounded cloud AI where validated | A lower commitment paid option |
-| Pro annual | The same Pro features with a lower effective monthly price, if selected | Support people who already find lasting value |
+| Full preview | All current features for thirty elapsed days after the first successfully saved alarm; no card or signup | Experience enough real mornings to judge usefulness |
+| Free after preview | Alarm scheduling, Gentle mode, Balanced's three push-ups, system sound for new alarms, Stop and recovery | Useful indefinitely, including for people who never subscribe |
+| Pro monthly | Focused mode, extra sounds, thirty-day history and a custom weekly goal | A lower commitment paid option at about $2/month |
+| Pro annual | The same Pro features | Support people who find lasting value at about $20/year |
 
-The first implementation is deliberately smaller: seven-day Free progress,
-thirty-day Pro history, a custom Pro weekly goal, one monthly StoreKit product and
-optional progress sharing. The local test offer is one introductory week. Activity
-collections, paid cloud AI, annual billing and rewarded referral attribution remain
-planned. See [monthly Pro](SUBSCRIPTIONS.md) for implemented benefits and setup.
-Only advertise features that work in the submitted build.
+The preview is not a subscription trial: it ends with no automatic charge or
+renewal. The clock starts after a successful alarm save, not download or a failed
+attempt. Existing confirmed alarms start a preview on refresh during migration.
+Monthly and annual StoreKit products share one Pro entitlement, with no Apple
+introductory offer in this model. Show live localized prices and renewal terms
+only when the person voluntarily opens the purchase sheet.
 
-Apple supports a one-week introductory free trial for monthly and annual
-subscriptions. Eligibility is limited to one introductory offer per subscription
-group. Show the localized renewal price, date and cancellation terms before the
-person starts; a conventional subscription trial renews unless cancelled.
-[Apple introductory offers](https://developer.apple.com/help/app-store-connect/manage-subscriptions/set-up-introductory-offers-for-auto-renewable-subscriptions/)
-
-Do not add a weekly paid subscription or a separate Lite purchase initially.
-Free covers limited features; monthly Pro covers shorter paid commitment. At the
-end of paid access, retain alarms and offer a free challenge fallback.
+Saved alarms, modes and sounds survive expiry. A saved Focused challenge runs a
+clearly explained Balanced fallback during Free access; saved preferences return
+when full access resumes. Progress is gated after expiry, while clearing retained
+history remains free. See [subscription setup](SUBSCRIPTIONS.md) for exact scope.
+Activity collections, paid cloud AI and rewarded referral attribution remain
+planned. Only advertise features that work in the submitted build.
 
 ## One real journey
 
-1. **First evening:** Set an alarm, choose one familiar activity and try it. No
-   purchase or friend invitation is required.
+1. **First evening:** Save an alarm and begin the full preview. No card, purchase
+   or friend invitation is required.
 2. **First morning:** Complete the activity or choose another way to finish. Show
    a short confirmation, then let the person leave the app.
-3. **After a few mornings:** Show progress toward the person's chosen weekly goal.
-   Offer Pro discovery after completion or in settings, never over a ringing alarm.
+3. **After three completed mornings:** Offer nonblocking Pro discovery and show
+   progress toward the chosen goal. Never place a paywall over a ringing alarm.
 4. **When useful:** Share an illustrated morning card or invite one friend. Use
    the system share sheet; do not upload contacts or share camera footage.
 5. **After a missed day:** Keep prior progress and offer an easy return. Do not
    add repetitions, penalties or pressure to buy.
+6. **At thirty days:** Explain that the preview has ended and show the Free options.
+   Offer monthly or annual Pro voluntarily; do not require payment to dismiss an
+   alarm or retrieve the privacy controls.
 
 ## Encourage commitment without making it a condition of purchase
 
@@ -74,8 +76,8 @@ users must receive purchased subscription benefits without additional tasks.
 ## Invite a friend
 
 First ship a share card and an optional invitation code/link. The invited person
-can use Free normally. Do not require an invitation to create an alarm or claim
-an otherwise eligible introductory offer.
+can start the same no-card preview and use Free normally. Do not require an
+invitation to create an alarm or start the preview.
 
 For a later rewarded pilot, try one simple rule: a new invited person completes
 three qualifying morning activities on distinct scheduled days within seven days.
@@ -120,7 +122,7 @@ an iOS link to a future web checkout needs a fresh policy review.
 
 | Stage | Payment work |
 |---|---|
-| First iOS release | StoreKit 2; Firebase verifies Apple transactions for paid cloud access |
+| First iOS release | StoreKit 2 for local Pro; server verification is required before adding paid cloud access |
 | Future Android release | Add a Google Play billing integration after checking its current regional rules |
 | Future web sales | Evaluate a payment provider supporting the requested wallets, bank payments and Apple Pay; confirm recurring-payment support, refunds and reconciliation |
 | Cross-platform access | Map verified purchases to one account entitlement; show the original billing channel and avoid charging an existing subscriber twice |
@@ -134,14 +136,21 @@ is needed now. One-off bank payments are not automatically recurring subscriptio
 
 | Question | Proposed measurement |
 |---|---|
-| Do people start? | First saved alarm and first completed morning activity; report both steps |
-| Do people return? | D7/D30 morning-use retention by signup cohort; also report completed scheduled days per week |
+| Do people start? | First successfully saved alarm starts the preview cohort; report first completed morning separately |
+| Do people return? | D7/D30 morning-use retention by preview-start cohort; also report completed scheduled days per week |
 | Do challenges feel fair? | Completion by verification type, uncertainty/recovery rates and reported frustration |
-| Is Pro useful? | Eligible trial starts, trial-to-paid conversion after the trial window, renewal and refund rates |
+| Is Pro useful? | Purchase conversion among preview cohorts with thirty full elapsed days of follow-up; separate purchases during/after preview, monthly/annual choice, renewal and refund rates |
 | Do invitations bring lasting users? | Accepted invitations, qualified referrals and referred-user retention; compare with non-referred cohorts |
 | Is paid AI sustainable? | Actual store proceeds after refunds minus allocated inference, hosting and other variable service costs per active paid user |
 
-Use explicit denominators and mature cohorts. App opens do not prove alarm
+These are proposed metrics; no event pipeline or collection is claimed. Report
+cohort size, observation window and missing records with every rate. D7 and D30
+use the same declared morning-use event and only cohorts old enough to observe
+that day. For conversion, divide unique purchasers by unique preview starters
+with at least thirty elapsed days of follow-up, and state the purchase cutoff.
+Do not compare a fresh cohort with a fully observed cohort.
+
+App opens do not prove alarm
 delivery or wakefulness. Longer screen time is not the objective: a short,
 successful morning is a good outcome. Qwen self-hosting still has compute and
 operating costs; do not advertise unlimited AI before measuring capacity.
@@ -152,14 +161,16 @@ at a time where possible; these metrics alone do not establish causation.
 
 ## What we checked and what comes next
 
-This plan was checked against the existing product and release plans and Apple's
-payment, introductory-offer and offer-code documentation on 13 October 2026.
-No user experiment, payment-provider contract, purchase test or pricing study was
-performed. No runtime code, subscription product or checkout was changed.
+The original payment and offer-code research was recorded on 13 October 2026.
+The owner approved the no-card preview revision on 15 October after challenging
+the assumption that new users would subscribe before seeing value. No user
+experiment or pricing study proves this model yet. Implementation checks and
+App Store configuration must be recorded separately from this product decision.
 
 1. Finish release gates and one complete free activity.
-2. Select implemented Pro benefits; configure and test StoreKit purchases/trials.
-3. Add small weekly progress and optional share cards.
+2. Validate preview expiry, Free fallback and both StoreKit plans locally, then
+   configure production products and test sandbox/TestFlight purchases.
+3. Use local progress and optional sharing to learn whether people return.
 4. Evaluate retention and costs before building rewarded referrals or web payments.
 
 ## Read next

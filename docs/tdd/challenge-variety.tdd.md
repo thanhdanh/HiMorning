@@ -154,3 +154,55 @@ test, the unrelated alert-binding change, and the two runtime-warning documents.
 The working files retain those edits.
 
 Approved feature commit: `feat(ios): add selectable wake-up challenges`.
+
+## PR #5 integration with main
+
+Merged `origin/main` at `8ad1b72` into the approved feature in a clean,
+detached `HiMorning-pr5-integration` worktree. The original feature worktree and
+its user-owned edits were left untouched. Conflicts in the editor, challenge
+view, app model, portable runner and UI tests retain both feature sets.
+
+- Preview/Pro retain all choices. Free access retains local challenges and caps
+  explicit push-ups at three; Focused and premium sound use the existing basic
+  fallbacks. Effective-alarm normalization preserves identity, schedule state,
+  and the saved choice without rewriting existing persistence.
+- The active challenge snapshots its effective alarm once, so expiry cannot
+  change the target midway through capture or discard an explicit local choice.
+- Editor saves still start preview only after a confirmed schedule. SoundPreview,
+  Pro discovery, expired-preview tests and all new challenge tests are retained.
+- Two access regression tests were added first. RED failed for the missing
+  normalization methods; GREEN passed all 24 core XCTest cases.
+- The portable runner passed all 28 journeys with 86.61% region and 95.54% line
+  coverage. `pnpm check` passed typechecking, 53 JavaScript tests and backend build.
+- Independent bounded code and security reviews found no actionable integration
+  regressions. No backend contract, fixture or dependency changes were needed.
+
+The installed Node 24 runtime emits the existing Node 22 engine warning.
+Physical-iPhone speech and movement calibration remain unverified.
+
+The initial full native/UI run on iOS 27 executed 30 tests: 19 passed and 11
+failed. Ten failing subscription tests could not load StoreKit products, matching
+the existing CLI limitation documented in `docs/SUBSCRIPTIONS.md`; CI already
+pins iOS 26.2. Only iOS 27 is installed locally, so subscription verification is
+not claimed for this integration. The other failure was the new UI test looking
+up `Increment` instead of the actual `pushUpTarget-Increment` accessibility ID;
+the captured disabled control confirmed that the app already capped free access
+at three. The test selector was corrected without changing application code.
+The initial result bundle is
+`/private/tmp/himorning-pr5-build/Logs/Test/Test-HiMorning-2026.10.15_09-54-53-+0700.xcresult`.
+
+A second run on the previously dedicated simulator was rejected as regression
+evidence: it contained `testExpandedSoundCatalogSelectsANewSoundInBothLanguages`,
+which is absent from this checkout, and runner processes were terminated. Source
+and build-product timestamps remained correct, indicating concurrent simulator
+installation/interference rather than a source failure. Final affected-journey
+validation uses a newly created simulator `148D3923-73C0-4D3E-BB87-FBD7BA94EA2B`.
+
+The final targeted run exited 0. It reran both native capture tests, all four
+PreviewStore tests, the corrected free-limit/local-choice UI test, bilingual
+progress/Pro discovery and language persistence. Together with the initial
+run's other passing UI cases, all 19 unique challenge/preview/UI cases are
+covered by passing results; this is not a claim that the StoreKit suite passed.
+The final result reports 9 passed, 0 failed, 0 skipped and no runtime warnings:
+`/private/tmp/himorning-pr5-build/Logs/Test/Test-HiMorning-2026.10.15_10-10-05-+0700.xcresult`.
+Xcode may prune older bundles from its test log directory automatically.

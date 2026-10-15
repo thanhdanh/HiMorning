@@ -3,6 +3,7 @@ import StoreKit
 
 struct ProView:View {
  @ObservedObject var store:SubscriptionStore
+ @ObservedObject var preview:PreviewStore
  @Environment(\.dismiss) private var dismiss
  var body:some View {
   NavigationStack {
@@ -11,11 +12,15 @@ struct ProView:View {
      HStack {MorningSun(size:60);Text(appText("More room for your progress.")).font(.title2.bold())}
      Label(appText("30-day morning history"),systemImage:"calendar")
      Label(appText("A weekly goal you choose"),systemImage:"sun.max")
+     Label(appText("Focused challenges and more sounds"),systemImage:"bolt")
+     Text(appText("Try all features free for 30 days. No card needed. Subscribe only when you choose."))
+      .font(.footnote).foregroundStyle(MorningTheme.muted)
+     if preview.access == .preview,preview.hasStarted {Text(appText("%lld free days left. No automatic charge.",count:preview.remainingDays)).font(.footnote)}
      Text(appText("Basic alarms and Stop stay free. History stays on this device.")).font(.footnote).foregroundStyle(MorningTheme.muted)
      if store.isPro {Text(appText("Pro is active")).foregroundStyle(MorningTheme.success)}
      if let message=store.message {Text(message).font(.footnote).accessibilityIdentifier("purchaseMessage")}
     }.padding(.horizontal,24)
-    SubscriptionStoreView(productIDs:[SubscriptionStore.monthlyProductID])
+    SubscriptionStoreView(productIDs:SubscriptionStore.productIDs)
      .subscriptionStoreControlStyle(.prominentPicker)
      .storeButton(.visible,for:.restorePurchases)
      .storeButton(.visible,for:.redeemCode)

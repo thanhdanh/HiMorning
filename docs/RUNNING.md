@@ -51,11 +51,14 @@ UI tests. Hosted CI runs both paths.
 
 Select a simulator to review English/Vietnamese screens. Use the globe menu to
 follow the device language or save a choice. On a physical phone, set your team and
-enable signing; generated projects disable signing for CI.
+enable signing. Simulator runs use local ad-hoc signing so Keychain preview state
+can be read and saved. Do not pass `CODE_SIGNING_ALLOWED=NO` when running native
+tests; unsigned compile-only builds can still use that override.
 
 Native scope: create alarms, weekday repeats, three modes, on/off/delete, sound
 preview, language selection, rehearsal, consented camera, one cloud submission,
-self-confirm and stop. Editing, QR, native snooze/countdown and history are planned.
+self-confirm, stop, a no-card preview and monthly/annual Pro. Editing, QR and native
+snooze/countdown are planned. See [subscriptions](SUBSCRIPTIONS.md) for current access.
 
 ## Local Qwen integration
 

@@ -59,7 +59,7 @@ jobs:
           PYDEVICE
       - name: Test native language journeys
         id: ui
-        run: xcodebuild -project apps/ios/HiMorning.xcodeproj -scheme HiMorning -destination 'platform=iOS Simulator,id=${{ steps.simulator.outputs.id }}' -derivedDataPath /tmp/himorning-derived CODE_SIGNING_ALLOWED=NO -resultBundlePath /tmp/himorning-ui.xcresult test
+        run: xcodebuild -project apps/ios/HiMorning.xcodeproj -scheme HiMorning -destination 'platform=iOS Simulator,id=${{ steps.simulator.outputs.id }}' -derivedDataPath /tmp/himorning-derived CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -collect-test-diagnostics never -resultBundlePath /tmp/himorning-ui.xcresult test
       - name: Export UI screenshots
         if: always()
         run: |
