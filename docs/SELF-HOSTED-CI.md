@@ -38,7 +38,8 @@ flows outside the smoke set. Manual runs keep the same unit tests and coverage.
 Merging a same-repository PR cancels running or pending checks for its head branch.
 The `pull_request: closed` event acquires that branch's existing concurrency group
 while every runner job is skipped, so cleanup does not wait for the Mac or use
-hosted-runner minutes. Push checks on `main` use a separate group. Unmerged closes,
+hosted-runner minutes. Push checks on `main` use a separate group; skipped closure
+checks have distinct names so they cannot satisfy main's required checks. Unmerged closes,
 fork PRs and PRs whose head is the default branch use an isolated group instead.
 The mechanism applies after this workflow reaches the PR's base branch. See
 [GitHub's concurrency rules](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency).

@@ -4,8 +4,9 @@ import { describe,expect,it } from 'vitest';
 const workflow=readFileSync('.github/workflows/ci.yml','utf8');
 const group=workflow.match(/  group: >-\n([\s\S]*?)\n  cancel-in-progress:/)![1].trim().replace(/\s+/g,' ');
 // The actual workflow expression uses the shared JavaScript &&/||/== subset.
-const groupFor=(github:object)=>group.replace(/\$\{\{(.*?)\}\}/g,(_,expression)=>
+const valueFor=(value:string,github:object)=>value.replace(/\$\{\{(.*?)\}\}/g,(_,expression)=>
  new Function('github','format',`return (${expression});`)(github,(template:string,value:unknown)=>template.replace('{0}',String(value))));
+const groupFor=(github:object)=>valueFor(group,github);
 const repository='thanhdanh/HiMorning';
 const push=(ref:string,event_name='push')=>({event_name,repository,ref,event:{repository:{default_branch:'main'}}});
 const closed=(merged=true,head='codex/example',repo=repository)=>({
@@ -32,5 +33,12 @@ describe('CI cancellation after merge',()=>{
  it('handles only closed PR events and skips every runner job for them',()=>{
   expect(workflow).toMatch(/pull_request:\n    types: \[closed\]/);
   for(const job of ['backend','inference','ios'])expect(workflow).toContain(`  ${job}:\n    if: github.event_name != 'pull_request'`);
+ });
+ it('keeps skipped closure checks separate from the main branch checks',()=>{
+  for(const job of ['backend','inference','ios']){
+   const name=workflow.match(new RegExp(`  ${job}:\\n    if:.*\\n    name: (.*)`))![1];
+   expect(valueFor(name,push('refs/heads/main'))).toBe(job);
+   expect(valueFor(name,closed())).toBe(`PR closure (${job})`);
+  }
  });
 });

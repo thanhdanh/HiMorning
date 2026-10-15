@@ -21,6 +21,7 @@ concurrency:
 jobs:
   backend:
     if: github.event_name != 'pull_request'
+    name: ${{ github.event_name == 'pull_request' && 'PR closure (backend)' || 'backend' }}
     runs-on: [self-hosted, macOS, ARM64, himorning]
     timeout-minutes: 12
     steps:
@@ -47,6 +48,7 @@ jobs:
       - run: pnpm audit --prod
   inference:
     if: github.event_name != 'pull_request'
+    name: ${{ github.event_name == 'pull_request' && 'PR closure (inference)' || 'inference' }}
     runs-on: [self-hosted, macOS, ARM64, himorning]
     timeout-minutes: 8
     steps:
@@ -60,6 +62,7 @@ jobs:
       - run: cd backend/inference && .venv/bin/python -c "import app"
   ios:
     if: github.event_name != 'pull_request'
+    name: ${{ github.event_name == 'pull_request' && 'PR closure (ios)' || 'ios' }}
     needs: backend
     runs-on: [self-hosted, macOS, ARM64, himorning]
     timeout-minutes: 25
