@@ -84,4 +84,93 @@ final class CoreTests: XCTestCase {
   XCTAssertEqual(evidence.frames.count,2)
   evidence.clear();XCTAssertTrue(evidence.frames.isEmpty)
  }
+
+ func testChallengeDefaultsPreserveLegacyModeBehaviorButRemainIndependent() throws {
+  let time=try AlarmTime(hour:6,minute:30,weekdays:[])
+  XCTAssertEqual(SavedAlarm(time:time,mode:.gentle).challenge,.none)
+  XCTAssertEqual(SavedAlarm(time:time,mode:.balanced).challenge,.pushUps(repetitions:3))
+  XCTAssertEqual(SavedAlarm(time:time,mode:.focused).challenge,.pushUps(repetitions:5))
+  XCTAssertEqual(ChallengeSelection.pushUps(repetitions:0).repetitions,1)
+  XCTAssertEqual(ChallengeSelection.pushUps(repetitions:99).repetitions,5)
+
+  let focusedReading=SavedAlarm(time:time,mode:.focused,challenge:.readAloud)
+  XCTAssertEqual(focusedReading.mode,.focused)
+  XCTAssertEqual(focusedReading.challenge.kind,.readAloud)
+  XCTAssertNil(focusedReading.challenge.repetitions)
+ }
+
+ func testSavedAlarmDecodesLegacyPayloadAndRoundTripsExplicitChallenge() throws {
+  let time=try AlarmTime(hour:7,minute:15,weekdays:[2,4,6])
+  let explicit=SavedAlarm(time:time,mode:.gentle,sound:.softChime,challenge:.guidedRhythm(variant:.seated))
+  let encoded=try JSONEncoder().encode(explicit)
+  XCTAssertEqual(try JSONDecoder().decode(SavedAlarm.self,from:encoded),explicit)
+
+  var legacyObject=try XCTUnwrap(JSONSerialization.jsonObject(with:encoded) as? [String:Any])
+  legacyObject.removeValue(forKey:"challenge")
+  legacyObject["mode"]="focused"
+  let legacyData=try JSONSerialization.data(withJSONObject:legacyObject)
+  let migrated=try JSONDecoder().decode(SavedAlarm.self,from:legacyData)
+  XCTAssertEqual(migrated.challenge,.pushUps(repetitions:5))
+ }
+
+ func testLocalCompletionInvalidatesPendingCloudResult() {
+  var flow=WakeSession(mode:.balanced)
+  let generation=flow.beginVerification()
+  XCTAssertTrue(flow.completeLocally())
+  XCTAssertEqual(flow.outcome,.localCompleted)
+  XCTAssertFalse(flow.applyVerified(generation:generation))
+  XCTAssertFalse(flow.completeLocally())
+ }
+
+ func testRecognizedWordScoreUsesNormalizedTokenEditDistanceAndPassesAtEightyPercent() {
+  XCTAssertEqual(RecognizedWordMatch.score(target:"Good morning, WORLD!",recognized:"good morning world"),1,accuracy:0.0001)
+  XCTAssertEqual(RecognizedWordMatch.score(target:"one two three four five",recognized:"one two tree four five"),0.8,accuracy:0.0001)
+  XCTAssertTrue(RecognizedWordMatch.passes(target:"one two three four five",recognized:"one two tree four five"))
+  XCTAssertFalse(RecognizedWordMatch.passes(target:"one two three four",recognized:"one too four"))
+  XCTAssertFalse(RecognizedWordMatch.passes(target:"",recognized:""))
+ }
+
+ func testCuratedEnglishChallengesAreValidAndStable() {
+  XCTAssertFalse(EnglishChallengeContent.readAndChoose.isEmpty)
+  XCTAssertFalse(EnglishChallengeContent.readAloud.isEmpty)
+  for item in EnglishChallengeContent.readAndChoose {
+   XCTAssertFalse(item.sentence.isEmpty)
+   XCTAssertTrue(item.choices.indices.contains(item.correctChoiceIndex))
+  }
+  XCTAssertEqual(Set(EnglishChallengeContent.readAloud.map(\.id)).count,EnglishChallengeContent.readAloud.count)
+ }
+
+ func testGuidedRhythmSupportsStandingAndSeatedWithoutImageEvidence() {
+  var standing=GuidedRhythmSession(variant:.standing,maxSequenceDurationMs:3_000)
+  XCTAssertFalse(standing.observe(.standing,timestampMs:0,visible:true))
+  XCTAssertFalse(standing.observe(.standing,timestampMs:250,visible:true))
+  XCTAssertFalse(standing.observe(.lowered,timestampMs:500,visible:true))
+  XCTAssertTrue(standing.observe(.standing,timestampMs:1_000,visible:true))
+  XCTAssertEqual(standing.completedCycles,1)
+
+  var seated=GuidedRhythmSession(variant:.seated,maxSequenceDurationMs:3_000)
+  XCTAssertFalse(seated.observe(.armsDown,timestampMs:0,visible:true))
+  XCTAssertFalse(seated.observe(.armsDown,timestampMs:250,visible:true))
+  XCTAssertFalse(seated.observe(.armsUp,timestampMs:500,visible:true))
+  XCTAssertTrue(seated.observe(.armsDown,timestampMs:1_000,visible:true))
+  XCTAssertEqual(seated.completedCycles,1)
+ }
+
+ func testGuidedRhythmResetsOnOcclusionOutOfOrderAndExpiredWindow() {
+  var rhythm=GuidedRhythmSession(variant:.standing,maxSequenceDurationMs:1_000)
+  XCTAssertFalse(rhythm.observe(.standing,timestampMs:100,visible:true))
+  XCTAssertFalse(rhythm.observe(.lowered,timestampMs:200,visible:false))
+  XCTAssertFalse(rhythm.observe(.lowered,timestampMs:300,visible:true))
+  XCTAssertFalse(rhythm.observe(.standing,timestampMs:250,visible:true))
+  XCTAssertFalse(rhythm.observe(.standing,timestampMs:500,visible:true))
+  XCTAssertFalse(rhythm.observe(.lowered,timestampMs:700,visible:true))
+  XCTAssertFalse(rhythm.observe(.standing,timestampMs:1_501,visible:true))
+  XCTAssertEqual(rhythm.completedCycles,0)
+  XCTAssertFalse(rhythm.observe(.standing,timestampMs:2_000,visible:true))
+  XCTAssertFalse(rhythm.observe(.lowered,timestampMs:2_200,visible:true))
+  XCTAssertTrue(rhythm.observe(.standing,timestampMs:2_400,visible:true))
+  XCTAssertEqual(rhythm.completedCycles,1)
+  rhythm.interrupt()
+  XCTAssertEqual(rhythm.completedCycles,1)
+ }
 }

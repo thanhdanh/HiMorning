@@ -6,10 +6,14 @@ struct AlarmEditor:View {
  @State private var time=Calendar.current.date(from:DateComponents(hour:6,minute:30)) ?? Date()
  @State private var mode:WakeMode = .gentle
  @State private var sound:AlarmSound = .system
+ @State private var challenge:ChallengeSelection = .none
+ @State private var pushUpTarget=3
+ @State private var rhythmVariant:GuidedRhythmVariant = .standing
+ @State private var choseChallenge=false
  @State private var days:Set<Int>=[2,3,4,5,6]
  @State private var volume:Double=0.3
  @State private var player:AVAudioPlayer?
- let save:(AlarmTime,WakeMode,AlarmSound)->Void
+ let save:(AlarmTime,WakeMode,AlarmSound,ChallengeSelection)->Void
  private let weekdays=[2,3,4,5,6,7,1]
  private var dayNames:[String] {[appText("Sun"),appText("Mon"),appText("Tue"),appText("Wed"),appText("Thu"),appText("Fri"),appText("Sat")]}
  var body:some View {
@@ -37,18 +41,30 @@ struct AlarmEditor:View {
       Text(appText("Your morning")).font(.subheadline.weight(.semibold)).foregroundStyle(MorningTheme.muted)
       HStack(spacing:4) {
        ForEach(WakeMode.allCases,id:\.self) {value in
-        Button {mode=value} label: {
-         VStack(spacing:8) {
-          Image(systemName:value == .gentle ? "leaf" : value == .balanced ? "sun.max" : "bolt")
-          Text(value.title).font(.subheadline.weight(.semibold)).multilineTextAlignment(.center)
-         }.padding(10).frame(maxWidth:.infinity,minHeight:72)
-          .background(mode == value ? MorningTheme.surface : .clear,in:RoundedRectangle(cornerRadius:12))
-        }.buttonStyle(.plain).accessibilityIdentifier("mode-"+value.rawValue)
-         .accessibilityAddTraits(mode == value ? .isSelected : [])
+        modeButton(value)
        }
       }.padding(4).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:16))
-      Text(mode.explanation).font(.subheadline).accessibilityIdentifier("modeExplanation")
+      Text(challenge.kind == .pushUps ? appText("Try %lld push-ups",count:challenge.repetitions ?? 3) : appText("Wake up at your own pace")).font(.subheadline).accessibilityIdentifier("modeExplanation")
       Text(appText("You can always confirm you are awake or stop.")).font(.footnote).foregroundStyle(MorningTheme.muted)
+     }
+     VStack(alignment:.leading,spacing:12) {
+      Text(appText("Challenge")).font(.subheadline.weight(.semibold)).foregroundStyle(MorningTheme.muted)
+      ForEach(ChallengeKind.allCases,id:\.self) {kind in
+       challengeButton(kind)
+       if challenge.kind == kind {Text(kind.summary).font(.footnote).foregroundStyle(MorningTheme.muted)}
+      }
+      if challenge.kind == .pushUps {
+       Stepper(appText("%lld push-ups",count:pushUpTarget),value:$pushUpTarget,in:1...5)
+        .onChange(of:pushUpTarget) {_,value in challenge = .pushUps(repetitions:value)}
+        .accessibilityIdentifier("pushUpTarget")
+      }
+      if challenge.kind == .guidedRhythm {
+       Picker(appText("Rhythm style"),selection:$rhythmVariant) {
+        Text(appText("Standing")).tag(GuidedRhythmVariant.standing)
+        Text(appText("Seated")).tag(GuidedRhythmVariant.seated)
+       }.pickerStyle(.segmented)
+        .onChange(of:rhythmVariant) {_,value in challenge = .guidedRhythm(variant:value)}
+      }
      }
      NavigationLink {
       SoundSelection(sound:$sound,volume:$volume,preview:preview,stopPreview:{player?.stop()})
@@ -70,12 +86,47 @@ struct AlarmEditor:View {
    .safeAreaInset(edge:.bottom) {
     Button(appText("Save")) {
      let c=Calendar.current.dateComponents([.hour,.minute],from:time)
-     if let value=try? AlarmTime(hour:c.hour ?? 6,minute:c.minute ?? 30,weekdays:days) {save(value,mode,sound);player?.stop();dismiss()}
+     if let value=try? AlarmTime(hour:c.hour ?? 6,minute:c.minute ?? 30,weekdays:days) {save(value,mode,sound,challenge);player?.stop();dismiss()}
     }.buttonStyle(MorningButtonStyle()).padding(.horizontal,20).padding(.vertical,12).background(MorningTheme.canvas)
    }
    .tint(MorningTheme.accent).onDisappear {player?.stop()}
    .onChange(of:volume) {_,value in player?.volume=Float(value)}
   }
+ }
+ private func challengeButton(_ kind:ChallengeKind)->some View {
+  Button {
+   choseChallenge=true
+   switch kind {
+   case .none:challenge = .none
+   case .pushUps:challenge = .pushUps(repetitions:pushUpTarget)
+   case .readAndChoose:challenge = .readAndChoose
+   case .guidedRhythm:challenge = .guidedRhythm(variant:rhythmVariant)
+   case .readAloud:challenge = .readAloud
+   }
+  } label: {
+   HStack(spacing:14) {
+    Image(systemName:kind.icon).frame(width:32)
+    Text(kind.title).font(.body.weight(.medium))
+    Spacer()
+    Image(systemName:challenge.kind == kind ? "checkmark.circle.fill" : "circle").foregroundStyle(MorningTheme.accent)
+   }.padding(14).contentShape(Rectangle())
+    .background(MorningTheme.surface,in:RoundedRectangle(cornerRadius:14))
+    .overlay {RoundedRectangle(cornerRadius:14).strokeBorder(MorningTheme.line)}
+  }.buttonStyle(.plain).accessibilityIdentifier("challenge-"+kind.editorIdentifier)
+   .accessibilityAddTraits(challenge.kind == kind ? .isSelected : [])
+ }
+ private func modeButton(_ value:WakeMode)->some View {
+  Button {
+   mode=value
+   if !choseChallenge {challenge = .legacyDefault(for:value);pushUpTarget=challenge.repetitions ?? 3}
+  } label: {
+   VStack(spacing:8) {
+    Image(systemName:value == .gentle ? "leaf" : value == .balanced ? "sun.max" : "bolt")
+    Text(value.title).font(.subheadline.weight(.semibold)).multilineTextAlignment(.center)
+   }.padding(10).frame(maxWidth:.infinity,minHeight:72)
+    .background(mode == value ? MorningTheme.surface : .clear,in:RoundedRectangle(cornerRadius:12))
+  }.buttonStyle(.plain).accessibilityIdentifier("mode-"+value.rawValue)
+   .accessibilityAddTraits(mode == value ? .isSelected : [])
  }
  private func preview() {
   player?.stop()

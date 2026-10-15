@@ -82,6 +82,50 @@ final class CoreTests {
   XCTAssertEqual(evidence.frames.count,2)
   evidence.clear();XCTAssertTrue(evidence.frames.isEmpty)
  }
+ func testChallengeDefaultsPreserveLegacyModeBehaviorButRemainIndependent() throws {
+  let time=try AlarmTime(hour:6,minute:30,weekdays:[])
+  XCTAssertEqual(SavedAlarm(time:time,mode:.gentle).challenge,.none)
+  XCTAssertEqual(SavedAlarm(time:time,mode:.balanced).challenge,.pushUps(repetitions:3))
+  XCTAssertEqual(SavedAlarm(time:time,mode:.focused).challenge,.pushUps(repetitions:5))
+  XCTAssertEqual(ChallengeSelection.pushUps(repetitions:0).repetitions,1)
+  XCTAssertEqual(ChallengeSelection.pushUps(repetitions:99).repetitions,5)
+  let focusedReading=SavedAlarm(time:time,mode:.focused,challenge:.readAloud)
+  XCTAssertEqual(focusedReading.mode,.focused)
+  XCTAssertEqual(focusedReading.challenge.kind,.readAloud)
+  XCTAssertNil(focusedReading.challenge.repetitions)
+ }
+ func testLocalCompletionInvalidatesPendingCloudResult() {
+  var flow=WakeSession(mode:.balanced)
+  let generation=flow.beginVerification()
+  XCTAssertTrue(flow.completeLocally())
+  XCTAssertEqual(flow.outcome,.localCompleted)
+  XCTAssertFalse(flow.applyVerified(generation:generation))
+  XCTAssertFalse(flow.completeLocally())
+ }
+ func testRecognizedWordScoreAndEightyPercentThreshold() {
+  XCTAssertEqual(RecognizedWordMatch.score(target:"Good morning, WORLD!",recognized:"good morning world"),1)
+  XCTAssertEqual(RecognizedWordMatch.score(target:"one two three four five",recognized:"one two tree four five"),0.8)
+  XCTAssertTrue(RecognizedWordMatch.passes(target:"one two three four five",recognized:"one two tree four five"))
+  XCTAssertFalse(RecognizedWordMatch.passes(target:"one two three four",recognized:"one too four"))
+  XCTAssertFalse(RecognizedWordMatch.passes(target:"",recognized:""))
+ }
+ func testGuidedRhythmStateMachine() {
+  var standing=GuidedRhythmSession(variant:.standing,maxSequenceDurationMs:1_000)
+  XCTAssertFalse(standing.observe(.standing,timestampMs:0,visible:true))
+  XCTAssertFalse(standing.observe(.standing,timestampMs:100,visible:true))
+  XCTAssertFalse(standing.observe(.lowered,timestampMs:250,visible:true))
+  XCTAssertTrue(standing.observe(.standing,timestampMs:500,visible:true))
+  XCTAssertEqual(standing.completedCycles,1)
+  standing.observe(.standing,timestampMs:700,visible:true)
+  standing.observe(.lowered,timestampMs:800,visible:false)
+  standing.observe(.lowered,timestampMs:900,visible:true)
+  XCTAssertEqual(standing.completedCycles,1)
+  var seated=GuidedRhythmSession(variant:.seated,maxSequenceDurationMs:1_000)
+  seated.observe(.armsDown,timestampMs:0,visible:true)
+  seated.observe(.armsDown,timestampMs:100,visible:true)
+  seated.observe(.armsUp,timestampMs:200,visible:true)
+  XCTAssertTrue(seated.observe(.armsDown,timestampMs:400,visible:true))
+ }
 }
 
 actor FakeScheduler: AlarmScheduler {
@@ -117,6 +161,18 @@ func testNativeLibrary() async throws {
  let failed=await library.all();XCTAssertEqual(failed.last?.state,.needsReview)
  try await library.reconcile()
 }
+func testChallengePersistenceMigration() throws {
+ let time=try AlarmTime(hour:7,minute:15,weekdays:[2,4,6])
+ let explicit=SavedAlarm(time:time,mode:.gentle,sound:.softChime,challenge:.guidedRhythm(variant:.seated))
+ let encoded=try JSONEncoder().encode(explicit)
+ XCTAssertEqual(try JSONDecoder().decode(SavedAlarm.self,from:encoded),explicit)
+ var object=try JSONSerialization.jsonObject(with:encoded) as! [String:Any]
+ object.removeValue(forKey:"challenge");object["mode"]="focused"
+ let migrated=try JSONDecoder().decode(SavedAlarm.self,from:JSONSerialization.data(withJSONObject:object))
+ XCTAssertEqual(migrated.challenge,.pushUps(repetitions:5))
+ XCTAssertFalse(EnglishChallengeContent.readAndChoose.isEmpty)
+ XCTAssertFalse(EnglishChallengeContent.readAloud.isEmpty)
+}
 func testCaptureSelectsCompleteCyclesAndDiscardsInterruptedEvidence() {
  var capture=CycleCapture(target:1)
  for (i,angle) in [165.0,120,80,120,165].enumerated() {capture.observe(angle:angle,visible:true,jpeg:Data([UInt8(i+1)]),timestampMs:i*300)}
@@ -141,13 +197,40 @@ actor FakeCloud: CloudVerification {
  var started:CheckedContinuation<Void,Never>?
  var cancelled=false
  var creates=0
- func create(target:Int,requestID:UUID) async throws -> CloudSession {creates+=1;return CloudSession(sessionID:String(repeating:"a",count:64),nonce:UUID().uuidString,expiresAt:Date().addingTimeInterval(120).timeIntervalSince1970*1000)}
+ var targets:[Int]=[]
+ func create(target:Int,requestID:UUID) async throws -> CloudSession {creates+=1;targets.append(target);return CloudSession(sessionID:String(repeating:"a",count:64),nonce:UUID().uuidString,expiresAt:Date().addingTimeInterval(120).timeIntervalSince1970*1000)}
  func verify(_ request:VerificationSubmission) async throws -> CloudDecision {
   return try await withCheckedThrowingContinuation {continuation=$0;started?.resume();started=nil}
  }
  func waitStarted() async {if continuation != nil {return};await withCheckedContinuation {started=$0}}
  func cancel(sessionID:String) async throws {cancelled=true}
  func release() {continuation?.resume(returning:CloudDecision(status:"verified",decisionID:UUID().uuidString,verifiedRepCount:3));continuation=nil}
+}
+@MainActor func testLocalChallengePrivacyBoundariesAndExplicitPushUpTarget() async throws {
+ let time=try AlarmTime(hour:6,minute:30,weekdays:[])
+ let cloud=FakeCloud();let scheduler=FakeScheduler()
+ let localSelections:[ChallengeSelection]=[.none,.readAndChoose,.guidedRhythm(variant:.standing),.readAloud]
+ for challenge in localSelections {
+  let flow=ChallengeCoordinator(alarm:SavedAlarm(time:time,mode:.focused,challenge:challenge),cloud:cloud,scheduler:scheduler)
+  do {try await flow.startCloud(consent:true);preconditionFailure("Local challenge must not create a cloud session")} catch {}
+ }
+ XCTAssertEqual(await cloud.creates,0)
+
+ let local=ChallengeCoordinator(alarm:SavedAlarm(time:time,mode:.balanced,challenge:.readAndChoose),cloud:cloud,scheduler:scheduler)
+ try await local.finish(.localCompleted)
+ XCTAssertEqual(local.session.outcome,.localCompleted)
+ XCTAssertEqual(await scheduler.stops,1)
+
+ for challenge in [ChallengeSelection.none,.pushUps(repetitions:2)] {
+  let unsupported=ChallengeCoordinator(alarm:SavedAlarm(time:time,mode:.gentle,challenge:challenge),cloud:cloud,scheduler:scheduler)
+  do {try await unsupported.finish(.localCompleted);preconditionFailure("Unsupported local completion") } catch {}
+  XCTAssertNil(unsupported.session.outcome)
+ }
+ XCTAssertEqual(await scheduler.stops,1)
+
+ let explicit=ChallengeCoordinator(alarm:SavedAlarm(time:time,mode:.gentle,challenge:.pushUps(repetitions:2)),cloud:cloud,scheduler:scheduler)
+ try await explicit.startCloud(consent:true)
+ XCTAssertEqual(await cloud.targets,[2])
 }
 @MainActor func testCloudStopRaceAndConsent() async throws {
  let cloud=FakeCloud();let scheduler=FakeScheduler()
@@ -187,10 +270,16 @@ suite.testLocalCountNeverCompletesCloudChallengeAndDuplicateResultCannotApply()
 suite.testFallbackAndSnoozeRemainExplicit()
 suite.testInterruptedRepResetsButRetainsCompletedReps()
 suite.testNoiseDoesNotCountAndBufferNeverExceedsCap()
+try suite.testChallengeDefaultsPreserveLegacyModeBehaviorButRemainIndependent()
+suite.testLocalCompletionInvalidatesPendingCloudResult()
+suite.testRecognizedWordScoreAndEightyPercentThreshold()
+suite.testGuidedRhythmStateMachine()
 try await testNativeLibrary()
+try testChallengePersistenceMigration()
 testCaptureSelectsCompleteCyclesAndDiscardsInterruptedEvidence()
 testPersistedTimeCannotBypassValidation()
 try await testCloudStopRaceAndConsent()
+try await testLocalChallengePrivacyBoundariesAndExplicitPushUpTarget()
 XCTAssertEqual(AppLanguage.system.resolved(preferredLanguages:["vi-VN","en-US"]), "vi")
 XCTAssertEqual(AppLanguage.system.resolved(preferredLanguages:["fr-FR","EN_gb"]), "en")
 XCTAssertEqual(AppLanguage.system.resolved(preferredLanguages:["fr","vi"]), "vi")
@@ -223,4 +312,4 @@ try testSharedMobileFixtures()
 
 try runMorningTests()
 runSubscriptionPeriodTests()
-print("PASS: 21 portable Swift domain and integration journeys")
+print("PASS: 27 portable Swift domain and integration journeys")

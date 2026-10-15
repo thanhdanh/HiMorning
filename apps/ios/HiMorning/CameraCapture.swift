@@ -12,11 +12,16 @@ final class CameraCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDelegate,
  private var started:TimeInterval=0
  private var lastSample:TimeInterval=0
  private var active=false
+ private let lifecycleLock=NSLock()
+ private var cancelled=false
  private let onUpdate:@Sendable(CaptureUpdate)->Void
  init(target:Int,onUpdate:@escaping @Sendable(CaptureUpdate)->Void) {capture=CycleCapture(target:target);self.onUpdate=onUpdate;super.init()}
  func start() async {
+  guard !isCancelled else {return}
   guard await AVCaptureDevice.requestAccess(for:.video) else {onUpdate(.init(reps:0,frames:[],ready:false,message:appText("Camera access is off. You can still stop.")));return}
+  guard !isCancelled else {return}
   queue.async { [self] in
+   guard !isCancelled else {return}
    do {
     if session.inputs.isEmpty {
      session.beginConfiguration();defer {session.commitConfiguration()};session.sessionPreset = .vga640x480
@@ -27,11 +32,13 @@ final class CameraCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDelegate,
      output.setSampleBufferDelegate(self,queue:queue)
      guard session.canAddOutput(output) else {throw NativeAlarmError.denied};session.addOutput(output)
     }
+    guard !isCancelled else {return}
     started=ProcessInfo.processInfo.systemUptime;lastSample=0;active=true;session.startRunning()
    } catch {onUpdate(.init(reps:0,frames:[],ready:false,message:appText("The camera could not open. Please choose another way.")))}
   }
  }
- func stop() {queue.async { [self] in active=false;session.stopRunning();capture.clear()}}
+ private var isCancelled:Bool {lifecycleLock.lock();defer {lifecycleLock.unlock()};return cancelled}
+ func stop() {lifecycleLock.lock();cancelled=true;lifecycleLock.unlock();queue.async { [self] in active=false;session.stopRunning();capture.clear()}}
  func captureOutput(_ output:AVCaptureOutput,didOutput sampleBuffer:CMSampleBuffer,from connection:AVCaptureConnection) {
   guard active,!capture.ready,ProcessInfo.processInfo.systemUptime-lastSample>=0.2,let buffer=CMSampleBufferGetImageBuffer(sampleBuffer) else {return}
   lastSample=ProcessInfo.processInfo.systemUptime

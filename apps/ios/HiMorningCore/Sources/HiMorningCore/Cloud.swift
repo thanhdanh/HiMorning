@@ -38,7 +38,7 @@ public enum ChallengeError: Error {case consentRequired,cloudUnavailable,expired
  }
  public func startCloud(consent:Bool) async throws {
   guard consent else {throw ChallengeError.consentRequired}
-  guard let cloud,alarm.mode.policy.reps>0 else {throw ChallengeError.cloudUnavailable}
+  guard let cloud,alarm.challenge.kind == .pushUps,let target=alarm.challenge.repetitions else {throw ChallengeError.cloudUnavailable}
   if let existing=cloudSession {
    guard existing.expiresAt>Date().timeIntervalSince1970*1000 else {throw ChallengeError.expired}
    return
@@ -46,7 +46,7 @@ public enum ChallengeError: Error {case consentRequired,cloudUnavailable,expired
   guard !starting,!submitted,session.outcome == nil else {throw ChallengeError.alreadySubmitted}
   starting=true;defer {starting=false}
   let generation=session.generation
-  let created=try await cloud.create(target:alarm.mode.policy.reps,requestID:UUID())
+  let created=try await cloud.create(target:target,requestID:UUID())
   guard session.outcome == nil,session.generation==generation else {try? await cloud.cancel(sessionID:created.sessionID);return}
   self.consent=true;cloudSession=created
  }
@@ -55,13 +55,13 @@ public enum ChallengeError: Error {case consentRequired,cloudUnavailable,expired
   guard let cloud,let remote=cloudSession else {throw ChallengeError.cloudUnavailable}
   guard remote.expiresAt>Date().timeIntervalSince1970*1000 else {throw ChallengeError.expired}
   guard !submitted else {throw ChallengeError.alreadySubmitted}
-  guard frames.count>=alarm.mode.policy.reps*5,frames.count<=25 else {throw ChallengeError.insufficientEvidence}
+  guard let target=alarm.challenge.repetitions,frames.count>=target*5,frames.count<=25 else {throw ChallengeError.insufficientEvidence}
   submitted=true
   let generation=session.beginVerification()
   let decision=try await cloud.verify(VerificationSubmission(session:remote,evidenceID:UUID(),frames:frames))
   guard consent,session.outcome == nil,session.generation==generation else {return false}
   lastDecision=decision
-  guard decision.status=="verified",!decision.decisionID.isEmpty,decision.verifiedRepCount==alarm.mode.policy.reps else {return false}
+  guard decision.status=="verified",!decision.decisionID.isEmpty,decision.verifiedRepCount==target else {return false}
   if !rehearsal {try await scheduler.stop(id:alarm.id)}
   return session.applyVerified(generation:generation)
  }
@@ -71,7 +71,14 @@ public enum ChallengeError: Error {case consentRequired,cloudUnavailable,expired
   cloudSession=nil
  }
  public func finish(_ outcome:WakeOutcome) async throws {
-  switch outcome {case .dismissed:session.stop();case .selfConfirmed:session.selfConfirm();case .openaiVerified:throw ChallengeError.unsupportedOutcome}
+  switch outcome {
+  case .dismissed:session.stop()
+  case .selfConfirmed:session.selfConfirm()
+  case .localCompleted:
+   guard [.readAndChoose,.guidedRhythm,.readAloud].contains(alarm.challenge.kind) else {throw ChallengeError.unsupportedOutcome}
+   _ = session.completeLocally()
+  case .openaiVerified:throw ChallengeError.unsupportedOutcome
+  }
   consent=false
   // Native stop always precedes network cleanup.
   var stopError:Error?
