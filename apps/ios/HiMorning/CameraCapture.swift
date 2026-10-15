@@ -3,7 +3,7 @@ import Vision
 import CoreImage
 import ImageIO
 import HiMorningCore
-struct CaptureUpdate:Sendable {let reps:Int;let frames:[EvidenceFrame];let ready:Bool;let message:String}
+struct CaptureUpdate:Sendable {let reps:Int;let frames:[EvidenceFrame];let ready:Bool;let ended:Bool;let message:String}
 final class CameraCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDelegate,@unchecked Sendable {
  let session=AVCaptureSession()
  private let queue=DispatchQueue(label:"com.himorning.camera",qos:.userInitiated)
@@ -16,9 +16,12 @@ final class CameraCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDelegate,
  private var cancelled=false
  private let onUpdate:@Sendable(CaptureUpdate)->Void
  init(target:Int,onUpdate:@escaping @Sendable(CaptureUpdate)->Void) {capture=CycleCapture(target:target);self.onUpdate=onUpdate;super.init()}
- func start() async {
+ func start(requestAccess:@Sendable () async ->Bool = {await AVCaptureDevice.requestAccess(for:.video)}) async {
   guard !isCancelled else {return}
-  guard await AVCaptureDevice.requestAccess(for:.video) else {onUpdate(.init(reps:0,frames:[],ready:false,message:appText("Camera access is off. You can still stop.")));return}
+  guard await requestAccess() else {
+   guard !isCancelled else {return}
+   onUpdate(.init(reps:0,frames:[],ready:false,ended:true,message:appText("Camera access is off. You can still stop.")));return
+  }
   guard !isCancelled else {return}
   queue.async { [self] in
    guard !isCancelled else {return}
@@ -34,7 +37,7 @@ final class CameraCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDelegate,
     }
     guard !isCancelled else {return}
     started=ProcessInfo.processInfo.systemUptime;lastSample=0;active=true;session.startRunning()
-   } catch {onUpdate(.init(reps:0,frames:[],ready:false,message:appText("The camera could not open. Please choose another way.")))}
+   } catch {onUpdate(.init(reps:0,frames:[],ready:false,ended:true,message:appText("The camera could not open. Please choose another way.")))}
   }
  }
  private var isCancelled:Bool {lifecycleLock.lock();defer {lifecycleLock.unlock()};return cancelled}
@@ -64,5 +67,5 @@ final class CameraCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDelegate,
    if capture.ready {active=false;queue.async {self.session.stopRunning()}}
   } catch {capture.interrupt();publish(appText("The movement is unclear. Try moving your phone."))}
  }
- private func publish(_ message:String) {onUpdate(.init(reps:capture.completedReps,frames:capture.ready ? capture.frames : [],ready:capture.ready,message:message))}
+ private func publish(_ message:String) {onUpdate(.init(reps:capture.completedReps,frames:capture.ready ? capture.frames : [],ready:capture.ready,ended:capture.ready,message:message))}
 }

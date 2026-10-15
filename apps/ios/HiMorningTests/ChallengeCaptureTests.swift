@@ -16,5 +16,21 @@ final class ChallengeCaptureTests:XCTestCase {
   speech.stop();rhythm.stop()
   await speech.start()
   await rhythm.start()
+  let camera=CameraCapture(target:1) {_ in XCTFail("Stopped camera must not publish updates")}
+  camera.stop()
+  await camera.start(requestAccess:{XCTFail("Stopped camera must not request permission");return false})
+ }
+
+ func testDeniedPushUpCameraReportsAnEndedAttemptWithoutEvidence() async {
+  let ended=expectation(description:"Camera denial ends the attempt")
+  let camera=CameraCapture(target:1) {update in
+   XCTAssertTrue(update.ended)
+   XCTAssertFalse(update.ready)
+   XCTAssertTrue(update.frames.isEmpty)
+   ended.fulfill()
+  }
+  await camera.start(requestAccess:{false})
+  await fulfillment(of:[ended],timeout:1)
+  camera.stop()
  }
 }

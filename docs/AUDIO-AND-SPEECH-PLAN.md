@@ -4,8 +4,8 @@ Give people more pleasant alarm sounds and a spoken example for the English
 read-aloud challenge. Move speech recognition to Apple's current on-device APIs
 while preserving the existing word-match completion rule.
 
-**Status:** Implemented and verified in focused core/native tests; awaiting Gate
-2 commit approval. **Audience:** iOS implementation and review. Research
+**Status:** Implemented and verified in focused core/native tests. See the
+[current feature list](../README.md#implemented-pilot). **Audience:** iOS implementation and review. Research
 snapshot: October 15, 2026.
 
 ## At a glance

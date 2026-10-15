@@ -67,8 +67,9 @@ public enum ChallengeError: Error {case consentRequired,cloudUnavailable,expired
  }
  public func suspend() async {
   consent=false;session.interruptVerification()
-  if let remote=cloudSession {try? await cloud?.cancel(sessionID:remote.sessionID)}
+  let remote=cloudSession
   cloudSession=nil
+  if let remote {try? await cloud?.cancel(sessionID:remote.sessionID)}
  }
  public func finish(_ outcome:WakeOutcome) async throws {
   switch outcome {

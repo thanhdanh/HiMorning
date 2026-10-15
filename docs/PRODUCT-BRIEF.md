@@ -3,8 +3,10 @@
 Give HiMorning a reason to be chosen beyond price or the number of alarm missions.
 The proposed promise is a short, enjoyable start with one small useful activity.
 
-**Status:** Product hypotheses, 13 October 2026; not implemented or user-validated.
-**Audience:** Product, design and engineering. **Decision:** Go for two bounded
+**Status:** Product hypotheses from 13 October 2026; not user-validated. See the
+[current feature list](../README.md#implemented-pilot) for implemented prototypes;
+the richer beat and combined speaking/meaning activities below remain proposals.
+**Audience:** Product, design and engineering. **Decision:** Evaluate bounded
 prototypes; no-go for a claim that HiMorning is better than Erly until tested.
 
 ## At a glance
@@ -203,11 +205,11 @@ backend verifier boundaries with codebase-memory coverage and source reads.
 No competitor app was exercised and no user research, dance scoring, speech test
 or Qwen inference was run for this brief.
 
-Next, make short task rehearsals and interview people about repeated use. In
+Next, use the existing task rehearsals and interview people about repeated use. In
 parallel with product validation, smoke-test the exact downloaded Qwen 9B build
 with its vision projector on the intended host. Keep model evaluation separate
-from whether users value a challenge. Only then implement the selected activities,
-with EN/VI copy, saved-alarm migration and executed behavior tests.
+from whether users value a challenge. Expand the selected activities only after
+that evidence, preserving EN/VI copy, saved-alarm migration and behavior tests.
 
 ## Read next
 
