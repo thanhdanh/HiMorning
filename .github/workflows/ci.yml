@@ -2,14 +2,25 @@ name: HiMorning checks
 on:
   push:
     branches: [main, 'codex/**']
+  pull_request:
+    types: [closed]
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: checks-${{ github.ref }}
+  # A merged PR cancels its head branch's runs; the closed event never needs a runner.
+  group: >-
+    checks-${{ github.event_name == 'pull_request'
+      && (github.event.pull_request.merged
+      && github.event.pull_request.head.repo.full_name == github.repository
+      && github.event.pull_request.head.ref != github.event.repository.default_branch
+      && format('refs/heads/{0}', github.event.pull_request.head.ref)
+      || format('closed-pr-{0}', github.event.pull_request.number))
+      || github.ref }}
   cancel-in-progress: true
 jobs:
   backend:
+    if: github.event_name != 'pull_request'
     runs-on: [self-hosted, macOS, ARM64, himorning]
     timeout-minutes: 12
     steps:
@@ -35,6 +46,7 @@ jobs:
       - run: pnpm run test:coverage
       - run: pnpm audit --prod
   inference:
+    if: github.event_name != 'pull_request'
     runs-on: [self-hosted, macOS, ARM64, himorning]
     timeout-minutes: 8
     steps:
@@ -47,6 +59,7 @@ jobs:
       - run: backend/inference/.venv/bin/python -m unittest discover -s backend/inference -p 'test_*.py' -v
       - run: cd backend/inference && .venv/bin/python -c "import app"
   ios:
+    if: github.event_name != 'pull_request'
     needs: backend
     runs-on: [self-hosted, macOS, ARM64, himorning]
     timeout-minutes: 25
