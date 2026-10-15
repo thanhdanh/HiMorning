@@ -13,3 +13,5 @@ func appText(_ key:String,count:Int?=nil)->String {
  if let count {return String(format:value,locale:locale,Int64(count))}
  return value
 }
+
+func morningCountText(_ count:Int)->String {appText(count == 1 ? "%lld morning" : "%lld mornings",count:count)}

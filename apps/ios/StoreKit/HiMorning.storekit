@@ -1,0 +1,91 @@
+{
+  "identifier": "D61B9E45-35A0-4925-AB92-C2291BA9EF63",
+  "nonRenewingSubscriptions": [],
+  "products": [
+    {
+      "displayPrice": "0.99",
+      "familyShareable": false,
+      "internalID": "OTHER",
+      "localizations": [
+        {
+          "description": "Unrelated test product",
+          "displayName": "Other",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.himorning.test.unrelated",
+      "referenceName": "Unrelated test product",
+      "type": "NonConsumable"
+    }
+  ],
+  "settings": {
+    "_failTransactionsEnabled": false,
+    "_locale": "en_US",
+    "_storefront": "USA"
+  },
+  "subscriptionGroups": [
+    {
+      "id": "PRO",
+      "localizations": [],
+      "name": "HiMorning Pro",
+      "subscriptions": [
+        {
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "2.00",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "PRO_MONTHLY",
+          "introductoryOffer": null,
+          "localizations": [
+            {
+              "description": "All challenge modes, sounds, 30-day history, and a weekly goal you choose.",
+              "displayName": "HiMorning Pro Monthly",
+              "locale": "en_US"
+            },
+            {
+              "description": "Tất cả chế độ thử thách, âm thanh, lịch sử 30 ngày và mục tiêu tuần theo ý bạn.",
+              "displayName": "HiMorning Pro theo tháng",
+              "locale": "vi"
+            }
+          ],
+          "productID": "com.himorning.pro.monthly",
+          "recurringSubscriptionPeriod": "P1M",
+          "referenceName": "HiMorning Pro Monthly",
+          "subscriptionGroupID": "PRO",
+          "type": "RecurringSubscription"
+        },
+        {
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "20.00",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "PRO_ANNUAL",
+          "introductoryOffer": null,
+          "localizations": [
+            {
+              "description": "All challenge modes, sounds, 30-day history, and a weekly goal you choose.",
+              "displayName": "HiMorning Pro Annual",
+              "locale": "en_US"
+            },
+            {
+              "description": "Tất cả chế độ thử thách, âm thanh, lịch sử 30 ngày và mục tiêu tuần theo ý bạn.",
+              "displayName": "HiMorning Pro theo năm",
+              "locale": "vi"
+            }
+          ],
+          "productID": "com.himorning.pro.annual",
+          "recurringSubscriptionPeriod": "P1Y",
+          "referenceName": "HiMorning Pro Annual",
+          "subscriptionGroupID": "PRO",
+          "type": "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version": {
+    "major": 3,
+    "minor": 0
+  }
+}

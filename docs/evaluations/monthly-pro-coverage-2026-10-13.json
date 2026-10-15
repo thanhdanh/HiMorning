@@ -1,0 +1,51 @@
+{
+  "sourceCommit": "7cede1f8e942e650d1ccfc83ab6292c0f68b09a6",
+  "ciRun": "https://github.com/thanhdanh/HiMorning/actions/runs/38409856341",
+  "scope": "Separate native Xcode coverage and portable Swift coverage; not combined",
+  "native": [
+    {
+      "name": "HiMorning.app",
+      "coveredLines": 1300,
+      "executableLines": 1654,
+      "lineCoverage": 0.7859733978234583,
+      "files": [
+        {
+          "name": "Subscriptions.swift",
+          "coveredLines": 84,
+          "executableLines": 85,
+          "lineCoverage": 0.9882352941176471
+        },
+        {
+          "name": "ProgressView.swift",
+          "coveredLines": 154,
+          "executableLines": 203,
+          "lineCoverage": 0.7586206896551724
+        },
+        {
+          "name": "ProView.swift",
+          "coveredLines": 85,
+          "executableLines": 114,
+          "lineCoverage": 0.7456140350877193
+        }
+      ]
+    }
+  ],
+  "portableSwift": {
+    "allCore": {
+      "coveredLines": 278,
+      "executableLines": 283,
+      "linePercent": 98.23,
+      "regionPercent": 86.45
+    },
+    "Morning.swift": {
+      "coveredLines": 49,
+      "executableLines": 49,
+      "linePercent": 100,
+      "regionPercent": 97.87
+    }
+  },
+  "limits": [
+    "App Store sandbox/TestFlight and real-device alarms are not validated.",
+    "Native grace/retry service behavior remains a release check; pure signed-period boundaries are tested."
+  ]
+}
