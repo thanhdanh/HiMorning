@@ -95,8 +95,6 @@
 "Your saved alarms could not be read. Changes are paused." = "Không đọc được lịch đã lưu. Chưa thể thay đổi báo thức.";
 "Choose a sound for your morning." = "Chọn âm thanh cho buổi sáng của bạn.";
 "Practice only. Your alarms stay as they are." = "Chỉ là buổi thử. Báo thức của bạn không thay đổi.";
-"End practice" = "Kết thúc buổi thử";
-"Practice ended. Your alarms are unchanged." = "Đã kết thúc buổi thử. Báo thức không thay đổi.";
 "This purchase could not be verified. Please try restoring it." = "Không xác minh được giao dịch. Bạn thử khôi phục nhé.";
 "Waiting for purchase approval. Your alarms are unchanged." = "Đang chờ duyệt giao dịch. Báo thức không thay đổi.";
 "The purchase could not finish. Please try again." = "Chưa hoàn tất giao dịch. Bạn thử lại nhé.";
@@ -291,7 +289,8 @@
 "Available in %d:%02d" = "Có thể xác nhận sau %d:%02d";
 "You can confirm you’re awake when the countdown ends." = "Bạn có thể xác nhận đã thức dậy khi đếm ngược kết thúc.";
 "Challenge complete!" = "Đã hoàn thành thử thách!";
-"Tap Back to home when you’re ready." = "Nhấn Về trang chính khi bạn sẵn sàng.";
+"Try again, or head home when you’re ready." = "Bạn có thể thử lại hoặc về trang chính.";
+"Try again" = "Thử lại";
 "Getting the camera ready…" = "Đang chuẩn bị camera…";
 "Checking your movement… You can still stop." = "Đang kiểm tra động tác… Bạn vẫn có thể dừng.";
 "Finishing your challenge…" = "Đang kết thúc thử thách…";

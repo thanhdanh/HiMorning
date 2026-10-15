@@ -87,7 +87,7 @@ final class PilotUITests:XCTestCase {
   XCTAssertTrue(app.buttons[vi ? "Đồng ý và chạy thử" : "Agree and run test"].waitForExistence(timeout:5))
   capture(app,name:"consent-"+language)
   app.buttons[vi ? "Chọn cách khác" : "Choose another way"].tap()
-  XCTAssertTrue(app.buttons["stopAlarm"].exists)
+  XCTAssertTrue(app.buttons["backToHome"].exists)
   app.buttons["startChallenge"].tap()
   app.buttons[vi ? "Đồng ý và chạy thử" : "Agree and run test"].tap()
   let unavailable=vi ? "Chưa chạy được phép thử từ xa. Bạn vẫn có thể dừng." : "The remote test is unavailable. You can still stop."
@@ -98,15 +98,13 @@ final class PilotUITests:XCTestCase {
   let confirmed=vi ? "Bạn đã tự xác nhận thức dậy. Chúc buổi sáng tốt lành!" : "You confirmed you are awake. Have a good morning!"
   XCTAssertTrue(app.staticTexts[confirmed].waitForExistence(timeout:5))
   capture(app,name:"self-confirmed-"+language)
-  app.buttons[vi ? "Về trang chính" : "Back to home"].tap()
+  app.buttons["backToHome"].tap()
   trial.tap()
   app.buttons["practice-pushUps"].tap()
-  XCTAssertTrue(app.buttons["stopAlarm"].waitForExistence(timeout:5))
-  app.buttons["stopAlarm"].tap()
-  let stopped=vi ? "Đã kết thúc buổi thử. Báo thức không thay đổi." : "Practice ended. Your alarms are unchanged."
-  XCTAssertTrue(app.staticTexts[stopped].waitForExistence(timeout:5))
-  capture(app,name:"stopped-"+language)
-  app.buttons[vi ? "Về trang chính" : "Back to home"].tap()
+  XCTAssertTrue(app.buttons["backToHome"].waitForExistence(timeout:5))
+  app.buttons["backToHome"].tap()
+  XCTAssertTrue(trial.waitForExistence(timeout:5))
+  capture(app,name:"returned-home-"+language)
   XCTAssertTrue(app.buttons["addAlarm"].exists)
   XCTAssertEqual(app.alerts.count,0,"Rehearsal must not ask for alarm access")
  }
@@ -308,15 +306,15 @@ final class PilotUITests:XCTestCase {
    example.tap()
    XCTAssertEqual(app.alerts.count,0,"The example must not request microphone access")
    XCTAssertFalse(app.staticTexts[language == "vi" ? "Bạn đọc tốt lắm. Chúc bạn buổi sáng tốt lành!" : "Great reading. Have a good morning!"].exists)
-   XCTAssertTrue(app.buttons["stopAlarm"].isHittable)
+   XCTAssertTrue(app.buttons["backToHome"].isHittable)
    XCUIDevice.shared.press(.home)
    app.activate()
    let ready=XCTNSPredicateExpectation(predicate:NSPredicate(format:"enabled == true"),object:start)
    wait(for:[ready],timeout:5)
    XCTAssertTrue(example.exists)
    XCTAssertFalse(app.staticTexts[language == "vi" ? "Bạn đọc tốt lắm. Chúc bạn buổi sáng tốt lành!" : "Great reading. Have a good morning!"].exists)
-   app.buttons["stopAlarm"].tap()
-   XCTAssertTrue(app.staticTexts[language == "vi" ? "Đã kết thúc buổi thử. Báo thức không thay đổi." : "Practice ended. Your alarms are unchanged."].waitForExistence(timeout:5))
+   app.buttons["backToHome"].tap()
+   XCTAssertTrue(app.buttons["practiceChallenges"].waitForExistence(timeout:5))
    app.terminate()
   }
  }
@@ -347,16 +345,17 @@ final class PilotUITests:XCTestCase {
    XCTAssertTrue(app.buttons["readChoice-0"].waitForExistence(timeout:5))
    XCTAssertFalse(app.buttons["startChallenge"].exists)
    XCTAssertFalse(app.buttons["startReadAloud"].exists)
-   XCTAssertTrue(app.buttons["stopAlarm"].exists)
+   XCTAssertTrue(app.buttons["backToHome"].exists)
    XCTAssertEqual(app.alerts.count,0,"Reading practice needs no camera, speech or alarm permission")
    for index in 0..<3 {
     let option=app.buttons["readChoice-\(index)"]
     if option.exists {option.tap()}
-    if app.buttons[vi ? "Về trang chính" : "Back to home"].waitForExistence(timeout:1) {break}
+    if app.buttons["retryChallenge"].waitForExistence(timeout:1) {break}
    }
    XCTAssertTrue(app.staticTexts[vi ? "Chính xác. Đã hoàn thành thử thách!" : "Correct. Challenge completed!"].waitForExistence(timeout:5))
    capture(app,name:"read-choose-complete-"+language)
-   app.buttons[vi ? "Về trang chính" : "Back to home"].tap()
+   app.buttons["backToHome"].tap()
+   XCTAssertTrue(app.buttons["practiceChallenges"].waitForExistence(timeout:5))
    app.terminate()
   }
  }
@@ -376,18 +375,17 @@ final class PilotUITests:XCTestCase {
   XCTAssertFalse(app.steppers["pushUpTarget"].exists)
   app.buttons["Cancel"].tap()
  }
- func testLocalPracticeKeepsStopAvailableBeforeRequestingPermissions() {
+ func testLocalPracticeCanReturnHomeBeforeRequestingPermissions() {
   let app=launch(language:"en")
   for (kind,startButton) in [("none",""),("readAloud","startReadAloud"),("guidedRhythm","startGuidedRhythm")] {
    app.buttons["practiceChallenges"].tap()
    app.buttons["practice-"+kind].tap()
-   XCTAssertTrue(app.buttons["stopAlarm"].waitForExistence(timeout:5))
+   XCTAssertTrue(app.buttons["backToHome"].waitForExistence(timeout:5))
    if !startButton.isEmpty {XCTAssertTrue(app.buttons[startButton].exists)}
    XCTAssertFalse(app.buttons["startChallenge"].exists)
    XCTAssertEqual(app.alerts.count,0)
-   app.buttons["stopAlarm"].tap()
-   XCTAssertTrue(app.staticTexts["Practice ended. Your alarms are unchanged."].waitForExistence(timeout:5))
-   app.buttons["Back to home"].tap()
+   app.buttons["backToHome"].tap()
+   XCTAssertTrue(app.buttons["practiceChallenges"].waitForExistence(timeout:5))
   }
  }
  func testExpiredPreviewKeepsBasicAlarmChoicesInBothLanguages() {
@@ -451,8 +449,8 @@ final class PilotUITests:XCTestCase {
   app.buttons["practice-readAndChoose"].tap()
   XCTAssertTrue(app.buttons["readChoice-0"].waitForExistence(timeout:5))
   XCTAssertFalse(app.buttons["startChallenge"].exists)
-  app.buttons["stopAlarm"].tap()
-  XCTAssertTrue(app.buttons["Back to home"].waitForExistence(timeout:5))
+  app.buttons["backToHome"].tap()
+  XCTAssertTrue(app.buttons["practiceChallenges"].waitForExistence(timeout:5))
  }
  func testLanguageChoiceSurvivesRelaunch() {
   let app=launch(language:"en")

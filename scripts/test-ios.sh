@@ -14,6 +14,7 @@ case "${2:-push}" in
       -only-testing:HiMorningUITests/PilotUITests/testProgressDayModesAndChallengeDetailsInBothLanguages \
       -only-testing:HiMorningUITests/ChallengeCelebrationUITests/testRealAlarmCompletionReturnsHomeAndMarksOnlyThatAlarmInBothLanguages \
       -only-testing:HiMorningUITests/ChallengeCelebrationUITests/testReadingSuccessCelebratesAndReturnsHomeInBothLanguages \
+      -only-testing:HiMorningUITests/ChallengeCelebrationUITests/testReadAloudRetryKeepsTheSentenceAndClearsThePreviousScore \
       -only-testing:HiMorningUITests/ChallengeCelebrationUITests/testAwakeConfirmationCountsDownBeforeEnabling
     ;;
   workflow_dispatch) set -- ;;
