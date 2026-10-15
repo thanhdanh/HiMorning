@@ -212,7 +212,7 @@ struct HomeView:View {
          }
         }.accessibilityIdentifier("practice-"+kind.editorIdentifier)
        }
-      } label: {Text(appText("Try a challenge")).frame(maxWidth:.infinity)}
+      } label: {Text(appText("Explore challenges")).frame(maxWidth:.infinity)}
        .buttonStyle(MorningButtonStyle(primary:false)).accessibilityIdentifier("practiceChallenges")
      Text(appText("You can always stop. A challenge is just a little help to start your day.")).font(.footnote).foregroundStyle(MorningTheme.muted)
      if let message=model.preview.message {Text(message).font(.footnote).foregroundStyle(MorningTheme.muted)}
@@ -262,7 +262,7 @@ struct HomeView:View {
     Button(appText("Edit")) {editor=AlarmDraft(alarm:alarm)}.buttonStyle(.plain).padding(.vertical,12)
      .accessibilityIdentifier("editAlarm-"+alarm.id.uuidString)
     Spacer()
-    Button(appText("Try a challenge")) {model.rehearsal=true;model.selected=alarm}.buttonStyle(.plain).padding(.vertical,12)
+    Button(appText("Try this challenge")) {model.rehearsal=true;model.selected=alarm}.buttonStyle(.plain).padding(.vertical,12)
     Spacer()
     Button(appText("Delete"),role:.destructive) {Task {await model.remove(alarm)}}.buttonStyle(.plain).padding(12)
    }.font(.subheadline.weight(.medium))
