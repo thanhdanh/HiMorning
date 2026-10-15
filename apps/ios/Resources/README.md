@@ -16,7 +16,7 @@ included. A 25 ms attack, decaying partials, an 800 ms final fade and a peak of
 preserve existing alarm choices. Preview volume is separate from system alarm
 volume. Signal checks do not establish perceived quality or wake-up suitability.
 
-Regenerate the two sounds and the app icon from the repository root on macOS:
+Regenerate the two sounds and validate the app icon from the repository root on macOS:
 
 ```sh
 swift scripts/generate-morning-assets.swift
@@ -25,11 +25,14 @@ swift scripts/generate-morning-assets.swift
 ## App icon
 
 `Assets.xcassets/AppIcon.appiconset` supplies one opaque 1024×1024 universal iOS
-icon. It matches the cream, yellow and ink palette and smiling sun in
-`MorningTheme.swift`. Xcode compiles the required iPhone sizes; `project.yml`
+icon. It uses the selected AI-generated rising-sun logo in the app's cream,
+yellow and ink palette. The original PNG was resized to 1024×1024 with macOS
+`sips`, preserving its opaque background and square corners.
+Xcode compiles the required iPhone sizes; `project.yml`
 selects `AppIcon` as the primary icon. The native bundle test checks the compiled
-icon metadata. The icon and original sounds are generated with Foundation and
-AppKit only; the generator has no added dependencies.
+icon metadata. The asset generator validates the checked-in icon without
+overwriting it and generates the original sounds using Foundation and AppKit;
+it has no added dependencies.
 
 ## Kenney provenance and license
 
