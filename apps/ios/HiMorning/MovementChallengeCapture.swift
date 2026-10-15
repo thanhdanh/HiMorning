@@ -2,11 +2,13 @@ import AVFoundation
 import Vision
 import HiMorningCore
 
+struct LocalMovementUpdate:Sendable {let reps:Int;let ready:Bool;let ended:Bool;let message:String}
+
 final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDelegate,@unchecked Sendable {
  let session=AVCaptureSession()
  private let kind:ChallengeKind
  private let queue=DispatchQueue(label:"com.himorning.local-movement",qos:.userInitiated)
- private let onUpdate:@Sendable(CaptureUpdate)->Void
+ private let onUpdate:@Sendable(LocalMovementUpdate)->Void
  private var waveMotion=WaveHandMotion()
  private var progress:MovementChallengeProgress
  private var started=0.0
@@ -15,7 +17,7 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
  private var cancelled=false
  private let lifecycleLock=NSLock()
 
- init(kind:ChallengeKind,onUpdate:@escaping @Sendable(CaptureUpdate)->Void) {
+ init(kind:ChallengeKind,onUpdate:@escaping @Sendable(LocalMovementUpdate)->Void) {
   precondition(kind.usesLocalMovement)
   self.kind=kind;progress=MovementChallengeProgress(kind:kind);self.onUpdate=onUpdate;super.init()
  }
@@ -113,7 +115,7 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
 
  private func observe(_ value:MovementObservation,_ timestamp:Int) { _ = progress.observe(value,timestampMs:timestamp) }
  private func publish(_ reps:Int,ended:Bool=false,_ message:String) {
-  onUpdate(.init(reps:reps,frames:[],ready:ended && progress.ready,ended:ended,message:appText(message)))
+  onUpdate(.init(reps:reps,ready:ended && progress.ready,ended:ended,message:appText(message)))
  }
  private var isCancelled:Bool {lifecycleLock.lock();defer {lifecycleLock.unlock()};return cancelled}
 }
