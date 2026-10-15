@@ -9,8 +9,10 @@ final class AlarmEditingTests:XCTestCase {
   let persistence=EditingPersistence(),scheduler=EditingScheduler()
   let library=try AlarmLibrary(persistence:persistence,scheduler:scheduler)
   let original=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[2,3,4,5,6]),mode:.balanced,sound:.sunrise)
+  await scheduler.expectSchedule(original)
   try await library.add(original)
   let edited=SavedAlarm(id:original.id,time:try AlarmTime(hour:7,minute:15,weekdays:[1,7]),mode:.gentle,sound:.softChime,challenge:.readAloud)
+  await scheduler.expectSchedule(edited)
   try await library.update(edited)
   let alarms=await library.all(),scheduled=await scheduler.scheduled
   XCTAssertEqual(alarms.count,1)
@@ -24,10 +26,127 @@ final class AlarmEditingTests:XCTestCase {
   XCTAssertEqual(try persistence.load(),alarms)
  }
 
+ func testEditingEnabledChallengePersistsWithoutNativeScheduling() async throws {
+  let persistence=EditingPersistence(),scheduler=EditingScheduler()
+  var original=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[2,3,4,5,6]),mode:.balanced,sound:.sunrise)
+  original.state = .confirmed
+  try persistence.save([original])
+  let library=try AlarmLibrary(persistence:persistence,scheduler:scheduler)
+  var edited=SavedAlarm(id:original.id,time:original.time,mode:original.mode,sound:original.sound,challenge:.readAloud)
+  edited.enabled=false;edited.state = .off
+  try await library.update(edited)
+  edited.enabled=true;edited.state = .confirmed
+  let alarms=await library.all(),attempts=await scheduler.attempts
+  XCTAssertEqual(alarms,[edited])
+  XCTAssertTrue(attempts.isEmpty)
+  XCTAssertEqual(try persistence.load(),alarms)
+  let restarted=try AlarmLibrary(persistence:persistence,scheduler:scheduler)
+  let restored=await restarted.all()
+  XCTAssertEqual(restored,alarms)
+ }
+
+ func testEditingChallengeParametersPersistsWithoutNativeScheduling() async throws {
+  let selections:[(ChallengeSelection,ChallengeSelection)]=[
+   (.pushUps(repetitions:3),.pushUps(repetitions:5)),
+   (.guidedRhythm(variant:.standing),.guidedRhythm(variant:.seated))
+  ]
+  for (previous,updated) in selections {
+   let persistence=EditingPersistence(),scheduler=EditingScheduler()
+   var original=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),sound:.sunrise,challenge:previous)
+   original.state = .confirmed
+   try persistence.save([original])
+   let library=try AlarmLibrary(persistence:persistence,scheduler:scheduler)
+   var edited=SavedAlarm(id:original.id,time:original.time,mode:original.mode,sound:original.sound,challenge:updated)
+   try await library.update(edited)
+   edited.state = .confirmed
+   let alarms=await library.all(),attempts=await scheduler.attempts
+   XCTAssertEqual(alarms,[edited])
+   XCTAssertTrue(attempts.isEmpty)
+   XCTAssertEqual(try persistence.load(),alarms)
+  }
+ }
+
+ func testEditingModeKeepsExplicitChallengeWithoutNativeScheduling() async throws {
+  let persistence=EditingPersistence(),scheduler=EditingScheduler()
+  var original=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),mode:.gentle,sound:.sunrise,challenge:.readAloud)
+  original.state = .confirmed
+  try persistence.save([original])
+  let library=try AlarmLibrary(persistence:persistence,scheduler:scheduler)
+  var edited=SavedAlarm(id:original.id,time:original.time,mode:.focused,sound:original.sound,challenge:original.challenge)
+  try await library.update(edited)
+  edited.state = .confirmed
+  let alarms=await library.all(),attempts=await scheduler.attempts
+  XCTAssertEqual(alarms,[edited])
+  XCTAssertTrue(attempts.isEmpty)
+  XCTAssertEqual(try persistence.load(),alarms)
+ }
+
+ func testSavingUnchangedAlarmDoesNotTouchNativeSchedule() async throws {
+  let persistence=EditingPersistence(),scheduler=EditingScheduler()
+  var original=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),mode:.balanced,sound:.sunrise)
+  original.state = .confirmed
+  try persistence.save([original])
+  let library=try AlarmLibrary(persistence:persistence,scheduler:scheduler)
+  try await library.update(SavedAlarm(id:original.id,time:original.time,mode:original.mode,sound:original.sound,challenge:original.challenge))
+  let alarms=await library.all(),attempts=await scheduler.attempts
+  XCTAssertEqual(alarms,[original])
+  XCTAssertTrue(attempts.isEmpty)
+  XCTAssertEqual(try persistence.load(),alarms)
+ }
+
+ func testEditingChallengePreservesUncertainNativeState() async throws {
+  for state in [ScheduleState.needsReview,.pending] {
+   let persistence=EditingPersistence(),scheduler=EditingScheduler()
+   var original=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),mode:.balanced,sound:.sunrise)
+   original.state=state
+   try persistence.save([original])
+   let library=try AlarmLibrary(persistence:persistence,scheduler:scheduler)
+   var edited=SavedAlarm(id:original.id,time:original.time,mode:original.mode,sound:original.sound,challenge:.readAloud)
+   try await library.update(edited)
+   edited.state=state
+   let alarms=await library.all(),attempts=await scheduler.attempts
+   XCTAssertEqual(alarms,[edited])
+   XCTAssertTrue(attempts.isEmpty)
+   XCTAssertEqual(try persistence.load(),alarms)
+  }
+ }
+
+ func testChallengeEditPersistenceFailureRollsBackWithoutNativeScheduling() async throws {
+  let persistence=EditingPersistence(),scheduler=EditingScheduler()
+  var original=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),mode:.balanced,sound:.sunrise)
+  original.state = .confirmed
+  try persistence.save([original])
+  let library=try AlarmLibrary(persistence:persistence,scheduler:scheduler)
+  let edited=SavedAlarm(id:original.id,time:original.time,mode:original.mode,sound:original.sound,challenge:.readAloud)
+  persistence.failNext()
+  do {try await library.update(edited);preconditionFailure("Expected persistence failure")} catch {}
+  let alarms=await library.all(),attempts=await scheduler.attempts
+  XCTAssertEqual(alarms,[original])
+  XCTAssertTrue(attempts.isEmpty)
+  XCTAssertEqual(try persistence.load(),alarms)
+ }
+
+ func testEditingOnlyTimeStillReschedulesNativeAlarm() async throws {
+  let persistence=EditingPersistence(),scheduler=EditingScheduler()
+  let library=try AlarmLibrary(persistence:persistence,scheduler:scheduler)
+  let original=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),sound:.sunrise,challenge:.readAloud)
+  await scheduler.expectSchedule(original)
+  try await library.add(original)
+  let edited=SavedAlarm(id:original.id,time:try AlarmTime(hour:7,minute:15,weekdays:[2,3,4,5,6]),mode:original.mode,sound:original.sound,challenge:original.challenge)
+  await scheduler.expectSchedule(edited)
+  try await library.update(edited)
+  let alarms=await library.all(),scheduled=await scheduler.scheduled
+  XCTAssertEqual(alarms.first?.state,.confirmed)
+  XCTAssertEqual(alarms.first?.time,edited.time)
+  XCTAssertEqual(scheduled.map(\.time),[original.time,edited.time])
+  XCTAssertEqual(try persistence.load(),alarms)
+ }
+
  func testEditingDisabledAlarmKeepsItOffWithoutScheduling() async throws {
   let persistence=EditingPersistence(),scheduler=EditingScheduler()
   let library=try AlarmLibrary(persistence:persistence,scheduler:scheduler)
   let original=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),sound:.sunrise)
+  await scheduler.expectSchedule(original)
   try await library.add(original)
   try await library.disable(id:original.id)
   let edited=SavedAlarm(id:original.id,time:try AlarmTime(hour:8,minute:0,weekdays:[7]),sound:.softChime)
@@ -46,8 +165,10 @@ final class AlarmEditingTests:XCTestCase {
   let persistence=EditingPersistence(),scheduler=EditingScheduler()
   let library=try AlarmLibrary(persistence:persistence,scheduler:scheduler)
   let original=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),sound:.sunrise)
+  await scheduler.expectSchedule(original)
   try await library.add(original)
   let edited=SavedAlarm(id:original.id,time:original.time,sound:.softChime)
+  await scheduler.expectSchedule(edited)
   await scheduler.failNext()
   do {try await library.update(edited);preconditionFailure("Expected schedule failure")} catch {}
   let failed=await library.all()
@@ -55,6 +176,7 @@ final class AlarmEditingTests:XCTestCase {
   XCTAssertEqual(failed.first?.sound,.sunrise)
   XCTAssertEqual(failed.first?.state,.needsReview)
   XCTAssertEqual(try persistence.load(),failed)
+  await scheduler.expectSchedule(edited)
   try await library.update(edited)
   let retried=await library.all()
   XCTAssertEqual(retried.count,1)
@@ -66,6 +188,7 @@ final class AlarmEditingTests:XCTestCase {
   let persistence=EditingPersistence(),scheduler=EditingScheduler()
   let library=try AlarmLibrary(persistence:persistence,scheduler:scheduler)
   let original=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),sound:.sunrise)
+  await scheduler.expectSchedule(original)
   try await library.add(original)
   let before=await library.all()
   persistence.failNext()
@@ -80,9 +203,12 @@ final class AlarmEditingTests:XCTestCase {
   let persistence=EditingPersistence(),scheduler=EditingScheduler()
   let library=try AlarmLibrary(persistence:persistence,scheduler:scheduler)
   let original=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),sound:.sunrise)
+  await scheduler.expectSchedule(original)
   try await library.add(original)
+  let edited=SavedAlarm(id:original.id,time:original.time,sound:.softChime)
+  await scheduler.expectSchedule(edited)
   persistence.failAfter(saves:1)
-  do {try await library.update(SavedAlarm(id:original.id,time:original.time,sound:.softChime));preconditionFailure("Expected persistence failure")} catch {}
+  do {try await library.update(edited);preconditionFailure("Expected persistence failure")} catch {}
   let alarms=await library.all(),scheduled=await scheduler.scheduled
   XCTAssertEqual(alarms.first?.sound,.softChime)
   XCTAssertEqual(alarms.first?.state,.needsReview)
@@ -132,12 +258,19 @@ private actor BlockingReconcileScheduler:AlarmScheduler {
  func finishChecking() {finish?.resume(returning:[]);finish=nil}
 }
 
+private enum EditingSchedulerError:Error {case unexpectedSchedule}
+
 private actor EditingScheduler:AlarmScheduler {
  var scheduled:[SavedAlarm]=[]
+ var attempts:[SavedAlarm]=[]
+ private var expected:[SavedAlarm]=[]
  private var ids:Set<UUID>=[]
  private var fail=false
+ func expectSchedule(_ alarm:SavedAlarm) {expected.append(alarm)}
  func failNext() {fail=true}
  func schedule(_ alarm:SavedAlarm) async throws {
+  attempts.append(alarm)
+  guard !expected.isEmpty,expected.removeFirst() == alarm else {throw EditingSchedulerError.unexpectedSchedule}
   if fail {fail=false;throw DomainError.invalidAlarmTime}
   scheduled.append(alarm);ids.insert(alarm.id)
  }
