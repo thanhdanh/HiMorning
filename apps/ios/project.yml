@@ -24,6 +24,7 @@ targets:
     sources: [HiMorning, Resources]
     settings:
       CODE_SIGN_ENTITLEMENTS: HiMorning/HiMorning.entitlements
+      ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
     info:
       path: HiMorning/Info.plist
       properties:

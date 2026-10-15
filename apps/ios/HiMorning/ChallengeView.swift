@@ -24,7 +24,8 @@ struct ChallengeView:View {
  @State private var captureGeneration=UUID()
  @State private var rhythmCycles=0
  @State private var transcript=""
- @State private var speechScore=0.0
+ @State private var speechProgress=0.0
+ @State private var speechFinishing=false
  @State private var readPrompt=EnglishChallengeContent.readAndChoose[0]
  @State private var readAloudPrompt=EnglishChallengeContent.readAloud[0]
  @State private var message=appText("Good morning. Choose what feels right today.")
@@ -38,7 +39,7 @@ struct ChallengeView:View {
  @State private var result:String?
  var body:some View {
   ScrollView {
-   VStack(spacing:24) {
+   VStack(spacing:20) {
     Text(model.rehearsal ? appText("Try a challenge") : appText("Good morning ☀️")).font(.headline)
     if model.rehearsal {Text(appText("Practice only. Your alarms stay as they are.")).font(.footnote).foregroundStyle(MorningTheme.muted)}
     if let camera {
@@ -48,8 +49,10 @@ struct ChallengeView:View {
      CameraPreview(session:rhythmCamera.session).frame(height:280).clipShape(RoundedRectangle(cornerRadius:24))
       .overlay(alignment:.bottom) {Text("\(rhythmCycles) / 3").font(.largeTitle.bold()).padding(12).background(.regularMaterial,in:Capsule()).padding()}
     } else {
-     MorningSun()
-     Text(String(format:"%02d:%02d",alarm.time.hour,alarm.time.minute)).font(.system(.largeTitle,design:.rounded).weight(.regular)).monospacedDigit()
+     HStack(spacing:16) {
+      MorningSun(size:64)
+      Text(String(format:"%02d:%02d",alarm.time.hour,alarm.time.minute)).font(.system(.largeTitle,design:.rounded).weight(.regular)).monospacedDigit()
+     }
     }
     Text(challenge.displayTitle).font(.subheadline.weight(.medium)).padding(.horizontal,14).padding(.vertical,8).background(MorningTheme.soft,in:Capsule())
     if effectiveAlarm.mode != alarm.mode || challenge != alarm.challenge {Text(appText("Your preview has ended. This morning uses the basic challenge. Your saved choice stays the same.")).font(.footnote).foregroundStyle(MorningTheme.muted)}
@@ -61,26 +64,31 @@ struct ChallengeView:View {
     }
     if challenge.kind == .readAloud && !finished {
      Text(appText(readAloudPrompt.text)).font(.title2.weight(.semibold)).multilineTextAlignment(.center)
+     Text(String(format:appText("You have about %d seconds. Read at your own pace."),Int(ReadAloudAttempt(target:readAloudPrompt.text).listeningDuration))).font(.footnote).foregroundStyle(MorningTheme.muted)
      Button {Task {await playExample()}} label: {
       Label(appText(spokenExample.isSpeaking ? "Stop example" : "Hear sentence"),systemImage:spokenExample.isSpeaking ? "stop.fill" : "speaker.wave.2.fill")
-     }.buttonStyle(MorningButtonStyle(primary:false)).disabled(busy || stopping || preparingExample).accessibilityIdentifier("hearSentence")
-     if !transcript.isEmpty {Text(transcript).foregroundStyle(MorningTheme.muted).accessibilityIdentifier("speechTranscript")}
-     if speechScore>0 {ProgressView(value:speechScore,total:1).accessibilityLabel(appText("Recognized-word match"))}
+     }.buttonStyle(MorningButtonStyle(primary:false)).disabled(busy || stopping || preparingExample || speech != nil).accessibilityIdentifier("hearSentence")
     }
+    if challenge.kind == .readAloud && !transcript.isEmpty {Text(transcript).foregroundStyle(MorningTheme.muted).accessibilityIdentifier("speechTranscript")}
+    if challenge.kind == .readAloud && speechProgress>0 && !finished {ProgressView(value:speechProgress,total:1).accessibilityLabel(appText("Reading progress"))}
     Text(result ?? message).font(.title3.weight(.medium)).multilineTextAlignment(.center).accessibilityIdentifier("challengeMessage")
+    if challenge.kind == .pushUps && camera == nil && !finished {
+     Button(appText("Start AI challenge")) {consentDialog=true}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startChallenge")
+    }
+    if challenge.kind == .guidedRhythm && rhythmCamera == nil && !finished {
+     Button(appText("Start guided rhythm")) {Task {await startRhythm()}}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startGuidedRhythm")
+    }
+    if challenge.kind == .readAloud && !finished {
+     if let speech {
+      Button(appText("Finish reading")) {speech.finishReading()}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping || speechFinishing).accessibilityIdentifier("finishReadAloud")
+     } else {
+      Button(appText("Start reading")) {Task {await startSpeech()}}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping || preparingExample || spokenExample.isSpeaking).accessibilityIdentifier("startReadAloud")
+     }
+    }
    }.padding(24).frame(maxWidth:.infinity)
   }.background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink)
    .safeAreaInset(edge:.bottom) {
     VStack(spacing:12) {
-     if challenge.kind == .pushUps && camera == nil && !finished {
-      Button(appText("Start AI challenge")) {consentDialog=true}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startChallenge")
-     }
-     if challenge.kind == .guidedRhythm && rhythmCamera == nil && !finished {
-      Button(appText("Start guided rhythm")) {Task {await startRhythm()}}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startGuidedRhythm")
-     }
-     if challenge.kind == .readAloud && speech == nil && !finished {
-      Button(appText("Start reading")) {Task {await startSpeech()}}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping || preparingExample || spokenExample.isSpeaking).accessibilityIdentifier("startReadAloud")
-     }
      if finished {Button(appText("Back to home")) {dismiss()}.buttonStyle(MorningButtonStyle())}
      else {
       Button(appText("I’m awake")) {finish(.selfConfirmed)}.buttonStyle(MorningButtonStyle(primary:challenge.kind == .none))
@@ -161,7 +169,7 @@ struct ChallengeView:View {
   case .pushUps:message=appText("Complete the selected push-ups in view of the camera.")
   case .readAndChoose:message=appText("Choose the closest meaning.")
   case .guidedRhythm:message=challenge.rhythmVariant == .seated ? appText("Stay seated. Lower your arms, raise them, then lower them. Complete 3 cycles. Video stays on this device.") : appText("Stand, bend your knees gently, then stand again. Complete 3 cycles. Video stays on this device.")
-  case .readAloud:message=appText("Speech is recognized on this device. This checks words, not accent quality.")
+  case .readAloud:message=appText("On-device AI detects a reading from the amount of speech recognized. It does not grade pronunciation.")
   }
  }
  private func chooseMeaning(_ index:Int) {
@@ -181,12 +189,12 @@ struct ChallengeView:View {
  }
  @MainActor private func startSpeech() async {
   guard speech == nil,!busy,!finished,!stopping,!preparingExample,!spokenExample.isSpeaking,scene == .active else {return};busy=true
-  transcript="";speechScore=0
+  transcript="";speechProgress=0;speechFinishing=false
   let generation=UUID();captureGeneration=generation
   let capture=SpeechChallengeCapture(target:appText(readAloudPrompt.text)) {update in Task {@MainActor in
    guard captureGeneration == generation,!finished,!stopping else {return}
-   transcript=update.transcript;speechScore=update.score;message=update.message
-   if update.completed {finish(.localCompleted,success:appText("Read aloud completed. Have a good morning!"))}
+   transcript=update.transcript;speechProgress=update.progress;speechFinishing=update.finishing;message=update.message
+   if update.completed {finish(.localCompleted,success:appText("Reading recorded. Have a good morning!"))}
    else if update.ended {speech?.stop();speech=nil}
   }}
   speech=capture;await capture.start();busy=false
@@ -200,7 +208,7 @@ struct ChallengeView:View {
   let previous=speech;speech=nil
   await previous?.stopAndWait()
   guard captureGeneration == generation,!finished,!stopping,scene == .active else {return}
-  transcript="";speechScore=0
+  transcript="";speechProgress=0;speechFinishing=false
   message=spokenExample.play(appText(readAloudPrompt.text)) ? appText("Listen to the example, then tap Start reading.") : appText("The English voice is not available. You can still read the sentence.")
  }
  private func pauseResources() {

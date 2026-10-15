@@ -28,7 +28,10 @@ actor NativeAlarmScheduler: AlarmScheduler {
   let configuration=AlarmManager.AlarmConfiguration<MorningMetadata>.alarm(schedule:.relative(relative),attributes:attributes,secondaryIntent:OpenMorningIntent(id:alarm.id),sound:sound)
   _ = try await manager.schedule(id:alarm.id,configuration:configuration)
  }
- func cancel(id:UUID) async throws {try AlarmManager.shared.cancel(id:id)}
+ func cancel(id:UUID) async throws {
+  let manager=AlarmManager.shared
+  if try manager.alarms.contains(where:{$0.id==id}) {try manager.cancel(id:id)}
+ }
  func stop(id:UUID) async throws {
   // A system Stop may already have removed a one-time alarm.
   if let alarm=try AlarmManager.shared.alarms.first(where:{$0.id==id}),alarm.state != .scheduled {try AlarmManager.shared.stop(id:id)}

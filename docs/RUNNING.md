@@ -55,9 +55,9 @@ enable signing. Simulator runs use local ad-hoc signing so Keychain preview stat
 can be read and saved. Do not pass `CODE_SIGNING_ALLOWED=NO` when running native
 tests; unsigned compile-only builds can still use that override.
 
-Native scope: create alarms, weekday repeats, three modes, on/off/delete, sound
+Native scope: create and edit alarms, weekday repeats, three modes, on/off/delete, sound
 preview, language selection, rehearsal, consented camera, one cloud submission,
-self-confirm, stop, a no-card preview and monthly/annual Pro. Editing, QR and native
+self-confirm, stop, a no-card preview and monthly/annual Pro. QR and native
 snooze/countdown are planned. See [subscriptions](SUBSCRIPTIONS.md) for current access.
 
 ## Local Qwen integration

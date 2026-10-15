@@ -8,7 +8,28 @@ HiMorning sounds, and twelve arrangements from Kenney Music Jingles.
 
 ## Original sounds
 
-`sunrise.wav` and `softChime.wav` are original synthesized, five-second mono PCM chime sketches created for HiMorning. No third-party recording or voice is included. Gentle attack, decay and conservative digital peaks are intentional; these are pilot assets, not validated release sounds. Test perceptual loudness, OS looping, device volume, sleep comfort and accessibility on real hardware. Preview volume is separate from the system alarm volume.
+`sunrise.wav` is a 9.4-second, felt-piano-inspired five-note phrase. `softChime.wav`
+is an 8.2-second, four-note bell phrase. Both are original additive synthesis at
+22,050 Hz, mono, 16-bit little-endian PCM; no third-party recording or voice is
+included. A 25 ms attack, decaying partials, an 800 ms final fade and a peak of
+0.44 (about −7 dBFS) avoid hard edges and leave digital headroom. Their stable IDs
+preserve existing alarm choices. Preview volume is separate from system alarm
+volume. Signal checks do not establish perceived quality or wake-up suitability.
+
+Regenerate the two sounds and the app icon from the repository root on macOS:
+
+```sh
+swift scripts/generate-morning-assets.swift
+```
+
+## App icon
+
+`Assets.xcassets/AppIcon.appiconset` supplies one opaque 1024×1024 universal iOS
+icon. It matches the cream, yellow and ink palette and smiling sun in
+`MorningTheme.swift`. Xcode compiles the required iPhone sizes; `project.yml`
+selects `AppIcon` as the primary icon. The native bundle test checks the compiled
+icon metadata. The icon and original sounds are generated with Foundation and
+AppKit only; the generator has no added dependencies.
 
 ## Kenney provenance and license
 
@@ -60,10 +81,13 @@ or inactive/background state. Previewing a row does not change the saved choice.
 
 ## What we checked
 
-The conversion self-check decoded every output and checked finite samples, mono,
+The conversion self-check decoded all twelve Kenney outputs and checked finite samples, mono,
 44.1 kHz, 7–9 second duration, peak no greater than 0.501, and zero endpoints.
 The core runners cover catalog IDs, persistence, and WAV headers; native resource
-tests decode every custom WAV from the application bundle.
+tests decode every custom WAV from the application bundle. The original-sound
+tests also check at least seven seconds of playback, finite samples, peaks with
+headroom and quiet edges. The generator asserts PCM duration, peak limits, zero
+endpoints, and the opaque 1024×1024 icon dimensions.
 
 ## Limits and next steps
 

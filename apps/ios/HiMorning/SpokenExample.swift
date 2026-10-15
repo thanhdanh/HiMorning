@@ -7,7 +7,7 @@ import Combine
  private let voice:()->AVSpeechSynthesisVoice?
  private var currentUtterance:ObjectIdentifier?
 
- init(synthesizer:AVSpeechSynthesizer=AVSpeechSynthesizer(),voice:@escaping ()->AVSpeechSynthesisVoice? = {AVSpeechSynthesisVoice(language:"en-US")}) {
+ init(synthesizer:AVSpeechSynthesizer=AVSpeechSynthesizer(),voice:@escaping ()->AVSpeechSynthesisVoice? = {SpokenExample.preferredVoice()}) {
   self.synthesizer=synthesizer;self.voice=voice
   super.init()
   synthesizer.usesApplicationAudioSession=false
@@ -18,10 +18,20 @@ import Combine
   guard !isSpeaking,!text.isEmpty,let voice=voice() else {return false}
   let utterance=AVSpeechUtterance(string:text)
   utterance.voice=voice
+  utterance.rate=AVSpeechUtteranceDefaultSpeechRate*0.9
   currentUtterance=ObjectIdentifier(utterance)
   isSpeaking=true
   synthesizer.speak(utterance)
   return true
+ }
+
+ nonisolated static func preferredVoice()->AVSpeechSynthesisVoice? {
+  AVSpeechSynthesisVoice.speechVoices().filter {$0.language.hasPrefix("en-")}
+   .sorted {left,right in
+    if left.quality != right.quality {return left.quality.rawValue>right.quality.rawValue}
+    return left.language == "en-US" && right.language != "en-US"
+   }.first
+   ?? AVSpeechSynthesisVoice(language:"en-US")
  }
 
  func stop() {

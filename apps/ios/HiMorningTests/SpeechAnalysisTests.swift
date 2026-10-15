@@ -82,6 +82,17 @@ final class SpeechAnalysisTests:XCTestCase {
 
 #if canImport(HiMorning)
 final class SpeechCaptureCancellationTests:XCTestCase {
+ @MainActor func testFinishCannotCompleteAnUnstartedOrStoppedCapture() async {
+  let capture=SpeechChallengeCapture(target:"The quiet morning brings a chance to begin again today.") {_ in
+   XCTFail("Finishing without a live microphone must not publish or complete")
+  }
+  capture.finishReading()
+  capture.stop()
+  capture.finishReading()
+  await capture.start()
+  await capture.stopAndWait()
+ }
+
  @MainActor func testStoppingDuringPreparationNeverStartsTheMicrophoneOrPublishesAgain() async {
   let probe=SpeechCaptureProbe()
   let capture=SpeechChallengeCapture(target:"Small steps create steady progress.") {update in

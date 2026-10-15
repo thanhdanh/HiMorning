@@ -1,0 +1,151 @@
+import XCTest
+
+final class DeviceFixesUITests:XCTestCase {
+ private func launch(_ arguments:[String]=[],vietnamese:Bool=false)->XCUIApplication {
+  let app=XCUIApplication()
+  app.launchArguments=["-AppleLanguages","(en)","-AppleLocale","en_US","--ui-testing"]+arguments
+  if vietnamese {app.launchArguments.append("--ui-language-vi")}
+  app.launch()
+  XCTAssertTrue(app.buttons["addAlarm"].waitForExistence(timeout:5))
+  let check=app.alerts[vietnamese ? "Cần kiểm tra" : "Please check"]
+  if check.waitForExistence(timeout:2),check.buttons[vietnamese ? "Đã hiểu" : "Got it"].exists {
+   let attachment=XCTAttachment(string:check.debugDescription)
+   attachment.name="startup-alarm-check";attachment.lifetime = .keepAlways;add(attachment)
+   check.buttons[vietnamese ? "Đã hiểu" : "Got it"].tap()
+  }
+  return app
+ }
+ private func reveal(_ element:XCUIElement,in app:XCUIApplication) {
+  for _ in 0..<8 where !element.isHittable {app.swipeUp()}
+  XCTAssertTrue(element.isHittable)
+ }
+ private func skipIfNativeAlarmAccessIsDenied(_ app:XCUIApplication) throws {
+  let feedback=app.staticTexts["alarmSaveError"]
+  guard feedback.exists,feedback.label == "Alarm access is off. Allow alarms for HiMorning in Settings, then try again." else {return}
+  let settings=app.buttons["openAlarmSettings"]
+  XCTAssertTrue(settings.isHittable,"Permission denial must offer a visible Settings recovery action")
+  XCTAssertTrue(app.buttons["saveAlarm"].isEnabled,"The user must be able to retry after changing Settings")
+  guard settings.isHittable,app.buttons["saveAlarm"].isEnabled else {return}
+  throw XCTSkip("Real AlarmKit scheduling is blocked by denied system alarm access; same-ID rescheduling is unverified.")
+ }
+ func testExistingAlarmSoundCanBeEditedWithoutEnablingItInBothLanguages() {
+  for vietnamese in [false,true] {
+   let app=launch(["--ui-disabled-alarm"],vietnamese:vietnamese)
+   let edit=app.buttons["editAlarm-00000000-0000-0000-0000-000000000001"]
+   reveal(edit,in:app);edit.tap()
+   XCTAssertTrue(app.navigationBars[vietnamese ? "Sửa báo thức" : "Edit alarm"].waitForExistence(timeout:5))
+   XCTAssertTrue(app.buttons["mode-balanced"].isSelected)
+   reveal(app.buttons["challenge-guidedRhythm"],in:app)
+   XCTAssertTrue(app.buttons["challenge-guidedRhythm"].isSelected)
+   XCTAssertTrue(app.buttons[vietnamese ? "Ngồi" : "Seated"].isSelected)
+   reveal(app.buttons["chooseSound"],in:app);app.buttons["chooseSound"].tap()
+   XCTAssertTrue(app.buttons["sound-sunrise"].isSelected)
+   app.buttons["sound-softChime"].tap()
+   app.navigationBars.buttons.element(boundBy:0).tap()
+   app.buttons["saveAlarm"].tap()
+   XCTAssertTrue(edit.waitForExistence(timeout:5))
+   XCTAssertEqual(app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@","editAlarm-")).count,1)
+   XCTAssertTrue(app.staticTexts[vietnamese ? "Đã tắt" : "Off"].exists)
+   XCTAssertEqual(app.staticTexts.matching(NSPredicate(format:"identifier BEGINSWITH %@","nextAlarm-")).count,0)
+   XCTAssertTrue(app.staticTexts.containing(NSPredicate(format:"label CONTAINS %@",vietnamese ? "Chuông dịu" : "Soft chime")).firstMatch.exists)
+   XCTAssertEqual(app.alerts.count,0,"Editing a disabled alarm must not request alarm access")
+   app.terminate()
+  }
+ }
+ func testSaveWaitsAndRetainsEditorOnFailure() {
+  let app=launch(["--ui-alarm-save-failure"])
+  app.buttons["addAlarm"].tap()
+  let save=app.buttons["saveAlarm"]
+  XCTAssertTrue(save.waitForExistence(timeout:5));save.tap()
+  let busyLabel=save.label,saveEnabled=save.isEnabled,cancelEnabled=app.buttons["Cancel"].isEnabled
+  let accessibility=XCTAttachment(string:save.debugDescription)
+  accessibility.name="alarm-save-in-progress-accessibility";accessibility.lifetime = .keepAlways;add(accessibility)
+  let screenshot=XCTAttachment(screenshot:app.screenshot())
+  screenshot.name="alarm-save-in-progress";screenshot.lifetime = .keepAlways;add(screenshot)
+  XCTAssertEqual(busyLabel,"Saving…")
+  XCTAssertFalse(saveEnabled)
+  XCTAssertFalse(cancelEnabled)
+  XCTAssertTrue(app.staticTexts["alarmSaveError"].waitForExistence(timeout:5))
+  XCTAssertTrue(save.isEnabled)
+  XCTAssertTrue(app.navigationBars["New alarm"].exists)
+  app.buttons["Cancel"].tap()
+ }
+ func testChallengeSummaryAndSettingsAreInsideSelectedCard() {
+  let app=launch()
+  app.buttons["addAlarm"].tap()
+  reveal(app.buttons["challenge-pushUps"],in:app);app.buttons["challenge-pushUps"].tap()
+  let card=app.otherElements["challenge-card-pushUps"]
+  let summary=app.staticTexts["challenge-summary-pushUps"],stepper=app.steppers["pushUpTarget"]
+  XCTAssertTrue(card.exists);XCTAssertTrue(summary.exists);XCTAssertTrue(stepper.exists)
+  XCTAssertTrue(card.frame.contains(summary.frame))
+  XCTAssertTrue(card.frame.contains(stepper.frame))
+  app.buttons["Cancel"].tap()
+ }
+ func testEnabledAlarmSoundEditReschedulesTheSameNativeAlarm() throws {
+  let app=launch()
+  let edits=app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@","editAlarm-"))
+  let before=Set(edits.allElementsBoundByIndex.map(\.identifier))
+  addTeardownBlock {
+   if app.buttons["Cancel"].isHittable {app.buttons["Cancel"].tap()}
+   let created=Set(edits.allElementsBoundByIndex.map(\.identifier)).subtracting(before)
+   guard created.count == 1,let identifier=created.first else {
+    XCTAssertTrue(created.isEmpty,"Only this test’s one disposable alarm may be removed")
+    return
+   }
+   let edit=app.buttons[identifier]
+   self.reveal(edit,in:app)
+   let deletes=app.buttons.matching(identifier:"Delete").allElementsBoundByIndex.filter {
+    $0.isHittable && abs($0.frame.midY-edit.frame.midY)<8 && $0.frame.minX>edit.frame.maxX
+   }
+   guard deletes.count == 1 else {XCTFail("Could not safely identify the disposable alarm’s Delete button");return}
+   deletes[0].tap()
+   let removed=XCTNSPredicateExpectation(predicate:NSPredicate(format:"exists == false"),object:edit)
+   self.wait(for:[removed],timeout:10)
+  }
+  app.buttons["addAlarm"].tap()
+  reveal(app.buttons["chooseSound"],in:app);app.buttons["chooseSound"].tap()
+  app.buttons["sound-sunrise"].tap()
+  app.navigationBars.buttons.element(boundBy:0).tap()
+  app.buttons["saveAlarm"].tap()
+  let permission=XCUIApplication(bundleIdentifier:"com.apple.springboard").alerts.firstMatch
+  if permission.waitForExistence(timeout:2) {
+   let allow=permission.buttons.matching(NSPredicate(format:"label == %@ OR label == %@","Allow","Allow Alarms")).firstMatch
+   XCTAssertTrue(allow.exists,"Native alarm access must be allowed to verify real scheduling")
+   if allow.exists {allow.tap()}
+  }
+  let saved=XCTNSPredicateExpectation(predicate:NSPredicate(format:"exists == false"),object:app.navigationBars["New alarm"])
+  guard XCTWaiter.wait(for:[saved],timeout:15) == .completed else {
+   try skipIfNativeAlarmAccessIsDenied(app)
+   XCTFail("The real native scheduler did not confirm the new alarm: \(app.staticTexts["alarmSaveError"].label)")
+   return
+  }
+  let created=Set(edits.allElementsBoundByIndex.map(\.identifier)).subtracting(before)
+  guard created.count == 1,let identifier=created.first else {XCTFail("Expected exactly one new alarm");return}
+  let alarmID=String(identifier.dropFirst("editAlarm-".count)),edit=app.buttons[identifier]
+  let state=app.descendants(matching:.any).matching(identifier:"alarmState-"+alarmID).firstMatch
+  reveal(edit,in:app)
+  XCTAssertTrue(state.label.contains("Alarm is set"))
+  XCTAssertTrue(app.staticTexts["nextAlarm-"+alarmID].exists)
+  edit.tap()
+  reveal(app.buttons["chooseSound"],in:app);app.buttons["chooseSound"].tap()
+  XCTAssertTrue(app.buttons["sound-sunrise"].isSelected)
+  app.buttons["sound-softChime"].tap()
+  app.navigationBars.buttons.element(boundBy:0).tap()
+  app.buttons["saveAlarm"].tap()
+  let edited=XCTNSPredicateExpectation(predicate:NSPredicate(format:"exists == false"),object:app.navigationBars["Edit alarm"])
+  guard XCTWaiter.wait(for:[edited],timeout:15) == .completed else {
+   try skipIfNativeAlarmAccessIsDenied(app)
+   XCTFail("The real native scheduler did not confirm editing the same alarm ID: \(app.staticTexts["alarmSaveError"].label)")
+   return
+  }
+  XCTAssertEqual(Set(edits.allElementsBoundByIndex.map(\.identifier)),before.union([identifier]))
+  reveal(edit,in:app)
+  XCTAssertTrue(state.label.contains("Alarm is set"))
+  XCTAssertTrue(app.staticTexts["nextAlarm-"+alarmID].exists)
+  edit.tap()
+  reveal(app.buttons["chooseSound"],in:app);app.buttons["chooseSound"].tap()
+  XCTAssertTrue(app.buttons["sound-softChime"].isSelected,"The same alarm must persist its changed sound")
+  app.navigationBars.buttons.element(boundBy:0).tap()
+  app.buttons["Cancel"].tap()
+ }
+}

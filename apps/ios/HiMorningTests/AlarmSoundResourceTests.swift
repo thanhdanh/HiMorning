@@ -25,4 +25,21 @@ final class AlarmSoundResourceTests:XCTestCase {
    XCTAssertLessThanOrEqual(player.duration,12,sound.rawValue)
   }
  }
+ func testOriginalSoundsHaveHeadroomAndSilentEdges() throws {
+  for sound in [AlarmSound.sunrise,.softChime] {
+   let url=try XCTUnwrap(Bundle.main.url(forResource:sound.rawValue,withExtension:"wav"))
+   let audio=try AVAudioFile(forReading:url)
+   let buffer=try XCTUnwrap(AVAudioPCMBuffer(pcmFormat:audio.processingFormat,frameCapacity:AVAudioFrameCount(audio.length)))
+   try audio.read(into:buffer)
+   let channel=try XCTUnwrap(buffer.floatChannelData?[0])
+   let samples=Array(UnsafeBufferPointer(start:channel,count:Int(buffer.frameLength)))
+   let peak=samples.map(abs).max() ?? 0
+   XCTAssertGreaterThanOrEqual(Double(audio.length)/audio.fileFormat.sampleRate,7,sound.rawValue)
+   XCTAssertGreaterThan(peak,0.15,sound.rawValue)
+   XCTAssertLessThanOrEqual(peak,0.501,sound.rawValue)
+   XCTAssertTrue(samples.allSatisfy(\.isFinite),sound.rawValue)
+   XCTAssertLessThan(samples.prefix(220).map(abs).max() ?? 0,0.002,sound.rawValue)
+   XCTAssertLessThan(samples.suffix(220).map(abs).max() ?? 0,0.002,sound.rawValue)
+  }
+ }
 }

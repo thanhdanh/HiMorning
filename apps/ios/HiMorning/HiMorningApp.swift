@@ -27,7 +27,15 @@ import HiMorningCore
    AppCheck.setAppCheckProviderFactory(AttestationFactory());FirebaseApp.configure();cloud=FirebaseCloud()
   } else {cloud=nil}
   do {
-   let url=try FileManager.default.url(for:.applicationSupportDirectory,in:.userDomainMask,appropriateFor:nil,create:true).appendingPathComponent("HiMorning/alarms.json")
+   var url=try FileManager.default.url(for:.applicationSupportDirectory,in:.userDomainMask,appropriateFor:nil,create:true).appendingPathComponent("HiMorning/alarms.json")
+   #if DEBUG
+   if ProcessInfo.processInfo.arguments.contains("--ui-testing"),ProcessInfo.processInfo.arguments.contains("--ui-disabled-alarm") {
+    url=FileManager.default.temporaryDirectory.appendingPathComponent("himorning-ui-disabled-alarm.json")
+    var fixture=SavedAlarm(id:UUID(uuidString:"00000000-0000-0000-0000-000000000001")!,time:try AlarmTime(hour:7,minute:15,weekdays:[2,4,6]),mode:.balanced,sound:.sunrise,challenge:.guidedRhythm(variant:.seated))
+    fixture.enabled=false;fixture.state = .off
+    try FileAlarmPersistence(url:url).save([fixture])
+   }
+   #endif
    library=try AlarmLibrary(persistence:FileAlarmPersistence(url:url),scheduler:scheduler)
   } catch {library=nil;self.error=appText("Your saved alarms could not be read. Changes are paused.")}
   do {
@@ -61,19 +69,28 @@ import HiMorningCore
  }
  func refresh() async {
   guard let library else {return}
-  do {try await library.reconcile()} catch {self.error=appText("Your alarms could not be checked. Please check alarm access.")}
+  do {try await library.reconcile()}
+  catch LibraryError.busy {return}
+  catch {self.error=appText("Your alarms could not be checked. Please check alarm access.")}
   alarms=await library.all()
   if alarms.contains(where:{$0.state == .confirmed}) {preview.start()} else {preview.refresh()}
   openPending()
  }
- func add(time:AlarmTime,mode:WakeMode,sound:AlarmSound,challenge:ChallengeSelection) async {
-  guard let library else {return}
+ func save(_ alarm:SavedAlarm) async throws {
+  #if DEBUG
+  if ProcessInfo.processInfo.arguments.contains("--ui-testing"),ProcessInfo.processInfo.arguments.contains("--ui-alarm-save-failure") {
+   try await Task.sleep(for:.seconds(2));throw LibraryError.notFound
+  }
+  #endif
+  guard let library else {throw LibraryError.notFound}
   preview.refresh()
   do {
-   try await library.add(access.effectiveAlarm(SavedAlarm(time:time,mode:mode,sound:sound,challenge:challenge)))
-   preview.start()
-  } catch {self.error=appText("This alarm could not be confirmed. Please check your system alarms before relying on it.")}
-  alarms=await library.all()
+   let effective=access.effectiveAlarm(alarm)
+   if await library.all().contains(where:{$0.id==alarm.id}) {try await library.update(effective)}
+   else {try await library.add(effective)}
+   alarms=await library.all()
+   if alarms.contains(where:{$0.state == .confirmed}) {preview.start()}
+  } catch {alarms=await library.all();throw error}
  }
  func toggle(_ alarm:SavedAlarm) async {
   guard let library else {return}
@@ -126,7 +143,7 @@ extension ChallengeKind {
   case .pushUps:return appText("Complete a short camera-checked movement challenge.")
   case .readAndChoose:return appText("Read one short sentence and choose its meaning.")
   case .guidedRhythm:return appText("Follow a simple standing or seated rhythm on camera.")
-  case .readAloud:return appText("Read the sentence aloud. 80% recognized-word match completes it.")
+  case .readAloud:return appText("Read a longer sentence aloud. On-device AI records your reading without grading pronunciation.")
  }}
  var icon:String {switch self {case .none:return "hand.tap";case .pushUps:return "figure.strengthtraining.traditional";case .readAndChoose:return "text.book.closed";case .guidedRhythm:return "figure.cooldown";case .readAloud:return "waveform"}}
 }
@@ -141,9 +158,10 @@ extension ScheduleState {
  var title:String {switch self {case .pending:return appText("Checking…");case .confirmed:return appText("Alarm is set");case .off:return appText("Off");case .needsReview:return appText("Check system alarms")}}
 }
 struct HomeView:View {
+ private struct AlarmDraft:Identifiable {let id=UUID();let alarm:SavedAlarm?}
  @ObservedObject var model:PilotModel
  @Environment(\.scenePhase) private var phase
- @State private var editor=false
+ @State private var editor:AlarmDraft?
  @State private var progress=false
  @State private var pro=false
  @AppStorage("appLanguage") private var language="system"
@@ -184,7 +202,7 @@ struct HomeView:View {
        .background(MorningTheme.hero,in:RoundedRectangle(cornerRadius:24))
      }
      ForEach(model.alarms) {alarm in alarmCard(alarm)}
-     Button {editor=true} label:{Label(appText("Add alarm"),systemImage:"plus")}
+     Button {editor=AlarmDraft(alarm:nil)} label:{Label(appText("Add alarm"),systemImage:"plus")}
       .buttonStyle(MorningButtonStyle()).accessibilityIdentifier("addAlarm")
       Menu {
        ForEach(ChallengeKind.allCases,id:\.self) {kind in
@@ -208,7 +226,7 @@ struct HomeView:View {
     }.padding(20)
    }.background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink).tint(MorningTheme.accent)
    .navigationTitle("HiMorning").toolbar(.hidden,for:.navigationBar)
-   .sheet(isPresented:$editor) {AlarmEditor(store:model.subscriptions,preview:model.preview) {time,mode,sound,challenge in Task {await model.add(time:time,mode:mode,sound:sound,challenge:challenge)}}}
+   .sheet(item:$editor) {draft in AlarmEditor(alarm:draft.alarm,store:model.subscriptions,preview:model.preview,save:model.save)}
    .sheet(isPresented:$progress) {MorningProgressView(model:model,store:model.subscriptions)}
    .sheet(isPresented:$pro) {ProView(store:model.subscriptions,preview:model.preview)}
    .fullScreenCover(item:$model.selected) {alarm in ChallengeView(alarm:alarm,model:model)}
@@ -233,9 +251,17 @@ struct HomeView:View {
    Text(String(format:"%02d:%02d",alarm.time.hour,alarm.time.minute)).font(.system(size:clockSize,weight:.regular,design:.rounded)).monospacedDigit()
    Text(alarm.mode.title+" · "+alarm.sound.title).font(.subheadline)
    Text(alarm.challenge.displayTitle).font(.subheadline.weight(.medium))
-   Text(alarm.state.title).font(.caption.weight(.semibold))
+   Label(alarm.state.title,systemImage:alarm.state == .confirmed ? "checkmark.circle.fill" : alarm.state == .needsReview ? "exclamationmark.triangle" : "clock")
+    .font(.caption.weight(.semibold)).accessibilityIdentifier("alarmState-"+alarm.id.uuidString)
+   if alarm.enabled,alarm.state == .confirmed,let next=alarm.time.next(after:Date()) {
+    Text(String(format:appText("Next ring: %@"),locale:appLocale(),next.formatted(Date.FormatStyle(date:.abbreviated,time:.shortened).locale(appLocale()))))
+     .font(.subheadline).accessibilityIdentifier("nextAlarm-"+alarm.id.uuidString)
+   }
    Divider()
    HStack {
+    Button(appText("Edit")) {editor=AlarmDraft(alarm:alarm)}.buttonStyle(.plain).padding(.vertical,12)
+     .accessibilityIdentifier("editAlarm-"+alarm.id.uuidString)
+    Spacer()
     Button(appText("Try a challenge")) {model.rehearsal=true;model.selected=alarm}.buttonStyle(.plain).padding(.vertical,12)
     Spacer()
     Button(appText("Delete"),role:.destructive) {Task {await model.remove(alarm)}}.buttonStyle(.plain).padding(12)
