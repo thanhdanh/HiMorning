@@ -5,6 +5,31 @@ import XCTest
 #endif
 
 final class CloudTests:XCTestCase {
+ @MainActor func testCompletedChallengeRetriesDoNotStopTheAlarmAgainOrReplaceItsJournalEntry() async throws {
+  let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+  defer {try? FileManager.default.removeItem(at:root)}
+  let url=root.appendingPathComponent("morning.json"),now=Date()
+  var journal=try MorningJournal(url:url)
+  let alarm=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),mode:.balanced,challenge:.readAndChoose)
+  let scheduler=RestartScheduler()
+  let original=ChallengeCoordinator(alarm:alarm,cloud:nil,scheduler:scheduler)
+  try await original.finish(.localCompleted)
+  let entry=MorningEntry(date:now,outcome:try XCTUnwrap(original.session.outcome))
+  let recorded=try journal.record(entry,now:now)
+  XCTAssertTrue(recorded)
+  for outcome in [WakeOutcome.localCompleted,.localCompleted,.dismissed] {
+   let retry=ChallengeCoordinator(alarm:alarm,cloud:nil,scheduler:scheduler,rehearsal:true)
+   try await retry.finish(outcome)
+   XCTAssertEqual(retry.session.outcome,outcome)
+   let recorded=try journal.record(MorningEntry(date:now,outcome:try XCTUnwrap(retry.session.outcome)),rehearsal:true,now:now)
+   XCTAssertFalse(recorded)
+  }
+  let stoppedIDs=await scheduler.stoppedIDs
+  XCTAssertEqual(stoppedIDs,[alarm.id])
+  let restored=try MorningJournal(url:url)
+  XCTAssertEqual(restored.entries.map(\.id),[entry.id])
+  XCTAssertEqual(restored.entries.map(\.outcome),[.localCompleted])
+ }
  @MainActor func testRestartDuringCancellationKeepsTheNewSessionAndConsent() async throws {
   let cloud=RestartCloud()
   let alarm=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),mode:.balanced)
@@ -46,10 +71,11 @@ private actor RestartCloud:CloudVerification {
  func releaseCancellation() {cancellation?.resume();cancellation=nil}
 }
 
-private struct RestartScheduler:AlarmScheduler {
+private actor RestartScheduler:AlarmScheduler {
+ private(set) var stoppedIDs:[UUID]=[]
  func schedule(_ alarm:SavedAlarm) async throws {}
  func cancel(id:UUID) async throws {}
- func stop(id:UUID) async throws {}
+ func stop(id:UUID) async throws {stoppedIDs.append(id)}
  func scheduledIDs() async throws ->Set<UUID> {[]}
 }
 

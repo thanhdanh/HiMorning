@@ -94,7 +94,7 @@ final class DeviceFixesUITests:XCTestCase {
    XCTAssertTrue(start.isHittable,"Reading controls must remain reachable while reviewing feedback")
    app.swipeDown()
    XCTAssertTrue(start.isHittable)
-   XCTAssertTrue(app.buttons["stopAlarm"].isHittable)
+   XCTAssertTrue(app.buttons["backToHome"].isHittable)
    XCTAssertEqual(app.alerts.count,0)
    app.terminate()
   }
