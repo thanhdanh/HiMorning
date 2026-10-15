@@ -33,11 +33,19 @@ import HiMorningCore
   do {
    var url=try FileManager.default.url(for:.applicationSupportDirectory,in:.userDomainMask,appropriateFor:nil,create:true).appendingPathComponent("HiMorning/alarms.json")
    #if DEBUG
-   if ProcessInfo.processInfo.arguments.contains("--ui-testing"),ProcessInfo.processInfo.arguments.contains("--ui-disabled-alarm") || ProcessInfo.processInfo.arguments.contains("--ui-enabled-alarm") {
+   if ProcessInfo.processInfo.arguments.contains("--ui-testing"),ProcessInfo.processInfo.arguments.contains("--ui-disabled-alarm") || ProcessInfo.processInfo.arguments.contains("--ui-enabled-alarm") || ProcessInfo.processInfo.arguments.contains("--ui-home-alarms") {
     url=FileManager.default.temporaryDirectory.appendingPathComponent("himorning-ui-edit-alarm.json")
     var fixture=SavedAlarm(id:UUID(uuidString:"00000000-0000-0000-0000-000000000001")!,time:try AlarmTime(hour:7,minute:15,weekdays:[2,4,6]),mode:.balanced,sound:.sunrise,challenge:.guidedRhythm(variant:.seated))
     fixture.enabled=ProcessInfo.processInfo.arguments.contains("--ui-enabled-alarm");fixture.state = fixture.enabled ? .confirmed : .off
-    try FileAlarmPersistence(url:url).save([fixture])
+    var fixtures=[fixture]
+    if ProcessInfo.processInfo.arguments.contains("--ui-home-alarms") {
+     fixture=SavedAlarm(id:fixture.id,time:fixture.time,mode:.balanced,challenge:.readAndChoose);fixture.state = .confirmed
+     var upcoming=SavedAlarm(id:UUID(uuidString:"00000000-0000-0000-0000-000000000002")!,time:try AlarmTime(hour:20,minute:30,weekdays:[2,4,6]),mode:.focused,challenge:.readAloud);upcoming.state = .confirmed
+     var disabled=SavedAlarm(id:UUID(uuidString:"00000000-0000-0000-0000-000000000003")!,time:try AlarmTime(hour:9,minute:0,weekdays:[]));disabled.enabled=false;disabled.state = .off
+     fixtures=[fixture,upcoming,disabled]
+     if ProcessInfo.processInfo.arguments.contains("--ui-open-alarm") {UserDefaults.standard.set(fixture.id.uuidString,forKey:"pendingAlarmID")}
+    }
+    try FileAlarmPersistence(url:url).save(fixtures)
    }
    #endif
    library=try AlarmLibrary(persistence:FileAlarmPersistence(url:url),scheduler:scheduler)
@@ -52,16 +60,24 @@ import HiMorningCore
    #endif
    journal=try MorningJournal(url:url)
    #if DEBUG
+   if ProcessInfo.processInfo.arguments.contains("--ui-testing"),ProcessInfo.processInfo.arguments.contains("--ui-progress-save-error") {
+    try FileManager.default.createDirectory(at:url,withIntermediateDirectories:true)
+   }
+   if ProcessInfo.processInfo.arguments.contains("--ui-testing"),ProcessInfo.processInfo.arguments.contains("--ui-completed-alarm") {
+    try journal?.record(MorningEntry(alarmID:UUID(uuidString:"00000000-0000-0000-0000-000000000001")!,mode:.balanced,challenge:.readAndChoose,outcome:.localCompleted))
+   }
    if ProcessInfo.processInfo.arguments.contains("--ui-testing"),ProcessInfo.processInfo.arguments.contains("--ui-progress-fixture") {
     let now=Date(),calendar=Calendar.current
     let outcomes:[WakeOutcome]=[.localCompleted,.localCompleted,.selfConfirmed,.openaiVerified,.localCompleted,.localCompleted,.localCompleted]
+    let modes:[WakeMode]=[.gentle,.balanced,.gentle,.focused,.balanced,.focused,.focused]
+    let challenges:[ChallengeSelection]=[.readAndChoose,.readAloud,.guidedRhythm(variant:.seated),.pushUps(repetitions:5),.readAndChoose,.readAloud,.pushUps(repetitions:5)]
     for (index,outcome) in outcomes.enumerated() where index != 1 {
-     if let date=calendar.date(byAdding:.day,value:index-6,to:calendar.startOfDay(for:now)) {
-      try journal?.record(MorningEntry(date:date,outcome:outcome),now:now)
+     if let date=calendar.date(byAdding:.day,value:index == 2 ? -6 : index-6,to:calendar.startOfDay(for:now)) {
+      try journal?.record(MorningEntry(mode:index == 0 ? nil : modes[index],challenge:index == 0 ? nil : challenges[index],date:date,outcome:outcome),now:now)
      }
     }
     if let date=calendar.date(byAdding:.day,value:-2,to:calendar.startOfDay(for:now)) {
-     try journal?.record(MorningEntry(date:date,outcome:.dismissed),now:now)
+     try journal?.record(MorningEntry(mode:.gentle,date:date,outcome:.dismissed),now:now)
     }
    }
    #endif
@@ -77,9 +93,9 @@ import HiMorningCore
   #endif
   accessObserver=preview.objectWillChange.sink { [weak self] in self?.objectWillChange.send() }
  }
- func recordMorning(id:UUID,outcome:WakeOutcome,rehearsal:Bool) {
+ func recordMorning(id:UUID,alarm:SavedAlarm,outcome:WakeOutcome,rehearsal:Bool) {
   guard journal != nil else {return}
-  do {try journal?.record(MorningEntry(id:id,outcome:outcome),rehearsal:rehearsal)}
+  do {try journal?.record(MorningEntry(id:id,alarmID:alarm.id,mode:alarm.mode,challenge:alarm.challenge,outcome:outcome),rehearsal:rehearsal)}
   catch {progressError=appText("Your progress could not be saved. Your alarm is already stopped.")}
  }
  func setGoal(_ goal:Int) {
@@ -89,6 +105,12 @@ import HiMorningCore
  }
  func refresh() async {
   guard let library else {return}
+  #if DEBUG
+  // Presentation fixtures have no native schedules to reconcile.
+  if ProcessInfo.processInfo.arguments.contains("--ui-testing"),ProcessInfo.processInfo.arguments.contains("--ui-home-alarms") {
+   alarms=await library.all();openPending();return
+  }
+  #endif
   do {try await library.reconcile()}
   catch LibraryError.busy {return}
   catch {self.error=appText("Your alarms could not be checked. Please check alarm access.")}
@@ -129,6 +151,7 @@ import HiMorningCore
 }
 extension WakeMode {
  var title:String {switch self {case .gentle:return appText("Gentle");case .balanced:return appText("Balanced");case .focused:return appText("Focused")}}
+ var icon:String {switch self {case .gentle:return "leaf";case .balanced:return "circle.lefthalf.filled";case .focused:return "scope"}}
 }
 extension AlarmSound {
  var title:String {switch self {
@@ -185,17 +208,22 @@ struct HomeView:View {
  @State private var progress=false
  @State private var pro=false
  @AppStorage("appLanguage") private var language="system"
- @ScaledMetric(relativeTo:.largeTitle) private var clockSize=58
+ @ScaledMetric(relativeTo:.largeTitle) private var clockSize=46
  var body:some View {
   NavigationStack {
    ScrollView {
-    VStack(alignment:.leading,spacing:24) {
-     HStack {
-      Label("HiMorning.",systemImage:"sunrise").font(.title2.bold()).labelStyle(.titleAndIcon)
+    VStack(alignment:.leading,spacing:16) {
+     HStack(spacing:12) {
+      Label("HiMorning.",systemImage:"sunrise").font(.title3.bold()).labelStyle(.titleAndIcon)
+       .fixedSize(horizontal:false,vertical:true).accessibilityLabel("Hi Morning")
       Spacer()
-      Button {progress=true} label:{Image(systemName:"chart.bar").frame(width:44,height:44)}
+      GlassEffectContainer(spacing:12) {
+      HStack(spacing:8) {
+      Button {progress=true} label:{Image(systemName:"chart.bar").frame(width:44,height:44).glassEffect(.regular.interactive(),in:.circle).contentShape(Rectangle())}
+       .buttonStyle(.plain)
        .accessibilityIdentifier("morningProgress").accessibilityLabel(appText("Your progress"))
-      Button {pro=true} label:{Image(systemName:"sun.max").frame(width:44,height:44)}
+      Button {pro=true} label:{Image(systemName:"sun.max").frame(width:44,height:44).glassEffect(.regular.interactive(),in:.circle).contentShape(Rectangle())}
+       .buttonStyle(.plain)
        .accessibilityIdentifier("hiMorningPro").accessibilityLabel("HiMorning Pro")
       Menu {
        Picker(appText("Language"),selection:$language) {
@@ -203,12 +231,16 @@ struct HomeView:View {
         Text(appText("English")).tag("en")
         Text(appText("Vietnamese")).tag("vi")
        }
-      } label: {Image(systemName:"globe").frame(width:44,height:44).background(MorningTheme.soft,in:Circle())}
+      } label: {Image(systemName:"globe").frame(width:44,height:44).glassEffect(.regular.interactive(),in:.circle)}
+       .buttonStyle(.plain)
        .accessibilityIdentifier("appLanguage").accessibilityLabel(appText("Language"))
+      }
+      }
      }
-     VStack(alignment:.leading,spacing:8) {
-      Text(appText("A fresh start,\nat your pace.").replacingOccurrences(of:"\n",with:" ")).font(.title2.weight(.semibold))
-      Text(appText("Start with a morning that feels right.")).font(.subheadline).foregroundStyle(MorningTheme.muted)
+     HStack(alignment:.firstTextBaseline) {
+      Text(appText("Alarms")).font(.title2.weight(.semibold))
+      Spacer(minLength:12)
+      Text(Date(),format:.dateTime.weekday(.abbreviated).day().month(.abbreviated).locale(appLocale())).font(.caption).foregroundStyle(MorningTheme.muted)
      }
      if model.alarms.isEmpty {
       HStack(spacing:16) {
@@ -221,7 +253,12 @@ struct HomeView:View {
       }.padding(24).frame(maxWidth:.infinity,minHeight:180).foregroundStyle(MorningTheme.onYellow)
        .background(MorningTheme.hero,in:RoundedRectangle(cornerRadius:24))
      }
-     ForEach(model.alarms) {alarm in alarmCard(alarm)}
+     if let error=model.progressError {
+      Label(error,systemImage:"exclamationmark.triangle").font(.footnote).foregroundStyle(MorningTheme.muted).accessibilityIdentifier("homeProgressError")
+     }
+     TimelineView(.everyMinute) {_ in
+      ForEach(model.alarms) {alarm in alarmCard(alarm,now:Date())}
+     }
      Button {editor=AlarmDraft(alarm:nil)} label:{Label(appText("Add alarm"),systemImage:"plus")}
       .buttonStyle(MorningButtonStyle()).accessibilityIdentifier("addAlarm")
       Menu {
@@ -234,7 +271,6 @@ struct HomeView:View {
        }
       } label: {Text(appText("Explore challenges")).frame(maxWidth:.infinity)}
        .buttonStyle(MorningButtonStyle(primary:false)).accessibilityIdentifier("practiceChallenges")
-     Text(appText("You can always stop. A challenge is just a little help to start your day.")).font(.footnote).foregroundStyle(MorningTheme.muted)
      if let message=model.preview.message {Text(message).font(.footnote).foregroundStyle(MorningTheme.muted)}
      if model.access == .preview {
       Text(model.preview.hasStarted ? appText("%lld free days left. No automatic charge.",count:model.preview.remainingDays) : appText("Your 30 free days begin when you save your first alarm. No card needed."))
@@ -249,7 +285,7 @@ struct HomeView:View {
    .sheet(item:$editor) {draft in AlarmEditor(alarm:draft.alarm,store:model.subscriptions,preview:model.preview,save:model.save)}
    .sheet(isPresented:$progress) {MorningProgressView(model:model,store:model.subscriptions)}
    .sheet(isPresented:$pro) {ProView(store:model.subscriptions,preview:model.preview)}
-   .fullScreenCover(item:$model.selected) {alarm in ChallengeView(alarm:alarm,model:model)}
+   .fullScreenCover(item:$model.selected,onDismiss:{Task {await model.refresh()}}) {alarm in ChallengeView(alarm:alarm,model:model)}
    .alert(appText("Please check"),isPresented:Binding(get:{model.error != nil},set:{visible in
     guard !visible,let shown=model.error else {return}
     DispatchQueue.main.async {if model.error==shown {model.error=nil}}
@@ -260,33 +296,76 @@ struct HomeView:View {
    .onChange(of:phase) {_,value in if value == .active {Task {await model.refresh();await model.subscriptions.refresh()}}}
   }
  }
- private func alarmCard(_ alarm:SavedAlarm)->some View {
-  VStack(alignment:.leading,spacing:14) {
-   HStack {
-    Text(appText("Alarm")).font(.caption.weight(.semibold))
+ private func alarmCard(_ alarm:SavedAlarm,now:Date)->some View {
+  let completed=model.journal?.completedToday(alarmID:alarm.id,now:now) ?? false
+  let time=String(format:"%02d:%02d",alarm.time.hour%12 == 0 ? 12 : alarm.time.hour%12,alarm.time.minute)
+  let period=alarm.time.hour<12 ? "AM" : "PM"
+  return VStack(alignment:.leading,spacing:10) {
+   HStack(spacing:12) {
+    VStack(alignment:.leading,spacing:4) {
+     HStack(spacing:8) {
+      if alarm.enabled {
+       HStack(alignment:.firstTextBaseline,spacing:6) {
+        Text(time).font(.system(size:clockSize,weight:.medium,design:.rounded)).monospacedDigit().lineLimit(1).minimumScaleFactor(0.7)
+         .accessibilityLabel(time+" "+period).accessibilityIdentifier("alarmTime-"+alarm.id.uuidString)
+        Text(verbatim:period).font(.caption.weight(.semibold)).accessibilityHidden(true)
+       }
+      } else {
+       Button {editor=AlarmDraft(alarm:alarm)} label: {
+       HStack(alignment:.firstTextBaseline,spacing:6) {
+        Text(time).font(.system(size:clockSize*0.7,weight:.regular,design:.rounded)).monospacedDigit().lineLimit(1).minimumScaleFactor(0.7)
+        Text(verbatim:period).font(.caption.weight(.medium))
+       }.frame(minHeight:44).contentShape(Rectangle())
+      }.buttonStyle(.plain).accessibilityLabel(appText("Edit")+" "+time+" "+period).accessibilityIdentifier("editAlarm-"+alarm.id.uuidString)
+      }
+      if completed,!alarm.enabled {
+       Image(systemName:"checkmark.circle.fill").foregroundStyle(MorningTheme.success).accessibilityLabel(appText("Completed today")).accessibilityIdentifier("alarmCompleted-"+alarm.id.uuidString)
+      }
+     }
+     if !alarm.enabled {Text(appText("Off")).font(.caption.weight(.medium)).foregroundStyle(MorningTheme.ink)}
+     else if alarm.state == .confirmed,let next=alarm.time.next(after:now) {
+      Text(String(format:appText("Next: %@"),locale:appLocale(),next.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).locale(appLocale()))))
+       .font(.caption).foregroundStyle(MorningTheme.onYellow.opacity(0.75)).accessibilityIdentifier("nextAlarm-"+alarm.id.uuidString)
+     }
+    }
     Spacer()
-    Button(alarm.enabled ? appText("Turn off") : appText("Turn on")) {Task {await model.toggle(alarm)}}
-     .buttonStyle(.plain).font(.subheadline.weight(.semibold)).padding(12).background(alarm.enabled ? Color.white.opacity(0.5) : MorningTheme.surface,in:Capsule())
+    Toggle(appText(alarm.enabled ? "Turn off" : "Turn on"),isOn:Binding(get:{alarm.enabled},set:{_ in Task {await model.toggle(alarm)}}))
+     .labelsHidden().tint(alarm.enabled ? MorningTheme.successOnYellow : MorningTheme.success).accessibilityIdentifier("toggleAlarm-"+alarm.id.uuidString)
+    if !alarm.enabled {
+    Button(role:.destructive) {Task {await model.remove(alarm)}} label: {Image(systemName:"trash").frame(width:44,height:44).contentShape(Rectangle())}
+     .buttonStyle(.plain).accessibilityLabel(appText("Delete")).accessibilityIdentifier("deleteAlarm-"+alarm.id.uuidString)
+    }
    }
-   Text(String(format:"%02d:%02d",alarm.time.hour,alarm.time.minute)).font(.system(size:clockSize,weight:.regular,design:.rounded)).monospacedDigit()
-   Text(alarm.mode.title+" · "+alarm.sound.title).font(.subheadline)
-   Text(alarm.challenge.displayTitle).font(.subheadline.weight(.medium))
-   Label(alarm.state.title,systemImage:alarm.state == .confirmed ? "checkmark.circle.fill" : alarm.state == .needsReview ? "exclamationmark.triangle" : "clock")
-    .font(.caption.weight(.semibold)).accessibilityIdentifier("alarmState-"+alarm.id.uuidString)
-   if alarm.enabled,alarm.state == .confirmed,let next=alarm.time.next(after:Date()) {
-    Text(String(format:appText("Next ring: %@"),locale:appLocale(),next.formatted(Date.FormatStyle(date:.abbreviated,time:.shortened).locale(appLocale()))))
-     .font(.subheadline).accessibilityIdentifier("nextAlarm-"+alarm.id.uuidString)
+   if alarm.enabled {
+    Label(alarm.challenge.displayTitle,systemImage:alarm.challenge.kind.icon).font(.subheadline.weight(.semibold)).accessibilityIdentifier("alarmChallenge-"+alarm.id.uuidString)
+    HStack(alignment:.top,spacing:12) {
+     Label(alarm.mode.title,systemImage:alarm.mode.icon).font(.caption.weight(.medium)).foregroundStyle(MorningTheme.onYellow.opacity(0.75))
+      .accessibilityIdentifier("alarmMode-"+alarm.id.uuidString)
+     Spacer(minLength:8)
+     if completed {
+      Label(appText("Completed today"),systemImage:"checkmark.circle.fill").font(.caption.weight(.medium)).foregroundStyle(MorningTheme.successOnYellow).accessibilityIdentifier("alarmCompleted-"+alarm.id.uuidString)
+     }
+    }
    }
-   Divider()
-   HStack {
-    Button(appText("Edit")) {editor=AlarmDraft(alarm:alarm)}.buttonStyle(.plain).padding(.vertical,12)
-     .accessibilityIdentifier("editAlarm-"+alarm.id.uuidString)
-    Spacer()
-    Button(appText("Try this challenge")) {model.rehearsal=true;model.selected=alarm}.buttonStyle(.plain).padding(.vertical,12)
-    Spacer()
-    Button(appText("Delete"),role:.destructive) {Task {await model.remove(alarm)}}.buttonStyle(.plain).padding(12)
-   }.font(.subheadline.weight(.medium))
-  }.padding(24).foregroundStyle(alarm.enabled ? MorningTheme.onYellow : MorningTheme.ink)
-   .background(alarm.enabled ? MorningTheme.hero : MorningTheme.soft,in:RoundedRectangle(cornerRadius:24))
+   if alarm.state == .needsReview || alarm.state == .pending {
+    Label(alarm.state.title,systemImage:alarm.state == .needsReview ? "exclamationmark.triangle" : "clock")
+     .font(.caption.weight(.semibold)).accessibilityIdentifier("alarmState-"+alarm.id.uuidString)
+   }
+   if alarm.enabled {
+    Divider().overlay(MorningTheme.onYellow.opacity(0.15))
+    HStack {
+     Button {editor=AlarmDraft(alarm:alarm)} label:{Text(appText("Edit")).frame(minWidth:44,minHeight:44).contentShape(Rectangle())}
+      .accessibilityIdentifier("editAlarm-"+alarm.id.uuidString)
+     Spacer(minLength:8)
+     Button {model.rehearsal=true;model.selected=alarm} label:{Text(appText("Try")).frame(minWidth:44,minHeight:44).contentShape(Rectangle())}
+      .accessibilityLabel(appText("Try this challenge"))
+     Spacer(minLength:8)
+     Button(role:.destructive) {Task {await model.remove(alarm)}} label:{Text(appText("Delete")).frame(minWidth:44,minHeight:44).contentShape(Rectangle())}
+      .accessibilityIdentifier("deleteAlarm-"+alarm.id.uuidString)
+    }.buttonStyle(.plain).font(.footnote.weight(.medium)).foregroundStyle(MorningTheme.onYellow.opacity(0.75))
+   }
+  }.padding(alarm.enabled ? 18 : 16).foregroundStyle(alarm.enabled ? MorningTheme.onYellow : MorningTheme.muted)
+   .background(alarm.enabled ? MorningTheme.hero : MorningTheme.soft,in:RoundedRectangle(cornerRadius:22))
+   .overlay {RoundedRectangle(cornerRadius:22).strokeBorder(alarm.enabled ? (completed ? MorningTheme.successOnYellow.opacity(0.35) : MorningTheme.onYellow.opacity(0.12)) : MorningTheme.line,lineWidth:1)}
  }
 }

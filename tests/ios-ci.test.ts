@@ -41,7 +41,11 @@ describe('iOS CI test selection', () => {
   expect(args).toContain(join(temporary, 'workspace with spaces', 'himorning-derived'));
   expect(args).toContain('-only-testing:HiMorningTests');
   const selectors = args.filter(arg => arg.startsWith('-only-testing:HiMorningUITests/'));
-  expect(selectors).toHaveLength(8);
+  expect(selectors).toHaveLength(12);
+  expect(selectors).toContain('-only-testing:HiMorningUITests/DeviceFixesUITests/testActiveAlarmShowsChallengeModeAndKeepsDeleteInTheFooter');
+  expect(selectors).toContain('-only-testing:HiMorningUITests/PilotUITests/testProgressDayModesAndChallengeDetailsInBothLanguages');
+  expect(selectors).toContain('-only-testing:HiMorningUITests/ChallengeCelebrationUITests/testRealAlarmCompletionReturnsHomeAndMarksOnlyThatAlarmInBothLanguages');
+  expect(selectors).toContain('-only-testing:HiMorningUITests/DeviceFixesUITests/testDisabledAlarmIsCompactAndCanBeEditedAndDeletedInBothLanguages');
   expect(selectors).toContain('-only-testing:HiMorningUITests/DeviceFixesUITests/testEnabledAlarmChallengeEditClosesAndKeepsTheNewChoiceInBothLanguages');
   expect(selectors).toContain('-only-testing:HiMorningUITests/ChallengeCelebrationUITests/testReadingSuccessCelebratesAndReturnsHomeInBothLanguages');
   expect(selectors).toContain('-only-testing:HiMorningUITests/ChallengeCelebrationUITests/testReadAloudRetryKeepsTheSentenceAndClearsThePreviousScore');

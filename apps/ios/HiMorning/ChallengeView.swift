@@ -245,7 +245,8 @@ struct ChallengeView:View {
  private func complete(_ outcome:WakeOutcome,success:String?=nil) {
   guard !finished else {return}
   pauseResources();completion=outcome
-  model.recordMorning(id:historyID,outcome:outcome,rehearsal:practicing)
+  model.recordMorning(id:historyID,alarm:effectiveAlarm,outcome:outcome,rehearsal:practicing)
+  if !practicing,celebrates {dismiss();return}
   switch outcome {
   case .localCompleted:result=success ?? appText("Local challenge completed. Have a good morning!")
   case .openaiVerified,.aiVerified:result=appText("Movement checked. Have a good morning!")

@@ -18,14 +18,22 @@ private func withMorningJournal(_ run:(inout MorningJournal,URL)throws->Void) th
 func runMorningTests() throws {
  // Rehearsals and duplicate callbacks must not manufacture successful mornings.
  try withMorningJournal {journal,_ in
+  let alarmID=UUID(),practiceID=UUID()
+  let practice=MorningEntry(alarmID:practiceID,mode:.focused,challenge:.readAloud,date:morningNow,outcome:.localCompleted)
+  XCTAssertEqual(try journal.record(practice,rehearsal:true,now:morningNow,calendar:morningCalendar),false)
+  XCTAssertFalse(journal.completedToday(alarmID:practiceID,now:morningNow,calendar:morningCalendar))
   let confirmed=MorningEntry(date:morningNow,outcome:.selfConfirmed)
   XCTAssertEqual(try journal.record(confirmed,rehearsal:true,now:morningNow,calendar:morningCalendar), false)
   XCTAssertEqual(try journal.record(confirmed,now:morningNow,calendar:morningCalendar), true)
   XCTAssertEqual(try journal.record(confirmed,now:morningNow,calendar:morningCalendar), false)
-  XCTAssertEqual(try journal.record(MorningEntry(date:morningNow,outcome:.openaiVerified),now:morningNow,calendar:morningCalendar), true)
+  let completed=MorningEntry(alarmID:alarmID,date:morningNow,outcome:.openaiVerified)
+  XCTAssertEqual(try journal.record(completed,now:morningNow,calendar:morningCalendar),true)
+  XCTAssertEqual(try journal.record(completed,now:morningNow,calendar:morningCalendar),false)
+  XCTAssertTrue(journal.completedToday(alarmID:alarmID,now:morningNow,calendar:morningCalendar))
   XCTAssertEqual(try journal.record(MorningEntry(date:morningNow,outcome:.dismissed),now:morningNow,calendar:morningCalendar), true)
   XCTAssertEqual(journal.completedDays(inLast:7,now:morningNow,calendar:morningCalendar),1)
   XCTAssertEqual(journal.entries.count,3)
+  XCTAssertEqual(journal.weeklyScores(now:morningNow,calendar:morningCalendar).last?.entries.count,3)
  }
  // Use local calendar days, exclude future evidence, retain at most 31 days.
  try withMorningJournal {journal,_ in
@@ -65,9 +73,12 @@ func runMorningTests() throws {
   try FileManager.default.createDirectory(at:url.deletingLastPathComponent(),withIntermediateDirectories:true)
   try Data("not a directory".utf8).write(to:url.deletingLastPathComponent().appendingPathComponent("blocked"))
   var blocked=try MorningJournal(url:url.deletingLastPathComponent().appendingPathComponent("blocked/morning.json"))
-  XCTAssertThrowsError(try blocked.record(MorningEntry(date:morningNow,outcome:.selfConfirmed),now:morningNow,calendar:morningCalendar))
+  let alarmID=UUID()
+  XCTAssertThrowsError(try blocked.record(MorningEntry(alarmID:alarmID,mode:.focused,challenge:.pushUps(repetitions:5),date:morningNow,outcome:.localCompleted),now:morningNow,calendar:morningCalendar))
   XCTAssertThrowsError(try blocked.setWeeklyGoal(5))
   XCTAssertTrue(blocked.entries.isEmpty)
+  XCTAssertFalse(blocked.completedToday(alarmID:alarmID,now:morningNow,calendar:morningCalendar))
+  XCTAssertEqual(blocked.weeklyScores(now:morningNow,calendar:morningCalendar).last?.entries.count,0)
   XCTAssertEqual(blocked.weeklyGoal,3)
  }
 }

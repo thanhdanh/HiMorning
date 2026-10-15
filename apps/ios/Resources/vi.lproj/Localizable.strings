@@ -5,6 +5,7 @@
 "Agree and open camera" = "Đồng ý và mở camera";
 "Alarm" = "Báo thức";
 "Alarm is set" = "Đã đặt với hệ thống";
+"Completed today" = "Đã xong hôm nay";
 "Alarm sound" = "Âm báo";
 "Alarm stopped. Take care today." = "Đã dừng. Hẹn bạn một buổi sáng khác.";
 "Back to home" = "Về trang chính";
@@ -317,3 +318,12 @@
 "Making time for breakfast is a small promise to myself that my energy, comfort, and health deserve a place in a busy schedule." = "Making time for breakfast is a small promise to myself that my energy, comfort, and health deserve a place in a busy schedule.";
 "Across a quiet lake, even a small ripple travels far, just as a thoughtful word can influence a day in ways we cannot see." = "Across a quiet lake, even a small ripple travels far, just as a thoughtful word can influence a day in ways we cannot see.";
 "Today I will ask one thoughtful question, try one unfamiliar thing, and leave enough space to appreciate what happens between my plans." = "Today I will ask one thoughtful question, try one unfamiliar thing, and leave enough space to appreciate what happens between my plans.";
+"Alarms" = "Báo thức";
+"Next: %@" = "Tiếp theo: %@";
+"Try" = "Thử";
+"Challenge modes" = "Mức thử thách";
+"Mixed modes" = "Nhiều mức";
+"Challenge details not recorded" = "Chưa lưu chi tiết thử thách";
+"No challenges recorded" = "Chưa có thử thách được ghi nhận";
+"Completed challenges" = "Thử thách đã hoàn thành";
+"View this day’s challenges" = "Xem thử thách trong ngày";
