@@ -245,3 +245,17 @@
 "Beyond the familiar path, a small discovery may be waiting, so today I will leave a little room for wonder." = "Beyond the familiar path, a small discovery may be waiting, so today I will leave a little room for wonder.";
 "Alarm access is off. Allow alarms for HiMorning in Settings, then try again." = "Quyền báo thức đang tắt. Hãy cho phép HiMorning đặt báo thức trong Cài đặt, rồi thử lại.";
 "Open Settings" = "Mở Cài đặt";
+"Read the English sentence aloud. See your score and matching words as you read." = "Đọc to câu tiếng Anh. Xem điểm và các từ đọc khớp ngay khi đang đọc.";
+"Read the English sentence. Match at least 80% of the words to complete." = "Đọc câu tiếng Anh. Đọc khớp ít nhất 80% số từ để hoàn thành.";
+"Word match: %d/100" = "Điểm khớp từ: %d/100";
+"Word match score" = "Điểm khớp từ";
+"Matched words are green. Underlined words need practice. Gray words have not been read yet." = "Từ khớp có màu xanh. Từ gạch chân cần đọc lại. Từ màu xám là từ chưa đọc.";
+"Correct: %@" = "Đọc khớp: %@";
+"Needs practice: %@" = "Cần đọc lại: %@";
+"Not read yet: %@" = "Chưa đọc: %@";
+"Extra words: %@" = "Từ đọc thêm: %@";
+"Heard: %@" = "Đã nghe: %@";
+"The score compares recognized words with the sentence; it does not measure accent or pronunciation quality." = "Điểm so sánh các từ nhận được với câu mẫu, chưa đánh giá giọng hay chất lượng phát âm.";
+"Your word match score is below 80. Review the highlighted words and try again." = "Điểm khớp từ chưa đạt 80. Xem các từ được đánh dấu và thử đọc lại.";
+"Recognition is taking too long. Try again or choose another challenge." = "Nhận dạng mất quá nhiều thời gian. Hãy thử lại hoặc chọn thử thách khác.";
+"Great reading. Have a good morning!" = "Bạn đọc tốt lắm. Chúc bạn buổi sáng tốt lành!";

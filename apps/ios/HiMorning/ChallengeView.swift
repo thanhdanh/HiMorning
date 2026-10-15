@@ -24,7 +24,7 @@ struct ChallengeView:View {
  @State private var captureGeneration=UUID()
  @State private var rhythmCycles=0
  @State private var transcript=""
- @State private var speechProgress=0.0
+ @State private var speechEnded=false
  @State private var speechFinishing=false
  @State private var readPrompt=EnglishChallengeContent.readAndChoose[0]
  @State private var readAloudPrompt=EnglishChallengeContent.readAloud[0]
@@ -62,15 +62,15 @@ struct ChallengeView:View {
       Button(appText(key)) {chooseMeaning(index)}.buttonStyle(MorningButtonStyle(primary:false)).accessibilityIdentifier("readChoice-\(index)")
      }
     }
-    if challenge.kind == .readAloud && !finished {
-     Text(appText(readAloudPrompt.text)).font(.title2.weight(.semibold)).multilineTextAlignment(.center)
-     Text(String(format:appText("You have about %d seconds. Read at your own pace."),Int(ReadAloudAttempt(target:readAloudPrompt.text).listeningDuration))).font(.footnote).foregroundStyle(MorningTheme.muted)
-     Button {Task {await playExample()}} label: {
-      Label(appText(spokenExample.isSpeaking ? "Stop example" : "Hear sentence"),systemImage:spokenExample.isSpeaking ? "stop.fill" : "speaker.wave.2.fill")
-     }.buttonStyle(MorningButtonStyle(primary:false)).disabled(busy || stopping || preparingExample || speech != nil).accessibilityIdentifier("hearSentence")
+    if challenge.kind == .readAloud {
+     ReadingFeedbackView(target:appText(readAloudPrompt.text),transcript:transcript,ended:speechEnded)
+     if !finished {
+      Text(String(format:appText("You have about %d seconds. Read at your own pace."),Int(ReadAloudAttempt(target:readAloudPrompt.text).listeningDuration))).font(.footnote).foregroundStyle(MorningTheme.muted)
+      Button {Task {await playExample()}} label: {
+       Label(appText(spokenExample.isSpeaking ? "Stop example" : "Hear sentence"),systemImage:spokenExample.isSpeaking ? "stop.fill" : "speaker.wave.2.fill")
+      }.buttonStyle(MorningButtonStyle(primary:false)).disabled(busy || stopping || preparingExample || speech != nil).accessibilityIdentifier("hearSentence")
+     }
     }
-    if challenge.kind == .readAloud && !transcript.isEmpty {Text(transcript).foregroundStyle(MorningTheme.muted).accessibilityIdentifier("speechTranscript")}
-    if challenge.kind == .readAloud && speechProgress>0 && !finished {ProgressView(value:speechProgress,total:1).accessibilityLabel(appText("Reading progress"))}
     Text(result ?? message).font(.title3.weight(.medium)).multilineTextAlignment(.center).accessibilityIdentifier("challengeMessage")
     if challenge.kind == .pushUps && camera == nil && !finished {
      Button(appText("Start AI challenge")) {consentDialog=true}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startChallenge")
@@ -78,19 +78,19 @@ struct ChallengeView:View {
     if challenge.kind == .guidedRhythm && rhythmCamera == nil && !finished {
      Button(appText("Start guided rhythm")) {Task {await startRhythm()}}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startGuidedRhythm")
     }
-    if challenge.kind == .readAloud && !finished {
-     if let speech {
-      Button(appText("Finish reading")) {speech.finishReading()}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping || speechFinishing).accessibilityIdentifier("finishReadAloud")
-     } else {
-      Button(appText("Start reading")) {Task {await startSpeech()}}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping || preparingExample || spokenExample.isSpeaking).accessibilityIdentifier("startReadAloud")
-     }
-    }
    }.padding(24).frame(maxWidth:.infinity)
   }.background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink)
    .safeAreaInset(edge:.bottom) {
     VStack(spacing:12) {
      if finished {Button(appText("Back to home")) {dismiss()}.buttonStyle(MorningButtonStyle())}
      else {
+      if challenge.kind == .readAloud {
+       if let speech {
+        Button(appText("Finish reading")) {speech.finishReading()}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping || speechFinishing).accessibilityIdentifier("finishReadAloud")
+       } else {
+        Button(appText("Start reading")) {Task {await startSpeech()}}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping || preparingExample || spokenExample.isSpeaking).accessibilityIdentifier("startReadAloud")
+       }
+      }
       Button(appText("I’m awake")) {finish(.selfConfirmed)}.buttonStyle(MorningButtonStyle(primary:challenge.kind == .none))
       Button(model.rehearsal ? appText("End practice") : appText("Stop alarm"),role:.destructive) {finish(.dismissed)}
        .buttonStyle(.plain).font(.subheadline).underline().foregroundStyle(MorningTheme.muted).frame(maxWidth:.infinity,minHeight:44).accessibilityIdentifier("stopAlarm")
@@ -108,6 +108,13 @@ struct ChallengeView:View {
     sessionAlarm=model.access.effectiveAlarm(alarm)
     coordinator=ChallengeCoordinator(alarm:effectiveAlarm,cloud:model.cloud,scheduler:model.scheduler,rehearsal:model.rehearsal)
     preparePrompt()
+    #if DEBUG
+    let arguments=ProcessInfo.processInfo.arguments
+    if arguments.contains("--ui-testing"),let index=arguments.firstIndex(of:"--ui-reading-transcript"),arguments.indices.contains(index+1) {
+     readAloudPrompt=ReadAloudPrompt(id:"ui-reading",text:"Small steps create steady progress.")
+     transcript=arguments[index+1];speechEnded=arguments.contains("--ui-reading-finished")
+    }
+    #endif
    }
    .onChange(of:scene) {_,value in if value == .background && !finished {pauseResources();message=appText("The challenge is paused. You can choose another way.");Task {await coordinator?.suspend()}}}
    .onChange(of:scene) {_,value in if value != .active {spokenExample.stop()}}
@@ -169,7 +176,7 @@ struct ChallengeView:View {
   case .pushUps:message=appText("Complete the selected push-ups in view of the camera.")
   case .readAndChoose:message=appText("Choose the closest meaning.")
   case .guidedRhythm:message=challenge.rhythmVariant == .seated ? appText("Stay seated. Lower your arms, raise them, then lower them. Complete 3 cycles. Video stays on this device.") : appText("Stand, bend your knees gently, then stand again. Complete 3 cycles. Video stays on this device.")
-  case .readAloud:message=appText("On-device AI detects a reading from the amount of speech recognized. It does not grade pronunciation.")
+  case .readAloud:message=appText("Read the English sentence. Match at least 80% of the words to complete.")
   }
  }
  private func chooseMeaning(_ index:Int) {
@@ -189,12 +196,12 @@ struct ChallengeView:View {
  }
  @MainActor private func startSpeech() async {
   guard speech == nil,!busy,!finished,!stopping,!preparingExample,!spokenExample.isSpeaking,scene == .active else {return};busy=true
-  transcript="";speechProgress=0;speechFinishing=false
+  transcript="";speechEnded=false;speechFinishing=false
   let generation=UUID();captureGeneration=generation
   let capture=SpeechChallengeCapture(target:appText(readAloudPrompt.text)) {update in Task {@MainActor in
    guard captureGeneration == generation,!finished,!stopping else {return}
-   transcript=update.transcript;speechProgress=update.progress;speechFinishing=update.finishing;message=update.message
-   if update.completed {finish(.localCompleted,success:appText("Reading recorded. Have a good morning!"))}
+   transcript=update.transcript;speechEnded=update.ended;speechFinishing=update.finishing;message=update.message
+   if update.completed {finish(.localCompleted,success:appText("Great reading. Have a good morning!"))}
    else if update.ended {speech?.stop();speech=nil}
   }}
   speech=capture;await capture.start();busy=false
@@ -208,7 +215,7 @@ struct ChallengeView:View {
   let previous=speech;speech=nil
   await previous?.stopAndWait()
   guard captureGeneration == generation,!finished,!stopping,scene == .active else {return}
-  transcript="";speechProgress=0;speechFinishing=false
+  transcript="";speechEnded=false;speechFinishing=false
   message=spokenExample.play(appText(readAloudPrompt.text)) ? appText("Listen to the example, then tap Start reading.") : appText("The English voice is not available. You can still read the sentence.")
  }
  private func pauseResources() {
@@ -217,5 +224,58 @@ struct ChallengeView:View {
   rhythmCamera?.stop();rhythmCamera=nil
   speech?.stop();speech=nil
   spokenExample.stop()
+ }
+}
+
+struct ReadingFeedbackView:View {
+ let target:String
+ let transcript:String
+ let ended:Bool
+ private var feedback:RecognizedWordMatch.Feedback {RecognizedWordMatch.feedback(target:target,recognized:transcript,finished:ended)}
+ var body:some View {
+  let feedback=feedback
+  VStack(spacing:12) {
+   Text(highlightedPrompt(feedback)).font(.title2.weight(.semibold)).multilineTextAlignment(.center)
+    .accessibilityIdentifier("readingPrompt").accessibilityLabel(target).accessibilityValue(wordSummary(feedback))
+   Text(String(format:appText("Word match: %d/100"),Int((feedback.score*100).rounded())))
+    .font(.headline).accessibilityIdentifier("readingScore")
+   ProgressView(value:feedback.score,total:1).accessibilityLabel(appText("Word match score"))
+   Text(appText("Matched words are green. Underlined words need practice. Gray words have not been read yet."))
+    .font(.footnote).foregroundStyle(MorningTheme.muted)
+   let incorrect=feedback.words.filter {$0.status == .incorrect}.map(\.text)
+   if !incorrect.isEmpty {
+    Text(String(format:appText("Needs practice: %@"),incorrect.joined(separator:", ")))
+     .font(.footnote).frame(maxWidth:.infinity,alignment:.leading).accessibilityIdentifier("readingIncorrectWords")
+   }
+   if !feedback.extraWords.isEmpty {
+    Text(String(format:appText("Extra words: %@"),feedback.extraWords.joined(separator:", ")))
+     .font(.footnote).frame(maxWidth:.infinity,alignment:.leading).accessibilityIdentifier("readingExtraWords")
+   }
+   if !transcript.isEmpty {
+    Text(String(format:appText("Heard: %@"),transcript)).foregroundStyle(MorningTheme.muted).accessibilityIdentifier("speechTranscript")
+   }
+   Text(appText("The score compares recognized words with the sentence; it does not measure accent or pronunciation quality."))
+    .font(.footnote).foregroundStyle(MorningTheme.muted)
+  }
+ }
+ private func wordSummary(_ feedback:RecognizedWordMatch.Feedback)->String {
+  [RecognizedWordMatch.WordStatus.correct,.incorrect,.pending].map {status in
+   let words=feedback.words.filter {$0.status == status}.map(\.text).joined(separator:", ")
+   return String(format:appText(status == .correct ? "Correct: %@" : status == .incorrect ? "Needs practice: %@" : "Not read yet: %@"),words)
+  }.joined(separator:"; ")
+ }
+ private func highlightedPrompt(_ feedback:RecognizedWordMatch.Feedback)->AttributedString {
+  var result=AttributedString(),index=0
+  for (position,part) in target.split(whereSeparator:\.isWhitespace).enumerated() {
+   if position>0 {result+=AttributedString(" ")}
+   var word=AttributedString(String(part))
+   let count=RecognizedWordMatch.tokens(in:String(part)).count
+   let statuses=feedback.words.dropFirst(index).prefix(count).map(\.status)
+   if statuses.contains(.incorrect) {word.foregroundColor = .red;word.underlineStyle = .single}
+   else if !statuses.isEmpty,statuses.allSatisfy({$0 == .correct}) {word.foregroundColor=MorningTheme.success}
+   else {word.foregroundColor=MorningTheme.muted}
+   result+=word;index+=count
+  }
+  return result
  }
 }

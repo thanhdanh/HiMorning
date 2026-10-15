@@ -68,6 +68,23 @@ final class SpeechAnalysisTests:XCTestCase {
   XCTAssertThrowsError(try converter.convert(changedInput))
  }
 
+ func testMicrophoneSizedBuffersProduceSignedIntegerAnalyzerAudio() throws {
+  let source=try XCTUnwrap(AVAudioFormat(standardFormatWithSampleRate:48_000,channels:1))
+  let destination=try XCTUnwrap(AVAudioFormat(commonFormat:.pcmFormatInt16,sampleRate:16_000,channels:1,interleaved:false))
+  let converter=try SpeechBufferConverter(inputFormat:source,outputFormat:destination)
+  var frames:AVAudioFrameCount=0
+  for _ in 0..<30 {
+   let input=try XCTUnwrap(AVAudioPCMBuffer(pcmFormat:source,frameCapacity:1_024))
+   input.frameLength=1_024
+   for index in 0..<1_024 {input.floatChannelData![0][index]=0.25}
+   let output=try XCTUnwrap(converter.convert(input))
+   frames+=output.frameLength
+   XCTAssertEqual(output.format,destination)
+   XCTAssertEqual(Int(output.int16ChannelData![0][Int(output.frameLength)/2]),8_192,accuracy:2)
+  }
+  XCTAssertEqual(Double(frames),10_240,accuracy:2)
+ }
+
  func testEmptyAudioBufferProducesNoAnalyzerInput() throws {
   let format=try XCTUnwrap(AVAudioFormat(standardFormatWithSampleRate:16_000,channels:1))
   let converter=try SpeechBufferConverter(inputFormat:format,outputFormat:format)

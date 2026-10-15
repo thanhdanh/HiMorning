@@ -79,20 +79,18 @@ public enum EnglishChallengeContent {
  ]
 }
 
-/// shortcut: speech length records a reading without checking its words, add semantic checking when accuracy is required.
 public struct ReadAloudAttempt:Sendable {
+ private let target:String
  private let expectedWords:Int
  public private(set) var transcript=""
  public private(set) var ended=false
  public private(set) var completed=false
 
- public init(target:String) {expectedWords=RecognizedWordMatch.tokens(in:target).count}
+ public init(target:String) {self.target=target;expectedWords=RecognizedWordMatch.tokens(in:target).count}
  public var listeningDuration:TimeInterval {max(45,Double(expectedWords)*3+15)}
- public var progress:Double {
-  guard expectedWords>0 else {return 0}
-  return min(1,Double(RecognizedWordMatch.tokens(in:transcript).count)/Double(expectedWords))
- }
- public var hasEnoughSpeech:Bool {progress>=0.8}
+ public var feedback:RecognizedWordMatch.Feedback {RecognizedWordMatch.feedback(target:target,recognized:transcript,finished:ended)}
+ public var progress:Double {feedback.score}
+ public var hasEnoughSpeech:Bool {progress>=RecognizedWordMatch.passingScore && !feedback.words.contains(where:{$0.status == .pending})}
 
  public mutating func observe(_ text:String) {
   guard !ended else {return}
@@ -100,7 +98,7 @@ public struct ReadAloudAttempt:Sendable {
  }
  @discardableResult public mutating func finish()->Bool {
   guard !ended else {return completed}
-  completed=hasEnoughSpeech;ended=true
+  completed=progress>=RecognizedWordMatch.passingScore;ended=true
   return completed
  }
  public mutating func stop() {ended=true;completed=false}
@@ -109,18 +107,55 @@ public struct ReadAloudAttempt:Sendable {
 /// Deterministic similarity of recognized word tokens. This does not grade accent quality.
 public enum RecognizedWordMatch {
  public static let passingScore=0.8
+ public enum WordStatus:Equatable,Sendable {case correct,incorrect,pending}
+ public struct Word:Equatable,Sendable {
+  public let text:String
+  public let status:WordStatus
+ }
+ public struct Feedback:Equatable,Sendable {
+  public let words:[Word]
+  public let extraWords:[String]
+  public let score:Double
+ }
 
  public static func score(target:String,recognized:String) -> Double {
-  let expected=tokens(in:target)
-  let actual=tokens(in:recognized)
-  guard !expected.isEmpty else {return 0}
-  let denominator=max(expected.count,actual.count)
-  guard denominator>0 else {return 0}
-  return max(0,1-Double(editDistance(expected,actual))/Double(denominator))
+  feedback(target:target,recognized:recognized,finished:true).score
  }
 
  public static func passes(target:String,recognized:String) -> Bool {
   score(target:target,recognized:recognized)>=passingScore
+ }
+
+ public static func feedback(target:String,recognized:String,finished:Bool) -> Feedback {
+  let expected=tokens(in:target),actual=tokens(in:recognized)
+  guard !expected.isEmpty else {return Feedback(words:[],extraWords:actual,score:0)}
+  var distance=Array(repeating:Array(repeating:0,count:actual.count+1),count:expected.count+1)
+  for index in 0...expected.count {distance[index][0]=index}
+  for index in 0...actual.count {distance[0][index]=index}
+  for (i,word) in expected.enumerated() {
+   for (j,heard) in actual.enumerated() {
+    distance[i+1][j+1]=min(distance[i][j+1]+1,distance[i+1][j]+1,distance[i][j]+(word == heard ? 0:1))
+   }
+  }
+  var words=expected.map {Word(text:$0,status:.pending)},extras:[String]=[]
+  var i=expected.count,j=actual.count,hasLaterSpeech=false
+  while i>0 || j>0 {
+   if i>0,j>0,expected[i-1] == actual[j-1],distance[i][j] == distance[i-1][j-1] {
+    words[i-1]=Word(text:expected[i-1],status:.correct)
+    hasLaterSpeech=true;i-=1;j-=1
+   } else if i>0,distance[i][j] == distance[i-1][j]+1 {
+    // Prefer an unread suffix over shifting a misread word to the end of the sentence.
+    words[i-1]=Word(text:expected[i-1],status:finished || hasLaterSpeech ? .incorrect:.pending)
+    i-=1
+   } else if i>0,j>0,distance[i][j] == distance[i-1][j-1]+1 {
+    words[i-1]=Word(text:expected[i-1],status:.incorrect)
+    hasLaterSpeech=true;i-=1;j-=1
+   } else {
+    extras.append(actual[j-1]);j-=1
+   }
+  }
+  let score=max(0,1-Double(distance[expected.count][actual.count])/Double(max(expected.count,actual.count)))
+  return Feedback(words:words,extraWords:extras.reversed(),score:score)
  }
 
  public static func tokens(in text:String) -> [String] {
@@ -134,24 +169,6 @@ public enum RecognizedWordMatch {
   return normalized.split(whereSeparator:\.isWhitespace).map(String.init)
  }
 
- private static func editDistance(_ left:[String],_ right:[String]) -> Int {
-  guard !left.isEmpty else {return right.count}
-  guard !right.isEmpty else {return left.count}
-  var previous=Array(0...right.count)
-  for (leftIndex,leftToken) in left.enumerated() {
-   var current=Array(repeating:0,count:right.count+1)
-   current[0]=leftIndex+1
-   for (rightIndex,rightToken) in right.enumerated() {
-    current[rightIndex+1]=min(
-     current[rightIndex]+1,
-     previous[rightIndex+1]+1,
-     previous[rightIndex]+(leftToken == rightToken ? 0 : 1)
-    )
-   }
-   previous=current
-  }
-  return previous[right.count]
- }
 }
 
 public enum GuidedRhythmPose: String, Codable, Sendable {
