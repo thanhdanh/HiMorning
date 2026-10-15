@@ -14,6 +14,7 @@ released or device-validated alarm app.
 | You want to… | Read |
 |---|---|
 | Run the app or tests | [Setup guide](docs/RUNNING.md) |
+| Manage the local CI runner | [Self-hosted CI](docs/SELF-HOSTED-CI.md) |
 | Check App Store readiness and subscription scope | [Release review](docs/RELEASE-READINESS.md) |
 | Review the free preview, Pro and friend invitations | [Business model](docs/BUSINESS-MODEL.md) and [subscription setup](docs/SUBSCRIPTIONS.md) |
 | Extend the project to Android | [Android guide](docs/ANDROID.md) and [shared contracts](shared/contracts/README.md) |

@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   backend:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, macOS, ARM64, himorning]
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
@@ -34,23 +34,23 @@ jobs:
       - run: pnpm run test:coverage
       - run: pnpm audit --prod
   ios:
-    runs-on: macos-latest
+    runs-on: [self-hosted, macOS, ARM64, himorning]
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - run: sh scripts/test-swift.sh
       - run: swift test --package-path apps/ios/HiMorningCore
-      - run: brew install xcodegen
+      - run: command -v xcodegen || brew install xcodegen
       - run: xcodegen generate --spec apps/ios/project.yml
       - name: Build native pilot with simulator SDK
-        run: xcodebuild -project apps/ios/HiMorning.xcodeproj -scheme HiMorning -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath /tmp/himorning-derived CODE_SIGNING_ALLOWED=NO build
+        run: xcodebuild -project apps/ios/HiMorning.xcodeproj -scheme HiMorning -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath '${{ runner.temp }}/himorning-derived' CODE_SIGNING_ALLOWED=NO build
       - name: Select iOS 26.2 for StoreKitTest compatibility
         id: simulator
         run: |
-          xcrun simctl list devices available -j > /tmp/himorning-devices.json
+          xcrun simctl list devices available -j > "$RUNNER_TEMP/himorning-devices.json"
           python3 - <<'PYDEVICE'
           import json,os
-          devices=json.load(open('/tmp/himorning-devices.json'))['devices']
+          devices=json.load(open(os.path.join(os.environ['RUNNER_TEMP'],'himorning-devices.json')))['devices']
           # shortcut: iOS 26.2 avoids the StoreKitTest CLI regression; upgrade when a fixed simulator is available.
           runtime='com.apple.CoreSimulator.SimRuntime.iOS-26-2'
           device=next(d for d in devices.get(runtime,[]) if d.get('isAvailable') and d['name'].startswith('iPhone'))
@@ -59,19 +59,19 @@ jobs:
           PYDEVICE
       - name: Test native language journeys
         id: ui
-        run: xcodebuild -project apps/ios/HiMorning.xcodeproj -scheme HiMorning -destination 'platform=iOS Simulator,id=${{ steps.simulator.outputs.id }}' -derivedDataPath /tmp/himorning-derived CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -collect-test-diagnostics never -resultBundlePath /tmp/himorning-ui.xcresult test
+        run: xcodebuild -project apps/ios/HiMorning.xcodeproj -scheme HiMorning -destination 'platform=iOS Simulator,id=${{ steps.simulator.outputs.id }}' -derivedDataPath '${{ runner.temp }}/himorning-derived' CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -collect-test-diagnostics never -resultBundlePath '${{ runner.temp }}/himorning-ui.xcresult' test
       - name: Export UI screenshots
         if: always()
         run: |
-          if [ -d /tmp/himorning-ui.xcresult ]; then
-            xcrun xcresulttool export attachments --path /tmp/himorning-ui.xcresult --output-path /tmp/himorning-ui-attachments
+          if [ -d "$RUNNER_TEMP/himorning-ui.xcresult" ]; then
+            xcrun xcresulttool export attachments --path "$RUNNER_TEMP/himorning-ui.xcresult" --output-path "$RUNNER_TEMP/himorning-ui-attachments"
           fi
       - name: Export native coverage
         if: success()
-        run: xcrun xccov view --report --json /tmp/himorning-ui.xcresult > /tmp/himorning-ui-attachments/native-coverage.json
+        run: xcrun xccov view --report --json "$RUNNER_TEMP/himorning-ui.xcresult" > "$RUNNER_TEMP/himorning-ui-attachments/native-coverage.json"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: ios-ui-evidence
-          path: /tmp/himorning-ui-attachments
+          path: ${{ runner.temp }}/himorning-ui-attachments
           retention-days: 7
