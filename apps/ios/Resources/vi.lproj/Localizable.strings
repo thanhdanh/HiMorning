@@ -81,6 +81,15 @@
 "You confirmed you are awake. Have a good morning!" = "Bạn đã tự xác nhận thức dậy. Chúc buổi sáng tốt lành!";
 "Your alarms could not be checked. Please check alarm access." = "Chưa kiểm tra được lịch hệ thống. Hãy kiểm tra quyền báo thức.";
 "Your morning" = "Nhịp buổi sáng";
+"Your free preview could not be checked. Basic alarms are available." = "Chưa kiểm tra được thời gian dùng thử. Bạn vẫn dùng được báo thức cơ bản.";
+"Your free preview could not be saved. Basic alarms are available." = "Chưa lưu được thời gian dùng thử. Bạn vẫn dùng được báo thức cơ bản.";
+"%lld free days left. No automatic charge." = "Còn %lld ngày dùng thử. Không tự động thu phí.";
+"Your 30 free days begin when you save your first alarm. No card needed." = "30 ngày dùng thử bắt đầu khi bạn lưu báo thức đầu tiên. Không cần thẻ.";
+"Enjoying your mornings? Explore Pro" = "Buổi sáng tốt hơn rồi? Khám phá Pro";
+"Your preview has ended. This morning uses the basic challenge. Your saved choice stays the same." = "Đã hết thời gian dùng thử. Sáng nay bạn dùng nhiệm vụ cơ bản. Lựa chọn đã lưu vẫn được giữ lại.";
+"Focused challenges and more sounds" = "Nhiệm vụ Tập trung và thêm âm thanh";
+"Try all features free for 30 days. No card needed. Subscribe only when you choose." = "Dùng mọi tính năng miễn phí trong 30 ngày. Không cần thẻ. Chỉ đăng ký khi bạn muốn.";
+"Your free preview has ended. Basic alarms and challenges stay free. Pro unlocks your progress, Focused mode and more sounds." = "Đã hết thời gian dùng thử. Báo thức và nhiệm vụ cơ bản vẫn miễn phí. Pro mở lịch sử, chế độ Tập trung và thêm âm thanh.";
 "Your saved alarms could not be read. Changes are paused." = "Không đọc được lịch đã lưu. Chưa thể thay đổi báo thức.";
 "Choose a sound for your morning." = "Chọn âm thanh cho buổi sáng của bạn.";
 "Practice only. Your alarms stay as they are." = "Chỉ là buổi thử. Báo thức của bạn không thay đổi.";

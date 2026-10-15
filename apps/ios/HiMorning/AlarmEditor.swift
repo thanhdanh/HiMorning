@@ -8,7 +8,10 @@ struct AlarmEditor:View {
  @State private var sound:AlarmSound = .system
  @State private var days:Set<Int>=[2,3,4,5,6]
  @State private var volume:Double=0.3
- @State private var player:AVAudioPlayer?
+ @State private var soundPreview=SoundPreview()
+ @State private var pro=false
+ @ObservedObject var store:SubscriptionStore
+ @ObservedObject var preview:PreviewStore
  let save:(AlarmTime,WakeMode,AlarmSound)->Void
  private let weekdays=[2,3,4,5,6,7,1]
  private var dayNames:[String] {[appText("Sun"),appText("Mon"),appText("Tue"),appText("Wed"),appText("Thu"),appText("Fri"),appText("Sat")]}
@@ -37,21 +40,14 @@ struct AlarmEditor:View {
       Text(appText("Your morning")).font(.subheadline.weight(.semibold)).foregroundStyle(MorningTheme.muted)
       HStack(spacing:4) {
        ForEach(WakeMode.allCases,id:\.self) {value in
-        Button {mode=value} label: {
-         VStack(spacing:8) {
-          Image(systemName:value == .gentle ? "leaf" : value == .balanced ? "sun.max" : "bolt")
-          Text(value.title).font(.subheadline.weight(.semibold)).multilineTextAlignment(.center)
-         }.padding(10).frame(maxWidth:.infinity,minHeight:72)
-          .background(mode == value ? MorningTheme.surface : .clear,in:RoundedRectangle(cornerRadius:12))
-        }.buttonStyle(.plain).accessibilityIdentifier("mode-"+value.rawValue)
-         .accessibilityAddTraits(mode == value ? .isSelected : [])
+        modeButton(value)
        }
       }.padding(4).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:16))
       Text(mode.explanation).font(.subheadline).accessibilityIdentifier("modeExplanation")
       Text(appText("You can always confirm you are awake or stop.")).font(.footnote).foregroundStyle(MorningTheme.muted)
      }
      NavigationLink {
-      SoundSelection(sound:$sound,volume:$volume,preview:preview,stopPreview:{player?.stop()})
+      SoundSelection(sound:$sound,volume:$volume,access:preview.access,unlock:{pro=true},preview:playPreview,stopPreview:{soundPreview.stop()})
      } label: {
       HStack(spacing:12) {
        Image(systemName:"music.note")
@@ -66,26 +62,42 @@ struct AlarmEditor:View {
    }.background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink)
    .navigationTitle(appText("New alarm")).navigationBarTitleDisplayMode(.inline)
    .toolbar(.visible,for:.navigationBar).toolbarBackground(MorningTheme.canvas,for:.navigationBar).toolbarBackground(.visible,for:.navigationBar)
-   .toolbar {ToolbarItem(placement:.cancellationAction) {Button(appText("Cancel")) {player?.stop();dismiss()}}}
+   .toolbar {ToolbarItem(placement:.cancellationAction) {Button(appText("Cancel")) {soundPreview.stop();dismiss()}}}
    .safeAreaInset(edge:.bottom) {
     Button(appText("Save")) {
      let c=Calendar.current.dateComponents([.hour,.minute],from:time)
-     if let value=try? AlarmTime(hour:c.hour ?? 6,minute:c.minute ?? 30,weekdays:days) {save(value,mode,sound);player?.stop();dismiss()}
+     if let value=try? AlarmTime(hour:c.hour ?? 6,minute:c.minute ?? 30,weekdays:days) {save(value,mode,sound);soundPreview.stop();dismiss()}
     }.buttonStyle(MorningButtonStyle()).padding(.horizontal,20).padding(.vertical,12).background(MorningTheme.canvas)
    }
-   .tint(MorningTheme.accent).onDisappear {player?.stop()}
-   .onChange(of:volume) {_,value in player?.volume=Float(value)}
+   .tint(MorningTheme.accent).onDisappear {soundPreview.stop()}
+   .onChange(of:volume) {_,value in soundPreview.setVolume(value)}
+   .onChange(of:preview.access) {_,access in
+    mode=access.effectiveMode(mode);sound=access.effectiveSound(sound);soundPreview.stop()
+   }
+   .sheet(isPresented:$pro) {ProView(store:store,preview:preview)}
   }
  }
- private func preview() {
-  player?.stop()
-  guard let url=Bundle.main.url(forResource:sound.rawValue,withExtension:"wav"),let audio=try? AVAudioPlayer(contentsOf:url) else {return}
-  player=audio;audio.volume=Float(volume);audio.play()
+ private func modeButton(_ value:WakeMode)->some View {
+  Button {preview.refresh();if preview.access.allows(mode:value) {mode=value} else {pro=true}} label: {
+   VStack(spacing:8) {
+    Image(systemName:value == .gentle ? "leaf" : value == .balanced ? "sun.max" : "bolt")
+    Text(value.title).font(.subheadline.weight(.semibold)).multilineTextAlignment(.center)
+    if !preview.access.allows(mode:value) {Image(systemName:"lock.fill").font(.caption)}
+   }.padding(10).frame(maxWidth:.infinity,minHeight:72)
+    .background(mode == value ? MorningTheme.surface : .clear,in:RoundedRectangle(cornerRadius:12))
+  }.buttonStyle(.plain).accessibilityIdentifier("mode-"+value.rawValue)
+   .accessibilityAddTraits(mode == value ? .isSelected : [])
+ }
+ private func playPreview() {
+  guard let url=Bundle.main.url(forResource:sound.rawValue,withExtension:"wav") else {soundPreview.stop();return}
+  soundPreview.play(url:url,volume:volume)
  }
 }
 private struct SoundSelection:View {
  @Binding var sound:AlarmSound
  @Binding var volume:Double
+ let access:MorningAccess
+ let unlock:()->Void
  let preview:()->Void
  let stopPreview:()->Void
  var body:some View {
@@ -94,11 +106,12 @@ private struct SoundSelection:View {
     Text(appText("Choose a sound for your morning.")).font(.title2.weight(.semibold))
     VStack(spacing:0) {
      ForEach(AlarmSound.allCases,id:\.self) {value in
-      Button {stopPreview();sound=value} label: {
+      Button {stopPreview();if access.allows(sound:value) {sound=value} else {unlock()}} label: {
        HStack(spacing:14) {
         Image(systemName:value == .system ? "alarm" : value == .sunrise ? "sunrise" : "music.note")
          .frame(width:44,height:44).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:12))
         Text(value.title).font(.body.weight(.medium))
+        if !access.allows(sound:value) {Image(systemName:"lock.fill").font(.caption)}
         Spacer()
         Image(systemName:sound == value ? "checkmark.circle.fill" : "circle").foregroundStyle(MorningTheme.accent)
        }.padding(.vertical,14).contentShape(Rectangle())

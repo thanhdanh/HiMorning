@@ -17,16 +17,17 @@ final class PilotUITests:XCTestCase {
   capture(app,name:"sounds-"+language)
   app.navigationBars.buttons.element(boundBy:0).tap()
  }
- private func launch(language:String)->XCUIApplication {
+ private func launch(language:String,expired:Bool=false)->XCUIApplication {
   let app=XCUIApplication()
-  app.launchArguments=["-AppleLanguages","(en)","-AppleLocale","en_US"]
+  app.terminate()
+  app.launchArguments=["-AppleLanguages","(en)","-AppleLocale","en_US","--ui-testing"]
+  if language == "vi" {app.launchArguments.append("--ui-language-vi")}
+  if expired {app.launchArguments.append("--preview-expired")}
   app.launch()
-  app.buttons["appLanguage"].tap()
-  if language == "en" {app.buttons["English"].tap()}
-  else {
-   let choice=app.buttons["Vietnamese"].exists ? app.buttons["Vietnamese"] : app.buttons["Tiếng Việt"]
-   choice.tap()
+  for identifier in ["closeProgress","closePro"] {
+   if app.buttons[identifier].exists {app.buttons[identifier].tap()}
   }
+  XCTAssertTrue(app.buttons["appLanguage"].waitForExistence(timeout:5))
   return app
  }
  func testEnglishGentleDefaultAndCancelWithoutPermissions() {
@@ -116,6 +117,52 @@ final class PilotUITests:XCTestCase {
    XCTAssertTrue(app.buttons["addAlarm"].exists)
    app.terminate()
   }
+ }
+ func testExpiredPreviewKeepsBasicAlarmChoicesInBothLanguages() {
+  for language in ["en","vi"] {
+   let app=launch(language:language,expired:true)
+   app.buttons["addAlarm"].tap()
+   app.buttons["mode-balanced"].tap()
+   XCTAssertEqual(app.staticTexts["modeExplanation"].label,language == "vi" ? "Gợi ý 3 lần chống đẩy" : "Try 3 push-ups")
+   app.buttons["mode-focused"].tap()
+   XCTAssertTrue(app.buttons["closePro"].waitForExistence(timeout:5))
+   capture(app,name:"expired-pro-"+language)
+   app.buttons["closePro"].tap()
+   app.buttons["chooseSound"].tap()
+   app.buttons["sound-sunrise"].tap()
+   XCTAssertTrue(app.buttons["closePro"].waitForExistence(timeout:5))
+   app.buttons["closePro"].tap()
+   XCTAssertTrue(app.buttons["sound-system"].isSelected)
+   app.navigationBars.buttons.element(boundBy:0).tap()
+   app.buttons[language == "vi" ? "Hủy" : "Cancel"].tap()
+   app.buttons["morningProgress"].tap()
+   XCTAssertTrue(app.buttons["explorePro"].waitForExistence(timeout:5))
+   XCTAssertFalse(app.staticTexts[language == "vi" ? "7 ngày qua" : "Past 7 days"].exists)
+   XCTAssertTrue(app.buttons[language == "vi" ? "Xóa lịch sử" : "Clear history"].exists)
+   capture(app,name:"expired-progress-"+language)
+   app.terminate()
+  }
+ }
+ func testSoundPreviewKeepsEditorUsable() {
+  let app=launch(language:"en")
+  app.buttons["addAlarm"].tap()
+  app.buttons["chooseSound"].tap()
+  app.buttons["sound-sunrise"].tap()
+  let preview=app.buttons["Preview sound"]
+  XCTAssertTrue(preview.waitForExistence(timeout:5))
+  preview.tap()
+  app.sliders["previewVolume"].adjust(toNormalizedSliderPosition:0.25)
+  preview.tap()
+  app.buttons["sound-softChime"].tap()
+  preview.tap()
+  app.buttons["sound-system"].tap()
+  XCTAssertFalse(app.sliders["previewVolume"].exists)
+  app.navigationBars.buttons.element(boundBy:0).tap()
+  app.buttons["Cancel"].tap()
+  XCTAssertTrue(app.buttons["addAlarm"].waitForExistence(timeout:5))
+  app.buttons["addAlarm"].tap()
+  XCTAssertTrue(app.navigationBars["New alarm"].waitForExistence(timeout:5))
+  app.buttons["Cancel"].tap()
  }
  func testLanguageChoiceSurvivesRelaunch() {
   let app=launch(language:"en")

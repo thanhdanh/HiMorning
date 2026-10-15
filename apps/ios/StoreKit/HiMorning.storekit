@@ -32,24 +32,19 @@
         {
           "adHocOffers": [],
           "codeOffers": [],
-          "displayPrice": "2.99",
+          "displayPrice": "2.00",
           "familyShareable": false,
           "groupNumber": 1,
           "internalID": "PRO_MONTHLY",
-          "introductoryOffer": {
-            "internalID": "TRIAL_WEEK",
-            "paymentMode": "free",
-            "subscriptionPeriod": "P1W",
-            "numberOfPeriods": 1
-          },
+          "introductoryOffer": null,
           "localizations": [
             {
-              "description": "30-day morning history and a weekly goal you choose.",
+              "description": "All challenge modes, sounds, 30-day history, and a weekly goal you choose.",
               "displayName": "HiMorning Pro Monthly",
               "locale": "en_US"
             },
             {
-              "description": "Lịch sử 30 ngày và mục tiêu tuần theo ý bạn.",
+              "description": "Tất cả chế độ thử thách, âm thanh, lịch sử 30 ngày và mục tiêu tuần theo ý bạn.",
               "displayName": "HiMorning Pro theo tháng",
               "locale": "vi"
             }
@@ -57,6 +52,32 @@
           "productID": "com.himorning.pro.monthly",
           "recurringSubscriptionPeriod": "P1M",
           "referenceName": "HiMorning Pro Monthly",
+          "subscriptionGroupID": "PRO",
+          "type": "RecurringSubscription"
+        },
+        {
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "20.00",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "PRO_ANNUAL",
+          "introductoryOffer": null,
+          "localizations": [
+            {
+              "description": "All challenge modes, sounds, 30-day history, and a weekly goal you choose.",
+              "displayName": "HiMorning Pro Annual",
+              "locale": "en_US"
+            },
+            {
+              "description": "Tất cả chế độ thử thách, âm thanh, lịch sử 30 ngày và mục tiêu tuần theo ý bạn.",
+              "displayName": "HiMorning Pro theo năm",
+              "locale": "vi"
+            }
+          ],
+          "productID": "com.himorning.pro.annual",
+          "recurringSubscriptionPeriod": "P1Y",
+          "referenceName": "HiMorning Pro Annual",
           "subscriptionGroupID": "PRO",
           "type": "RecurringSubscription"
         }

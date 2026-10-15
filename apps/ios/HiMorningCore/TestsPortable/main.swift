@@ -223,4 +223,5 @@ try testSharedMobileFixtures()
 
 try runMorningTests()
 runSubscriptionPeriodTests()
-print("PASS: 21 portable Swift domain and integration journeys")
+try runPreviewPeriodTests()
+print("PASS: 22 portable Swift domain and integration journeys")

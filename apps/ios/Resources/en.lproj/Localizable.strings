@@ -81,6 +81,15 @@
 "You confirmed you are awake. Have a good morning!" = "You confirmed you are awake. Have a good morning!";
 "Your alarms could not be checked. Please check alarm access." = "Your alarms could not be checked. Please check alarm access.";
 "Your morning" = "Your morning";
+"Your free preview could not be checked. Basic alarms are available." = "Your free preview could not be checked. Basic alarms are available.";
+"Your free preview could not be saved. Basic alarms are available." = "Your free preview could not be saved. Basic alarms are available.";
+"%lld free days left. No automatic charge." = "%lld free days left. No automatic charge.";
+"Your 30 free days begin when you save your first alarm. No card needed." = "Your 30 free days begin when you save your first alarm. No card needed.";
+"Enjoying your mornings? Explore Pro" = "Enjoying your mornings? Explore Pro";
+"Your preview has ended. This morning uses the basic challenge. Your saved choice stays the same." = "Your preview has ended. This morning uses the basic challenge. Your saved choice stays the same.";
+"Focused challenges and more sounds" = "Focused challenges and more sounds";
+"Try all features free for 30 days. No card needed. Subscribe only when you choose." = "Try all features free for 30 days. No card needed. Subscribe only when you choose.";
+"Your free preview has ended. Basic alarms and challenges stay free. Pro unlocks your progress, Focused mode and more sounds." = "Your free preview has ended. Basic alarms and challenges stay free. Pro unlocks your progress, Focused mode and more sounds.";
 "Your saved alarms could not be read. Changes are paused." = "Your saved alarms could not be read. Changes are paused.";
 "Choose a sound for your morning." = "Choose a sound for your morning.";
 "Practice only. Your alarms stay as they are." = "Practice only. Your alarms stay as they are.";

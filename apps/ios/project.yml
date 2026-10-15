@@ -14,12 +14,16 @@ settings:
   base:
     SWIFT_VERSION: "5.0"
     CODE_SIGNING_ALLOWED: NO
+    "CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]": YES
+    "CODE_SIGN_IDENTITY[sdk=iphonesimulator*]": "-"
     TARGETED_DEVICE_FAMILY: "1"
 targets:
   HiMorning:
     type: application
     platform: iOS
     sources: [HiMorning, Resources]
+    settings:
+      CODE_SIGN_ENTITLEMENTS: HiMorning/HiMorning.entitlements
     info:
       path: HiMorning/Info.plist
       properties:

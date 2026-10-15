@@ -1,14 +1,45 @@
 import Foundation
 
 public enum MorningAccess:Equatable,Sendable {
- case free,pro
+ case free,preview,pro
  public static func verifiedPeriod(expiresAt:Date?,graceUntil:Date?=nil,now:Date=Date())->MorningAccess {
   if let expiresAt,expiresAt>now {return .pro}
   if let graceUntil,graceUntil>now {return .pro}
   return .free
  }
- public var historyDays:Int {self == .pro ? 30 : 7}
- public func weeklyGoal(stored:Int)->Int {self == .pro ? stored : 3}
+ public var hasFullAccess:Bool {self != .free}
+ public var historyDays:Int {hasFullAccess ? 30 : 0}
+ public func weeklyGoal(stored:Int)->Int {hasFullAccess ? stored : 3}
+ public func allows(mode:WakeMode)->Bool {hasFullAccess || mode != .focused}
+ public func allows(sound:AlarmSound)->Bool {hasFullAccess || sound == .system}
+ public func effectiveMode(_ saved:WakeMode)->WakeMode {allows(mode:saved) ? saved : .balanced}
+ public func effectiveSound(_ saved:AlarmSound)->AlarmSound {allows(sound:saved) ? saved : .system}
+}
+
+/// A no-card preview, started only after the first alarm is successfully saved.
+/// Persist every observation so a later clock rollback cannot restore elapsed time.
+public struct PreviewPeriod:Codable,Equatable,Sendable {
+ public private(set) var startedAt:Date?
+ public private(set) var lastSeenAt:Date?
+ private static let duration:TimeInterval=30*86400
+ public init() {}
+ public var expiresAt:Date? {startedAt?.addingTimeInterval(Self.duration)}
+ public mutating func start(now:Date=Date()) {
+  guard startedAt == nil else {return}
+  startedAt=now;lastSeenAt=now
+ }
+ public mutating func observe(now:Date=Date()) {
+  guard let startedAt else {return}
+  lastSeenAt=max(now,lastSeenAt ?? startedAt,startedAt)
+ }
+ public func access(now:Date=Date())->MorningAccess {
+  remainingDays(now:now)>0 ? .preview : .free
+ }
+ public func remainingDays(now:Date=Date())->Int {
+  guard let startedAt,let expiresAt else {return 0}
+  let effectiveNow=max(now,lastSeenAt ?? startedAt,startedAt)
+  return max(0,Int(ceil(expiresAt.timeIntervalSince(effectiveNow)/86400)))
+ }
 }
 
 public struct MorningEntry:Codable,Identifiable,Sendable {
