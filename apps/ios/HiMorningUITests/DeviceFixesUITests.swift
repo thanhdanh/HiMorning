@@ -28,6 +28,53 @@ final class DeviceFixesUITests:XCTestCase {
   guard settings.isHittable,app.buttons["saveAlarm"].isEnabled else {return}
   throw XCTSkip("Real AlarmKit scheduling is blocked by denied system alarm access; same-ID rescheduling is unverified.")
  }
+ func testEnabledAlarmChallengeEditClosesAndKeepsTheNewChoiceInBothLanguages() {
+  for vietnamese in [false,true] {
+   let app=launch(["--ui-enabled-alarm"],vietnamese:vietnamese)
+   let edit=app.buttons["editAlarm-00000000-0000-0000-0000-000000000001"]
+   reveal(edit,in:app);edit.tap()
+   let navigation=app.navigationBars[vietnamese ? "Sửa báo thức" : "Edit alarm"]
+   XCTAssertTrue(navigation.waitForExistence(timeout:5))
+   let reading=app.buttons["challenge-readAloud"]
+   reveal(reading,in:app);reading.tap();XCTAssertTrue(reading.isSelected)
+   app.buttons["saveAlarm"].tap()
+   let closed=XCTNSPredicateExpectation(predicate:NSPredicate(format:"exists == false"),object:navigation)
+   guard XCTWaiter.wait(for:[closed],timeout:5) == .completed else {
+    XCTFail("Saving only a challenge must close the editor without native alarm access: \(app.staticTexts["alarmSaveError"].label)")
+    app.terminate();return
+   }
+   XCTAssertTrue(edit.waitForExistence(timeout:5))
+   XCTAssertEqual(app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@","editAlarm-")).count,1)
+   XCTAssertTrue(app.staticTexts[vietnamese ? "Đọc thành tiếng" : "Read Aloud"].exists)
+   XCTAssertEqual(app.alerts.count,0)
+   edit.tap();reveal(reading,in:app);XCTAssertTrue(reading.isSelected)
+   app.buttons["saveAlarm"].tap()
+   let unchanged=XCTNSPredicateExpectation(predicate:NSPredicate(format:"exists == false"),object:navigation)
+   XCTAssertEqual(XCTWaiter.wait(for:[unchanged],timeout:5),.completed,"Saving unchanged settings must also close")
+   app.terminate()
+  }
+ }
+ func testSaveButtonRespondsAcrossItsVisibleWidth() {
+  for (vietnamese,x) in [(false,0.1),(false,0.9),(true,0.5)] {
+   let app=launch(["--ui-disabled-alarm"],vietnamese:vietnamese)
+   let edit=app.buttons["editAlarm-00000000-0000-0000-0000-000000000001"]
+   reveal(edit,in:app);edit.tap()
+   let navigation=app.navigationBars[vietnamese ? "Sửa báo thức" : "Edit alarm"]
+   XCTAssertTrue(navigation.waitForExistence(timeout:5))
+   let reading=app.buttons["challenge-readAloud"]
+   reveal(reading,in:app);reading.tap()
+   let save=app.buttons["saveAlarm"]
+   XCTAssertTrue(save.isHittable)
+   save.coordinate(withNormalizedOffset:CGVector(dx:x,dy:0.5)).tap()
+   let closed=XCTNSPredicateExpectation(predicate:NSPredicate(format:"exists == false"),object:navigation)
+   guard XCTWaiter.wait(for:[closed],timeout:5) == .completed else {
+    XCTFail("The visible Save button must respond at horizontal offset \(x)")
+    app.terminate();return
+   }
+   edit.tap();reveal(reading,in:app);XCTAssertTrue(reading.isSelected)
+   app.buttons[vietnamese ? "Hủy" : "Cancel"].tap();app.terminate()
+  }
+ }
  func testReadAloudKeepsStartVisibleWithoutScrolling() {
   for (vietnamese,largeText) in [(false,false),(true,false),(true,true)] {
    let arguments=largeText ? ["-UIPreferredContentSizeCategoryName","UICTContentSizeCategoryAccessibilityM","--ui-reading-transcript","small extra steps with several additional words to review while reading"] : []
@@ -41,7 +88,7 @@ final class DeviceFixesUITests:XCTestCase {
    screenshot.lifetime = .keepAlways;add(screenshot)
    XCTAssertTrue(start.isHittable,"Start reading must be available before scrolling")
    XCTAssertTrue(app.windows.firstMatch.frame.contains(start.frame),"The entire reading button must be on screen")
-   let awake=app.buttons[vietnamese ? "Tôi đã thức dậy" : "I’m awake"]
+   let awake=app.buttons["confirmAwake"]
    XCTAssertLessThanOrEqual(start.frame.maxY,awake.frame.minY,"The fixed footer must not cover Start reading")
    app.swipeUp()
    XCTAssertTrue(start.isHittable,"Reading controls must remain reachable while reviewing feedback")

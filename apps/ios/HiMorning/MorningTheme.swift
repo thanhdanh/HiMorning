@@ -14,6 +14,7 @@ enum MorningTheme {
  static let onYellow=Color(red:41/255,green:37/255,blue:29/255)
  static let accent=color(0x967211,0xF5C842)
  static let success=color(0x44634A,0xBDD6BF)
+ static let correctWord=color(0x126B36,0x7FE5A2)
  private static func color(_ light:UInt32,_ dark:UInt32)->Color {
   Color(uiColor:UIColor { traits in
    let hex=traits.userInterfaceStyle == .dark ? dark : light

@@ -75,7 +75,28 @@ public enum EnglishChallengeContent {
  public static let readAloud:[ReadAloudPrompt]=[
   ReadAloudPrompt(id:"ready-for-day",text:"Before the world asks for my attention, I will take a quiet breath and choose one meaningful thing to begin."),
   ReadAloudPrompt(id:"steady-progress",text:"Progress rarely arrives all at once; it grows when we return with patience, curiosity, and the courage to try again."),
-  ReadAloudPrompt(id:"morning-energy",text:"Beyond the familiar path, a small discovery may be waiting, so today I will leave a little room for wonder.")
+  ReadAloudPrompt(id:"morning-energy",text:"Beyond the familiar path, a small discovery may be waiting, so today I will leave a little room for wonder."),
+  ReadAloudPrompt(id:"quiet-attention",text:"Before opening another app, I will decide what deserves my attention and give that task a few quiet minutes."),
+  ReadAloudPrompt(id:"corner-bakery",text:"At the corner bakery, warm bread and friendly conversation remind me that ordinary routines can hold small moments of joy."),
+  ReadAloudPrompt(id:"unfamiliar-street",text:"Curiosity turns an unfamiliar street into a possibility, especially when I slow down enough to notice the details around me."),
+  ReadAloudPrompt(id:"room-for-surprises",text:"A clear plan leaves room for surprises; I can prepare carefully while staying open to a better idea along the way."),
+  ReadAloudPrompt(id:"smaller-pieces",text:"When a difficult task feels overwhelming, I will break it into smaller pieces and begin with the part I understand."),
+  ReadAloudPrompt(id:"generous-listening",text:"Listening closely is a quiet kind of generosity, because another person may need understanding before they need advice or an answer."),
+  ReadAloudPrompt(id:"gentle-beginning",text:"After a restless night, I can treat myself with patience and choose a gentle beginning instead of demanding a perfect morning."),
+  ReadAloudPrompt(id:"beyond-the-clouds",text:"Somewhere beyond the clouds, the sun is still rising, and a cloudy sky can offer its own kind of beautiful light."),
+  ReadAloudPrompt(id:"learning-with-patience",text:"Learning a new skill means being willing to make awkward attempts, ask useful questions, and return tomorrow with a little more understanding."),
+  ReadAloudPrompt(id:"short-walk",text:"On a crowded day, a short walk can create enough space to breathe, notice the weather, and return with a clearer mind."),
+  ReadAloudPrompt(id:"bridge-to-action",text:"The strongest bridge between an idea and a result is often a modest action repeated with care, even when progress feels slow."),
+  ReadAloudPrompt(id:"while-the-kettle-warms",text:"While the kettle warms, I can stretch my shoulders, drink some water, and let the day begin without rushing into every notification."),
+  ReadAloudPrompt(id:"different-approach",text:"An unexpected problem may invite a different approach; I can pause, gather the facts, and choose the next step with a steady mind."),
+  ReadAloudPrompt(id:"books-and-conversation",text:"Books can carry us across oceans and centuries, but a good conversation can also reveal a world we have never considered before."),
+  ReadAloudPrompt(id:"honest-step",text:"Instead of measuring this morning against the achievements of others, I will notice what matters to me and take one honest step forward."),
+  ReadAloudPrompt(id:"patient-growth",text:"A seed grows without announcing its progress, reminding me that patient work can create meaningful change long before the results become visible."),
+  ReadAloudPrompt(id:"adjust-the-route",text:"If my plans change, I can adjust the route without abandoning the destination, and I may discover something useful along the way."),
+  ReadAloudPrompt(id:"first-few-minutes",text:"The first few minutes of the day do not need to solve everything; they can simply help me arrive with attention and purpose."),
+  ReadAloudPrompt(id:"breakfast-promise",text:"Making time for breakfast is a small promise to myself that my energy, comfort, and health deserve a place in a busy schedule."),
+  ReadAloudPrompt(id:"quiet-ripple",text:"Across a quiet lake, even a small ripple travels far, just as a thoughtful word can influence a day in ways we cannot see."),
+  ReadAloudPrompt(id:"thoughtful-question",text:"Today I will ask one thoughtful question, try one unfamiliar thing, and leave enough space to appreciate what happens between my plans.")
  ]
 }
 

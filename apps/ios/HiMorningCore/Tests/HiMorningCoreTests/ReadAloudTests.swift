@@ -6,10 +6,16 @@ import XCTest
 
 final class ReadAloudTests:XCTestCase {
  func testPromptsHaveEnoughContentForARealReading() {
-  for prompt in EnglishChallengeContent.readAloud {
+  let prompts=EnglishChallengeContent.readAloud
+  XCTAssertGreaterThan(prompts.count,23)
+  XCTAssertEqual(Set(prompts.map(\.id)).count,prompts.count)
+  XCTAssertEqual(Set(prompts.map {RecognizedWordMatch.tokens(in:$0.text).joined(separator:" ")}).count,prompts.count)
+  for prompt in prompts {
    let count=RecognizedWordMatch.tokens(in:prompt.text).count
-   XCTAssertTrue((18...25).contains(count))
+   XCTAssertTrue((18...30).contains(count))
   }
+  let durations=prompts.map {ReadAloudAttempt(target:$0.text).listeningDuration}
+  XCTAssertGreaterThan(durations.max() ?? 0,durations.min() ?? 0)
  }
 
  func testFinishingRequiresMatchingWordsInsteadOfOnlySpeechLength() {

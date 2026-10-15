@@ -125,6 +125,7 @@ final class SpeechCaptureCancellationTests:XCTestCase {
   XCTAssertEqual(probe.updates.count,1)
   XCTAssertFalse(probe.updates[0].completed)
   XCTAssertFalse(probe.updates[0].ended)
+  XCTAssertFalse(probe.updates[0].listening,"Preparing speech must not show an active microphone")
   probe.capture=nil
  }
 
