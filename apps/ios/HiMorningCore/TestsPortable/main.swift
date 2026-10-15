@@ -218,6 +218,11 @@ func testSharedMobileFixtures() throws {
 }
 try testSharedMobileFixtures()
 
+let scores=MorningScoreTests()
+scores.testOnlyCompletedChallengesEarnPointsAndEmptyIsUnrated()
+scores.testRatingThresholds()
+try scores.testWeekUsesLocalDaysAveragesAttemptsAndExcludesPracticeAndFuture()
+try scores.testMonthRetainsDayOneThroughDayThirtyOneAndSurvivesReload()
 try runMorningTests()
 runSubscriptionPeriodTests()
 print("PASS: shared Swift core tests and portable integration journeys")

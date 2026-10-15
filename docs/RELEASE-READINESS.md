@@ -98,7 +98,7 @@ separate from the iOS UI so a future Android adapter can use Google Play billing
 
 Expiration must not cancel saved alarms, rewrite their modes/sounds or block
 dismissal. A saved Focused alarm uses a clearly explained Balanced fallback while
-Free; new Free alarms use system sound. Clearing history remains free. Keychain
+Free; new Free alarms use system sound. Progress has no history deletion action. Keychain
 time protection limits simple rollback but is not a server entitlement or a
 guaranteed defense against reinstall/device changes. Cancellation of
 auto-renewal normally leaves access until the current paid period ends; refunds,

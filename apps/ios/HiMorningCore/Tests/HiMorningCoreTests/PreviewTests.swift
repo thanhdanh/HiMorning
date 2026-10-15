@@ -97,3 +97,66 @@ final class PreviewTests:XCTestCase {
   }
  }
 }
+
+final class MorningScoreTests:XCTestCase {
+ private var calendar:Calendar {
+  var calendar=Calendar(identifier:.gregorian)
+  calendar.timeZone=TimeZone(identifier:"Asia/Ho_Chi_Minh")!
+  return calendar
+ }
+ private func date(_ value:String)->Date {ISO8601DateFormatter().date(from:value)!}
+ func testOnlyCompletedChallengesEarnPointsAndEmptyIsUnrated() {
+  let now=date("2026-10-15T06:30:00+07:00")
+  let empty=MorningScore(date:now,entries:[])
+  XCTAssertNil(empty.score);XCTAssertEqual(empty.rating,.noData)
+  for outcome:WakeOutcome in [.localCompleted,.openaiVerified,.aiVerified,.selfConfirmed,.dismissed] {
+   let score=MorningScore(date:now,entries:[MorningEntry(date:now,outcome:outcome)])
+   XCTAssertEqual(score.score,[.selfConfirmed,.dismissed].contains(outcome) ? 0 : 100)
+  }
+  let mixed=MorningScore(date:now,entries:[.localCompleted,.selfConfirmed,.dismissed].map {MorningEntry(date:now,outcome:$0)})
+  XCTAssertEqual(mixed.score,33);XCTAssertEqual(mixed.completed,1);XCTAssertEqual(mixed.attempts,3)
+ }
+ func testRatingThresholds() {
+  let now=date("2026-10-15T06:30:00+07:00")
+  for (completed,rating):(Int,ConsistencyRating) in [(0,.gettingStarted),(49,.gettingStarted),(50,.building),(74,.building),(75,.consistent),(89,.consistent),(90,.excellent),(100,.excellent)] {
+   let entries=(0..<100).map {MorningEntry(date:now,outcome:$0<completed ? .localCompleted : .selfConfirmed)}
+   let score=MorningScore(date:now,entries:entries)
+   XCTAssertEqual(score.score,completed);XCTAssertEqual(score.rating,rating)
+  }
+ }
+ func testWeekUsesLocalDaysAveragesAttemptsAndExcludesPracticeAndFuture() throws {
+  let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+  defer {try? FileManager.default.removeItem(at:root)}
+  var journal=try MorningJournal(url:root.appendingPathComponent("mornings.json"))
+  let now=date("2026-10-15T06:30:00+07:00")
+  for (timestamp,outcome):(String,WakeOutcome) in [("2026-10-08T23:59:59+07:00",.localCompleted),("2026-10-09T00:00:00+07:00",.openaiVerified),("2026-10-14T23:59:59+07:00",.selfConfirmed),("2026-10-15T00:00:00+07:00",.localCompleted),("2026-10-15T06:00:00+07:00",.dismissed)] {
+   _=try journal.record(MorningEntry(date:date(timestamp),outcome:outcome),now:now,calendar:calendar)
+  }
+  _=try journal.record(MorningEntry(date:now,outcome:.localCompleted),rehearsal:true,now:now,calendar:calendar)
+  _=try journal.record(MorningEntry(date:now.addingTimeInterval(1),outcome:.localCompleted),now:now,calendar:calendar)
+  let week=journal.weeklyScores(now:now,calendar:calendar)
+  XCTAssertEqual(week.count,7);XCTAssertEqual(week.first?.date,date("2026-10-09T00:00:00+07:00"))
+  XCTAssertEqual(week.map(\.score),[100,nil,nil,nil,nil,0,50])
+  XCTAssertEqual(week.last?.attempts,2)
+ }
+ func testMonthRetainsDayOneThroughDayThirtyOneAndSurvivesReload() throws {
+  let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+  defer {try? FileManager.default.removeItem(at:root)}
+  let url=root.appendingPathComponent("mornings.json")
+  var journal=try MorningJournal(url:url)
+  let monthEnd=date("2026-10-31T08:00:00+07:00")
+  for timestamp in ["2026-09-30T07:00:00+07:00","2026-10-01T07:00:00+07:00","2026-10-31T07:00:00+07:00"] {
+   let recorded=date(timestamp)
+   _=try journal.record(MorningEntry(date:recorded,outcome:.localCompleted),now:recorded,calendar:calendar)
+  }
+  let restored=try MorningJournal(url:url)
+  XCTAssertEqual(restored.entries.count,2)
+  let month=restored.monthlyScore(now:monthEnd,calendar:calendar)
+  XCTAssertEqual(month.date,date("2026-10-01T00:00:00+07:00"));XCTAssertEqual(month.completed,2)
+  XCTAssertEqual(month.attempts,2);XCTAssertEqual(month.score,100)
+  let nextMonth=restored.monthlyScore(now:date("2026-11-01T08:00:00+07:00"),calendar:calendar)
+  XCTAssertNil(nextMonth.score);XCTAssertEqual(nextMonth.rating,.noData)
+  let midMonth=restored.monthlyScore(now:date("2026-10-15T08:00:00+07:00"),calendar:calendar)
+  XCTAssertEqual(midMonth.attempts,1)
+ }
+}

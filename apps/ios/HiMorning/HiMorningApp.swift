@@ -43,8 +43,28 @@ import HiMorningCore
    library=try AlarmLibrary(persistence:FileAlarmPersistence(url:url),scheduler:scheduler)
   } catch {library=nil;self.error=appText("Your saved alarms could not be read. Changes are paused.")}
   do {
-   let url=try FileManager.default.url(for:.applicationSupportDirectory,in:.userDomainMask,appropriateFor:nil,create:true).appendingPathComponent("HiMorning/mornings.json")
+   var url=try FileManager.default.url(for:.applicationSupportDirectory,in:.userDomainMask,appropriateFor:nil,create:true).appendingPathComponent("HiMorning/mornings.json")
+   #if DEBUG
+   if ProcessInfo.processInfo.arguments.contains("--ui-testing") {
+    url=FileManager.default.temporaryDirectory.appendingPathComponent("morning-test-\(UUID().uuidString).json")
+    if ProcessInfo.processInfo.arguments.contains("--ui-progress-read-error") {try Data("broken".utf8).write(to:url)}
+   }
+   #endif
    journal=try MorningJournal(url:url)
+   #if DEBUG
+   if ProcessInfo.processInfo.arguments.contains("--ui-testing"),ProcessInfo.processInfo.arguments.contains("--ui-progress-fixture") {
+    let now=Date(),calendar=Calendar.current
+    let outcomes:[WakeOutcome]=[.localCompleted,.localCompleted,.selfConfirmed,.openaiVerified,.localCompleted,.localCompleted,.localCompleted]
+    for (index,outcome) in outcomes.enumerated() where index != 1 {
+     if let date=calendar.date(byAdding:.day,value:index-6,to:calendar.startOfDay(for:now)) {
+      try journal?.record(MorningEntry(date:date,outcome:outcome),now:now)
+     }
+    }
+    if let date=calendar.date(byAdding:.day,value:-2,to:calendar.startOfDay(for:now)) {
+     try journal?.record(MorningEntry(date:date,outcome:.dismissed),now:now)
+    }
+   }
+   #endif
   } catch {progressError=appText("Your progress could not be read. Your alarms are unchanged.")}
   #if DEBUG
   if ProcessInfo.processInfo.arguments.contains("--ui-testing") {
@@ -66,10 +86,6 @@ import HiMorningCore
   guard access.hasFullAccess,journal != nil else {return}
   do {try journal?.setWeeklyGoal(goal);progressError=nil}
   catch {progressError=appText("Your goal could not be saved. Please try again.")}
- }
- func clearHistory() {
-  do {try journal?.clear();progressError=nil}
-  catch {progressError=appText("Your history could not be cleared. Please try again.")}
  }
  func refresh() async {
   guard let library else {return}

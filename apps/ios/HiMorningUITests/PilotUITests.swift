@@ -124,6 +124,76 @@ final class PilotUITests:XCTestCase {
    app.terminate()
   }
  }
+ func testProgressScoresAndEmptyStateInBothLanguages() {
+  for language in ["en","vi"] {
+   for fixture in [false,true] {
+    let app=XCUIApplication()
+    app.launchArguments=["-AppleLanguages","(en)","-AppleLocale","en_US","--ui-testing"]
+    if language == "vi" {app.launchArguments.append("--ui-language-vi")}
+    if fixture {app.launchArguments.append("--ui-progress-fixture")}
+    app.launch()
+    XCTAssertTrue(app.buttons["morningProgress"].waitForExistence(timeout:5))
+    let check=app.alerts[language == "vi" ? "Cần kiểm tra" : "Please check"]
+    if check.waitForExistence(timeout:1) {check.buttons[language == "vi" ? "Đã hiểu" : "Got it"].tap()}
+    app.buttons["morningProgress"].tap()
+    XCTAssertTrue(app.staticTexts["monthlyScore"].waitForExistence(timeout:5))
+    XCTAssertEqual(app.staticTexts["monthlyScore"].label == "—",!fixture)
+    XCTAssertEqual(app.otherElements.matching(NSPredicate(format:"identifier BEGINSWITH %@","morningScore-")).count,7)
+    if fixture {
+     XCTAssertTrue(app.otherElements.matching(NSPredicate(format:"identifier BEGINSWITH %@ AND label CONTAINS %@","morningScore-","50")).firstMatch.exists)
+    } else {
+     XCTAssertEqual(app.staticTexts["monthlyRating"].label,language == "vi" ? "Khởi đầu mới" : "A fresh start")
+    }
+    capture(app,name:"progress-\(language)-\(fixture ? "scores" : "empty")")
+    app.swipeUp()
+    XCTAssertFalse(app.buttons[language == "vi" ? "Xóa lịch sử" : "Clear history"].exists)
+    app.terminate()
+   }
+  }
+ }
+ func testExpiredProgressHasNoHistoryDeletionInBothLanguages() {
+  for language in ["en","vi"] {
+   let app=launch(language:language,expired:true)
+   app.buttons["morningProgress"].tap()
+   XCTAssertTrue(app.buttons["explorePro"].waitForExistence(timeout:5))
+   XCTAssertFalse(app.staticTexts["monthlyScore"].exists)
+   XCTAssertFalse(app.buttons[language == "vi" ? "Xóa lịch sử" : "Clear history"].exists)
+   capture(app,name:"progress-expired-\(language)")
+   app.terminate()
+  }
+ }
+ func testProgressReadErrorDoesNotInventScores() {
+  let app=XCUIApplication()
+  app.launchArguments=["-AppleLanguages","(en)","-AppleLocale","en_US","--ui-testing","--ui-progress-read-error","-appLanguage","en"]
+  app.launch()
+  XCTAssertTrue(app.buttons["morningProgress"].waitForExistence(timeout:5))
+  let check=app.alerts["Please check"]
+  if check.waitForExistence(timeout:1) {check.buttons["Got it"].tap()}
+  app.buttons["morningProgress"].tap()
+  XCTAssertTrue(app.staticTexts["Your progress could not be read. Your alarms are unchanged."].waitForExistence(timeout:5))
+  XCTAssertFalse(app.staticTexts["monthlyScore"].exists)
+  XCTAssertEqual(app.otherElements.matching(NSPredicate(format:"identifier BEGINSWITH %@","morningScore-")).count,0)
+  capture(app,name:"progress-read-error")
+  app.buttons["closeProgress"].tap()
+  XCTAssertTrue(app.buttons["morningProgress"].exists)
+ }
+ func testProgressSupportsLargeText() {
+  let app=XCUIApplication()
+  app.launchArguments=["-AppleLanguages","(vi)","-AppleLocale","vi_VN","--ui-testing","--ui-language-vi","--ui-progress-fixture","-UIPreferredContentSizeCategoryName","UICTContentSizeCategoryAccessibilityM"]
+  app.launch()
+  XCTAssertTrue(app.buttons["morningProgress"].waitForExistence(timeout:5))
+  let check=app.alerts["Cần kiểm tra"]
+  if check.waitForExistence(timeout:1) {check.buttons["Đã hiểu"].tap()}
+  app.buttons["morningProgress"].tap()
+  XCTAssertTrue(app.staticTexts["monthlyScore"].waitForExistence(timeout:5))
+  capture(app,name:"progress-vi-large-month")
+  app.swipeUp()
+  let scores=app.otherElements.matching(NSPredicate(format:"identifier BEGINSWITH %@","morningScore-"))
+  XCTAssertGreaterThan(scores.count,0)
+  capture(app,name:"progress-vi-large-week")
+  app.buttons["closeProgress"].tap()
+  XCTAssertTrue(app.buttons["morningProgress"].waitForExistence(timeout:5))
+ }
  func testSoundPreviewKeepsEditorUsable() {
   let app=launch(language:"en")
   app.buttons["addAlarm"].tap()
@@ -297,7 +367,7 @@ final class PilotUITests:XCTestCase {
    app.buttons["morningProgress"].tap()
    XCTAssertTrue(app.buttons["explorePro"].waitForExistence(timeout:5))
    XCTAssertFalse(app.staticTexts[language == "vi" ? "7 ngày qua" : "Past 7 days"].exists)
-   XCTAssertTrue(app.buttons[language == "vi" ? "Xóa lịch sử" : "Clear history"].exists)
+   XCTAssertFalse(app.buttons[language == "vi" ? "Xóa lịch sử" : "Clear history"].exists)
    capture(app,name:"expired-progress-"+language)
    app.terminate()
   }

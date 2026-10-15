@@ -37,16 +37,20 @@ verification and durable purchase ownership before backend policy can change.
    access. A failed save does not consume the preview. For existing pilot users,
    refresh starts a preview only when a confirmed saved alarm exists; an alarm
    still needing review does not qualify.
-2. Try the app across real mornings. Completed mornings count once per calendar
-   day; Stop and rehearsals do not count. Self-confirmed outcomes remain distinct
-   from AI-checked outcomes.
+2. Try the app across real mornings. Progress scores each recorded challenge
+   completion at 100 and self-confirmation or Stop at zero. Rehearsals are excluded.
+   Daily scores average that day's recorded attempts; the monthly score is the
+   percentage of recorded attempts completed in the current local calendar month.
+   Missing records are unscored. Ratings are Excellent (90–100), Consistent (75–89),
+   Building (50–74) and Getting started (0–49); no records means no rating. The
+   weekly goal counts each day with a completed challenge once.
 3. Open Pro voluntarily. A nonblocking discovery prompt can appear after three
    completed mornings, outside the active alarm; an explicit Pro button remains
    available. Apple's `SubscriptionStoreView` displays both plans, localized
    prices, renewal terms, purchase approval and restore.
 4. At preview expiry, Free keeps scheduling and recovery. History stays on the
-   device but its progress view and custom goal require full access. Clearing
-   history remains available for privacy.
+   device but its progress view and custom goal require full access. The progress
+   page has no history deletion action.
 5. A saved Focused alarm runs a clearly explained Balanced fallback while access
    is Free. Its saved mode is preserved for a later return to full access. Saved
    sounds, including re-enabled alarms, are preserved for reliability. New Free
@@ -80,8 +84,9 @@ access. Unrelated, unverified or superseded transactions do not grant it. See
   cross-device entitlement. Firebase plus App Attest/DeviceCheck can be evaluated
   if abuse or paid service costs justify it.
 - **Private history:** Outcomes and goals stay in
-  `Application Support/HiMorning/mornings.json`. Clearing history does not reset
-  the preview. This feature does not upload contacts, recordings or progress events.
+  `Application Support/HiMorning/mornings.json`. New entries retain 31 local
+  calendar days so the monthly rating includes day one of a 31-day month. This
+  feature does not upload contacts, recordings or progress events.
 - **Alarm reliability:** Access refresh does not cancel alarms or block Stop.
   Expiry changes the available challenge without rewriting saved preferences.
 - **Honest scope:** Full access covers implemented local features, not future
@@ -158,7 +163,8 @@ TDD record; this guide does not claim unexecuted checks passed.
 
 These are actual captures from passing UI tests. The first row uses an unstarted
 preview fixture; an existing disabled sample alarm is still visible. The second
-uses an expired preview and hides history while keeping its clear action available.
+uses an expired preview and hides history. These older captures predate the
+monthly rating redesign and removal of the clear action.
 The captures demonstrate access states, not an App Store purchase.
 
 | State | English | Vietnamese |

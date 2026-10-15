@@ -27,7 +27,7 @@ func runMorningTests() throws {
   XCTAssertEqual(journal.completedDays(inLast:7,now:morningNow,calendar:morningCalendar),1)
   XCTAssertEqual(journal.entries.count,3)
  }
- // Use local calendar days, exclude future evidence, retain at most 30 days.
+ // Use local calendar days, exclude future evidence, retain at most 31 days.
  try withMorningJournal {journal,_ in
   for timestamp in ["2026-09-10T06:00:00+07:00","2026-09-20T06:00:00+07:00","2026-10-06T06:00:00+07:00","2026-10-07T00:00:00+07:00","2026-10-13T06:00:00+07:00"] {
    _=try journal.record(MorningEntry(date:morningDate(timestamp),outcome:.selfConfirmed),now:morningNow,calendar:morningCalendar)
@@ -36,7 +36,7 @@ func runMorningTests() throws {
   XCTAssertEqual(journal.recent(days:7,now:morningNow,calendar:morningCalendar).count,2)
   XCTAssertEqual(journal.recent(days:30,now:morningNow,calendar:morningCalendar).count,4)
   XCTAssertTrue(journal.recent(days:0,now:morningNow,calendar:morningCalendar).isEmpty)
-  XCTAssertTrue(journal.recent(days:31,now:morningNow,calendar:morningCalendar).isEmpty)
+  XCTAssertTrue(journal.recent(days:32,now:morningNow,calendar:morningCalendar).isEmpty)
  }
  // Downgrading changes access, without deleting history or the saved goal.
  try withMorningJournal {journal,url in
@@ -51,8 +51,6 @@ func runMorningTests() throws {
   XCTAssertThrowsError(try journal.setWeeklyGoal(0))
   XCTAssertThrowsError(try journal.setWeeklyGoal(8))
   XCTAssertEqual(journal.weeklyGoal,5)
-  try journal.clear()
-  XCTAssertEqual(try MorningJournal(url:url).entries.isEmpty, true)
  }
  // Corrupt storage pauses changes; it is never silently reset.
  try withMorningJournal {journal,url in
