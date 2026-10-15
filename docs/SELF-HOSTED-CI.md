@@ -19,9 +19,14 @@ CI results appear in the pull request checks. **Audience:** The repository and M
 
 ## How it works
 
-The backend and iOS jobs keep their existing checks and run one at a time on this
-runner. Node 22, pnpm and Java 21 are selected by the setup actions. Xcode and
-XcodeGen come from the Mac. Native tests require an available iPhone simulator
+The backend, inference and iOS jobs run one at a time on this runner. Node 22,
+pnpm and Java 21 are selected by the setup actions. The inference job uses
+Homebrew's `python@3.11` and its explicit interpreter path to create the virtual
+environment. `setup-python` macOS distributions require the fixed
+`/Users/runner/hostedtoolcache` directory, which this runner user cannot create;
+changing the tool-cache environment variable does not relocate those binaries.
+See [GitHub's macOS self-hosted Python requirements](https://github.com/actions/setup-python/blob/main/docs/advanced-usage.md#macos).
+Xcode and XcodeGen come from the Mac. Native tests require an available iPhone simulator
 using iOS 26.2 because of the documented StoreKitTest regression on newer runtimes.
 
 Each push runs both Swift core test paths, all native unit tests and four UI smoke

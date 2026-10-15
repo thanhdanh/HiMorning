@@ -39,10 +39,10 @@ jobs:
     timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - run: python -m venv backend/inference/.venv
+      - name: Set up Python 3.11 from Homebrew
+        run: |
+          brew list --versions python@3.11 >/dev/null || brew install python@3.11
+          "$(brew --prefix python@3.11)/bin/python3.11" -m venv backend/inference/.venv
       - run: backend/inference/.venv/bin/python -m pip install -r backend/inference/requirements.lock
       - run: backend/inference/.venv/bin/python -m unittest discover -s backend/inference -p 'test_*.py' -v
       - run: cd backend/inference && .venv/bin/python -c "import app"
