@@ -1,0 +1,27 @@
+{
+  "surface": "Native iPhone Your progress sheet, English and Vietnamese",
+  "job": "See monthly challenge consistency first and the latest seven daily scores second.",
+  "primaryAction": "Review progress; dismiss or adjust the existing weekly goal.",
+  "hierarchy": [
+    "Current calendar month rating and score",
+    "Latest seven daily scores and weekly goal",
+    "Expandable 30-day outcome history",
+    "Existing share and subscription actions"
+  ],
+  "reference": "Reuse MorningTheme warm cream, sunshine yellow, forest green and rounded surfaces from HomeView; use native SwiftUI controls.",
+  "layout": "Monthly warm yellow summary, seven labeled bars; accessibility text sizes switch to daily rows. No nested cards, chart motion or new dependencies.",
+  "scoring": "Each recorded completed challenge earns 100; self-confirmation and dismissal earn zero. Average attempts per local day; monthly score is completed/recorded attempts. No records shows an em dash. Practice is excluded.",
+  "targets": [
+    "402x874",
+    "390x844"
+  ],
+  "states": {
+    "empty": "No rating and em dash scores; next morning prompt in history.",
+    "partial": "Unrecorded dates show em dash alongside known scores.",
+    "error": "Preserve existing read/write failure message and do not fabricate scores when journal is unavailable.",
+    "loading": "Progress is synchronous from local storage; StoreKit refresh does not replace content.",
+    "permission": "Reading progress requires no camera, microphone or alarm permission.",
+    "success": "Show monthly completion count and daily points."
+  },
+  "limits": "Ratings measure recorded attempts, not missed scheduled alarms. Previously pruned data cannot be restored."
+}
