@@ -187,7 +187,7 @@ struct ChallengeView:View {
    .onDisappear {pauseResources();if !finished {Task {await coordinator?.suspend()}}}
   }
   .overlay {
-   if celebrates,!reduceMotion {ChallengeConfetti().ignoresSafeArea()}
+   if practicing,celebrates,!reduceMotion {ChallengeConfetti().ignoresSafeArea()}
   }
  }
  @MainActor private func startCamera() async {
@@ -246,7 +246,7 @@ struct ChallengeView:View {
   guard !finished else {return}
   pauseResources();completion=outcome
   model.recordMorning(id:historyID,alarm:effectiveAlarm,outcome:outcome,rehearsal:practicing)
-  if !practicing,celebrates {dismiss();return}
+  if !practicing,celebrates {model.celebrationID=reduceMotion ? nil : UUID();dismiss();return}
   switch outcome {
   case .localCompleted:result=success ?? appText("Local challenge completed. Have a good morning!")
   case .openaiVerified,.aiVerified:result=appText("Movement checked. Have a good morning!")

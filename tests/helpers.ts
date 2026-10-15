@@ -4,7 +4,7 @@ export const actor = { uid: 'guest-1', appCheck: true };
 export const config = { enabled: true, model: 'test-model', baseURL:'https://test.modal.run', userDailyLimit: 3, globalDailyLimit: 100 };
 export const createInput = (n = 1, target = 1) => ({ requestID: uuid(n), challenge: 'pushup', target, consentVersion: '2026-10-15' });
 export async function frames(count = 5) {
- return Promise.all(Array.from({ length: count }, async (_, i) => ({ id: `f${i}`, timestampMs: i * 300, jpegBase64: (await sharp({ create: { width: 40, height: 40, channels: 3, background: { r: 20 + i * 5, g: 40, b: 80 } } }).jpeg().toBuffer()).toString('base64') })));
+ return Promise.all(Array.from({ length: count }, async (_, i) => ({ id: `f${i}`, timestampMs: i * 300, jpegBase64: (await sharp({ create: { width: 40, height: 40, channels: 3, background: { r: (i % 16) * 16, g: Math.floor(i / 16) * 16, b: 80 } } }).jpeg().toBuffer()).toString('base64') })));
 }
 export const complete = (count = 1) => ({ status: 'complete', reps: Array.from({ length: count }, (_, i) => ({ frameIDs: Array.from({ length: 5 }, (_, j) => `f${i * 5 + j}`) })), cue: 'none' });
 // Serial transaction double: no external model calls in this critical section.

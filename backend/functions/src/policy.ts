@@ -5,7 +5,7 @@ export const POLICY_VERSION = 'pilot-v1';
 export interface Evidence { frames: { id: string; timestampMs: number; dataURL: string }[]; payloadHash: string; sufficient: boolean }
 export interface DecisionEvidence { frames: { id: string }[]; sufficient: boolean }
 export const hash = (value: string) => createHash('sha256').update(value).digest('hex');
-export const verdictSchema = z.object({ status: z.enum(['complete','incomplete','uncertain']), reps: z.array(z.object({ frameIDs: z.array(z.string()).length(5) }).strict()).max(5), cue: z.enum(['none','adjust_camera']) }).strict();
+export const verdictSchema = z.object({ status: z.enum(['complete','incomplete','uncertain']), reps: z.array(z.object({ frameIDs: z.array(z.string()).length(5) }).strict()).max(50), cue: z.enum(['none','adjust_camera']) }).strict();
 export type Verdict = z.infer<typeof verdictSchema>;
 export type Decision = { status: 'verified' | 'incomplete' | 'uncertain'; reasonCode: string; verifiedRepCount: number; cue: 'none' | 'adjust_camera' };
 export function decide(raw: unknown, evidence: DecisionEvidence, target: number): Decision {

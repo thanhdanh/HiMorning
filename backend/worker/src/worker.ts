@@ -36,7 +36,7 @@ export default {
    workerConfig(env);
    const actor=await authorize(request,env);
    let input;
-   try {input=await boundedJSON(new Response(request.body),32768);}catch{throw new Failure('invalid-argument','Invalid request body');}
+   try {input=await boundedJSON(new Response(request.body),18*1024*1024);}catch{throw new Failure('invalid-argument','Invalid request body');}
    if(!input||typeof input!=='object'||Object.keys(input).length!==1||!Object.hasOwn(input,'data'))throw new Failure('invalid-argument','Expected callable data');
    // A new object name applies the placement hint; existing objects do not move.
    const hub=env.VERIFICATIONS.get(env.VERIFICATIONS.idFromName('free-pilot-enam-v1'),{locationHint:'enam'});

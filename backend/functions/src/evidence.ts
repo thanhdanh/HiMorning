@@ -5,6 +5,7 @@ import { hash, type Evidence } from './policy.js';
 export * from './policy.js';
 export async function prepareEvidence(input: unknown, target: number): Promise<Evidence> {
  const data = parse(submissionSchema, input);
+ if(data.frames.length > target * LIMITS.framesPerRep)throw new Failure('invalid-argument', 'Evidence exceeds the session target');
  const ids = new Set<string>(), images = new Set<string>(); let total = 0, normalizedTotal = 0, previous = -1;
  const normalized: Evidence['frames'] = [];
  for (const frame of data.frames) {

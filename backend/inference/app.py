@@ -6,7 +6,7 @@ import urllib.request
 from pathlib import Path
 
 import modal
-from protocol import MODEL, MAX_BODY_BYTES, completion_request, parse_completion, validate_request
+from protocol import MODEL, MAX_BODY_BYTES, completion_request, parse_completion, validate_request, completion_batches, combine_verdicts
 
 ROOT = Path(__file__).parent
 PINS = json.loads((ROOT / "pins.json").read_text())
@@ -75,24 +75,36 @@ class Qwen:
     @modal.method()
     def verify(self, payload):
         validate_request(payload)
-        remaining = (payload["deadlineAt"] - int(time.time() * 1000)) / 1000
-        request = urllib.request.Request(
-            "http://127.0.0.1:8080/v1/chat/completions",
-            data=json.dumps(completion_request(payload)).encode(),
-            headers={"Content-Type": "application/json"}, method="POST",
-        )
+        batches, verdicts = completion_batches(payload), []
         started = time.monotonic()
-        with urllib.request.urlopen(request, timeout=min(remaining, 120)) as response:
-            raw = response.read(65537)
-        if len(raw) > 65536:
-            raise ValueError("Model response too large")
-        output = json.loads(raw)
-        verdict = parse_completion(output)
-        usage = output.get("usage", {})
+        input_tokens = output_tokens = 0
+        for batch in batches:
+            remaining = (payload["deadlineAt"] - int(time.time() * 1000)) / 1000
+            if remaining <= 0:
+                raise TimeoutError("Inference deadline exceeded")
+            request = urllib.request.Request(
+                "http://127.0.0.1:8080/v1/chat/completions",
+                data=json.dumps(completion_request(batch)).encode(),
+                headers={"Content-Type": "application/json"}, method="POST",
+            )
+            with urllib.request.urlopen(request, timeout=min(remaining, 120)) as response:
+                raw = response.read(65537)
+            if len(raw) > 65536:
+                raise ValueError("Model response too large")
+            output = json.loads(raw)
+            verdicts.append(parse_completion(output))
+            usage = output.get("usage", {})
+            input_tokens += usage.get("prompt_tokens", 0)
+            output_tokens += usage.get("completion_tokens", 0)
+            # No additional paid work after ambiguous, malformed or truncated output.
+            if combine_verdicts(batches[:len(verdicts)], verdicts)["status"] == "uncertain":
+                break
+        verdict = combine_verdicts(batches, verdicts)
         print(json.dumps({"event": "inference_finished", "model": MODEL,
                           "revision": PINS["revision"], "durationMs": int((time.monotonic()-started)*1000),
-                          "inputTokens": usage.get("prompt_tokens"), "outputTokens": usage.get("completion_tokens")}))
+                          "inputTokens": input_tokens, "outputTokens": output_tokens}))
         return verdict
+
 
 
 gateway_image = modal.Image.debian_slim(python_version="3.11").pip_install_from_requirements(str(ROOT / "requirements.lock"))

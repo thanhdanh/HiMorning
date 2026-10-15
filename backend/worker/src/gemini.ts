@@ -29,7 +29,7 @@ export class GeminiVerifier implements Verifier {
  private readonly active=new Map<string,AbortController>();
  constructor(private readonly storage:DurableObjectStorage,private readonly context:Pick<DurableObjectState,'waitUntil'>,private readonly key:string,private readonly request:typeof fetch=fetch.bind(globalThis)){}
  async start(evidence:Evidence,target:number,deadlineAt:number) {
-  if(!this.key||deadlineAt<=Date.now()||deadlineAt>Date.now()+180000||evidence.frames.length!==target*5||evidence.frames.some((frame,i)=>frame.id!==fixture.frames[i].id||frame.timestampMs!==fixture.frames[i].timestampMs||frame.dataURL!==`data:image/jpeg;base64,${fixture.frames[i].jpegBase64}`))throw new Error('Invalid demo evidence');
+  if(!this.key||deadlineAt<=Date.now()||deadlineAt>Date.now()+180000||!Number.isInteger(target)||target<1||target>50||evidence.frames.length!==target*5||evidence.frames.some((frame,i)=>frame.id!==fixture.frames[i].id||frame.timestampMs!==fixture.frames[i].timestampMs||frame.dataURL!==`data:image/jpeg;base64,${fixture.frames[i].jpegBase64}`))throw new Error('Invalid demo evidence');
   const id=`fc-${randomUUID()}`,path=`inferenceJobs/${id}`;
   const job:Job={state:'pending',deadlineAt,deleteAt:new Date(Date.now()+2*86400000)};
   await this.storage.put(path,job);

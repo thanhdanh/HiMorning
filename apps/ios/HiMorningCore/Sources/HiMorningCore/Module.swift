@@ -3,7 +3,7 @@ public struct WakePolicy: Equatable, Sendable { public let reps: Int; public let
 public enum WakeMode: String, Codable, CaseIterable, Sendable {
  case gentle, balanced, focused
  public var policy: WakePolicy {
-  switch self { case .gentle: return WakePolicy(reps:0,snoozes:2);case .balanced:return WakePolicy(reps:3,snoozes:1);case .focused:return WakePolicy(reps:5,snoozes:0) }
+  switch self { case .gentle: return WakePolicy(reps:0,snoozes:2);case .balanced:return WakePolicy(reps:5,snoozes:1);case .focused:return WakePolicy(reps:10,snoozes:0) }
  }
 }
 public enum DomainError: Error { case invalidAlarmTime }
@@ -50,12 +50,13 @@ public struct WakeSession: Sendable {
 }
 public struct EvidenceFrame: Sendable { public let jpeg:Data; public let timestampMs:Int }
 public struct EvidenceBuffer: Sendable {
+ public static let maximumDurationMs=300000
  public private(set) var frames:[EvidenceFrame]=[]
  private var totalBytes=0
  private let maxFrames:Int;private let maxBytes:Int
- public init(maxFrames:Int=25,maxBytes:Int=1250000) {self.maxFrames=maxFrames;self.maxBytes=maxBytes}
+ public init(maxFrames:Int=ChallengeSelection.maximumPushUps*5,maxBytes:Int=ChallengeSelection.maximumPushUps*5*50000) {self.maxFrames=maxFrames;self.maxBytes=maxBytes}
  @discardableResult public mutating func append(_ jpeg:Data,timestampMs:Int) -> Bool {
-  guard !jpeg.isEmpty,jpeg.count<=50000,timestampMs>=0,timestampMs<=120000,frames.count<maxFrames,totalBytes+jpeg.count<=maxBytes,frames.last.map({timestampMs>$0.timestampMs}) ?? true else {return false}
+  guard !jpeg.isEmpty,jpeg.count<=50000,timestampMs>=0,timestampMs<=Self.maximumDurationMs,frames.count<maxFrames,totalBytes+jpeg.count<=maxBytes,frames.last.map({timestampMs>$0.timestampMs}) ?? true else {return false}
   frames.append(EvidenceFrame(jpeg:jpeg,timestampMs:timestampMs));totalBytes+=jpeg.count;return true
  }
  public mutating func clear() {frames.removeAll(keepingCapacity:false);totalBytes=0}

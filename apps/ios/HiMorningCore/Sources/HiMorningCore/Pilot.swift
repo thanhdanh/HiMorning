@@ -24,7 +24,11 @@ public struct SavedAlarm: Codable, Equatable, Identifiable, Sendable {
   time=try values.decode(AlarmTime.self,forKey:.time)
   mode=try values.decode(WakeMode.self,forKey:.mode)
   sound=try values.decode(AlarmSound.self,forKey:.sound)
-  challenge=try values.decodeIfPresent(ChallengeSelection.self,forKey:.challenge) ?? .legacyDefault(for:mode)
+  if let saved=try values.decodeIfPresent(ChallengeSelection.self,forKey:.challenge) {challenge=saved}
+  else {
+   // Alarms predating explicit challenges retain their original mode target.
+   switch mode {case .gentle:challenge = .none;case .balanced:challenge = .pushUps(repetitions:3);case .focused:challenge = .pushUps(repetitions:5)}
+  }
   enabled=try values.decode(Bool.self,forKey:.enabled)
   state=try values.decode(ScheduleState.self,forKey:.state)
  }
@@ -89,7 +93,15 @@ public actor AlarmLibrary {
   alarms[index]=replacement
   do {try persistence.save(alarms)} catch {alarms[index]=previous;throw error}
   guard replacement.enabled,nativeScheduleChanged else {return}
+  do {try await scheduler.cancel(id:previous.id)} catch {
+   alarms[index]=previous;alarms[index].state = .needsReview
+   try? persistence.save(alarms)
+   throw error
+  }
   do {try await scheduler.schedule(replacement)} catch {
+   // AlarmKit cannot replace an existing ID; recover its old schedule after a failed edit.
+   try? await scheduler.cancel(id:previous.id)
+   try? await scheduler.schedule(previous)
    alarms[index]=previous;alarms[index].state = .needsReview
    try? persistence.save(alarms)
    throw error
@@ -146,12 +158,12 @@ public struct CycleCapture: Sendable {
  public private(set) var completedReps=0
  public var frames:[EvidenceFrame] {buffer.frames}
  public var ready:Bool {completedReps>=target}
- public init(target:Int) {self.target=min(5,max(1,target))}
+ public init(target:Int) {self.target=min(ChallengeSelection.maximumPushUps,max(1,target))}
  public mutating func interrupt() {phase = .top;cycle.removeAll(keepingCapacity:false)}
  public mutating func clear() {interrupt();completedReps=0;buffer.clear()}
  public mutating func observe(angle:Double,visible:Bool,jpeg:Data,timestampMs:Int) {
   guard !ready else {return}
-  guard visible,angle.isFinite,(0...180).contains(angle),!jpeg.isEmpty,jpeg.count<=50000,(0...120000).contains(timestampMs) else {interrupt();return}
+  guard visible,angle.isFinite,(0...180).contains(angle),!jpeg.isEmpty,jpeg.count<=50000,(0...EvidenceBuffer.maximumDurationMs).contains(timestampMs) else {interrupt();return}
   if let last=cycle.last, timestampMs-last.timestampMs<120 {return}
   let matches:Bool
   switch phase {

@@ -10,9 +10,9 @@
     "nonce": "00000000-0000-4000-8000-000000000002",
     "expiresAt": 2000000000000,
     "limits": {
-      "maxFrames": 25,
+      "maxFrames": 250,
       "maxFrameBytes": 50000,
-      "maxTotalBytes": 1250000,
+      "maxTotalBytes": 12500000,
       "maxDimension": 512,
       "framesPerRep": 5
     }

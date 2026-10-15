@@ -4,7 +4,7 @@ import { Failure, parse } from '../../functions/src/errors.js';
 import { hash, type Evidence } from '../../functions/src/policy.js';
 export async function prepareDemoEvidence(input:unknown,target:number):Promise<Evidence> {
  const data=parse(submissionSchema,input);
- if(data.frames.length!==target*5||data.frames.some((frame,index)=>{
+ if(!Number.isInteger(target)||target<1||target>50||data.frames.length!==target*5||data.frames.some((frame,index)=>{
   const expected=fixture.frames[index];
   return frame.id!==expected.id||frame.timestampMs!==expected.timestampMs||frame.jpegBase64!==expected.jpegBase64;
  }))throw new Failure('invalid-argument','This free demo accepts only the bundled generated images');

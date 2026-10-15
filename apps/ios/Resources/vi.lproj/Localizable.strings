@@ -327,3 +327,15 @@
 "No challenges recorded" = "Chưa có thử thách được ghi nhận";
 "Completed challenges" = "Thử thách đã hoàn thành";
 "View this day’s challenges" = "Xem thử thách trong ngày";
+
+"Awake" = "Tỉnh táo";
+"Energized" = "Bứt phá";
+"Default: 10 push-ups" = "Mặc định: 10 lần chống đẩy";
+"Expanded" = "Đã mở rộng";
+"Collapsed" = "Đã thu gọn";
+"Increase push-up target" = "Tăng số lần chống đẩy";
+"This sound is no longer available. Choose System sound or unlock Pro." = "Âm thanh này không còn khả dụng. Chọn âm hệ thống hoặc mở khóa Pro.";
+"These challenge settings require Pro. Choose another challenge or unlock Pro." = "Thiết lập thử thách này cần Pro. Chọn thử thách khác hoặc mở khóa Pro.";
+"Decrease push-up target" = "Giảm số lần chống đẩy";
+
+"Movement capture timed out. Try again or choose another challenge." = "Đã hết thời gian ghi nhận động tác. Hãy thử lại hoặc chọn thử thách khác.";

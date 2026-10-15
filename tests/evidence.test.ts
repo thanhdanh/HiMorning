@@ -8,7 +8,16 @@ describe('bounded evidence and conservative decision', () => {
   const data = await request(); const a = await prepareEvidence(data, 1); const b = await prepareEvidence(data, 1);
   expect(a.payloadHash).toBe(b.payloadHash); expect(a.frames).toHaveLength(5); expect(a.sufficient).toBe(true);
   expect(a.frames[0].dataURL).toMatch(/^data:image\/jpeg;base64,/);
-  expect((await prepareEvidence({ ...data, frames: await frames(6) }, 1)).payloadHash).not.toBe(a.payloadHash);
+  expect((await prepareEvidence({ ...data, frames: (await frames()).map(frame=>({...frame,timestampMs:frame.timestampMs+1})) }, 1)).payloadHash).not.toBe(a.payloadHash);
+ });
+ it.each([10,20,50])('verifies %i fully observed cycles without relaxing target matching', async target => {
+  const evidence=await prepareEvidence({...await request(),frames:await frames(target*5)},target);
+  expect(decide(complete(target),evidence,target)).toMatchObject({status:'verified',verifiedRepCount:target});
+  expect(decide(complete(target-1),evidence,target).status).toBe('incomplete');
+  expect(decide(complete(target+1),evidence,target).status).toBe('uncertain');
+ });
+ it('rejects surplus frames before inference rather than silently dropping evidence',async()=>{
+  await expect(prepareEvidence({...await request(),frames:await frames(10)},1)).rejects.toMatchObject({code:'invalid-argument'});
  });
  it('keeps too-short evidence uncertain without guessing', async () => {
   expect((await prepareEvidence(await request(), 2)).sufficient).toBe(false);
@@ -30,7 +39,7 @@ describe('bounded evidence and conservative decision', () => {
   if (kind === 'duplicate-id') data.frames[1].id = data.frames[0].id;
   if (kind === 'duplicate-image') data.frames[1].jpegBase64 = data.frames[0].jpegBase64;
   if (kind === 'time-order') data.frames[1].timestampMs = 0;
-  if (kind === 'too-many') data.frames = await frames(26);
+  if (kind === 'too-many') data.frames = await frames(251);
   if (kind === 'negative-time') data.frames[0].timestampMs = -1;
   if (kind === 'unknown-field') data.remoteURL = 'https://example.com';
   if (kind === 'consent') data.consentVersion = 'old';

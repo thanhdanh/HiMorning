@@ -5,6 +5,21 @@ import XCTest
 #endif
 
 final class CloudTests:XCTestCase {
+ @MainActor func testFiftyRepSubmissionAcceptsTwoHundredFiftyBoundedFramesAndRejectsOverflow() async throws {
+  let cloud=TargetCloud(),scheduler=RestartScheduler()
+  let alarm=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),mode:.focused,challenge:.pushUps(repetitions:50))
+  let flow=ChallengeCoordinator(alarm:alarm,cloud:cloud,scheduler:scheduler)
+  try await flow.startCloud(consent:true)
+  let frames=(0..<250).map {EvidenceFrame(jpeg:Data([1]),timestampMs:$0*1200)}
+  for invalid in [Array(frames.prefix(249)),frames+[EvidenceFrame(jpeg:Data([1]),timestampMs:300000)],[EvidenceFrame(jpeg:Data(repeating:1,count:50001),timestampMs:0)]+Array(frames.dropFirst())] {
+   do {_=try await flow.submit(invalid);preconditionFailure("Expected insufficient evidence")} catch ChallengeError.insufficientEvidence {}
+  }
+  let applied=try await flow.submit(frames)
+  XCTAssertTrue(applied);XCTAssertEqual(flow.session.outcome,.aiVerified)
+  let stops=await scheduler.stoppedIDs
+  XCTAssertEqual(stops,[alarm.id])
+ }
+
  @MainActor func testCompletedChallengeRetriesDoNotStopTheAlarmAgainOrReplaceItsJournalEntry() async throws {
   let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
   defer {try? FileManager.default.removeItem(at:root)}
@@ -32,7 +47,7 @@ final class CloudTests:XCTestCase {
  }
  @MainActor func testRestartDuringCancellationKeepsTheNewSessionAndConsent() async throws {
   let cloud=RestartCloud()
-  let alarm=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),mode:.balanced)
+  let alarm=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),mode:.balanced,challenge:.pushUps(repetitions:3))
   let flow=ChallengeCoordinator(alarm:alarm,cloud:cloud,scheduler:RestartScheduler(),rehearsal:true)
   try await flow.startCloud(consent:true)
   let suspension=Task {await flow.suspend()}
@@ -106,7 +121,7 @@ private actor PausedPoll {
 extension CloudTests {
  @MainActor func testColdStartPollsWithoutResubmittingAndRecordsNeutralSuccess() async throws {
   let cloud=PollingCloud(),delays=PollDelays()
-  let alarm=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),mode:.balanced)
+  let alarm=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),mode:.balanced,challenge:.pushUps(repetitions:3))
   let flow=ChallengeCoordinator(alarm:alarm,cloud:cloud,scheduler:RestartScheduler(),rehearsal:true,sleep:{await delays.record($0)})
   try await flow.startCloud(consent:true)
   let applied=try await flow.submit((0..<15).map{EvidenceFrame(jpeg:Data([UInt8($0+1)]),timestampMs:$0*300)})
@@ -116,7 +131,7 @@ extension CloudTests {
  }
  @MainActor func testStopCancelsSleepingPollWithoutWaitingForItsNextInterval() async throws {
   let cloud=PollingCloud(),pause=PausedPoll()
-  let alarm=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),mode:.balanced)
+  let alarm=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),mode:.balanced,challenge:.pushUps(repetitions:3))
   let flow=ChallengeCoordinator(alarm:alarm,cloud:cloud,scheduler:RestartScheduler(),rehearsal:true,sleep:{try await pause.sleep($0)})
   try await flow.startCloud(consent:true)
   let task=Task{try await flow.submit((0..<15).map{EvidenceFrame(jpeg:Data([UInt8($0+1)]),timestampMs:$0*300)})}
@@ -126,7 +141,7 @@ extension CloudTests {
  }
  @MainActor func testPollingDeadlineCancelsRemoteJobAndNeverMarksSuccess() async throws {
   let cloud=PollingCloud()
-  let alarm=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),mode:.balanced)
+  let alarm=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),mode:.balanced,challenge:.pushUps(repetitions:3))
   var times:[TimeInterval]=[0,181]
   let flow=ChallengeCoordinator(alarm:alarm,cloud:cloud,scheduler:RestartScheduler(),rehearsal:true,sleep:{_ in},clock:{times.removeFirst()})
   try await flow.startCloud(consent:true)
@@ -138,4 +153,15 @@ extension CloudTests {
   XCTAssertEqual(try JSONDecoder().decode(WakeOutcome.self,from:Data("\"openai_verified\"".utf8)),.openaiVerified)
   XCTAssertEqual(try JSONDecoder().decode(WakeOutcome.self,from:Data("\"ai_verified\"".utf8)),.aiVerified)
  }
+}
+
+private actor TargetCloud:CloudVerification {
+ private var target=0
+ func create(target:Int,requestID:UUID) async throws ->CloudSession {
+  self.target=target
+  return CloudSession(sessionID:String(repeating:"a",count:64),nonce:UUID().uuidString,expiresAt:Date().addingTimeInterval(600).timeIntervalSince1970*1000)
+ }
+ func verify(_ request:VerificationSubmission) async throws ->CloudDecision {CloudDecision(status:"verified",decisionID:"target",verifiedRepCount:target)}
+ func getResult(sessionID:String,evidenceID:String) async throws ->CloudDecision {throw ChallengeError.cloudUnavailable}
+ func cancel(sessionID:String) async throws {}
 }

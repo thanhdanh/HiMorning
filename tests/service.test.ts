@@ -13,12 +13,12 @@ function lookup(session:any,id=2){return {sessionID:session.sessionID,evidenceID
 describe('asynchronous verification and cost controls',()=>{
  it('creates an idempotent ten-minute session with unchanged image bounds',async()=>{
   const s=setup(),session=await s.service.create(actor,createInput());
-  expect(await s.service.create(actor,createInput())).toEqual(session);expect(session.expiresAt).toBe(s.now()+600000);expect(session.limits.maxFrames).toBe(25);
+  expect(await s.service.create(actor,createInput())).toEqual(session);expect(session.expiresAt).toBe(s.now()+600000);expect(session.limits.maxFrames).toBe(250);
   await expect(s.service.create(actor,createInput(1,2))).rejects.toMatchObject({code:'already-exists'});
  });
  it('requires identity, App Check, current consent and a bounded target',async()=>{
   const s=setup();for(const who of [{...actor,uid:''},{...actor,appCheck:false}])await expect(s.service.create(who,createInput())).rejects.toThrow();
-  for(const input of [{...createInput(),target:6},{...createInput(),target:0},{...createInput(),consentVersion:'old'},{...createInput(),challenge:'situp'},{...createInput(),extra:true}])await expect(s.service.create(actor,input)).rejects.toThrow();
+  for(const input of [{...createInput(),target:51},{...createInput(),target:0},{...createInput(),consentVersion:'old'},{...createInput(),challenge:'situp'},{...createInput(),extra:true}])await expect(s.service.create(actor,input)).rejects.toThrow();
  });
  it('dispatches once, polls without photos and caches the final decision',async()=>{
   const s=setup(),session=await s.service.create(actor,createInput()),data=await submission(session);
@@ -28,7 +28,7 @@ describe('asynchronous verification and cost controls',()=>{
   expect(s.start).toHaveBeenCalledOnce();expect(s.get).toHaveBeenCalledOnce();expect(s.get).toHaveBeenCalledWith('fc-test');
   expect(s.start.mock.calls[0]).toHaveLength(3);expect(JSON.stringify([...s.store.docs.values()])).not.toContain(data.frames[0].jpegBase64);
   expect(JSON.stringify([...s.store.docs.values()])).not.toContain('dataURL');
-  await expect(s.service.verify(actor,{...data,frames:await frames(6)})).rejects.toMatchObject({code:'already-exists'});
+  await expect(s.service.verify(actor,{...data,frames:(await frames()).map(frame=>({...frame,timestampMs:frame.timestampMs+1}))})).rejects.toMatchObject({code:'already-exists'});
  });
  it('never redispatches while acknowledgement is outstanding',async()=>{
   const s=setup();let release!:(id:string)=>void;s.start.mockImplementationOnce(()=>new Promise(resolve=>{release=resolve;}));

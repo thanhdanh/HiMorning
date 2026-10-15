@@ -12,12 +12,12 @@ from protocol import MODEL
 
 
 def synthetic_request(count=5):
-    if count not in (5, 15, 25):
-        raise ValueError("Use 5, 15 or 25 frames")
+    if count not in (5, 15, 25, 50, 100, 250):
+        raise ValueError("Use 5, 15, 25, 50, 100 or 250 frames")
     frames = []
     for i in range(count):
         output = io.BytesIO()
-        Image.new("RGB", (128, 128), (i * 9, 40, 80)).save(output, format="JPEG")
+        Image.new("RGB", (128, 128), ((i * 9) % 256, i, 80)).save(output, format="JPEG")
         frames.append({"id": f"f{i}", "timestampMs": i * 300,
                        "dataURL": "data:image/jpeg;base64," + base64.b64encode(output.getvalue()).decode()})
     return {"model": MODEL, "target": count // 5, "deadlineAt": int(time.time()*1000)+180000, "frames": frames}

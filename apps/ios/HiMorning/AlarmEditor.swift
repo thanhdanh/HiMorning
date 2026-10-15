@@ -5,11 +5,14 @@ import HiMorningCore
 struct AlarmEditor:View {
  @Environment(\.dismiss) private var dismiss
  @Environment(\.openURL) private var openURL
+ @Environment(\.accessibilityReduceMotion) private var reduceMotion
+ private enum ChoiceSection:Equatable {case challenge,sound}
+ @State private var expanded:ChoiceSection? = .challenge
  @State private var time=Calendar.current.date(from:DateComponents(hour:6,minute:30)) ?? Date()
  @State private var mode:WakeMode = .gentle
  @State private var sound:AlarmSound = .system
  @State private var challenge:ChallengeSelection = .none
- @State private var pushUpTarget=3
+ @State private var pushUpTarget=5
  @State private var rhythmVariant:GuidedRhythmVariant = .standing
  @State private var choseChallenge=false
  @State private var days:Set<Int>=[2,3,4,5,6]
@@ -30,7 +33,7 @@ struct AlarmEditor:View {
    _time=State(initialValue:Calendar.current.date(from:DateComponents(hour:alarm.time.hour,minute:alarm.time.minute)) ?? Date())
    _mode=State(initialValue:alarm.mode);_sound=State(initialValue:alarm.sound)
    _challenge=State(initialValue:alarm.challenge);_days=State(initialValue:alarm.time.weekdays)
-   _pushUpTarget=State(initialValue:alarm.challenge.repetitions ?? 3)
+   _pushUpTarget=State(initialValue:alarm.challenge.repetitions ?? 5)
    _rhythmVariant=State(initialValue:alarm.challenge.rhythmVariant ?? .standing)
    _choseChallenge=State(initialValue:true)
   }
@@ -39,6 +42,9 @@ struct AlarmEditor:View {
  private var dayNames:[String] {[appText("Sun"),appText("Mon"),appText("Tue"),appText("Wed"),appText("Thu"),appText("Fri"),appText("Sat")]}
  var body:some View {
   NavigationStack {
+   VStack(spacing:0) {
+    choiceHeaders
+   ScrollViewReader {scroll in
    ScrollView {
     VStack(alignment:.leading,spacing:20) {
      Text(appText("Wake-up time")).font(.subheadline.weight(.semibold)).foregroundStyle(MorningTheme.muted)
@@ -58,6 +64,7 @@ struct AlarmEditor:View {
       }
       Text(days.isEmpty ? appText("Rings once") : appText("Uses your phone’s local time")).font(.caption).foregroundStyle(MorningTheme.muted)
      }
+     if expanded == .challenge {
      VStack(alignment:.leading,spacing:12) {
       Text(appText("Your morning")).font(.subheadline.weight(.semibold)).foregroundStyle(MorningTheme.muted)
       HStack(spacing:4) {
@@ -65,34 +72,48 @@ struct AlarmEditor:View {
         modeButton(value)
        }
       }.padding(4).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:16))
-      Text(challenge.kind == .pushUps ? appText("Try %lld push-ups",count:challenge.repetitions ?? 3) : appText("Wake up at your own pace")).font(.subheadline).accessibilityIdentifier("modeExplanation")
-      Text(appText("Defaults get more active from Gentle to Focused. Your own challenge choice stays selected.")).font(.footnote).foregroundStyle(MorningTheme.muted)
-      Text(appText("You can always confirm you are awake or stop.")).font(.footnote).foregroundStyle(MorningTheme.muted)
-     }
+      Text(challenge.kind == .pushUps ? appText("Try %lld push-ups",count:pushUpTarget) : appText("Wake up at your own pace")).font(.subheadline).accessibilityIdentifier("modeExplanation")
+     }.id("editorOptions")
      VStack(alignment:.leading,spacing:12) {
       Text(appText("Challenge")).font(.subheadline.weight(.semibold)).foregroundStyle(MorningTheme.muted)
       ForEach(ChallengeKind.allCases,id:\.self) {kind in
        challengeButton(kind)
       }
      }
-     NavigationLink {
+     }
+     if expanded == .sound {
       SoundSelection(sound:$sound,volume:$volume,access:preview.access,unlock:{pro=true},preview:playPreview,stopPreview:{soundPreview.stop()})
-     } label: {
-      HStack(spacing:12) {
-       Image(systemName:"music.note")
-       Text(appText("Sound"))
-       Spacer()
-       Text(sound.title).font(.subheadline).foregroundStyle(MorningTheme.muted)
-       Image(systemName:"chevron.right").font(.caption)
-      }.padding(16).background(MorningTheme.surface,in:RoundedRectangle(cornerRadius:16))
-       .overlay {RoundedRectangle(cornerRadius:16).strokeBorder(MorningTheme.line)}
-     }.buttonStyle(.plain).accessibilityIdentifier("chooseSound")
+       .id("editorOptions")
+     }
     }.padding(20)
    }.background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink)
+   .onChange(of:expanded) {_,section in
+    soundPreview.stop()
+    if section != nil {scroll.scrollTo("editorOptions",anchor:.top)}
+   }
+   }
+    saveBar
+   }.background(MorningTheme.canvas.ignoresSafeArea())
    .navigationTitle(appText(editing ? "Edit alarm" : "New alarm")).navigationBarTitleDisplayMode(.inline)
    .toolbar(.visible,for:.navigationBar).toolbarBackground(MorningTheme.canvas,for:.navigationBar).toolbarBackground(.visible,for:.navigationBar)
    .toolbar {ToolbarItem(placement:.cancellationAction) {Button(appText("Cancel")) {soundPreview.stop();dismiss()}.disabled(saving)}}
-   .safeAreaInset(edge:.bottom) {
+
+   .disabled(saving).interactiveDismissDisabled(saving)
+   .tint(MorningTheme.accent).onDisappear {soundPreview.stop()}
+   .onChange(of:volume) {_,value in soundPreview.setVolume(value)}
+   .onChange(of:preview.access) {_,_ in
+    soundPreview.stop()
+   }
+   .sheet(isPresented:$pro) {ProView(store:store,preview:preview)}
+  }
+ }
+ private var choiceHeaders:some View {
+  HStack(spacing:10) {
+   sectionHeader(.challenge,title:appText("Challenge"),summary:challenge.displayTitle,icon:challenge.kind.icon,id:"editorChallengeSection")
+   sectionHeader(.sound,title:appText("Sound"),summary:sound.title,icon:"music.note",id:"chooseSound")
+  }.padding(.horizontal,20).padding(.vertical,10)
+ }
+ private var saveBar:some View {
     VStack(spacing:8) {
      if let saveError {Text(saveError).font(.footnote).foregroundStyle(MorningTheme.ink).accessibilityIdentifier("alarmSaveError")}
      if alarmAccessDenied {
@@ -113,8 +134,18 @@ struct AlarmEditor:View {
        } catch NativeAlarmError.denied {
         saveError=appText("Alarm access is off. Allow alarms for HiMorning in Settings, then try again.")
         alarmAccessDenied=true;saving=false
+       } catch AlarmSaveError.soundUnavailable {
+        saveError=appText("This sound is no longer available. Choose System sound or unlock Pro.");saving=false
+       } catch AlarmSaveError.challengeUnavailable {
+        saveError=appText("These challenge settings require Pro. Choose another challenge or unlock Pro.");saving=false
        } catch {
         saveError=appText("This alarm could not be confirmed. Please check your system alarms before relying on it.")
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--ui-testing") {
+         let native=error as NSError
+         saveError! += " [\(native.domain):\(native.code)] \(native.localizedDescription)"
+        }
+        #endif
         saving=false
        }
       }
@@ -123,17 +154,25 @@ struct AlarmEditor:View {
      }.buttonStyle(MorningButtonStyle()).disabled(saving).accessibilityIdentifier("saveAlarm")
       .accessibilityLabel(appText(saving ? "Saving…" : "Save"))
     }.padding(.horizontal,20).padding(.vertical,12).background(MorningTheme.canvas)
-   }
-   .disabled(saving).interactiveDismissDisabled(saving)
-   .tint(MorningTheme.accent).onDisappear {soundPreview.stop()}
-   .onChange(of:volume) {_,value in soundPreview.setVolume(value)}
-   .onChange(of:preview.access) {_,access in
-    mode=access.effectiveMode(mode);sound=access.effectiveSound(sound);soundPreview.stop()
-    challenge=access.effectiveChallenge(choseChallenge ? challenge : .legacyDefault(for:mode))
-    pushUpTarget=access.effectiveChallenge(.pushUps(repetitions:pushUpTarget)).repetitions ?? 3
-   }
-   .sheet(isPresented:$pro) {ProView(store:store,preview:preview)}
-  }
+ }
+ private func sectionHeader(_ section:ChoiceSection,title:String,summary:String,icon:String,id:String)->some View {
+  Button {
+   if reduceMotion {expanded=expanded == section ? nil : section}
+   else {withAnimation(.snappy(duration:0.25)) {expanded=expanded == section ? nil : section}}
+  } label: {
+   VStack(alignment:.leading,spacing:5) {
+    HStack(spacing:6) {
+     Image(systemName:icon)
+     Text(title).font(.subheadline.weight(.semibold))
+     Spacer(minLength:0)
+     Image(systemName:expanded == section ? "chevron.up" : "chevron.down").font(.caption.weight(.semibold))
+    }
+    Text(summary).font(.caption).foregroundStyle(MorningTheme.muted).lineLimit(1)
+   }.padding(12).frame(maxWidth:.infinity,minHeight:64,alignment:.leading).contentShape(Rectangle())
+    .background(expanded == section ? MorningTheme.surface : MorningTheme.soft,in:RoundedRectangle(cornerRadius:16))
+    .overlay {RoundedRectangle(cornerRadius:16).strokeBorder(expanded == section ? MorningTheme.accent : MorningTheme.line)}
+  }.buttonStyle(.plain).accessibilityIdentifier(id)
+   .accessibilityLabel(title+", "+summary).accessibilityValue(appText(expanded == section ? "Expanded" : "Collapsed"))
  }
  private func challengeButton(_ kind:ChallengeKind)->some View {
   VStack(alignment:.leading,spacing:0) {
@@ -141,7 +180,9 @@ struct AlarmEditor:View {
     choseChallenge=true
     switch kind {
     case .none:challenge = .none
-    case .pushUps:challenge = .pushUps(repetitions:pushUpTarget)
+    case .pushUps:
+     pushUpTarget=max(mode == .focused ? 10 : 5,pushUpTarget)
+     challenge = .pushUps(repetitions:pushUpTarget)
     case .readAndChoose:challenge = .readAndChoose
     case .guidedRhythm:challenge = .guidedRhythm(variant:rhythmVariant)
     case .readAloud:challenge = .readAloud
@@ -159,9 +200,22 @@ struct AlarmEditor:View {
     VStack(alignment:.leading,spacing:12) {
      Text(kind.summary).font(.footnote).foregroundStyle(MorningTheme.muted).accessibilityIdentifier("challenge-summary-"+kind.editorIdentifier)
      if kind == .pushUps {
-      Stepper(appText("%lld push-ups",count:pushUpTarget),value:$pushUpTarget,in:1...(preview.access.hasFullAccess ? 5 : 3))
-       .onChange(of:pushUpTarget) {_,value in if challenge.kind == .pushUps {challenge = .pushUps(repetitions:value)}}
-       .accessibilityIdentifier("pushUpTarget")
+      HStack {
+       Text(appText("%lld push-ups",count:pushUpTarget)).font(.headline).monospacedDigit().accessibilityIdentifier("pushUpTarget")
+       Spacer()
+       Button {
+        pushUpTarget-=1;challenge = .pushUps(repetitions:pushUpTarget)
+       } label:{Image(systemName:"minus").frame(width:44,height:44).contentShape(Rectangle())}
+        .buttonStyle(.plain).background(MorningTheme.soft,in:Circle())
+        .disabled(pushUpTarget <= (mode == .focused ? 10 : 5))
+        .accessibilityLabel(appText("Decrease push-up target")).accessibilityIdentifier("decreasePushUpTarget")
+       Button {
+        pushUpTarget=max(mode == .focused ? 10 : 5,pushUpTarget+1);challenge = .pushUps(repetitions:pushUpTarget)
+       } label:{Image(systemName:"plus").frame(width:44,height:44).contentShape(Rectangle())}
+        .buttonStyle(.plain).background(MorningTheme.soft,in:Circle())
+        .disabled(pushUpTarget >= (preview.access.hasFullAccess ? ChallengeSelection.maximumPushUps : 5))
+        .accessibilityLabel(appText("Increase push-up target")).accessibilityIdentifier("increasePushUpTarget")
+      }
      }
      if kind == .guidedRhythm {
       Picker(appText("Rhythm style"),selection:$rhythmVariant) {
@@ -181,7 +235,11 @@ struct AlarmEditor:View {
    preview.refresh()
    if preview.access.allows(mode:value) {
     mode=value
-    if !choseChallenge {challenge = .legacyDefault(for:value);pushUpTarget=challenge.repetitions ?? 3}
+    if !choseChallenge {challenge = .legacyDefault(for:value)}
+    if challenge.kind == .pushUps {
+     pushUpTarget=max(value == .focused ? 10 : 5,pushUpTarget)
+     challenge = .pushUps(repetitions:pushUpTarget)
+    }
    } else {pro=true}
   } label: {
    VStack(spacing:8) {
@@ -192,7 +250,7 @@ struct AlarmEditor:View {
       Capsule().fill(index < (value == .gentle ? 1 : value == .balanced ? 2 : 3) ? MorningTheme.accent : MorningTheme.line).frame(width:14,height:4)
      }
     }.accessibilityHidden(true)
-    Text(appText(value == .gentle ? "Default: No challenge" : value == .balanced ? "Default: 3 push-ups" : "Default: 5 push-ups"))
+    Text(appText(value == .gentle ? "Default: No challenge" : value == .balanced ? "Default: 5 push-ups" : "Default: 10 push-ups"))
      .font(.caption).multilineTextAlignment(.center).fixedSize(horizontal:false,vertical:true)
     if !preview.access.allows(mode:value) {Image(systemName:"lock.fill").font(.caption)}
    }.padding(10).frame(maxWidth:.infinity,minHeight:128)
@@ -217,9 +275,7 @@ private struct SoundSelection:View {
  let preview:(AlarmSound)->Void
  let stopPreview:()->Void
  var body:some View {
-  ScrollView {
    VStack(alignment:.leading,spacing:24) {
-    Text(appText("Choose a sound for your morning.")).font(.title2.weight(.semibold))
     ForEach(AlarmSound.groups,id:\.title) {group in
      VStack(alignment:.leading,spacing:0) {
       Text(group.title).font(.subheadline.weight(.semibold)).foregroundStyle(MorningTheme.muted).padding(.bottom,4)
@@ -253,9 +309,7 @@ private struct SoundSelection:View {
      }
     }
     Text(appText("This slider changes the preview only. The alarm uses system volume. Please check it on your phone.")).font(.footnote).foregroundStyle(MorningTheme.muted)
-   }.padding(20)
-  }.background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink)
-   .navigationTitle(appText("Sound")).navigationBarTitleDisplayMode(.inline).tint(MorningTheme.accent)
+   }.tint(MorningTheme.accent)
    .onDisappear(perform:stopPreview)
    .onChange(of:scenePhase) {_,phase in if phase != .active {stopPreview()}}
  }
