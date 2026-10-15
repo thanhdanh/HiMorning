@@ -7,7 +7,10 @@ case "${2:-push}" in
       -only-testing:HiMorningUITests/PilotUITests/testEnglishGentleDefaultAndCancelWithoutPermissions \
       -only-testing:HiMorningUITests/PilotUITests/testVietnameseGentleDefaultAndCancelWithoutPermissions \
       -only-testing:HiMorningUITests/PilotUITests/testReadingPracticeCompletesOfflineInBothLanguages \
-      -only-testing:HiMorningUITests/DeviceFixesUITests/testSaveWaitsAndRetainsEditorOnFailure
+      -only-testing:HiMorningUITests/DeviceFixesUITests/testSaveWaitsAndRetainsEditorOnFailure \
+      -only-testing:HiMorningUITests/DeviceFixesUITests/testEnabledAlarmChallengeEditClosesAndKeepsTheNewChoiceInBothLanguages \
+      -only-testing:HiMorningUITests/ChallengeCelebrationUITests/testReadingSuccessCelebratesAndReturnsHomeInBothLanguages \
+      -only-testing:HiMorningUITests/ChallengeCelebrationUITests/testAwakeConfirmationCountsDownBeforeEnabling
     ;;
   workflow_dispatch) set -- ;;
   *) echo 'Expected push or workflow_dispatch' >&2; exit 64 ;;

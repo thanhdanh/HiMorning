@@ -83,11 +83,12 @@ public actor AlarmLibrary {
   guard let index=alarms.firstIndex(where:{$0.id==alarm.id}) else {throw LibraryError.notFound}
   busy=true;defer {busy=false}
   let previous=alarms[index]
-  var replacement=alarm;replacement.enabled=previous.enabled
-  replacement.state=previous.enabled ? .pending : previous.state == .off ? .off : .needsReview
+  let nativeScheduleChanged=alarm.time != previous.time || alarm.sound != previous.sound
+  var replacement=alarm;replacement.enabled=previous.enabled;replacement.state=previous.state
+  if nativeScheduleChanged {replacement.state=previous.enabled ? .pending : previous.state == .off ? .off : .needsReview}
   alarms[index]=replacement
   do {try persistence.save(alarms)} catch {alarms[index]=previous;throw error}
-  guard replacement.enabled else {return}
+  guard replacement.enabled,nativeScheduleChanged else {return}
   do {try await scheduler.schedule(replacement)} catch {
    alarms[index]=previous;alarms[index].state = .needsReview
    try? persistence.save(alarms)

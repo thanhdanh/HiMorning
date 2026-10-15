@@ -8,6 +8,7 @@ struct SpeechUpdate:Sendable {
  let completed:Bool
  let ended:Bool
  let finishing:Bool
+ let listening:Bool
  let message:String
 }
 
@@ -264,7 +265,7 @@ private actor SpeechAudioSession {
 
  private func publish(token:Int,message:String,completed:Bool=false,ended:Bool=false) {
   guard isCurrent(token) else {return}
-  onUpdate(.init(transcript:transcript.text,progress:reading.progress,completed:completed,ended:ended,finishing:finishing,message:appText(message)))
+  onUpdate(.init(transcript:transcript.text,progress:reading.progress,completed:completed,ended:ended,finishing:finishing,listening:audioEngine.isRunning && !finishing && !ended,message:appText(message)))
  }
 
  private func isCurrent(_ token:Int) -> Bool {!stopped && generation == token && !Task.isCancelled}
