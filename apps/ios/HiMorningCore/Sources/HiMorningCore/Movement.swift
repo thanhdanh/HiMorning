@@ -9,6 +9,30 @@ public enum MovementObservation:Sendable {
  case stretch(overhead:Bool)
 }
 
+/// Turns sampled hand positions into direction changes despite sparse camera frames.
+public struct WaveHandMotion:Sendable {
+ // shortcut: 4% frame travel filters small jitter; tune on real-device samples if normal waves are still missed.
+ private let minimumTravel=0.04
+ private var anchor:Double?
+ private var direction:Int?
+
+ public init() {}
+
+ public mutating func observe(x:Double)->MovementObservation {
+  guard x.isFinite,(0...1).contains(x) else {reset();return .unavailable}
+  guard let anchor else {self.anchor=x;return .transition}
+  let distance=x-anchor
+  guard abs(distance)>=minimumTravel else {return .transition}
+  self.anchor=x
+  let next=distance>0 ? 1:-1
+  guard next != direction else {return .transition}
+  direction=next
+  return .wave(direction:next)
+ }
+
+ public mutating func reset() {anchor=nil;direction=nil}
+}
+
 /// Counts ordered, stable Vision poses. An interruption clears the current cycle but keeps completed reps.
 public struct MovementChallengeProgress:Sendable {
  private enum Pose:Equatable {case left,center,right,closed,open,lowered,overhead}
@@ -21,6 +45,7 @@ public struct MovementChallengeProgress:Sendable {
  private var phase=0
  private var lastWaveDirection:Int?
  private var waveReversals=0
+ private var lastWaveChange:Int?
  public private(set) var completed=0
  public var ready:Bool {completed>=target}
 
@@ -30,7 +55,7 @@ public struct MovementChallengeProgress:Sendable {
  }
 
  public mutating func interrupt() {
-  candidate=nil;candidateSince=0;candidateConsumed=false;phase=0;lastWaveDirection=nil;waveReversals=0
+  candidate=nil;candidateSince=0;candidateConsumed=false;phase=0;lastWaveDirection=nil;waveReversals=0;lastWaveChange=nil
  }
 
  @discardableResult public mutating func observe(_ observation:MovementObservation,timestampMs:Int)->Int {
@@ -39,6 +64,17 @@ public struct MovementChallengeProgress:Sendable {
    interrupt();lastTimestamp=(0...90_000).contains(timestampMs) ? timestampMs:nil;return completed
   }
   lastTimestamp=timestampMs
+  if kind == .waveHand,case .wave(let direction)=observation {
+   guard direction == -1 || direction == 1 else {interrupt();return completed}
+   if let previous=lastWaveDirection,direction != previous {
+    if let lastWaveChange,timestampMs-lastWaveChange<180 {return completed}
+    waveReversals+=1;lastWaveChange=timestampMs
+    if waveReversals==2 {completed+=1;waveReversals=0}
+   } else if lastWaveDirection == nil {lastWaveChange=timestampMs}
+   lastWaveDirection=direction
+   candidate=nil;candidateConsumed=false
+   return completed
+  }
   if case .transition=observation {candidate=nil;candidateConsumed=false;return completed}
   let pose:Pose
   switch (kind,observation) {
