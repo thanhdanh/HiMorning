@@ -31,7 +31,8 @@ targets:
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         NSAlarmKitUsageDescription: HiMorning needs access to set your morning alarms.
-        NSCameraUsageDescription: The camera opens only for a challenge you choose. With your consent, movement photos are sent to OpenAI for checking.
+        NSCameraUsageDescription: Guided Rhythm checks movement on this device. Push-up photos are sent to OpenAI only after you agree.
+        NSMicrophoneUsageDescription: Read Aloud uses your microphone to recognize words on this device. Audio is not saved or uploaded.
     dependencies:
       - package: HiMorningCore
       - package: Firebase

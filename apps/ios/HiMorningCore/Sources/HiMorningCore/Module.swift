@@ -23,7 +23,7 @@ public struct AlarmTime: Codable, Equatable, Sendable {
   return weekdays.compactMap { calendar.nextDate(after:date,matching:DateComponents(hour:hour,minute:minute,second:0,weekday:$0),matchingPolicy:.nextTime,repeatedTimePolicy:.first) }.min()
  }
 }
-public enum WakeOutcome: String, Codable, Sendable { case selfConfirmed = "self_confirmed", openaiVerified = "openai_verified", dismissed }
+public enum WakeOutcome: String, Codable, Sendable { case selfConfirmed = "self_confirmed", openaiVerified = "openai_verified", localCompleted = "local_completed", dismissed }
 public struct WakeSession: Sendable {
  public let mode: WakeMode
  public private(set) var outcome: WakeOutcome?
@@ -39,6 +39,10 @@ public struct WakeSession: Sendable {
   pending=false;outcome = .openaiVerified;return true
  }
  public mutating func interruptVerification() {generation+=1;pending=false}
+ @discardableResult public mutating func completeLocally() -> Bool {
+  guard outcome == nil else {return false}
+  generation+=1;pending=false;outcome = .localCompleted;return true
+ }
  public mutating func stop() {generation+=1;pending=false;if outcome == nil {outcome = .dismissed}}
  public mutating func selfConfirm() {generation+=1;pending=false;if outcome == nil {outcome = .selfConfirmed}}
  @discardableResult public mutating func snooze() -> Bool {

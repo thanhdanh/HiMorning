@@ -14,6 +14,15 @@ public enum MorningAccess:Equatable,Sendable {
  public func allows(sound:AlarmSound)->Bool {hasFullAccess || sound == .system}
  public func effectiveMode(_ saved:WakeMode)->WakeMode {allows(mode:saved) ? saved : .balanced}
  public func effectiveSound(_ saved:AlarmSound)->AlarmSound {allows(sound:saved) ? saved : .system}
+ public func effectiveChallenge(_ saved:ChallengeSelection)->ChallengeSelection {
+  guard !hasFullAccess,saved.kind == .pushUps else {return saved}
+  return .pushUps(repetitions:min(saved.repetitions ?? 3,WakeMode.balanced.policy.reps))
+ }
+ public func effectiveAlarm(_ saved:SavedAlarm)->SavedAlarm {
+  var effective=SavedAlarm(id:saved.id,time:saved.time,mode:effectiveMode(saved.mode),sound:effectiveSound(saved.sound),challenge:effectiveChallenge(saved.challenge))
+  effective.enabled=saved.enabled;effective.state=saved.state
+  return effective
+ }
 }
 
 /// A no-card preview, started only after the first alarm is successfully saved.

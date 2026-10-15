@@ -1,15 +1,32 @@
 import Foundation
-public enum AlarmSound: String, Codable, CaseIterable, Sendable {case system,sunrise,softChime}
+public enum AlarmSound: String, Codable, CaseIterable, Sendable {
+ case system,sunrise,softChime
+ case pizzicatoDawn,pizzicatoSteps,pizzicatoRise,pizzicatoBloom
+ case steelShimmer,steelBreeze,steelMorning,steelSparkle
+ case saxHello,saxStroll,saxGlow,saxDaybreak
+}
 public enum ScheduleState: String, Codable, Sendable {case pending,confirmed,off,needsReview}
 public struct SavedAlarm: Codable, Equatable, Identifiable, Sendable {
  public let id:UUID
  public let time:AlarmTime
  public let mode:WakeMode
  public let sound:AlarmSound
+ public let challenge:ChallengeSelection
  public var enabled:Bool
  public var state:ScheduleState
- public init(id:UUID=UUID(),time:AlarmTime,mode:WakeMode = .gentle,sound:AlarmSound = .system) {
-  self.id=id;self.time=time;self.mode=mode;self.sound=sound;enabled=true;state = .pending
+ public init(id:UUID=UUID(),time:AlarmTime,mode:WakeMode = .gentle,sound:AlarmSound = .system,challenge:ChallengeSelection?=nil) {
+  self.id=id;self.time=time;self.mode=mode;self.sound=sound;self.challenge=challenge ?? .legacyDefault(for:mode);enabled=true;state = .pending
+ }
+ private enum CodingKeys:String,CodingKey {case id,time,mode,sound,challenge,enabled,state}
+ public init(from decoder:Decoder) throws {
+  let values=try decoder.container(keyedBy:CodingKeys.self)
+  id=try values.decode(UUID.self,forKey:.id)
+  time=try values.decode(AlarmTime.self,forKey:.time)
+  mode=try values.decode(WakeMode.self,forKey:.mode)
+  sound=try values.decode(AlarmSound.self,forKey:.sound)
+  challenge=try values.decodeIfPresent(ChallengeSelection.self,forKey:.challenge) ?? .legacyDefault(for:mode)
+  enabled=try values.decode(Bool.self,forKey:.enabled)
+  state=try values.decode(ScheduleState.self,forKey:.state)
  }
 }
 public protocol AlarmScheduler: Sendable {

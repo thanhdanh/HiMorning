@@ -56,6 +56,10 @@ final class PreviewTests:XCTestCase {
   XCTAssertFalse(MorningAccess.free.allows(sound:.sunrise))
   XCTAssertFalse(MorningAccess.free.allows(sound:.softChime))
   XCTAssertEqual(MorningAccess.free.effectiveSound(.sunrise),.system)
+  for sound in AlarmSound.allCases {
+   XCTAssertEqual(MorningAccess.free.allows(sound:sound),sound == .system)
+   XCTAssertEqual(MorningAccess.free.effectiveSound(sound),.system)
+  }
   let saved=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),mode:.focused,sound:.sunrise)
   _=MorningAccess.free.effectiveMode(saved.mode)
   XCTAssertEqual(saved.mode,.focused)
@@ -64,5 +68,27 @@ final class PreviewTests:XCTestCase {
  func testPaidVerificationNeverReturnsPreview() {
   XCTAssertEqual(MorningAccess.verifiedPeriod(expiresAt:now,now:now),.free)
   XCTAssertEqual(MorningAccess.verifiedPeriod(expiresAt:now.addingTimeInterval(1),now:now),.pro)
+ }
+ func testAccessPreservesExplicitLocalChallengesAndCapsOnlyFreePushUps() {
+  let local:[ChallengeSelection]=[.none,.readAndChoose,.guidedRhythm(variant:.standing),.guidedRhythm(variant:.seated),.readAloud]
+  for challenge in local {XCTAssertEqual(MorningAccess.free.effectiveChallenge(challenge),challenge)}
+  for target in 1...5 {
+   let challenge=ChallengeSelection.pushUps(repetitions:target)
+   XCTAssertEqual(MorningAccess.free.effectiveChallenge(challenge),.pushUps(repetitions:min(target,3)))
+   for access in [MorningAccess.preview,.pro] {XCTAssertEqual(access.effectiveChallenge(challenge),challenge)}
+  }
+ }
+ func testEffectiveAlarmPreservesIdentityStateAndSavedPreferences() throws {
+  for challenge:ChallengeSelection in [.readAndChoose,.pushUps(repetitions:5)] {
+   var saved=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[2,4]),mode:.focused,sound:.sunrise,challenge:challenge)
+   saved.enabled=false;saved.state = .needsReview
+   let effective=MorningAccess.free.effectiveAlarm(saved)
+   XCTAssertEqual(effective.id,saved.id);XCTAssertEqual(effective.time,saved.time)
+   XCTAssertEqual(effective.enabled,saved.enabled);XCTAssertEqual(effective.state,saved.state)
+   XCTAssertEqual(effective.mode,.balanced);XCTAssertEqual(effective.sound,.system)
+   XCTAssertEqual(effective.challenge,challenge.kind == .pushUps ? .pushUps(repetitions:3) : challenge)
+   XCTAssertEqual(saved.mode,.focused);XCTAssertEqual(saved.sound,.sunrise);XCTAssertEqual(saved.challenge,challenge)
+   for access in [MorningAccess.preview,.pro] {XCTAssertEqual(access.effectiveAlarm(saved),saved)}
+  }
  }
 }

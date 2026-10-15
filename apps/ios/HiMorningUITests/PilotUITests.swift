@@ -10,10 +10,13 @@ final class PilotUITests:XCTestCase {
    app.buttons["mode-"+mode].tap()
    capture(app,name:mode+"-"+language)
   }
+  app.swipeUp()
   app.buttons["chooseSound"].tap()
   XCTAssertTrue(app.navigationBars[language == "vi" ? "Âm thanh" : "Sound"].waitForExistence(timeout:5))
   app.buttons["sound-sunrise"].tap()
-  XCTAssertTrue(app.sliders["previewVolume"].exists)
+  let slider=app.sliders["previewVolume"]
+  for _ in 0..<10 where !slider.isHittable {app.swipeUp()}
+  XCTAssertTrue(slider.isHittable)
   capture(app,name:"sounds-"+language)
   app.navigationBars.buttons.element(boundBy:0).tap()
  }
@@ -71,9 +74,10 @@ final class PilotUITests:XCTestCase {
  private func challengeJourney(language:String) {
   let app=launch(language:language),vi=language == "vi"
   assertBrandColors(app)
-  let trial=app.buttons[vi ? "Thử nhiệm vụ" : "Try a challenge"]
+  let trial=app.buttons["practiceChallenges"]
   guard trial.waitForExistence(timeout:5) else {XCTFail("A rehearsal must be available before setting an alarm");return}
   trial.tap()
+  app.buttons["practice-pushUps"].tap()
   XCTAssertTrue(app.buttons["startChallenge"].waitForExistence(timeout:5))
   capture(app,name:"challenge-ready-"+language)
   app.buttons["startChallenge"].tap()
@@ -92,6 +96,7 @@ final class PilotUITests:XCTestCase {
   capture(app,name:"self-confirmed-"+language)
   app.buttons[vi ? "Về trang chính" : "Back to home"].tap()
   trial.tap()
+  app.buttons["practice-pushUps"].tap()
   XCTAssertTrue(app.buttons["stopAlarm"].waitForExistence(timeout:5))
   app.buttons["stopAlarm"].tap()
   let stopped=vi ? "Đã kết thúc buổi thử. Báo thức không thay đổi." : "Practice ended. Your alarms are unchanged."
@@ -118,6 +123,144 @@ final class PilotUITests:XCTestCase {
    app.terminate()
   }
  }
+ func testSoundPreviewKeepsEditorUsable() {
+  let app=launch(language:"en")
+  app.buttons["addAlarm"].tap()
+  app.swipeUp()
+  app.buttons["chooseSound"].tap()
+  app.buttons["sound-sunrise"].tap()
+  let preview=app.buttons["preview-sunrise"]
+  XCTAssertTrue(preview.waitForExistence(timeout:5))
+  preview.tap()
+  let slider=app.sliders["previewVolume"]
+  for _ in 0..<10 where !slider.isHittable {app.swipeUp()}
+  slider.adjust(toNormalizedSliderPosition:0.25)
+  for _ in 0..<10 where !preview.isHittable {app.swipeDown()}
+  preview.tap()
+  app.buttons["sound-softChime"].tap()
+  app.buttons["preview-softChime"].tap()
+  app.buttons["sound-system"].tap()
+  XCTAssertFalse(app.sliders["previewVolume"].exists)
+  app.navigationBars.buttons.element(boundBy:0).tap()
+  app.buttons["Cancel"].tap()
+  XCTAssertTrue(app.buttons["addAlarm"].waitForExistence(timeout:5))
+  app.buttons["addAlarm"].tap()
+  XCTAssertTrue(app.navigationBars["New alarm"].waitForExistence(timeout:5))
+  app.buttons["Cancel"].tap()
+ }
+ func testExpandedSoundCatalogSelectsANewSoundInBothLanguages() {
+  for language in ["en","vi"] {
+   let app=launch(language:language)
+   app.buttons["addAlarm"].tap()
+   app.swipeUp()
+   app.buttons["chooseSound"].tap()
+   XCTAssertEqual(app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@","sound-")).count,15)
+   XCTAssertEqual(app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@","preview-")).count,14)
+   let sound=app.buttons["sound-saxDaybreak"]
+   for _ in 0..<10 where !sound.isHittable {app.swipeUp()}
+   XCTAssertTrue(sound.isHittable)
+   sound.tap()
+   app.buttons["preview-saxDaybreak"].tap()
+   app.buttons["preview-saxGlow"].tap()
+   capture(app,name:"expanded-sounds-"+language)
+   app.navigationBars.buttons.element(boundBy:0).tap()
+   XCTAssertTrue(app.staticTexts[language == "vi" ? "Sax ban mai" : "Sax daybreak"].exists)
+   app.buttons[language == "vi" ? "Hủy" : "Cancel"].tap()
+   app.terminate()
+  }
+ }
+ func testSpokenExampleNeedsNoMicrophoneAndCannotCompleteReading() {
+  for language in ["en","vi"] {
+   let app=launch(language:language)
+   app.buttons["practiceChallenges"].tap()
+   app.buttons["practice-readAloud"].tap()
+   let example=app.buttons["hearSentence"],start=app.buttons["startReadAloud"]
+   XCTAssertTrue(example.waitForExistence(timeout:5))
+   example.tap()
+   XCTAssertEqual(app.alerts.count,0,"The example must not request microphone access")
+   XCTAssertFalse(app.staticTexts[language == "vi" ? "Đã hoàn thành đọc thành tiếng. Chúc buổi sáng tốt lành!" : "Read aloud completed. Have a good morning!"].exists)
+   XCTAssertTrue(app.buttons["stopAlarm"].isHittable)
+   XCUIDevice.shared.press(.home)
+   app.activate()
+   let ready=XCTNSPredicateExpectation(predicate:NSPredicate(format:"enabled == true"),object:start)
+   wait(for:[ready],timeout:5)
+   XCTAssertTrue(example.exists)
+   XCTAssertFalse(app.staticTexts[language == "vi" ? "Đã hoàn thành đọc thành tiếng. Chúc buổi sáng tốt lành!" : "Read aloud completed. Have a good morning!"].exists)
+   app.buttons["stopAlarm"].tap()
+   XCTAssertTrue(app.staticTexts[language == "vi" ? "Đã kết thúc buổi thử. Báo thức không thay đổi." : "Practice ended. Your alarms are unchanged."].waitForExistence(timeout:5))
+   app.terminate()
+  }
+ }
+ func testAlarmEditorOffersDiverseChallengeChoices() {
+  let app=launch(language:"en")
+  app.buttons["addAlarm"].tap()
+  app.swipeUp()
+  let readChoice=app.buttons["challenge-readAndChoose"]
+  for _ in 0..<4 where !readChoice.isHittable {app.swipeUp()}
+  XCTAssertTrue(readChoice.exists)
+  for id in ["none","pushUps","readAndChoose","guidedRhythm","readAloud"] {
+   XCTAssertTrue(app.buttons["challenge-"+id].exists,"Missing challenge choice: \(id)")
+  }
+  readChoice.tap()
+  let readSummary=app.staticTexts["Read one short sentence and choose its meaning."]
+  for _ in 0..<3 where !readSummary.exists {app.swipeUp()}
+  XCTAssertTrue(app.staticTexts["Read one short sentence and choose its meaning."].waitForExistence(timeout:3))
+  for _ in 0..<3 where !app.buttons["challenge-readAloud"].isHittable {app.swipeUp()}
+  app.buttons["challenge-readAloud"].tap()
+  XCTAssertTrue(app.staticTexts["Read the sentence aloud. 80% recognized-word match completes it."].waitForExistence(timeout:3))
+  app.buttons["Cancel"].tap()
+ }
+ func testReadingPracticeCompletesOfflineInBothLanguages() {
+  for language in ["en","vi"] {
+   let app=launch(language:language),vi=language == "vi"
+   app.buttons["practiceChallenges"].tap()
+   app.buttons["practice-readAndChoose"].tap()
+   XCTAssertTrue(app.buttons["readChoice-0"].waitForExistence(timeout:5))
+   XCTAssertFalse(app.buttons["startChallenge"].exists)
+   XCTAssertFalse(app.buttons["startReadAloud"].exists)
+   XCTAssertTrue(app.buttons["stopAlarm"].exists)
+   XCTAssertEqual(app.alerts.count,0,"Reading practice needs no camera, speech or alarm permission")
+   for index in 0..<3 {
+    let option=app.buttons["readChoice-\(index)"]
+    if option.exists {option.tap()}
+    if app.buttons[vi ? "Về trang chính" : "Back to home"].waitForExistence(timeout:1) {break}
+   }
+   XCTAssertTrue(app.staticTexts[vi ? "Chính xác. Đã hoàn thành thử thách!" : "Correct. Challenge completed!"].waitForExistence(timeout:5))
+   capture(app,name:"read-choose-complete-"+language)
+   app.buttons[vi ? "Về trang chính" : "Back to home"].tap()
+   app.terminate()
+  }
+ }
+ func testModeDefaultsMatchTargetAndKeepAnExplicitChallenge() {
+  let app=launch(language:"en")
+  app.buttons["addAlarm"].tap()
+  app.buttons["mode-focused"].tap()
+  app.swipeUp()
+  let target=app.steppers["pushUpTarget"]
+  XCTAssertTrue(target.waitForExistence(timeout:3))
+  XCTAssertTrue(target.label.contains("5"))
+  app.buttons["challenge-readAndChoose"].tap()
+  app.swipeDown()
+  app.buttons["mode-balanced"].tap()
+  app.swipeUp()
+  XCTAssertTrue(app.buttons["challenge-readAndChoose"].isSelected)
+  XCTAssertFalse(app.steppers["pushUpTarget"].exists)
+  app.buttons["Cancel"].tap()
+ }
+ func testLocalPracticeKeepsStopAvailableBeforeRequestingPermissions() {
+  let app=launch(language:"en")
+  for (kind,startButton) in [("none",""),("readAloud","startReadAloud"),("guidedRhythm","startGuidedRhythm")] {
+   app.buttons["practiceChallenges"].tap()
+   app.buttons["practice-"+kind].tap()
+   XCTAssertTrue(app.buttons["stopAlarm"].waitForExistence(timeout:5))
+   if !startButton.isEmpty {XCTAssertTrue(app.buttons[startButton].exists)}
+   XCTAssertFalse(app.buttons["startChallenge"].exists)
+   XCTAssertEqual(app.alerts.count,0)
+   app.buttons["stopAlarm"].tap()
+   XCTAssertTrue(app.staticTexts["Practice ended. Your alarms are unchanged."].waitForExistence(timeout:5))
+   app.buttons["Back to home"].tap()
+  }
+ }
  func testExpiredPreviewKeepsBasicAlarmChoicesInBothLanguages() {
   for language in ["en","vi"] {
    let app=launch(language:language,expired:true)
@@ -128,11 +271,26 @@ final class PilotUITests:XCTestCase {
    XCTAssertTrue(app.buttons["closePro"].waitForExistence(timeout:5))
    capture(app,name:"expired-pro-"+language)
    app.buttons["closePro"].tap()
+   app.swipeUp()
    app.buttons["chooseSound"].tap()
    app.buttons["sound-sunrise"].tap()
    XCTAssertTrue(app.buttons["closePro"].waitForExistence(timeout:5))
    app.buttons["closePro"].tap()
    XCTAssertTrue(app.buttons["sound-system"].isSelected)
+   app.buttons["preview-sunrise"].tap()
+   XCTAssertTrue(app.buttons["closePro"].waitForExistence(timeout:5))
+   app.buttons["closePro"].tap()
+   let premium=app.buttons["sound-saxDaybreak"]
+   for _ in 0..<10 where !premium.isHittable {app.swipeUp()}
+   premium.tap()
+   XCTAssertTrue(app.buttons["closePro"].waitForExistence(timeout:5))
+   app.buttons["closePro"].tap()
+   app.buttons["preview-saxDaybreak"].tap()
+   XCTAssertTrue(app.buttons["closePro"].waitForExistence(timeout:5))
+   app.buttons["closePro"].tap()
+   let system=app.buttons["sound-system"]
+   for _ in 0..<10 where !system.isHittable {app.swipeDown()}
+   XCTAssertTrue(system.isSelected)
    app.navigationBars.buttons.element(boundBy:0).tap()
    app.buttons[language == "vi" ? "Hủy" : "Cancel"].tap()
    app.buttons["morningProgress"].tap()
@@ -143,26 +301,28 @@ final class PilotUITests:XCTestCase {
    app.terminate()
   }
  }
- func testSoundPreviewKeepsEditorUsable() {
-  let app=launch(language:"en")
+ func testExpiredPreviewCapsPushUpsAndKeepsLocalChallengeChoice() {
+  let app=launch(language:"en",expired:true)
   app.buttons["addAlarm"].tap()
-  app.buttons["chooseSound"].tap()
-  app.buttons["sound-sunrise"].tap()
-  let preview=app.buttons["Preview sound"]
-  XCTAssertTrue(preview.waitForExistence(timeout:5))
-  preview.tap()
-  app.sliders["previewVolume"].adjust(toNormalizedSliderPosition:0.25)
-  preview.tap()
-  app.buttons["sound-softChime"].tap()
-  preview.tap()
-  app.buttons["sound-system"].tap()
-  XCTAssertFalse(app.sliders["previewVolume"].exists)
-  app.navigationBars.buttons.element(boundBy:0).tap()
+  app.buttons["mode-balanced"].tap()
+  app.swipeUp()
+  let target=app.steppers["pushUpTarget"]
+  XCTAssertTrue(target.waitForExistence(timeout:3))
+  XCTAssertTrue(target.label.contains("3"))
+  XCTAssertFalse(target.buttons["pushUpTarget-Increment"].isEnabled)
+  app.buttons["challenge-readAndChoose"].tap()
+  app.swipeDown()
+  app.buttons["mode-gentle"].tap()
+  app.swipeUp()
+  XCTAssertTrue(app.buttons["challenge-readAndChoose"].isSelected)
+  XCTAssertFalse(target.exists)
   app.buttons["Cancel"].tap()
-  XCTAssertTrue(app.buttons["addAlarm"].waitForExistence(timeout:5))
-  app.buttons["addAlarm"].tap()
-  XCTAssertTrue(app.navigationBars["New alarm"].waitForExistence(timeout:5))
-  app.buttons["Cancel"].tap()
+  app.buttons["practiceChallenges"].tap()
+  app.buttons["practice-readAndChoose"].tap()
+  XCTAssertTrue(app.buttons["readChoice-0"].waitForExistence(timeout:5))
+  XCTAssertFalse(app.buttons["startChallenge"].exists)
+  app.buttons["stopAlarm"].tap()
+  XCTAssertTrue(app.buttons["Back to home"].waitForExistence(timeout:5))
  }
  func testLanguageChoiceSurvivesRelaunch() {
   let app=launch(language:"en")

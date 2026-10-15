@@ -29,10 +29,36 @@ describe('English and Vietnamese app copy', () => {
    for (const match of source.matchAll(/appText\(("(?:[^"\\]|\\.)*")/g)) expect(en, `${file}: ${match[1]}`).toHaveProperty(JSON.parse(match[1]));
   }
  });
- it('localizes camera and alarm permission descriptions in both languages', () => {
+ it('localizes the permissions used by the app and omits the legacy speech permission', () => {
+  const project = readFileSync('apps/ios/project.yml', 'utf8');
   for (const locale of ['en','vi']) {
    const info = strings(locale,'InfoPlist');
-   for (const key of ['NSCameraUsageDescription','NSAlarmKitUsageDescription']) expect(info[key].length).toBeGreaterThan(20);
+   for (const key of ['NSCameraUsageDescription','NSAlarmKitUsageDescription','NSMicrophoneUsageDescription']) {
+    expect(info[key].length).toBeGreaterThan(20);
+    expect(project).toContain(`${key}:`);
+   }
+   expect(info).not.toHaveProperty('NSSpeechRecognitionUsageDescription');
+  }
+  expect(project).not.toContain('NSSpeechRecognitionUsageDescription:');
+ });
+ it('localizes challenge meanings while keeping English learning sentences in English', () => {
+  const en = strings('en'), vi = strings('vi');
+  const source = readFileSync('apps/ios/HiMorningCore/Sources/HiMorningCore/Challenge.swift', 'utf8');
+  const content = source.split('public enum EnglishChallengeContent {')[1]?.split('///')[0];
+  expect(content).toBeTruthy();
+  if (!content) throw new Error('English challenge content was not found');
+  for (const match of content.matchAll(/(?:sentence|text):("(?:[^"\\]|\\.)*")/g)) {
+   const key = JSON.parse(match[1]);
+   expect(en).toHaveProperty(key);
+   expect(vi[key]).toBe(key);
+  }
+  for (const list of content.matchAll(/choices:\[([^\]]+)\]/g)) {
+   for (const match of list[1].matchAll(/"(?:[^"\\]|\\.)*"/g)) {
+    const key = JSON.parse(match[0]);
+    expect(en).toHaveProperty(key);
+    expect(vi[key]).toBeTruthy();
+    expect(vi[key]).not.toBe(key);
+   }
   }
  });
 });

@@ -1,3 +1,4 @@
 // HiMorning app copy. Keep format placeholders unchanged.
 "NSAlarmKitUsageDescription" = "HiMorning cần quyền đặt báo thức cho buổi sáng của bạn.";
-"NSCameraUsageDescription" = "Camera chỉ mở khi bạn chọn nhiệm vụ. Khi bạn đồng ý, ảnh động tác được gửi đến OpenAI để kiểm tra.";
+"NSCameraUsageDescription" = "Vận động theo nhịp kiểm tra ngay trên thiết bị. Ảnh chống đẩy chỉ được gửi đến OpenAI khi bạn đồng ý.";
+"NSMicrophoneUsageDescription" = "Đọc thành tiếng dùng micrô để nhận diện từ ngay trên thiết bị. Âm thanh không được lưu hay tải lên.";

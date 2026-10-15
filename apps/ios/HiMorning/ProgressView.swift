@@ -65,6 +65,7 @@ extension WakeOutcome {
   switch self {
   case .openaiVerified:return appText("AI checked")
   case .selfConfirmed:return appText("You confirmed")
+  case .localCompleted:return appText("Local challenge completed")
   case .dismissed:return appText("Stopped")
   }
  }

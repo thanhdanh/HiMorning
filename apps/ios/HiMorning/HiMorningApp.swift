@@ -66,11 +66,11 @@ import HiMorningCore
   if alarms.contains(where:{$0.state == .confirmed}) {preview.start()} else {preview.refresh()}
   openPending()
  }
- func add(time:AlarmTime,mode:WakeMode,sound:AlarmSound) async {
+ func add(time:AlarmTime,mode:WakeMode,sound:AlarmSound,challenge:ChallengeSelection) async {
   guard let library else {return}
   preview.refresh()
   do {
-   try await library.add(SavedAlarm(time:time,mode:access.effectiveMode(mode),sound:access.effectiveSound(sound)))
+   try await library.add(access.effectiveAlarm(SavedAlarm(time:time,mode:mode,sound:sound,challenge:challenge)))
    preview.start()
   } catch {self.error=appText("This alarm could not be confirmed. Please check your system alarms before relying on it.")}
   alarms=await library.all()
@@ -92,10 +92,50 @@ import HiMorningCore
 }
 extension WakeMode {
  var title:String {switch self {case .gentle:return appText("Gentle");case .balanced:return appText("Balanced");case .focused:return appText("Focused")}}
- var explanation:String {policy.reps==0 ? appText("Wake up at your own pace") : appText("Try %lld push-ups",count:policy.reps)}
 }
 extension AlarmSound {
- var title:String {switch self {case .system:return appText("System sound");case .sunrise:return appText("Sunrise");case .softChime:return appText("Soft chime")}}
+ var title:String {switch self {
+  case .system:return appText("System sound")
+  case .sunrise:return appText("Sunrise")
+  case .softChime:return appText("Soft chime")
+  case .pizzicatoDawn:return appText("Pizzicato dawn")
+  case .pizzicatoSteps:return appText("Pizzicato steps")
+  case .pizzicatoRise:return appText("Pizzicato rise")
+  case .pizzicatoBloom:return appText("Pizzicato bloom")
+  case .steelShimmer:return appText("Steel shimmer")
+  case .steelBreeze:return appText("Steel breeze")
+  case .steelMorning:return appText("Steel morning")
+  case .steelSparkle:return appText("Steel sparkle")
+  case .saxHello:return appText("Sax hello")
+  case .saxStroll:return appText("Sax stroll")
+  case .saxGlow:return appText("Sax glow")
+  case .saxDaybreak:return appText("Sax daybreak")
+ }}
+ static var groups:[(title:String,sounds:[AlarmSound])] {[
+  (appText("Classic"),[.system,.sunrise,.softChime]),
+  (appText("Plucked strings"),[.pizzicatoDawn,.pizzicatoSteps,.pizzicatoRise,.pizzicatoBloom]),
+  (appText("Steel pan"),[.steelShimmer,.steelBreeze,.steelMorning,.steelSparkle]),
+  (appText("Saxophone"),[.saxHello,.saxStroll,.saxGlow,.saxDaybreak])
+ ]}
+}
+extension ChallengeKind {
+ var editorIdentifier:String {switch self {case .none:return "none";case .pushUps:return "pushUps";case .readAndChoose:return "readAndChoose";case .guidedRhythm:return "guidedRhythm";case .readAloud:return "readAloud"}}
+ var title:String {switch self {case .none:return appText("No challenge");case .pushUps:return appText("Push-ups");case .readAndChoose:return appText("Read & Choose");case .guidedRhythm:return appText("Guided Rhythm");case .readAloud:return appText("Read Aloud")}}
+ var summary:String {switch self {
+  case .none:return appText("Confirm you are awake when you are ready.")
+  case .pushUps:return appText("Complete a short camera-checked movement challenge.")
+  case .readAndChoose:return appText("Read one short sentence and choose its meaning.")
+  case .guidedRhythm:return appText("Follow a simple standing or seated rhythm on camera.")
+  case .readAloud:return appText("Read the sentence aloud. 80% recognized-word match completes it.")
+ }}
+ var icon:String {switch self {case .none:return "hand.tap";case .pushUps:return "figure.strengthtraining.traditional";case .readAndChoose:return "text.book.closed";case .guidedRhythm:return "figure.cooldown";case .readAloud:return "waveform"}}
+}
+extension ChallengeSelection {
+ var displayTitle:String {
+  if kind == .pushUps,let repetitions {return appText("%lld push-ups",count:repetitions)}
+  if kind == .guidedRhythm {return rhythmVariant == .seated ? appText("Guided Rhythm · Seated") : appText("Guided Rhythm · Standing")}
+  return kind.title
+ }
 }
 extension ScheduleState {
  var title:String {switch self {case .pending:return appText("Checking…");case .confirmed:return appText("Alarm is set");case .off:return appText("Off");case .needsReview:return appText("Check system alarms")}}
@@ -146,13 +186,16 @@ struct HomeView:View {
      ForEach(model.alarms) {alarm in alarmCard(alarm)}
      Button {editor=true} label:{Label(appText("Add alarm"),systemImage:"plus")}
       .buttonStyle(MorningButtonStyle()).accessibilityIdentifier("addAlarm")
-     if model.alarms.isEmpty {
-      Button(appText("Try a challenge")) {
-       if let time=try? AlarmTime(hour:6,minute:30,weekdays:[]) {
-        model.rehearsal=true;model.selected=SavedAlarm(time:time,mode:.balanced)
+      Menu {
+       ForEach(ChallengeKind.allCases,id:\.self) {kind in
+        Button(kind.title) {
+         if let time=try? AlarmTime(hour:6,minute:30,weekdays:[]) {
+          model.rehearsal=true;model.selected=SavedAlarm(time:time,mode:.balanced,challenge:ChallengeSelection(kind:kind))
+         }
+        }.accessibilityIdentifier("practice-"+kind.editorIdentifier)
        }
-      }.buttonStyle(MorningButtonStyle(primary:false))
-     }
+      } label: {Text(appText("Try a challenge")).frame(maxWidth:.infinity)}
+       .buttonStyle(MorningButtonStyle(primary:false)).accessibilityIdentifier("practiceChallenges")
      Text(appText("You can always stop. A challenge is just a little help to start your day.")).font(.footnote).foregroundStyle(MorningTheme.muted)
      if let message=model.preview.message {Text(message).font(.footnote).foregroundStyle(MorningTheme.muted)}
      if model.access == .preview {
@@ -165,7 +208,7 @@ struct HomeView:View {
     }.padding(20)
    }.background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink).tint(MorningTheme.accent)
    .navigationTitle("HiMorning").toolbar(.hidden,for:.navigationBar)
-   .sheet(isPresented:$editor) {AlarmEditor(store:model.subscriptions,preview:model.preview) {time,mode,sound in Task {await model.add(time:time,mode:mode,sound:sound)}}}
+   .sheet(isPresented:$editor) {AlarmEditor(store:model.subscriptions,preview:model.preview) {time,mode,sound,challenge in Task {await model.add(time:time,mode:mode,sound:sound,challenge:challenge)}}}
    .sheet(isPresented:$progress) {MorningProgressView(model:model,store:model.subscriptions)}
    .sheet(isPresented:$pro) {ProView(store:model.subscriptions,preview:model.preview)}
    .fullScreenCover(item:$model.selected) {alarm in ChallengeView(alarm:alarm,model:model)}
@@ -189,6 +232,7 @@ struct HomeView:View {
    }
    Text(String(format:"%02d:%02d",alarm.time.hour,alarm.time.minute)).font(.system(size:clockSize,weight:.regular,design:.rounded)).monospacedDigit()
    Text(alarm.mode.title+" · "+alarm.sound.title).font(.subheadline)
+   Text(alarm.challenge.displayTitle).font(.subheadline.weight(.medium))
    Text(alarm.state.title).font(.caption.weight(.semibold))
    Divider()
    HStack {
