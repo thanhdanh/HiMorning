@@ -192,6 +192,33 @@ func testCaptureSelectsCompleteCyclesAndDiscardsInterruptedEvidence() {
 func testPersistedTimeCannotBypassValidation() {
  XCTAssertThrowsError(try JSONDecoder().decode(AlarmTime.self,from:Data(#"{"hour":24,"minute":30,"weekdays":[]}"#.utf8)))
 }
+func testAlarmSoundCatalogPersistenceAndResources() throws {
+ XCTAssertEqual(AlarmSound.allCases.count,15)
+ XCTAssertEqual(Set(AlarmSound.allCases.map(\.rawValue)).count,15)
+ for raw in ["system","sunrise","softChime","pizzicatoDawn","pizzicatoSteps","pizzicatoRise","pizzicatoBloom","steelShimmer","steelBreeze","steelMorning","steelSparkle","saxHello","saxStroll","saxGlow","saxDaybreak"] {
+  XCTAssertTrue(AlarmSound(rawValue:raw) != nil)
+ }
+ let directory=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+ defer {try? FileManager.default.removeItem(at:directory)}
+ let persistence=FileAlarmPersistence(url:directory.appendingPathComponent("alarms.json"))
+ let time=try AlarmTime(hour:7,minute:15,weekdays:[2,4,6])
+ let alarms=AlarmSound.allCases.map {SavedAlarm(time:time,sound:$0)}
+ try persistence.save(alarms)
+ XCTAssertEqual(try persistence.load(),alarms)
+ var resources=URL(fileURLWithPath:#filePath)
+ for _ in 0..<3 {resources.deleteLastPathComponent()}
+ resources.appendPathComponent("Resources")
+ XCTAssertEqual(AlarmSound.allCases.filter {$0 != .system}.count,14)
+ for sound in AlarmSound.allCases {
+  XCTAssertEqual(try JSONDecoder().decode(AlarmSound.self,from:Data("\"\(sound.rawValue)\"".utf8)),sound)
+  if sound != .system {
+   let data=try Data(contentsOf:resources.appendingPathComponent(sound.rawValue+".wav"))
+   XCTAssertGreaterThan(data.count,44)
+   XCTAssertEqual(String(data:Data(data.prefix(4)),encoding:.ascii),"RIFF")
+   XCTAssertEqual(String(data:Data(data.dropFirst(8).prefix(4)),encoding:.ascii),"WAVE")
+  }
+ }
+}
 actor FakeCloud: CloudVerification {
  var continuation:CheckedContinuation<CloudDecision,Error>?
  var started:CheckedContinuation<Void,Never>?
@@ -278,6 +305,7 @@ try await testNativeLibrary()
 try testChallengePersistenceMigration()
 testCaptureSelectsCompleteCyclesAndDiscardsInterruptedEvidence()
 testPersistedTimeCannotBypassValidation()
+try testAlarmSoundCatalogPersistenceAndResources()
 try await testCloudStopRaceAndConsent()
 try await testLocalChallengePrivacyBoundariesAndExplicitPushUpTarget()
 XCTAssertEqual(AppLanguage.system.resolved(preferredLanguages:["vi-VN","en-US"]), "vi")
@@ -312,4 +340,4 @@ try testSharedMobileFixtures()
 
 try runMorningTests()
 runSubscriptionPeriodTests()
-print("PASS: 27 portable Swift domain and integration journeys")
+print("PASS: 28 portable Swift domain and integration journeys")

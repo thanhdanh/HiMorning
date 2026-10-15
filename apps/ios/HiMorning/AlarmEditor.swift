@@ -12,7 +12,7 @@ struct AlarmEditor:View {
  @State private var choseChallenge=false
  @State private var days:Set<Int>=[2,3,4,5,6]
  @State private var volume:Double=0.3
- @State private var player:AVAudioPlayer?
+ @State private var soundPreview=SoundPreview()
  let save:(AlarmTime,WakeMode,AlarmSound,ChallengeSelection)->Void
  private let weekdays=[2,3,4,5,6,7,1]
  private var dayNames:[String] {[appText("Sun"),appText("Mon"),appText("Tue"),appText("Wed"),appText("Thu"),appText("Fri"),appText("Sat")]}
@@ -67,7 +67,7 @@ struct AlarmEditor:View {
       }
      }
      NavigationLink {
-      SoundSelection(sound:$sound,volume:$volume,preview:preview,stopPreview:{player?.stop()})
+      SoundSelection(sound:$sound,volume:$volume,preview:preview,stopPreview:{soundPreview.stop()})
      } label: {
       HStack(spacing:12) {
        Image(systemName:"music.note")
@@ -82,15 +82,15 @@ struct AlarmEditor:View {
    }.background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink)
    .navigationTitle(appText("New alarm")).navigationBarTitleDisplayMode(.inline)
    .toolbar(.visible,for:.navigationBar).toolbarBackground(MorningTheme.canvas,for:.navigationBar).toolbarBackground(.visible,for:.navigationBar)
-   .toolbar {ToolbarItem(placement:.cancellationAction) {Button(appText("Cancel")) {player?.stop();dismiss()}}}
+   .toolbar {ToolbarItem(placement:.cancellationAction) {Button(appText("Cancel")) {soundPreview.stop();dismiss()}}}
    .safeAreaInset(edge:.bottom) {
     Button(appText("Save")) {
      let c=Calendar.current.dateComponents([.hour,.minute],from:time)
-     if let value=try? AlarmTime(hour:c.hour ?? 6,minute:c.minute ?? 30,weekdays:days) {save(value,mode,sound,challenge);player?.stop();dismiss()}
+     if let value=try? AlarmTime(hour:c.hour ?? 6,minute:c.minute ?? 30,weekdays:days) {save(value,mode,sound,challenge);soundPreview.stop();dismiss()}
     }.buttonStyle(MorningButtonStyle()).padding(.horizontal,20).padding(.vertical,12).background(MorningTheme.canvas)
    }
-   .tint(MorningTheme.accent).onDisappear {player?.stop()}
-   .onChange(of:volume) {_,value in player?.volume=Float(value)}
+   .tint(MorningTheme.accent).onDisappear {soundPreview.stop()}
+   .onChange(of:volume) {_,value in soundPreview.setVolume(value)}
   }
  }
  private func challengeButton(_ kind:ChallengeKind)->some View {
@@ -128,37 +128,47 @@ struct AlarmEditor:View {
   }.buttonStyle(.plain).accessibilityIdentifier("mode-"+value.rawValue)
    .accessibilityAddTraits(mode == value ? .isSelected : [])
  }
- private func preview() {
-  player?.stop()
-  guard let url=Bundle.main.url(forResource:sound.rawValue,withExtension:"wav"),let audio=try? AVAudioPlayer(contentsOf:url) else {return}
-  player=audio;audio.volume=Float(volume);audio.play()
+ private func preview(_ value:AlarmSound) {
+  guard value != .system,let url=Bundle.main.url(forResource:value.rawValue,withExtension:"wav") else {soundPreview.stop();return}
+  soundPreview.play(url:url,volume:volume)
  }
 }
 private struct SoundSelection:View {
+ @Environment(\.scenePhase) private var scenePhase
  @Binding var sound:AlarmSound
  @Binding var volume:Double
- let preview:()->Void
+ let preview:(AlarmSound)->Void
  let stopPreview:()->Void
  var body:some View {
   ScrollView {
    VStack(alignment:.leading,spacing:24) {
     Text(appText("Choose a sound for your morning.")).font(.title2.weight(.semibold))
-    VStack(spacing:0) {
-     ForEach(AlarmSound.allCases,id:\.self) {value in
-      Button {stopPreview();sound=value} label: {
-       HStack(spacing:14) {
-        Image(systemName:value == .system ? "alarm" : value == .sunrise ? "sunrise" : "music.note")
-         .frame(width:44,height:44).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:12))
-        Text(value.title).font(.body.weight(.medium))
-        Spacer()
-        Image(systemName:sound == value ? "checkmark.circle.fill" : "circle").foregroundStyle(MorningTheme.accent)
-       }.padding(.vertical,14).contentShape(Rectangle())
-      }.buttonStyle(.plain).accessibilityIdentifier("sound-"+value.rawValue).accessibilityAddTraits(sound == value ? .isSelected : [])
-      Divider().overlay(MorningTheme.line)
+    ForEach(AlarmSound.groups,id:\.title) {group in
+     VStack(alignment:.leading,spacing:0) {
+      Text(group.title).font(.subheadline.weight(.semibold)).foregroundStyle(MorningTheme.muted).padding(.bottom,4)
+      ForEach(group.sounds,id:\.self) {value in
+       HStack(spacing:8) {
+        Button {stopPreview();sound=value} label: {
+         HStack(spacing:14) {
+          Image(systemName:value == .system ? "alarm" : value == .sunrise ? "sunrise" : "music.note")
+           .frame(width:44,height:44).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:12))
+          Text(value.title).font(.body.weight(.medium))
+          Spacer()
+          Image(systemName:sound == value ? "checkmark.circle.fill" : "circle").foregroundStyle(MorningTheme.accent)
+         }.padding(.vertical,14).contentShape(Rectangle())
+        }.buttonStyle(.plain).accessibilityIdentifier("sound-"+value.rawValue).accessibilityAddTraits(sound == value ? .isSelected : [])
+        if value != .system {
+         Button {preview(value)} label: {Image(systemName:"play.fill").frame(width:44,height:44)}
+          .buttonStyle(.plain).foregroundStyle(MorningTheme.accent)
+          .accessibilityLabel(String(format:appText("Preview %@"),locale:appLocale(),value.title))
+          .accessibilityIdentifier("preview-"+value.rawValue)
+        }
+       }
+       Divider().overlay(MorningTheme.line)
+      }
      }
     }
     if sound != .system {
-     Button(action:preview) {Label(appText("Preview sound"),systemImage:"play.fill")}.buttonStyle(MorningButtonStyle(primary:false))
      VStack(alignment:.leading,spacing:12) {
       Text(appText("Preview volume")).font(.subheadline.weight(.semibold))
       Slider(value:$volume,in:0...0.7).accessibilityLabel(appText("Preview volume")).accessibilityIdentifier("previewVolume")
@@ -169,5 +179,6 @@ private struct SoundSelection:View {
   }.background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink)
    .navigationTitle(appText("Sound")).navigationBarTitleDisplayMode(.inline).tint(MorningTheme.accent)
    .onDisappear(perform:stopPreview)
+   .onChange(of:scenePhase) {_,phase in if phase != .active {stopPreview()}}
  }
 }

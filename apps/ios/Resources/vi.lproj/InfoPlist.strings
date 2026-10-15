@@ -2,4 +2,3 @@
 "NSAlarmKitUsageDescription" = "HiMorning cần quyền đặt báo thức cho buổi sáng của bạn.";
 "NSCameraUsageDescription" = "Vận động theo nhịp kiểm tra ngay trên thiết bị. Ảnh chống đẩy chỉ được gửi đến OpenAI khi bạn đồng ý.";
 "NSMicrophoneUsageDescription" = "Đọc thành tiếng dùng micrô để nhận diện từ ngay trên thiết bị. Âm thanh không được lưu hay tải lên.";
-"NSSpeechRecognitionUsageDescription" = "Đọc thành tiếng đối chiếu từ tiếng Anh được nhận diện ngay trên thiết bị. Bạn luôn có thể chọn cách khác.";

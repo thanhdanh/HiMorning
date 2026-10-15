@@ -16,6 +16,8 @@ struct ChallengeView:View {
  @State private var camera:CameraCapture?
  @State private var rhythmCamera:GuidedRhythmCapture?
  @State private var speech:SpeechChallengeCapture?
+ @StateObject private var spokenExample=SpokenExample()
+ @State private var preparingExample=false
  @State private var captureGeneration=UUID()
  @State private var rhythmCycles=0
  @State private var transcript=""
@@ -55,6 +57,9 @@ struct ChallengeView:View {
     }
     if alarm.challenge.kind == .readAloud && !finished {
      Text(appText(readAloudPrompt.text)).font(.title2.weight(.semibold)).multilineTextAlignment(.center)
+     Button {Task {await playExample()}} label: {
+      Label(appText(spokenExample.isSpeaking ? "Stop example" : "Hear sentence"),systemImage:spokenExample.isSpeaking ? "stop.fill" : "speaker.wave.2.fill")
+     }.buttonStyle(MorningButtonStyle(primary:false)).disabled(busy || stopping || preparingExample).accessibilityIdentifier("hearSentence")
      if !transcript.isEmpty {Text(transcript).foregroundStyle(MorningTheme.muted).accessibilityIdentifier("speechTranscript")}
      if speechScore>0 {ProgressView(value:speechScore,total:1).accessibilityLabel(appText("Recognized-word match"))}
     }
@@ -70,7 +75,7 @@ struct ChallengeView:View {
       Button(appText("Start guided rhythm")) {Task {await startRhythm()}}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startGuidedRhythm")
      }
      if alarm.challenge.kind == .readAloud && speech == nil && !finished {
-      Button(appText("Start reading")) {Task {await startSpeech()}}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startReadAloud")
+      Button(appText("Start reading")) {Task {await startSpeech()}}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping || preparingExample || spokenExample.isSpeaking).accessibilityIdentifier("startReadAloud")
      }
      if finished {Button(appText("Back to home")) {dismiss()}.buttonStyle(MorningButtonStyle())}
      else {
@@ -86,6 +91,13 @@ struct ChallengeView:View {
    }
    .task {coordinator=ChallengeCoordinator(alarm:alarm,cloud:model.cloud,scheduler:model.scheduler,rehearsal:model.rehearsal);preparePrompt()}
    .onChange(of:scene) {_,value in if value == .background && !finished {pauseResources();message=appText("The challenge is paused. You can choose another way.");Task {await coordinator?.suspend()}}}
+   .onChange(of:scene) {_,value in if value != .active {spokenExample.stop()}}
+   .onReceive(NotificationCenter.default.publisher(for:AVAudioSession.interruptionNotification).receive(on:RunLoop.main)) {notification in
+    if let raw=notification.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt,AVAudioSession.InterruptionType(rawValue:raw) == .began {spokenExample.stop()}
+   }
+   .onReceive(NotificationCenter.default.publisher(for:AVAudioSession.routeChangeNotification).receive(on:RunLoop.main)) {notification in
+    if let raw=notification.userInfo?[AVAudioSessionRouteChangeReasonKey] as? UInt,AVAudioSession.RouteChangeReason(rawValue:raw) == .oldDeviceUnavailable {spokenExample.stop()}
+   }
    .onDisappear {pauseResources();if !finished {Task {await coordinator?.suspend()}}}
  }
  @MainActor private func startCamera() async {
@@ -156,7 +168,8 @@ struct ChallengeView:View {
   rhythmCamera=capture;await capture.start();busy=false
  }
  @MainActor private func startSpeech() async {
-  guard speech == nil,!busy,!finished,!stopping,scene == .active else {return};busy=true
+  guard speech == nil,!busy,!finished,!stopping,!preparingExample,!spokenExample.isSpeaking,scene == .active else {return};busy=true
+  transcript="";speechScore=0
   let generation=UUID();captureGeneration=generation
   let capture=SpeechChallengeCapture(target:appText(readAloudPrompt.text)) {update in Task {@MainActor in
    guard captureGeneration == generation,!finished,!stopping else {return}
@@ -166,10 +179,23 @@ struct ChallengeView:View {
   }}
   speech=capture;await capture.start();busy=false
  }
+ @MainActor private func playExample() async {
+  guard !busy,!finished,!stopping,!preparingExample,scene == .active else {return}
+  if spokenExample.isSpeaking {spokenExample.stop();return}
+  preparingExample=true
+  defer {preparingExample=false}
+  let generation=UUID();captureGeneration=generation
+  let previous=speech;speech=nil
+  await previous?.stopAndWait()
+  guard captureGeneration == generation,!finished,!stopping,scene == .active else {return}
+  transcript="";speechScore=0
+  message=spokenExample.play(appText(readAloudPrompt.text)) ? appText("Listen to the example, then tap Start reading.") : appText("The English voice is not available. You can still read the sentence.")
+ }
  private func pauseResources() {
   captureGeneration=UUID();consent=false
   camera?.stop();camera=nil
   rhythmCamera?.stop();rhythmCamera=nil
   speech?.stop();speech=nil
+  spokenExample.stop()
  }
 }
