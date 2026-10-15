@@ -24,8 +24,18 @@ runner. Node 22, pnpm and Java 21 are selected by the setup actions. Xcode and
 XcodeGen come from the Mac. Native tests require an available iPhone simulator
 using iOS 26.2 because of the documented StoreKitTest regression on newer runtimes.
 
-Builds, result bundles and exported screenshots use `runner.temp`, which GitHub's
-runner clears between jobs. Repository credentials remain in the private runner
+Each push runs both Swift core test paths, all native unit tests and four UI smoke
+tests: the English and Vietnamese alarm editor journeys, offline reading in both
+languages, and alarm-save failure recovery. Run **HiMorning checks → Run workflow**
+in GitHub Actions to run the complete UI suite before a release or when changing
+flows outside the smoke set. Manual runs keep the same unit tests and coverage.
+
+`xcodebuild test` builds the app and test bundles once. Derived data, including
+resolved Swift packages, stays in `runner.workspace/himorning-derived` so Xcode can
+reuse it between jobs on this runner. Remove that directory when troubleshooting
+stale build state or reclaiming disk space. Result bundles and exported screenshots
+use `runner.temp`, which GitHub's runner clears between jobs.
+Repository credentials remain in the private runner
 directory and must never be committed or copied into documentation.
 
 ## Start and stop
@@ -51,6 +61,13 @@ against GitHub's repository runner-download API. Registration and login-service
 startup succeeded, and GitHub reports the runner online with the required labels.
 See [PR #7 checks](https://github.com/thanhdanh/HiMorning/pull/7/checks) for end-to-end
 workflow results; runner availability alone does not prove those checks passed.
+
+Before the smoke change, [run 38750657831](https://github.com/thanhdanh/HiMorning/actions/runs/38750657831)
+took about 14 minutes for iOS: 88 seconds for the separate build and 679 seconds for
+native testing. The four selected UI tests took 85 seconds combined in that run;
+this excludes build, simulator startup and unit-test overhead. The new duration
+must be measured on the runner. `tests/ios-ci.test.ts` checks smoke/full selection,
+that smoke selectors exist, and that build/test failures still fail CI.
 
 ## Limits and next steps
 
