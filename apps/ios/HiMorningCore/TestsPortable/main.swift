@@ -75,6 +75,19 @@ func testMovementRequiresStableOrderedPoses() {
  for (open,time) in [(true,1_200),(true,1_500),(false,1_800),(false,2_100)] {_ = partial.observe(.jumpingJack(open:open),timestampMs:time)}
  XCTAssertEqual(partial.completed,1)
 }
+func testWaveHandAccumulatesSparseCameraMotionAndCountsReversals() {
+ var motion=WaveHandMotion(),progress=MovementChallengeProgress(kind:.waveHand,target:1)
+ for (index,x) in [0.50,0.52,0.55,0.59,0.63,0.60,0.56,0.52,0.48,0.52,0.56,0.60].enumerated() {
+  _ = progress.observe(motion.observe(x:x),timestampMs:index*250)
+ }
+ precondition(progress.ready,"A normal side-to-side wave must count after two reversals")
+
+ var still=WaveHandMotion(),noWave=MovementChallengeProgress(kind:.waveHand,target:1)
+ for (index,x) in [0.50,0.51,0.49,0.52,0.50,0.51].enumerated() {
+  _ = noWave.observe(still.observe(x:x),timestampMs:index*250)
+ }
+ precondition(noWave.completed==0,"Small hand jitter must not count as a wave")
+}
 func testPersistedTimeCannotBypassValidation() {
  XCTAssertThrowsError(try JSONDecoder().decode(AlarmTime.self,from:Data(#"{"hour":24,"minute":30,"weekdays":[]}"#.utf8)))
 }
