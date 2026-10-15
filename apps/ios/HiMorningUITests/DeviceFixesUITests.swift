@@ -28,6 +28,54 @@ final class DeviceFixesUITests:XCTestCase {
   guard settings.isHittable,app.buttons["saveAlarm"].isEnabled else {return}
   throw XCTSkip("Real AlarmKit scheduling is blocked by denied system alarm access; same-ID rescheduling is unverified.")
  }
+ func testReadAloudKeepsStartVisibleWithoutScrolling() {
+  for (vietnamese,largeText) in [(false,false),(true,false),(true,true)] {
+   let arguments=largeText ? ["-UIPreferredContentSizeCategoryName","UICTContentSizeCategoryAccessibilityM","--ui-reading-transcript","small extra steps with several additional words to review while reading"] : []
+   let app=launch(arguments,vietnamese:vietnamese)
+   reveal(app.buttons["practiceChallenges"],in:app)
+   app.buttons["practiceChallenges"].tap();app.buttons["practice-readAloud"].tap()
+   let start=app.buttons["startReadAloud"]
+   XCTAssertTrue(start.waitForExistence(timeout:5))
+   let screenshot=XCTAttachment(screenshot:app.screenshot())
+   screenshot.name="read-aloud-start-\(vietnamese ? "vi" : "en")-\(largeText ? "large" : "default")"
+   screenshot.lifetime = .keepAlways;add(screenshot)
+   XCTAssertTrue(start.isHittable,"Start reading must be available before scrolling")
+   XCTAssertTrue(app.windows.firstMatch.frame.contains(start.frame),"The entire reading button must be on screen")
+   let awake=app.buttons[vietnamese ? "Tôi đã thức dậy" : "I’m awake"]
+   XCTAssertLessThanOrEqual(start.frame.maxY,awake.frame.minY,"The fixed footer must not cover Start reading")
+   app.swipeUp()
+   XCTAssertTrue(start.isHittable,"Reading controls must remain reachable while reviewing feedback")
+   app.swipeDown()
+   XCTAssertTrue(start.isHittable)
+   XCTAssertTrue(app.buttons["stopAlarm"].isHittable)
+   XCTAssertEqual(app.alerts.count,0)
+   app.terminate()
+  }
+ }
+ func testReadAloudShowsLiveWordFeedbackInBothLanguages() {
+  for vietnamese in [false,true] {
+   let app=launch(["--ui-reading-transcript","small stops"],vietnamese:vietnamese)
+   app.buttons["practiceChallenges"].tap();app.buttons["practice-readAloud"].tap()
+   let score=app.staticTexts["readingScore"]
+   XCTAssertTrue(score.waitForExistence(timeout:5))
+   XCTAssertEqual(score.label,vietnamese ? "Điểm khớp từ: 20/100" : "Word match: 20/100")
+   XCTAssertTrue(app.staticTexts["readingIncorrectWords"].label.contains("steps"))
+   let summary=app.staticTexts["readingPrompt"].value as? String ?? ""
+   XCTAssertTrue(summary.contains(vietnamese ? "Đọc khớp: small" : "Correct: small"))
+   XCTAssertTrue(summary.contains(vietnamese ? "Chưa đọc: create, steady, progress" : "Not read yet: create, steady, progress"))
+   XCTAssertEqual(app.alerts.count,0,"Feedback rendering must not request microphone access")
+   app.terminate()
+  }
+ }
+ func testReadAloudFinalFeedbackKeepsMissedAndExtraWordsVisible() {
+  let app=launch(["--ui-reading-transcript","small extra steps","--ui-reading-finished"])
+  app.buttons["practiceChallenges"].tap();app.buttons["practice-readAloud"].tap()
+  XCTAssertTrue(app.staticTexts["readingScore"].waitForExistence(timeout:5))
+  XCTAssertEqual(app.staticTexts["readingScore"].label,"Word match: 20/100")
+  XCTAssertTrue(app.staticTexts["readingIncorrectWords"].label.contains("create, steady, progress"))
+  reveal(app.staticTexts["readingExtraWords"],in:app)
+  XCTAssertEqual(app.staticTexts["readingExtraWords"].label,"Extra words: extra")
+ }
  func testExistingAlarmSoundCanBeEditedWithoutEnablingItInBothLanguages() {
   for vietnamese in [false,true] {
    let app=launch(["--ui-disabled-alarm"],vietnamese:vietnamese)

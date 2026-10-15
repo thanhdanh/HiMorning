@@ -245,3 +245,17 @@
 "Beyond the familiar path, a small discovery may be waiting, so today I will leave a little room for wonder." = "Beyond the familiar path, a small discovery may be waiting, so today I will leave a little room for wonder.";
 "Alarm access is off. Allow alarms for HiMorning in Settings, then try again." = "Alarm access is off. Allow alarms for HiMorning in Settings, then try again.";
 "Open Settings" = "Open Settings";
+"Read the English sentence aloud. See your score and matching words as you read." = "Read the English sentence aloud. See your score and matching words as you read.";
+"Read the English sentence. Match at least 80% of the words to complete." = "Read the English sentence. Match at least 80% of the words to complete.";
+"Word match: %d/100" = "Word match: %d/100";
+"Word match score" = "Word match score";
+"Matched words are green. Underlined words need practice. Gray words have not been read yet." = "Matched words are green. Underlined words need practice. Gray words have not been read yet.";
+"Correct: %@" = "Correct: %@";
+"Needs practice: %@" = "Needs practice: %@";
+"Not read yet: %@" = "Not read yet: %@";
+"Extra words: %@" = "Extra words: %@";
+"Heard: %@" = "Heard: %@";
+"The score compares recognized words with the sentence; it does not measure accent or pronunciation quality." = "The score compares recognized words with the sentence; it does not measure accent or pronunciation quality.";
+"Your word match score is below 80. Review the highlighted words and try again." = "Your word match score is below 80. Review the highlighted words and try again.";
+"Recognition is taking too long. Try again or choose another challenge." = "Recognition is taking too long. Try again or choose another challenge.";
+"Great reading. Have a good morning!" = "Great reading. Have a good morning!";

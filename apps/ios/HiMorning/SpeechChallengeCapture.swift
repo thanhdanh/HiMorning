@@ -38,7 +38,6 @@ private actor SpeechAudioSession {
  private var installation:AssetInstallationRequest?
  private var inputContinuation:AsyncStream<AnalyzerInput>.Continuation?
  private var startupTask:Task<Void,Never>?
- private var analysisTask:Task<Void,Never>?
  private var resultsTask:Task<Void,Never>?
  private var timeoutTask:Task<Void,Never>?
  private var idleTask:Task<Void,Never>?
@@ -74,7 +73,7 @@ private actor SpeechAudioSession {
   guard !stopped else {return}
   stopped=true;generation+=1;active=false
   reading.stop()
-  startupTask?.cancel();timeoutTask?.cancel();idleTask?.cancel();finishTask?.cancel();finalizationTimeoutTask?.cancel();resultsTask?.cancel();analysisTask?.cancel()
+  startupTask?.cancel();timeoutTask?.cancel();idleTask?.cancel();finishTask?.cancel();finalizationTimeoutTask?.cancel();resultsTask?.cancel()
   installation?.progress.cancel();installation=nil
   closeInput()
   for observer in observers {NotificationCenter.default.removeObserver(observer)}
@@ -102,13 +101,16 @@ private actor SpeechAudioSession {
   timeoutTask?.cancel();idleTask?.cancel()
   finalizationTimeoutTask=Task {[weak self] in
    do {try await Task.sleep(for:.seconds(6))} catch {return}
-   self?.completeReading(token:token)
+   self?.end(token:token,message:"Recognition is taking too long. Try again or choose another challenge.")
   }
   finishTask=Task {[weak self] in
    do {
     try await analyzer.finalizeAndFinishThroughEndOfInput()
     await self?.resultsTask?.value
-   } catch {}
+   } catch {
+    self?.end(token:token,message:"Speech recognition stopped. Try again or choose another challenge.")
+    return
+   }
    self?.completeReading(token:token)
   }
  }
@@ -199,14 +201,8 @@ private actor SpeechAudioSession {
   }
   tapInstalled=true
   active=true
-  analysisTask=Task {[weak self] in
-   do {try await analyzer.start(inputSequence:stream)}
-   catch {
-    guard let self,self.isCurrent(token) else {return}
-    if self.finishing {self.completeReading(token:token)}
-    else {self.end(token:token,message:"Speech recognition stopped. Try again or choose another challenge.")}
-   }
-  }
+  try await analyzer.start(inputSequence:stream)
+  guard isCurrent(token) else {return}
   for (name,object) in [(AVAudioSession.interruptionNotification,session as AnyObject),(Notification.Name.AVAudioEngineConfigurationChange,audioEngine as AnyObject)] {
    observers.append(NotificationCenter.default.addObserver(forName:name,object:object,queue:nil) {[weak self] _ in
     Task {@MainActor in
@@ -246,8 +242,7 @@ private actor SpeechAudioSession {
     self?.completeReading(token:token)
    } catch {
     guard let self,self.isCurrent(token) else {return}
-    if self.finishing {self.completeReading(token:token)}
-    else {self.end(token:token,message:"Speech recognition stopped. Try again or choose another challenge.")}
+    self.end(token:token,message:"Speech recognition stopped. Try again or choose another challenge.")
    }
   }
  }
@@ -255,9 +250,9 @@ private actor SpeechAudioSession {
  private func completeReading(token:Int) {
   guard isCurrent(token) else {return}
   let completed=reading.finish()
-  let message=completed ? "Reading recorded. Challenge complete." : reading.progress == 0
+  let message=completed ? "Great reading. Challenge complete." : RecognizedWordMatch.tokens(in:reading.transcript).isEmpty
    ? "No speech was recognized. Try again and speak near the microphone."
-   : "Only part of the reading was recorded. Read the whole sentence and try again."
+   : "Your word match score is below 80. Review the highlighted words and try again."
   end(token:token,message:message,completed:completed)
  }
 

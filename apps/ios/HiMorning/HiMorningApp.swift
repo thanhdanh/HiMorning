@@ -143,7 +143,7 @@ extension ChallengeKind {
   case .pushUps:return appText("Complete a short camera-checked movement challenge.")
   case .readAndChoose:return appText("Read one short sentence and choose its meaning.")
   case .guidedRhythm:return appText("Follow a simple standing or seated rhythm on camera.")
-  case .readAloud:return appText("Read a longer sentence aloud. On-device AI records your reading without grading pronunciation.")
+  case .readAloud:return appText("Read the English sentence aloud. See your score and matching words as you read.")
  }}
  var icon:String {switch self {case .none:return "hand.tap";case .pushUps:return "figure.strengthtraining.traditional";case .readAndChoose:return "text.book.closed";case .guidedRhythm:return "figure.cooldown";case .readAloud:return "waveform"}}
 }

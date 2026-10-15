@@ -7,6 +7,11 @@ and what remains to be tried on a physical iPhone.
 passed with one AlarmKit skip. Physical-device acceptance is pending.
 **Audience:** iOS maintainers and reviewers.
 
+The Read Aloud sections below record the initial speech-length implementation.
+The later request for live word scoring supersedes that behavior; see
+[Read Aloud word feedback](read-aloud-word-feedback.tdd.md) for the current
+implementation, device installation and remaining acceptance check.
+
 ## At a glance
 
 Development took place in `HiMorning-pr5-integration` alongside unrelated
