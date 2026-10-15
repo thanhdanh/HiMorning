@@ -10,179 +10,194 @@ struct SpeechUpdate:Sendable {
  let message:String
 }
 
-/// Streams microphone buffers directly to Apple's on-device recognizer. No audio is saved.
-final class SpeechChallengeCapture:NSObject,@unchecked Sendable {
+/// Streams microphone buffers to Apple's on-device analyzer. No audio is saved.
+@MainActor final class SpeechChallengeCapture {
  private let target:String
  private let onUpdate:@Sendable(SpeechUpdate)->Void
- private let queue=DispatchQueue(label:"com.himorning.speech",qos:.userInitiated)
- private let lock=NSLock()
  private let audioEngine=AVAudioEngine()
- private var recognitionTask:SFSpeechRecognitionTask?
- private var recognitionRequest:SFSpeechAudioBufferRecognitionRequest?
+ private var analyzer:SpeechAnalyzer?
+ private var installation:AssetInstallationRequest?
+ private var inputContinuation:AsyncStream<AnalyzerInput>.Continuation?
+ private var startupTask:Task<Void,Never>?
+ private var analysisTask:Task<Void,Never>?
+ private var resultsTask:Task<Void,Never>?
+ private var timeoutTask:Task<Void,Never>?
+ private var teardownTask:Task<Void,Never>?
+ private var observers:[NSObjectProtocol]=[]
+ private var transcript=SpeechTranscript()
  private var tapInstalled=false
+ private var ownsAudioSession=false
  private var active=false
- private var generation=0
+ private var started=false
  private var stopped=false
- private var timeoutWorkItem:DispatchWorkItem?
- private var interruptionObserver:NSObjectProtocol?
+ private var generation=0
 
  init(target:String,onUpdate:@escaping @Sendable(SpeechUpdate)->Void) {
   self.target=target
   self.onUpdate=onUpdate
-  super.init()
  }
 
  func start() async {
-  guard let token=beginStartup() else {return}
-  let speechStatus=await requestSpeechPermission()
-  guard isCurrent(token) else {return}
-  let microphoneGranted=await requestMicrophonePermission()
-  guard isCurrent(token) else {return}
-  guard speechStatus == .authorized,microphoneGranted else {
-   publish(transcript:"",score:0,completed:false,ended:true,message:appText("Speech and microphone access are needed for this challenge."))
-   return
-  }
-  guard let recognizer=SFSpeechRecognizer(locale:Locale(identifier:"en-US")),recognizer.isAvailable,recognizer.supportsOnDeviceRecognition else {
-   publish(transcript:"",score:0,completed:false,ended:true,message:appText("On-device speech recognition is not available. Choose another challenge."))
-   return
-  }
-  queue.async { [weak self] in self?.startAudio(token:token) }
+  guard !started,!stopped,!Task.isCancelled else {return}
+  started=true
+  let token=generation
+  let startup=Task {await prepareAndStart(token:token)}
+  startupTask=startup
+  await withTaskCancellationHandler(operation:{await startup.value},onCancel:{
+   Task {@MainActor [weak self] in self?.stop()}
+  })
  }
 
  func stop() {
-  stopPermanently()
-  queue.async { [self] in stopAudio() }
- }
-
- private func startAudio(token:Int) {
-  guard isCurrent(token) else {return}
-  stopAudio()
-  guard let recognizer=SFSpeechRecognizer(locale:Locale(identifier:"en-US")),recognizer.isAvailable,recognizer.supportsOnDeviceRecognition else {
-   publish(transcript:"",score:0,completed:false,ended:true,message:appText("On-device speech recognition is not available. Choose another challenge."))
-   return
-  }
-  do {
-   let audioSession=AVAudioSession.sharedInstance()
-   try audioSession.setCategory(.record,mode:.measurement,options:[.duckOthers])
-   try audioSession.setActive(true,options:.notifyOthersOnDeactivation)
-   let input=audioEngine.inputNode
-   let format=input.outputFormat(forBus:0)
-   guard format.sampleRate>0,format.channelCount>0 else {throw SpeechCaptureError.invalidAudioFormat}
-   let request=SFSpeechAudioBufferRecognitionRequest()
-   request.requiresOnDeviceRecognition=true
-   request.shouldReportPartialResults=true
-   request.taskHint = .confirmation
-   input.installTap(onBus:0,bufferSize:1_024,format:format) {buffer,_ in request.append(buffer)}
-   tapInstalled=true
-   recognitionRequest=request
-   active=true
-   recognitionTask=recognizer.recognitionTask(with:request) { [weak self] result,error in
-    self?.queue.async {self?.handle(result:result,error:error,token:token)}
-   }
-   interruptionObserver=NotificationCenter.default.addObserver(forName:AVAudioSession.interruptionNotification,object:audioSession,queue:nil) { [weak self] _ in
-    self?.queue.async {self?.endForInterruption(token:token)}
-   }
-   let timeout=DispatchWorkItem { [weak self] in self?.endForTimeout(token:token) }
-   timeoutWorkItem=timeout
-   queue.asyncAfter(deadline:.now()+20,execute:timeout)
-   audioEngine.prepare()
-   try audioEngine.start()
-   publish(transcript:"",score:0,completed:false,ended:false,message:appText("Listening… Read the sentence aloud."))
-  } catch {
-   stopAudio()
-   publish(transcript:"",score:0,completed:false,ended:true,message:appText("The microphone could not start. Choose another challenge."))
-  }
- }
-
- private func handle(result:SFSpeechRecognitionResult?,error:Error?,token:Int) {
-  guard active,isCurrent(token) else {return}
-  if let result {
-   let transcript=result.bestTranscription.formattedString
-   let score=RecognizedWordMatch.score(target:target,recognized:transcript)
-   let completed=score>=RecognizedWordMatch.passingScore
-   publish(
-    transcript:transcript,
-    score:score,
-    completed:completed,
-    ended:completed,
-    message:appText(completed ? "Great reading. Challenge complete." : "Keep going. Match at least 80% of the words.")
-   )
-   if completed {
-    invalidateStartup()
-    stopAudio()
-    return
-   }
-   if result.isFinal {
-    stopAudio()
-    publish(transcript:transcript,score:score,completed:false,ended:true,message:appText("Speech recognition stopped. Try again or choose another challenge."))
-   }
-  } else if error != nil {
-   stopAudio()
-   publish(transcript:"",score:0,completed:false,ended:true,message:appText("Speech recognition stopped. Try again or choose another challenge."))
-  }
- }
-
- private func endForTimeout(token:Int) {
-  guard active,isCurrent(token) else {return}
-  stopAudio()
-  publish(transcript:"",score:0,completed:false,ended:true,message:appText("Listening timed out. Try again or choose another challenge."))
- }
-
- private func endForInterruption(token:Int) {
-  guard active,isCurrent(token) else {return}
-  stopAudio()
-  publish(transcript:"",score:0,completed:false,ended:true,message:appText("Speech recognition stopped. Try again or choose another challenge."))
- }
-
- private func stopAudio() {
-  active=false
+  guard !stopped else {return}
+  stopped=true;generation+=1;active=false
+  startupTask?.cancel();timeoutTask?.cancel();resultsTask?.cancel();analysisTask?.cancel()
+  installation?.progress.cancel();installation=nil
   if audioEngine.isRunning {audioEngine.stop()}
   if tapInstalled {audioEngine.inputNode.removeTap(onBus:0);tapInstalled=false}
-  recognitionRequest?.endAudio()
-  recognitionTask?.cancel()
-  recognitionRequest=nil
-  recognitionTask=nil
-  timeoutWorkItem?.cancel()
-  timeoutWorkItem=nil
-  if let interruptionObserver {NotificationCenter.default.removeObserver(interruptionObserver);self.interruptionObserver=nil}
-  try? AVAudioSession.sharedInstance().setActive(false,options:.notifyOthersOnDeactivation)
- }
-
- private func publish(transcript:String,score:Double,completed:Bool,ended:Bool,message:String) {
-  onUpdate(.init(transcript:transcript,score:score,completed:completed,ended:ended,message:message))
- }
-
- private func beginStartup() -> Int? {
-  lock.lock();defer {lock.unlock()}
-  guard !stopped else {return nil}
-  generation+=1
-  return generation
- }
-
- private func stopPermanently() {
-  lock.lock();stopped=true;generation+=1;lock.unlock()
- }
-
- private func invalidateStartup() {
-  lock.lock();generation+=1;lock.unlock()
- }
-
- private func isCurrent(_ token:Int) -> Bool {
-  lock.lock();defer {lock.unlock()}
-  return token == generation
- }
-
- private func requestSpeechPermission() async -> SFSpeechRecognizerAuthorizationStatus {
-  await withCheckedContinuation {continuation in
-   SFSpeechRecognizer.requestAuthorization {continuation.resume(returning:$0)}
+  inputContinuation?.finish();inputContinuation=nil
+  for observer in observers {NotificationCenter.default.removeObserver(observer)}
+  observers=[]
+  if ownsAudioSession {
+   try? AVAudioSession.sharedInstance().setActive(false,options:.notifyOthersOnDeactivation)
+   ownsAudioSession=false
+  }
+  if let analyzer {
+   self.analyzer=nil
+   teardownTask=Task {await analyzer.cancelAndFinishNow()}
   }
  }
 
- private func requestMicrophonePermission() async -> Bool {
-  await withCheckedContinuation {continuation in
-   AVAudioApplication.requestRecordPermission {continuation.resume(returning:$0)}
+ func stopAndWait() async {
+  stop()
+  await teardownTask?.value
+ }
+
+ private func prepareAndStart(token:Int) async {
+  publish(token:token,message:"Preparing on-device speech…")
+  guard isCurrent(token) else {return}
+  var openingMicrophone=false
+  do {
+   let locale=Locale(identifier:"en-US")
+   let module:any SpeechModule
+   let observeResults:()->Void
+   if SpeechTranscriber.isAvailable,let supported=await SpeechTranscriber.supportedLocale(equivalentTo:locale) {
+    guard isCurrent(token) else {return}
+    let transcriber=SpeechTranscriber(locale:supported,preset:.progressiveTranscription)
+    module=transcriber
+    observeResults={self.observe(transcriber.results,text:{String($0.text.characters)},token:token)}
+   } else if let supported=await DictationTranscriber.supportedLocale(equivalentTo:locale) {
+    guard isCurrent(token) else {return}
+    let transcriber=DictationTranscriber(locale:supported,preset:.progressiveShortDictation)
+    module=transcriber
+    observeResults={self.observe(transcriber.results,text:{String($0.text.characters)},token:token)}
+   } else {
+    end(token:token,message:"On-device speech recognition is not available. Choose another challenge.")
+    return
+   }
+   guard isCurrent(token) else {return}
+   if let request=try await AssetInventory.assetInstallationRequest(supporting:[module]) {
+    guard isCurrent(token) else {return}
+    installation=request
+    publish(token:token,message:"Downloading speech support… You can stop at any time.")
+    guard isCurrent(token) else {return}
+    try await request.downloadAndInstall()
+    guard isCurrent(token) else {return}
+    installation=nil
+   }
+   guard isCurrent(token) else {return}
+   guard let format=await SpeechAnalyzer.bestAvailableAudioFormat(compatibleWith:[module]) else {
+    end(token:token,message:"On-device speech recognition is not available. Choose another challenge.")
+    return
+   }
+   guard isCurrent(token) else {return}
+   let analyzer=SpeechAnalyzer(modules:[module])
+   self.analyzer=analyzer
+   try await analyzer.prepareToAnalyze(in:format)
+   guard isCurrent(token) else {return}
+   let granted=await AVAudioApplication.requestRecordPermission()
+   guard isCurrent(token) else {return}
+   guard granted else {
+    end(token:token,message:"Microphone access is needed for this challenge.")
+    return
+   }
+   openingMicrophone=true
+   try startAudio(format:format,analyzer:analyzer,token:token)
+   guard isCurrent(token) else {return}
+   observeResults()
+  } catch {
+   guard isCurrent(token) else {return}
+   end(token:token,message:openingMicrophone
+    ? "The microphone could not start. Choose another challenge."
+    : "Speech support could not be prepared. Check your connection and try again.")
   }
  }
+
+ private func startAudio(format:AVAudioFormat,analyzer:SpeechAnalyzer,token:Int) throws {
+  let session=AVAudioSession.sharedInstance()
+  try session.setCategory(.playAndRecord,mode:.measurement,options:[.mixWithOthers,.defaultToSpeaker])
+  try session.setActive(true)
+  ownsAudioSession=true
+  let input=audioEngine.inputNode
+  let converter=try SpeechBufferConverter(inputFormat:input.outputFormat(forBus:0),outputFormat:format)
+  let (stream,continuation)=AsyncStream<AnalyzerInput>.makeStream()
+  inputContinuation=continuation
+  input.installTap(onBus:0,bufferSize:1_024,format:input.outputFormat(forBus:0)) {[weak self] buffer,_ in
+   do {
+    if let output=try converter.convert(buffer) {continuation.yield(AnalyzerInput(buffer:output))}
+   } catch {
+    Task {@MainActor in self?.end(token:token,message:"Speech recognition stopped. Try again or choose another challenge.")}
+   }
+  }
+  tapInstalled=true
+  active=true
+  analysisTask=Task {[weak self] in
+   do {try await analyzer.start(inputSequence:stream)}
+   catch {self?.end(token:token,message:"Speech recognition stopped. Try again or choose another challenge.")}
+  }
+  for (name,object) in [(AVAudioSession.interruptionNotification,session as AnyObject),(Notification.Name.AVAudioEngineConfigurationChange,audioEngine as AnyObject)] {
+   observers.append(NotificationCenter.default.addObserver(forName:name,object:object,queue:nil) {[weak self] _ in
+    Task {@MainActor in self?.end(token:token,message:"Speech recognition stopped. Try again or choose another challenge.")}
+   })
+  }
+  audioEngine.prepare()
+  try audioEngine.start()
+  publish(token:token,message:"Listening… Read the sentence aloud.")
+  guard isCurrent(token) else {return}
+  timeoutTask=Task {[weak self] in
+   do {try await Task.sleep(for:.seconds(20))} catch {return}
+   self?.end(token:token,message:"Listening timed out. Try again or choose another challenge.")
+  }
+ }
+
+ private func observe<Results:AsyncSequence & Sendable>(_ results:Results,text:@escaping(Results.Element)->String,token:Int) where Results.Element:SpeechModuleResult {
+  resultsTask=Task {[weak self] in
+   do {
+    for try await result in results {
+     guard let self,self.active,self.isCurrent(token) else {return}
+     self.transcript.update(text:text(result),range:result.range,isFinal:result.isFinal)
+     let score=RecognizedWordMatch.score(target:self.target,recognized:self.transcript.text)
+     if score>=RecognizedWordMatch.passingScore {
+      self.end(token:token,message:"Great reading. Challenge complete.",completed:true)
+      return
+     }
+     self.publish(token:token,message:"Keep going. Match at least 80% of the words.")
+    }
+    self?.end(token:token,message:"Speech recognition stopped. Try again or choose another challenge.")
+   } catch {self?.end(token:token,message:"Speech recognition stopped. Try again or choose another challenge.")}
+  }
+ }
+
+ private func end(token:Int,message:String,completed:Bool=false) {
+  guard isCurrent(token) else {return}
+  publish(token:token,message:message,completed:completed,ended:true)
+  stop()
+ }
+
+ private func publish(token:Int,message:String,completed:Bool=false,ended:Bool=false) {
+  guard isCurrent(token) else {return}
+  onUpdate(.init(transcript:transcript.text,score:RecognizedWordMatch.score(target:target,recognized:transcript.text),completed:completed,ended:ended,message:appText(message)))
+ }
+
+ private func isCurrent(_ token:Int) -> Bool {!stopped && generation == token && !Task.isCancelled}
 }
-
-private enum SpeechCaptureError:Error {case invalidAudioFormat}

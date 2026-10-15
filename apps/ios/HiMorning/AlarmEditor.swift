@@ -141,39 +141,52 @@ struct AlarmEditor:View {
   }.buttonStyle(.plain).accessibilityIdentifier("mode-"+value.rawValue)
    .accessibilityAddTraits(mode == value ? .isSelected : [])
  }
- private func playPreview() {
-  guard let url=Bundle.main.url(forResource:sound.rawValue,withExtension:"wav") else {soundPreview.stop();return}
+ private func playPreview(_ value:AlarmSound) {
+  preview.refresh()
+  guard preview.access.allows(sound:value) else {soundPreview.stop();pro=true;return}
+  guard value != .system,let url=Bundle.main.url(forResource:value.rawValue,withExtension:"wav") else {soundPreview.stop();return}
   soundPreview.play(url:url,volume:volume)
  }
 }
 private struct SoundSelection:View {
+ @Environment(\.scenePhase) private var scenePhase
  @Binding var sound:AlarmSound
  @Binding var volume:Double
  let access:MorningAccess
  let unlock:()->Void
- let preview:()->Void
+ let preview:(AlarmSound)->Void
  let stopPreview:()->Void
  var body:some View {
   ScrollView {
    VStack(alignment:.leading,spacing:24) {
     Text(appText("Choose a sound for your morning.")).font(.title2.weight(.semibold))
-    VStack(spacing:0) {
-     ForEach(AlarmSound.allCases,id:\.self) {value in
-      Button {stopPreview();if access.allows(sound:value) {sound=value} else {unlock()}} label: {
-       HStack(spacing:14) {
-        Image(systemName:value == .system ? "alarm" : value == .sunrise ? "sunrise" : "music.note")
-         .frame(width:44,height:44).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:12))
-        Text(value.title).font(.body.weight(.medium))
-        if !access.allows(sound:value) {Image(systemName:"lock.fill").font(.caption)}
-        Spacer()
-        Image(systemName:sound == value ? "checkmark.circle.fill" : "circle").foregroundStyle(MorningTheme.accent)
-       }.padding(.vertical,14).contentShape(Rectangle())
-      }.buttonStyle(.plain).accessibilityIdentifier("sound-"+value.rawValue).accessibilityAddTraits(sound == value ? .isSelected : [])
-      Divider().overlay(MorningTheme.line)
+    ForEach(AlarmSound.groups,id:\.title) {group in
+     VStack(alignment:.leading,spacing:0) {
+      Text(group.title).font(.subheadline.weight(.semibold)).foregroundStyle(MorningTheme.muted).padding(.bottom,4)
+      ForEach(group.sounds,id:\.self) {value in
+       HStack(spacing:8) {
+        Button {stopPreview();if access.allows(sound:value) {sound=value} else {unlock()}} label: {
+         HStack(spacing:14) {
+          Image(systemName:value == .system ? "alarm" : value == .sunrise ? "sunrise" : "music.note")
+           .frame(width:44,height:44).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:12))
+          Text(value.title).font(.body.weight(.medium))
+          if !access.allows(sound:value) {Image(systemName:"lock.fill").font(.caption)}
+          Spacer()
+          Image(systemName:sound == value ? "checkmark.circle.fill" : "circle").foregroundStyle(MorningTheme.accent)
+         }.padding(.vertical,14).contentShape(Rectangle())
+        }.buttonStyle(.plain).accessibilityIdentifier("sound-"+value.rawValue).accessibilityAddTraits(sound == value ? .isSelected : [])
+        if value != .system {
+         Button {stopPreview();if access.allows(sound:value) {preview(value)} else {unlock()}} label: {Image(systemName:"play.fill").frame(width:44,height:44)}
+          .buttonStyle(.plain).foregroundStyle(MorningTheme.accent)
+          .accessibilityLabel(String(format:appText("Preview %@"),locale:appLocale(),value.title))
+          .accessibilityIdentifier("preview-"+value.rawValue)
+        }
+       }
+       Divider().overlay(MorningTheme.line)
+      }
      }
     }
     if sound != .system {
-     Button(action:preview) {Label(appText("Preview sound"),systemImage:"play.fill")}.buttonStyle(MorningButtonStyle(primary:false))
      VStack(alignment:.leading,spacing:12) {
       Text(appText("Preview volume")).font(.subheadline.weight(.semibold))
       Slider(value:$volume,in:0...0.7).accessibilityLabel(appText("Preview volume")).accessibilityIdentifier("previewVolume")
@@ -184,5 +197,6 @@ private struct SoundSelection:View {
   }.background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink)
    .navigationTitle(appText("Sound")).navigationBarTitleDisplayMode(.inline).tint(MorningTheme.accent)
    .onDisappear(perform:stopPreview)
+   .onChange(of:scenePhase) {_,phase in if phase != .active {stopPreview()}}
  }
 }

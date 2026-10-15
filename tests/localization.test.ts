@@ -29,15 +29,17 @@ describe('English and Vietnamese app copy', () => {
    for (const match of source.matchAll(/appText\(("(?:[^"\\]|\\.)*")/g)) expect(en, `${file}: ${match[1]}`).toHaveProperty(JSON.parse(match[1]));
   }
  });
- it('localizes camera, alarm, microphone and speech permission descriptions in both languages', () => {
+ it('localizes the permissions used by the app and omits the legacy speech permission', () => {
   const project = readFileSync('apps/ios/project.yml', 'utf8');
   for (const locale of ['en','vi']) {
    const info = strings(locale,'InfoPlist');
-   for (const key of ['NSCameraUsageDescription','NSAlarmKitUsageDescription','NSMicrophoneUsageDescription','NSSpeechRecognitionUsageDescription']) {
+   for (const key of ['NSCameraUsageDescription','NSAlarmKitUsageDescription','NSMicrophoneUsageDescription']) {
     expect(info[key].length).toBeGreaterThan(20);
     expect(project).toContain(`${key}:`);
    }
+   expect(info).not.toHaveProperty('NSSpeechRecognitionUsageDescription');
   }
+  expect(project).not.toContain('NSSpeechRecognitionUsageDescription:');
  });
  it('localizes challenge meanings while keeping English learning sentences in English', () => {
   const en = strings('en'), vi = strings('vi');

@@ -94,7 +94,29 @@ extension WakeMode {
  var title:String {switch self {case .gentle:return appText("Gentle");case .balanced:return appText("Balanced");case .focused:return appText("Focused")}}
 }
 extension AlarmSound {
- var title:String {switch self {case .system:return appText("System sound");case .sunrise:return appText("Sunrise");case .softChime:return appText("Soft chime")}}
+ var title:String {switch self {
+  case .system:return appText("System sound")
+  case .sunrise:return appText("Sunrise")
+  case .softChime:return appText("Soft chime")
+  case .pizzicatoDawn:return appText("Pizzicato dawn")
+  case .pizzicatoSteps:return appText("Pizzicato steps")
+  case .pizzicatoRise:return appText("Pizzicato rise")
+  case .pizzicatoBloom:return appText("Pizzicato bloom")
+  case .steelShimmer:return appText("Steel shimmer")
+  case .steelBreeze:return appText("Steel breeze")
+  case .steelMorning:return appText("Steel morning")
+  case .steelSparkle:return appText("Steel sparkle")
+  case .saxHello:return appText("Sax hello")
+  case .saxStroll:return appText("Sax stroll")
+  case .saxGlow:return appText("Sax glow")
+  case .saxDaybreak:return appText("Sax daybreak")
+ }}
+ static var groups:[(title:String,sounds:[AlarmSound])] {[
+  (appText("Classic"),[.system,.sunrise,.softChime]),
+  (appText("Plucked strings"),[.pizzicatoDawn,.pizzicatoSteps,.pizzicatoRise,.pizzicatoBloom]),
+  (appText("Steel pan"),[.steelShimmer,.steelBreeze,.steelMorning,.steelSparkle]),
+  (appText("Saxophone"),[.saxHello,.saxStroll,.saxGlow,.saxDaybreak])
+ ]}
 }
 extension ChallengeKind {
  var editorIdentifier:String {switch self {case .none:return "none";case .pushUps:return "pushUps";case .readAndChoose:return "readAndChoose";case .guidedRhythm:return "guidedRhythm";case .readAloud:return "readAloud"}}

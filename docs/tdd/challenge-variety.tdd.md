@@ -206,3 +206,27 @@ covered by passing results; this is not a claim that the StoreKit suite passed.
 The final result reports 9 passed, 0 failed, 0 skipped and no runtime warnings:
 `/private/tmp/himorning-pr5-build/Logs/Test/Test-HiMorning-2026.10.15_10-10-05-+0700.xcresult`.
 Xcode may prune older bundles from its test log directory automatically.
+
+### Concurrent sounds/speech update
+
+The first safe push was rejected because `d06418c` advanced the same remote
+branch while validation ran. That commit was merged, not overwritten or rebased.
+It adds the grouped 15-sound catalog, SpeechAnalyzer pipeline and spoken examples.
+The follow-up resolution retains the access-aware challenge snapshot and gates
+both selection and per-row previews of premium sounds. Duplicate UI methods from
+the automatic merge were consolidated, keeping the newer preview identifiers.
+
+Core XCTest now passes 27 cases; the portable harness passes 29 journeys with
+86.61% region and 95.54% line coverage. Free sound normalization is asserted for
+every premium catalog entry. `pnpm check` again passes all 53 JavaScript tests,
+typechecking and backend build. Code/security re-review found no actionable
+integration regressions. The incoming speech/audio implementation is preserved;
+physical-device validation and the documented StoreKit runtime limitation remain.
+
+The follow-up Xcode run on `148D3923-73C0-4D3E-BB87-FBD7BA94EA2B` exited 0:
+29 passed, 0 failed, 0 skipped, and no runtime warnings.
+It includes all native tests except the known-incompatible SubscriptionTests,
+plus eight affected UI cases: EN/VI editor defaults, the expanded sound catalog,
+preview controls, spoken-example privacy/recovery, expired-preview sound gates,
+free challenge bounds and offline reading. The result bundle is
+`/private/tmp/himorning-pr5-build/Logs/Test/Test-HiMorning-2026.10.15_10-15-56-+0700.xcresult`.

@@ -10,7 +10,7 @@ final class ChallengeCaptureTests:XCTestCase {
   XCTAssertEqual(GuidedRhythmCapture.jointAngle(hip,knee,ankle,imageSize:CGSize(width:640,height:320)),104.036,accuracy:0.001)
  }
 
- func testStoppedCapturesCannotRestartOrRequestPermissions() async {
+ @MainActor func testStoppedCapturesCannotRestartOrRequestPermissions() async {
   let speech=SpeechChallengeCapture(target:"Small steps create steady progress.") {_ in XCTFail("Stopped speech capture must not publish updates")}
   let rhythm=GuidedRhythmCapture(variant:.seated) {_ in XCTFail("Stopped rhythm capture must not publish updates")}
   speech.stop();rhythm.stop()

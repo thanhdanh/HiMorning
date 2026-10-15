@@ -1,5 +1,10 @@
 import Foundation
-public enum AlarmSound: String, Codable, CaseIterable, Sendable {case system,sunrise,softChime}
+public enum AlarmSound: String, Codable, CaseIterable, Sendable {
+ case system,sunrise,softChime
+ case pizzicatoDawn,pizzicatoSteps,pizzicatoRise,pizzicatoBloom
+ case steelShimmer,steelBreeze,steelMorning,steelSparkle
+ case saxHello,saxStroll,saxGlow,saxDaybreak
+}
 public enum ScheduleState: String, Codable, Sendable {case pending,confirmed,off,needsReview}
 public struct SavedAlarm: Codable, Equatable, Identifiable, Sendable {
  public let id:UUID

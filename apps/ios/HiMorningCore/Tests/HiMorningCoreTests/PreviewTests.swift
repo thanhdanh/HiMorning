@@ -56,6 +56,10 @@ final class PreviewTests:XCTestCase {
   XCTAssertFalse(MorningAccess.free.allows(sound:.sunrise))
   XCTAssertFalse(MorningAccess.free.allows(sound:.softChime))
   XCTAssertEqual(MorningAccess.free.effectiveSound(.sunrise),.system)
+  for sound in AlarmSound.allCases {
+   XCTAssertEqual(MorningAccess.free.allows(sound:sound),sound == .system)
+   XCTAssertEqual(MorningAccess.free.effectiveSound(sound),.system)
+  }
   let saved=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),mode:.focused,sound:.sunrise)
   _=MorningAccess.free.effectiveMode(saved.mode)
   XCTAssertEqual(saved.mode,.focused)
