@@ -57,7 +57,8 @@ installed voices.
 Keep sound identifiers stable so existing alarms retain their selections. Only
 the two original WAV files changed; the other catalog sounds are unchanged.
 [The asset generator](../../scripts/generate-morning-assets.swift) reproduces the
-opaque icon and PCM audio. Audio tests establish format, duration and headroom,
+PCM audio and validates the opaque icon. The selected AI-generated rising-sun
+logo now replaces the earlier drawn icon. Audio tests establish format, duration and headroom,
 not whether the melody is pleasant.
 
 ## Try it
@@ -90,6 +91,15 @@ fails the test. Use a device with alarm access allowed to exercise its remaining
 same-ID rescheduling assertions.
 
 ## What we checked
+
+### Selected logo update
+
+The selected rising-sun PNG is now the opaque 1024×1024 `AppIcon.png`.
+The asset generator passed its assertions without changing the icon or either
+original WAV file (SHA-256 compared before and after). A Debug build and
+`HiMorningTests/AppIconResourceTests` passed on the iOS 26.2 QA simulator.
+The compiled 120×120 iPhone icon was visually checked. This update has not been
+installed or checked on a physical iPhone.
 
 ### Regression and review evidence
 
