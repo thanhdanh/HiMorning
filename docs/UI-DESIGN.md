@@ -9,9 +9,9 @@ Vietnamese web concept includes planned screens and simulated behavior.
 
 ## Native screens
 
-The gallery contains **20 unedited XCUITest images: 10 screens/states in two
-languages**. It covers setup and the rehearsal/recovery flow. These are native
-captures, not a count of 20 separate product screens.
+The original gallery contains **20 unedited XCUITest images: 10 screens/states in
+two languages**. Four newer subscription captures below show the preview and Free
+access. These are native captures, not a count of separate product screens.
 
 ### Before bed
 
@@ -38,6 +38,21 @@ the run, commit and simulator. The trial uses 06:30 as a sample time without
 scheduling an alarm. Unavailable AI and self-confirmation are distinct outcomes;
 these images do not show a paid AI verification or a live camera feed.
 
+### Preview and Free access
+
+These four captures come from passing bilingual UI tests for the revised
+subscription model. The Home fixture forces an unstarted preview while retaining
+an existing disabled alarm. The expired fixture hides history. They demonstrate UI states,
+not measured user behavior or a production purchase.
+
+| Screen / state | English | Vietnamese |
+|---|---|---|
+| Home before preview starts | <img src="images/ui/preview-home-en.png" width="230" alt="English home before the preview starts"> | <img src="images/ui/preview-home-vi.png" width="230" alt="Vietnamese home before the preview starts"> |
+| Progress after preview expiry | <img src="images/ui/expired-progress-en.png" width="230" alt="English Free progress after preview expiry"> | <img src="images/ui/expired-progress-vi.png" width="230" alt="Vietnamese Free progress after preview expiry"> |
+
+See [subscription behavior and validation](SUBSCRIPTIONS.md) for access rules,
+saved-alarm fallbacks and the remaining sandbox/device checks.
+
 ## Following the original design
 
 The original [web study](../design/index.html) remains the visual reference. The
@@ -55,7 +70,7 @@ incomplete implementation of the visual direction, not a new approved design.
 | Friendly sun and a clear way out | Sun illustration, consent, self-confirm and persistent stop/end-trial actions |
 
 The native time picker keeps the platform wheel. System confirmation dialogs keep
-iOS styling. Alarm labels, editable targets, QR, native snooze, history and the
+iOS styling. Alarm labels, editable targets, QR, native snooze and the
 prototype's six-sound collection are still planned; their simulated controls have
 not been added to the native navigation.
 
@@ -104,11 +119,11 @@ yellow keep the visual direction usable. The sun follows the original concept.
 | Sound | Hear a sound before choosing it | System sound + two chime sketches; preview volume |
 | Challenge | Understand consent and progress | Explicit consent, camera, provisional count, checking state |
 | Finish | Know what happened | AI checked, self-confirmed or stopped; clear return action |
-| History | See progress without shame | Planned; web study has sample data only |
+| History | See progress without shame | Thirty-day local history and custom weekly goal during preview/Pro; clearing remains free |
 
-The web study also includes QR and snooze simulations, an editor and weekly progress.
-They must not be presented as native features. Review controls outside the phone
-simulate events; they do not access a real camera or cloud model.
+The web study also includes simulated QR, snooze, editing and weekly progress.
+Its sample data is separate from the native local journal. Review controls outside
+the phone simulate events; they do not access a real camera or cloud model.
 
 ## Modes and choices
 

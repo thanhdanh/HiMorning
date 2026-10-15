@@ -30,13 +30,37 @@ hand-written, or claim every line received human review unless that review happe
 | Measure | Extract actual token records, reconcile totals and label limits | [Metrics](metrics/README.md), tested collector library |
 | Refine | Add language resources and rewrite reader-facing guides | [Language guide](LOCALIZATION.md), [doc template](DOC-TEMPLATE.md) |
 
-## Monthly Pro: use the platform before adding services
+## Subscription design: test the product assumption first
 
-The owner set a $2–3 monthly budget; the pilot targets US $2.99. AI-assisted work
-used failing Swift history journeys and a missing-StoreKit-adapter Xcode RED, then
-implemented verified local access with Apple's native subscription view. Paid
-cloud AI and rewarded referrals remain separate work. The [monthly Pro evidence](tdd/monthly-pro.tdd.md)
-records checkpoints, coverage and validation gaps without inventing token savings.
+The initial monthly-only implementation used failing Swift history journeys and
+a missing-StoreKit-adapter Xcode RED, then implemented verified local access with
+Apple's native subscription view. Its [TDD record](tdd/monthly-pro.tdd.md) preserves
+that historical scope and its validation gaps.
+
+The owner then challenged a product assumption: why would a new user actively
+subscribe before seeing that the app helps? The approved revision gives thirty
+elapsed days of full access after the first successful alarm save, with no card,
+signup or automatic renewal. Optional Pro targets US $2/month or $20/year.
+Keychain holds the preview window; verified StoreKit transactions hold paid
+access. Free alarm/recovery behavior survives expiry. This is a documented human
+decision, not evidence that the model improves conversion.
+
+ECC `orch-change-feature` guided scope exploration and a delegated plan, followed
+by owner approval before implementation. The revised work also delegates bounded
+core, native and documentation responsibilities while preserving existing edits.
+Relevant evidence includes changed tests, RED/GREEN logs, review findings and the
+approval boundary. Do not count delegation itself as measured token savings.
+Paid cloud AI and rewarded referrals remain separate work. See the
+[subscription guide](SUBSCRIPTIONS.md) for the approved behavior and limits.
+The [new TDD record](tdd/no-card-preview.tdd.md) separates passing core, signed
+native and bilingual UI suites from earlier failed attempts. A real Keychain
+test caught an unsigned-run entitlement failure (`-34018`), leading to an explicit
+app-specific access group and simulator signing. StoreKit expiry testing also
+exposed contradictory test-transaction and signed-entitlement dates. The tests
+now check verified signed expiry against an injected clock that defaults to
+`Date` in production; simulator event propagation remains a manual check.
+These are investigation results, not proof of a vendor defect. Release checks
+confirm UI-test fixture flags are absent from the compiled executable.
 
 ## A concrete example: cost bugs that tests caught
 
@@ -127,7 +151,8 @@ packages capabilities; installation alone is not evidence that they were used.
 | Used capability | Role in this work | Boundary |
 |---|---|---|
 | `codebase-memory` skill + MCP | Inspect index, architecture and path coverage; refresh stale data | Graph results need freshness checks and source fallback |
-| ECC 2.2.3 planning/ADR/frontend skills | Guide planning, architecture and the design study; skill paths appear in the trace | No subagents or parallel agent team were used |
+| ECC 2.2.3 planning/ADR/frontend skills | Guide planning, architecture and the design study; skill paths appear in the trace | Early work used no subagents; the later subscription revision uses delegated tasks |
+| ECC `orch-change-feature` | Scope an existing behavior change, delegate bounded work and require plan/commit gates | Owner approved the revised plan; approval is distinct from completed validation |
 | ECC `tdd-workflow` | Require a valid RED, GREEN, checkpoints, coverage and evidence | Initial native adapters were an integration spike, not complete local native TDD |
 | ECC `product-lens` | Frame product hypotheses, rank small experiments and define outcomes | No hands-on competitor test or user research; scores are provisional judgment |
 | `openai-docs` | Consult official API material at the point of implementation | Documentation does not measure model accuracy |
@@ -219,6 +244,13 @@ success by itself.
 Split future planning/coding/testing/review turns and label them in the phase map.
 Historical mixed turns stay combined. Observed model labels do not prove an optimal
 routing strategy. A high cache ratio is not the same as dollars or minutes saved.
+
+For the subscription revision, measure plan, implementation, test and review
+usage only where real request records can be attributed. Preserve mixed turns
+and subagent records separately, reconcile totals, and mark unavailable exact
+tokens or dollar cost as unavailable. The current docs add no invented token
+totals. Product metrics in the [business model](BUSINESS-MODEL.md) are a proposed
+measurement plan, not collected analytics or proof of wakefulness.
 
 ## A short interview story
 
