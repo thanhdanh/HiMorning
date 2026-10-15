@@ -309,7 +309,8 @@ final class PilotUITests:XCTestCase {
   let target=app.steppers["pushUpTarget"]
   XCTAssertTrue(target.waitForExistence(timeout:3))
   XCTAssertTrue(target.label.contains("3"))
-  XCTAssertFalse(target.buttons["pushUpTarget-Increment"].isEnabled)
+  target.buttons["pushUpTarget-Increment"].tap()
+  XCTAssertTrue(target.label.contains("3"))
   app.buttons["challenge-readAndChoose"].tap()
   app.swipeDown()
   app.buttons["mode-gentle"].tap()
