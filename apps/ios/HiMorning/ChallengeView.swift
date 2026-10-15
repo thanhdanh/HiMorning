@@ -40,8 +40,6 @@ struct ChallengeView:View {
  @State private var consent=false
  @State private var busy=false
  @State private var consentDialog=false
- @State private var demoSubmitted=false
- private var isDemoOnly:Bool {model.cloud?.isDemoOnly ?? true}
  @State private var completion:WakeOutcome?
  @State private var retrying=false
  private var practicing:Bool {model.rehearsal || retrying}
@@ -100,8 +98,8 @@ struct ChallengeView:View {
      }
     }
     if challenge.kind == .pushUps && camera == nil && !finished {
-     Button {consentDialog=true} label: {ChallengeStartLabel(title:isDemoOnly ? "Test remote AI":"Start AI challenge")}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping || demoSubmitted).accessibilityIdentifier("startChallenge")
-     if isDemoOnly {Text(appText("Remote demo uses generated images. It does not verify your movement.")).font(.footnote).foregroundStyle(MorningTheme.muted)}
+     Button {consentDialog=true} label: {ChallengeStartLabel(title:"Start challenge")}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startChallenge")
+     Text(appText("The camera counts push-ups on this iPhone. Video is not saved or uploaded.")).font(.footnote).foregroundStyle(MorningTheme.muted)
     }
     if challenge.kind == .guidedRhythm && rhythmCamera == nil && !finished {
      Button {Task {await startRhythm()}} label: {ChallengeStartLabel(title:"Start guided rhythm")}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startGuidedRhythm")
@@ -150,8 +148,8 @@ struct ChallengeView:View {
      }
     }.padding(.horizontal,24).padding(.vertical,12).background(MorningTheme.canvas)
    }.tint(MorningTheme.accent)
-   .confirmationDialog(appText(isDemoOnly ? "This test sends generated color images to Gemini through Cloudflare. Your camera stays off. Google may use demo inputs and outputs to improve its products. No movement will be verified.":"Movement photos go through HiMorning to Qwen on Modal. Modal may retain inputs and outputs for up to 7 days. No audio is uploaded. You can stop at any time."),isPresented:$consentDialog,titleVisibility:.visible) {
-    Button(appText(isDemoOnly ? "Agree and run test":"Agree and open camera")) {Task {if isDemoOnly {await startDemo()} else {await startCamera()}}}
+   .confirmationDialog(appText("Allow the camera to check your push-ups on this iPhone. Video and sound are not saved or uploaded. You can stop at any time."),isPresented:$consentDialog,titleVisibility:.visible) {
+    Button(appText("Open camera")) {Task {await startCamera()}}
     Button(appText("Choose another way")) {consentDialog=false}
    }
    .task {
@@ -176,7 +174,7 @@ struct ChallengeView:View {
     }
     if arguments.contains("--ui-testing"),model.rehearsal,arguments.contains("--ui-complete-challenge") {
      switch challenge.kind {
-     case .pushUps:complete(.aiVerified)
+     case .pushUps:complete(.localCompleted,success:appText("Push-ups complete. Have a good morning!"))
      case .guidedRhythm:complete(.localCompleted,success:appText("Guided rhythm completed. Have a good morning!"))
      case .readAloud:
       if transcript.isEmpty {transcript=appText(readAloudPrompt.text)}
@@ -204,45 +202,27 @@ struct ChallengeView:View {
   }
  }
  @MainActor private func startCamera() async {
-  guard !isDemoOnly else {return}
-  guard !busy,!finished,!stopping,scene == .active,let coordinator,let target=challenge.repetitions else {return};busy=true;message=appText("Getting the camera ready…")
-  let generation=UUID();captureGeneration=generation
+  guard !busy,!finished,!stopping,scene == .active,let coordinator,let target=challenge.repetitions else {return}
+  busy=true;reps=0;message=appText("Getting the camera ready…")
+  let generation=UUID();captureGeneration=generation;consent=true
   defer {busy=false}
-  do {
-   try await coordinator.startCloud(consent:true)
-   guard coordinator.session.outcome == nil,captureGeneration == generation,scene == .active,!stopping else {return}
-   consent=true
-   let capture=CameraCapture(target:target) {update in Task {@MainActor in
-    guard captureGeneration == generation,consent,!finished,!stopping else {return};reps=update.reps;message=update.message
-    if update.ready {await submit(update.frames)}
-    else if update.ended {camera?.stop();camera=nil;consent=false;await coordinator.suspend()}
-   }}
-   camera=capture;await capture.start()
-  } catch {message=appText("AI is not available. You can confirm you are awake or stop.")}
+  let capture=CameraCapture(target:target) {update in Task {@MainActor in
+   guard captureGeneration == generation,consent,!finished,!stopping else {return}
+   reps=update.reps;message=update.message
+   if update.ready {await completePushUps(update.counter)}
+   else if update.ended {camera?.stop();camera=nil;consent=false;await coordinator.suspend()}
+  }}
+  camera=capture;await capture.start()
  }
- @MainActor private func startDemo() async {
-  guard isDemoOnly,!busy,!finished,!stopping,!demoSubmitted,scene == .active,let coordinator,let target=challenge.repetitions else {return}
-  busy=true;let generation=UUID();captureGeneration=generation
+ @MainActor private func completePushUps(_ counter:PushUpCounter) async {
+  guard let coordinator,!busy,!stopping,!finished,consent,scene == .active else {return}
+  busy=true;let generation=captureGeneration
   defer {busy=false}
   do {
-   guard let url=Bundle.main.url(forResource:"free-demo-frames",withExtension:"json") else {throw ChallengeError.insufficientEvidence}
-   let frames=try RemoteDemo.frames(from:Data(contentsOf:url),target:target)
-   try await coordinator.startCloud(consent:true)
-   guard coordinator.session.outcome == nil,captureGeneration==generation,scene == .active,!stopping else {return}
-   demoSubmitted=true;message=appText("Waiting for the AI server. You can still stop.")
-   _ = try await coordinator.submit(frames)
-   guard coordinator.session.outcome == nil,captureGeneration==generation,scene == .active,!stopping else {return}
-   if let decision=coordinator.lastDecision,["uncertain","incomplete"].contains(decision.status),!decision.decisionID.isEmpty {message=appText("The remote AI replied. Demo complete; no movement was verified.")}
-   else {message=appText("The remote test is unavailable. You can still stop.")}
-  } catch {if captureGeneration==generation,!finished,!stopping {message=appText("The remote test is unavailable. You can still stop.")}}
- }
- @MainActor private func submit(_ frames:[EvidenceFrame]) async {
-  guard let coordinator,!busy else {return};busy=true;message=appText("Waiting for the AI server. You can still stop.")
-  defer {busy=false}
-  do {
-   if try await coordinator.submit(frames) {complete(coordinator.session.outcome ?? .aiVerified)}
-   else if coordinator.session.outcome == nil {message=appText("The movement could not be fully checked. You can choose another way.")}
-  } catch {message=appText("The movement could not be checked right now. You can still stop.")}
+   let applied=try await coordinator.completePushUps(counter)
+   guard captureGeneration == generation,!stopping,scene == .active else {return}
+   if applied {complete(.localCompleted,success:appText("Push-ups complete. Have a good morning!"))}
+  } catch {message=appText("The alarm could not be stopped here. Please use the system Stop button.")}
  }
  private func finish(_ outcome:WakeOutcome,success:String?=nil) {
   guard !finished,!stopping,let coordinator else {return}
@@ -273,7 +253,7 @@ struct ChallengeView:View {
   // A passed alarm stays completed; further attempts are practice only.
   retrying=true
   coordinator=ChallengeCoordinator(alarm:effectiveAlarm,cloud:model.cloud,scheduler:model.scheduler,rehearsal:true)
-  transcript="";speechEnded=false;reps=0;rhythmCycles=0;demoSubmitted=false;consentDialog=false
+  transcript="";speechEnded=false;reps=0;rhythmCycles=0;consentDialog=false
   preparePrompt(newReadingPrompt:true)
   result=nil;completion=nil;message=challengeInstructions
  }
@@ -290,7 +270,7 @@ struct ChallengeView:View {
  private var challengeInstructions:String {
   switch challenge.kind {
   case .none:return appText("You can confirm you’re awake when the countdown ends.")
-  case .pushUps:return appText(isDemoOnly ? "Remote demo uses generated images. It does not verify your movement.":"Place your phone to the side so your whole body is visible. Start the camera, then do your push-ups. Each full down-and-up movement counts once.")
+  case .pushUps:return appText("Place your phone to the side so your whole body is visible. Start the camera, then do your push-ups. Each full down-and-up movement counts once.")
   case .readAndChoose:return appText("Read the sentence, then choose the closest meaning. You can try again.")
   case .riddle:return appText("Solve the riddle, then choose your answer. You can try again.")
   case .waveHand:return appText("Place your hand in view and wave it side to side. Video stays on this device.")
