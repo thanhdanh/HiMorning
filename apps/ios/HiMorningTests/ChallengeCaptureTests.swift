@@ -26,11 +26,25 @@ final class ChallengeCaptureTests:XCTestCase {
   let camera=CameraCapture(target:1) {update in
    XCTAssertTrue(update.ended)
    XCTAssertFalse(update.ready)
-   XCTAssertTrue(update.frames.isEmpty)
+   XCTAssertEqual(update.counter.completedReps,0)
    ended.fulfill()
   }
   await camera.start(requestAccess:{false})
   await fulfillment(of:[ended],timeout:1)
   camera.stop()
  }
+ func testStoppingWhileCameraPermissionIsPendingSuppressesTheReply() async {
+  let gate=CameraPermissionGate()
+  let camera=CameraCapture(target:1) {_ in XCTFail("A stopped camera must ignore a late permission reply")}
+  let startup=Task {await camera.start(requestAccess:{await gate.wait()})}
+  await gate.waitUntilRequested()
+  camera.stop();await gate.release()
+  await startup.value
+ }
+}
+private actor CameraPermissionGate {
+ private var reply:CheckedContinuation<Bool,Never>?
+ func wait() async ->Bool {await withCheckedContinuation {reply=$0}}
+ func waitUntilRequested() async {while reply == nil {await Task.yield()}}
+ func release() {reply?.resume(returning:true);reply=nil}
 }

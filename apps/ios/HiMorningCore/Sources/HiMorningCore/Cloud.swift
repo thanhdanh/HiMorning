@@ -44,6 +44,7 @@ public enum ChallengeError: Error {case consentRequired,cloudUnavailable,expired
  private var consent=false
  private var submitted=false
  private var starting=false
+ private var completingPushUps=false
  private var verificationTask:Task<CloudDecision,Error>?
  private let sleep:@Sendable(UInt64) async throws ->Void
  private let clock:()->TimeInterval
@@ -109,6 +110,15 @@ public enum ChallengeError: Error {case consentRequired,cloudUnavailable,expired
   let remote=cloudSession
   cloudSession=nil
   if let remote {try? await cloud?.cancel(sessionID:remote.sessionID)}
+ }
+ public func completePushUps(_ counter:PushUpCounter) async throws ->Bool {
+  guard alarm.challenge.kind == .pushUps,counter.target == alarm.challenge.repetitions,counter.ready else {throw ChallengeError.insufficientEvidence}
+  guard session.outcome == nil,!starting,!submitted,!completingPushUps else {return false}
+  completingPushUps=true;defer {completingPushUps=false}
+  let generation=session.beginVerification()
+  if !rehearsal {try await scheduler.stop(id:alarm.id)}
+  guard session.outcome == nil,session.generation == generation else {return false}
+  return session.completeLocally()
  }
  public func finish(_ outcome:WakeOutcome) async throws {
   switch outcome {

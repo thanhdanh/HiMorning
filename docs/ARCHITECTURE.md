@@ -1,13 +1,14 @@
 # Architecture
 
-The current native cloud path is the [free remote demo](FREE-REMOTE-DEMO.md):
-Firebase Spark Auth/App Check -> Workers -> SQLite-backed session/quota state ->
-Gemini free API. It accepts generated fixtures only and cannot record verified
-movement. The Functions/Modal flow below is retained for separate paid evaluation.
+The product challenge flow runs on the iPhone: camera frames feed Apple's body
+pose recognition and a bounded push-up counter. No frames are archived or uploaded,
+and completion uses `local_completed`. Guided Rhythm and English challenges also
+complete locally. See [camera challenge](PUSH-UP-CAMERA.md).
 
-HiMorning keeps the alarm on the phone and uses cloud AI only for consented push-up
-verification. Guided Rhythm and English challenges complete locally. This keeps
-the morning flow simple and gives users a way out when capture or checking fails.
+The [free server demo](FREE-REMOTE-DEMO.md) remains a separate developer reference:
+Firebase Spark Auth/App Check -> Workers -> SQLite session/quota state -> Gemini.
+It accepts generated fixtures only. The Functions/Modal flow below is retained for
+separate paid evaluation and is not called by the product challenge screen.
 
 **Status:** iOS 26+ pilot implemented. Device reliability and model accuracy are
 not yet validated. Android and several product features remain planned.

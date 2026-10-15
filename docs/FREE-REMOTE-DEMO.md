@@ -9,6 +9,10 @@ and a five-image Gemini request passed; the conservative verdict was `uncertain`
 with zero verified repetitions. Physical iPhone acceptance remains pending.
 **Audience:** Pilot developers.
 
+The product Push-ups flow now uses [on-device camera recognition](PUSH-UP-CAMERA.md).
+The server below remains a synthetic connectivity reference, not the camera
+challenge or a way to verify real movement.
+
 ## At a glance
 
 | Part | Setting |
@@ -217,15 +221,11 @@ xcodegen generate --spec apps/ios/project.yml
 The local ignored file already contains the staging origin above. A generic
 Simulator build with that file succeeded; device signing is still required.
 
-In Push-ups, tap **Test remote AI** and accept the demo disclosure. The camera
-stays off. A valid conservative provider response shows that the remote AI replied;
-it does not complete the movement challenge or record verified progress. Stop and
-self-confirm remain available. Each screen permits one submission.
-
-Disable Wi-Fi and use cellular data, then repeat with the Mac off. Check response,
-stop/background cancellation, quota rejection and unavailable behavior. Inspect
-Workers logs for operation/status/timing only. Test movement accuracy separately
-with a provider and data policy suitable for real camera evidence.
+The earlier app demo has been replaced by camera push-ups. Its generated-image
+fixtures, server and wire contracts remain available for developer diagnostics.
+Do not send camera images to this endpoint: it rejects anything except the exact
+fixture and cannot complete a movement challenge. Use [camera setup](PUSH-UP-CAMERA.md)
+for the current iPhone flow.
 
 ## What we checked
 
