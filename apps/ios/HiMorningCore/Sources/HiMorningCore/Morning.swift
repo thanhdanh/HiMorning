@@ -53,10 +53,13 @@ public struct PreviewPeriod:Codable,Equatable,Sendable {
 
 public struct MorningEntry:Codable,Identifiable,Sendable {
  public let id:UUID
+ public let alarmID:UUID?
+ public let mode:WakeMode?
+ public let challenge:ChallengeSelection?
  public let date:Date
  public let outcome:WakeOutcome
- public init(id:UUID=UUID(),date:Date=Date(),outcome:WakeOutcome) {
-  self.id=id;self.date=date;self.outcome=outcome
+ public init(id:UUID=UUID(),alarmID:UUID?=nil,mode:WakeMode?=nil,challenge:ChallengeSelection?=nil,date:Date=Date(),outcome:WakeOutcome) {
+  self.id=id;self.alarmID=alarmID;self.mode=mode;self.challenge=challenge;self.date=date;self.outcome=outcome
  }
 }
 
@@ -67,6 +70,7 @@ public enum ConsistencyRating:Equatable,Sendable {case noData,gettingStarted,bui
 public struct MorningScore:Identifiable,Sendable {
  public var id:Date {date}
  public let date:Date
+ public let entries:[MorningEntry]
  public let attempts:Int
  public let completed:Int
  public var score:Int? {attempts == 0 ? nil : Int((Double(completed)*100/Double(attempts)).rounded())}
@@ -80,7 +84,7 @@ public struct MorningScore:Identifiable,Sendable {
   }
  }
  init(date:Date,entries:[MorningEntry]) {
-  self.date=date;attempts=entries.count
+  self.date=date;self.entries=entries;attempts=entries.count
   completed=entries.filter { [.localCompleted,.openaiVerified,.aiVerified].contains($0.outcome) }.count
  }
 }
@@ -102,6 +106,9 @@ public struct MorningJournal:Sendable {
  }
  public func completedDays(inLast days:Int,now:Date=Date(),calendar:Calendar = .current)->Int {
   Set(recent(days:days,now:now,calendar:calendar).filter {$0.outcome != .dismissed}.map {calendar.startOfDay(for:$0.date)}).count
+ }
+ public func completedToday(alarmID:UUID,now:Date=Date(),calendar:Calendar = .current)->Bool {
+  recent(days:1,now:now,calendar:calendar).contains {$0.alarmID==alarmID && [.localCompleted,.openaiVerified,.aiVerified].contains($0.outcome)}
  }
  public func weeklyScores(now:Date=Date(),calendar:Calendar = .current)->[MorningScore] {
   let entries=recent(days:7,now:now,calendar:calendar)

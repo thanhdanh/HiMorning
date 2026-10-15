@@ -233,6 +233,10 @@ func testSharedMobileFixtures() throws {
 try testSharedMobileFixtures()
 
 let scores=MorningScoreTests()
+try scores.testTodayCompletionMatchesOnlySuccessfulAlarmAndSurvivesReload()
+try scores.testTodayCompletionUsesLocalMidnightAndExcludesFuture()
+try scores.testLegacyMorningEntriesKeepProgressWithoutGuessingAlarmIdentity()
+try scores.testDayEntriesKeepRecordedModesAndChallengeTargetsAfterAlarmEditsAndReload()
 scores.testOnlyCompletedChallengesEarnPointsAndEmptyIsUnrated()
 scores.testRatingThresholds()
 try scores.testWeekUsesLocalDaysAveragesAttemptsAndExcludesPracticeAndFuture()
