@@ -70,7 +70,9 @@ public enum ChallengeError: Error {case consentRequired,cloudUnavailable,expired
   guard let cloud,let remote=cloudSession else {throw ChallengeError.cloudUnavailable}
   guard remote.expiresAt>Date().timeIntervalSince1970*1000 else {throw ChallengeError.expired}
   guard !submitted else {throw ChallengeError.alreadySubmitted}
-  guard let target=alarm.challenge.repetitions,frames.count>=target*5,frames.count<=25 else {throw ChallengeError.insufficientEvidence}
+  guard let target=alarm.challenge.repetitions,frames.count>=target*5,frames.count<=ChallengeSelection.maximumPushUps*5 else {throw ChallengeError.insufficientEvidence}
+  var evidence=EvidenceBuffer()
+  for frame in frames {guard evidence.append(frame.jpeg,timestampMs:frame.timestampMs) else {throw ChallengeError.insufficientEvidence}}
   submitted=true
   let generation=session.beginVerification()
   let request=VerificationSubmission(session:remote,evidenceID:UUID(),frames:frames,consentVersion:cloud.consentVersion)

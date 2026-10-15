@@ -3,6 +3,7 @@ import { build } from 'esbuild';
 import { Miniflare,Response as MFResponse,convertV4MiniflareOptions,type Request as MFRequest } from 'miniflare';
 import { generateKeyPair,exportJWK,SignJWT } from 'jose';
 import { fileURLToPath } from 'node:url';
+import fixture from '../../../shared/contracts/v1/free-demo-frames.json';
 import { env,actor,create,submit,completion } from './helpers.js';
 let runtime:Miniflare|undefined,headers:Record<string,string>,otherHeaders:Record<string,string>,inferences=0;
 beforeAll(async()=>{
@@ -20,7 +21,7 @@ beforeAll(async()=>{
    if(request.url==='https://firebaseappcheck.googleapis.com/v1/jwks'||request.url==='https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com')return MFResponse.json({keys:[jwk]});
    if(request.url==='https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent'){
     expect(request.headers.get('x-goog-api-key')).toBe(env.GEMINI_API_KEY);inferences++;
-    const body=await request.json() as any;expect(body.contents[0].parts.filter((part:any)=>part.inlineData)).toHaveLength(5);
+    const body=await request.json() as any;expect(body.contents[0].parts.filter((part:any)=>part.inlineData)).toHaveLength(250);
     return MFResponse.json(completion());
    }
    throw new Error(`Unexpected test outbound host: ${new URL(request.url).hostname}`);
@@ -37,8 +38,8 @@ it('runs the callable protocol through real workerd, signed Firebase tokens and 
  expect((await call('unknown',{})).status).toBe(404);
  expect((await runtime!.dispatchFetch('https://demo.workers.dev/createVerificationSession')).status).toBe(400);
  const wrapped=(value:number)=>({'@type':'type.googleapis.com/google.protobuf.Int64Value',value:String(value)});
- const created=await call('createVerificationSession',{...create(),target:wrapped(1)});expect(created.status).toBe(200);
- const {data:session}=await created.json() as any,data=submit({sessionID:session.sessionID,nonce:session.nonce});
+ const created=await call('createVerificationSession',{...create(),target:wrapped(50)});expect(created.status).toBe(200);
+ const {data:session}=await created.json() as any,data={...submit({sessionID:session.sessionID,nonce:session.nonce}),frames:fixture.frames};
  const nativeData={...data,frames:data.frames.map(frame=>({...frame,timestampMs:wrapped(frame.timestampMs)}))};
  const repeated=await Promise.all([call('verifyChallenge',nativeData),call('verifyChallenge',nativeData)]);
  for(const response of repeated){expect(response.status).toBe(200);expect(await response.json()).toMatchObject({data:{status:'pending'}});}
@@ -54,5 +55,5 @@ it('runs the callable protocol through real workerd, signed Firebase tokens and 
  const cancelled=await call('cancelVerificationSession',{sessionID:session.sessionID});expect(await cancelled.json()).toEqual({data:{status:'cancelled'}});
  expect(await (await call('getVerificationResult',{sessionID:session.sessionID,evidenceID:data.evidenceID})).json()).toMatchObject({data:{status:'cancelled'}});
  const malformed=await runtime!.dispatchFetch('https://demo.workers.dev/createVerificationSession',{method:'POST',headers,body:'{"data":{},"uid":"forged"}'});expect(malformed.status).toBe(400);
- expect((await runtime!.dispatchFetch('https://demo.workers.dev/createVerificationSession',{method:'POST',headers,body:'x'.repeat(32769)})).status).toBe(400);
+ expect((await runtime!.dispatchFetch('https://demo.workers.dev/createVerificationSession',{method:'POST',headers,body:'x'.repeat(18*1024*1024+1)})).status).toBe(400);
 });

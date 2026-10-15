@@ -20,16 +20,27 @@ final class RemoteDemoTests:XCTestCase {
   let submission=wire["SubmitRequest"] as! [String:Any]
   let encoded=VerificationSubmission(session:session,evidenceID:UUID(uuidString:submission["evidenceID"] as! String)!,frames:try RemoteDemo.frames(from:data,target:1),consentVersion:CloudConsent.demo)
   XCTAssertEqual(try JSONSerialization.jsonObject(with:JSONEncoder().encode(encoded)) as! NSDictionary,submission as NSDictionary)
-  for target in [1,3,5] {
+  for target in [1,3,5,10,20,50] {
    let frames=try RemoteDemo.frames(from:data,target:target)
    XCTAssertEqual(frames.count,target*5);XCTAssertTrue(frames.allSatisfy{$0.jpeg.count<=50000})
   }
-  XCTAssertThrowsError(try RemoteDemo.frames(from:data,target:6))
+  let object=try JSONSerialization.jsonObject(with:data) as! [String:Any]
+  let original=object["frames"] as! [[String:Any]]
+  let legacy=try JSONSerialization.data(withJSONObject:["frames":Array(original.prefix(25))])
+  XCTAssertEqual(try RemoteDemo.frames(from:legacy,target:5).count,25)
+  XCTAssertThrowsError(try RemoteDemo.frames(from:legacy,target:10))
+  let previous=try JSONSerialization.data(withJSONObject:["frames":Array(original.prefix(100))])
+  XCTAssertEqual(try RemoteDemo.frames(from:previous,target:20).count,100)
+  XCTAssertThrowsError(try RemoteDemo.frames(from:previous,target:50))
+  var corrupt=original
+  corrupt[corrupt.count-1]["id"]="invalid"
+  XCTAssertThrowsError(try RemoteDemo.frames(from:JSONSerialization.data(withJSONObject:["frames":corrupt]),target:1))
+  XCTAssertThrowsError(try RemoteDemo.frames(from:data,target:51))
   XCTAssertThrowsError(try RemoteDemo.frames(from:Data("{}".utf8),target:1))
  }
  @MainActor func testDemoCannotStopAnAlarmOrRecordVerifiedEvenWithAMaliciousSuccess() async throws {
   let cloud=DemoCloud(),scheduler=DemoScheduler()
-  let flow=ChallengeCoordinator(alarm:SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),mode:.balanced),cloud:cloud,scheduler:scheduler)
+  let flow=ChallengeCoordinator(alarm:SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),mode:.balanced,challenge:.pushUps(repetitions:3)),cloud:cloud,scheduler:scheduler)
   try await flow.startCloud(consent:true)
   let applied=try await flow.submit((0..<15).map{EvidenceFrame(jpeg:Data([UInt8($0)]),timestampMs:$0*300)})
   XCTAssertFalse(applied);XCTAssertNil(flow.session.outcome)

@@ -18,8 +18,8 @@ final class CoreTests: XCTestCase {
  func testPresetsAreGentleAndBounded() {
   XCTAssertEqual(WakeMode.gentle.policy.snoozes, 2)
   XCTAssertEqual(WakeMode.gentle.policy.reps, 0)
-  XCTAssertEqual(WakeMode.balanced.policy.reps, 3)
-  XCTAssertEqual(WakeMode.focused.policy.reps, 5)
+  XCTAssertEqual(WakeMode.balanced.policy.reps, 5)
+  XCTAssertEqual(WakeMode.focused.policy.reps, 10)
   XCTAssertEqual(WakeMode.focused.policy.snoozes, 0)
  }
  func testAlarmValidation() throws {
@@ -75,13 +75,13 @@ final class CoreTests: XCTestCase {
   evidence.clear();XCTAssertTrue(evidence.frames.isEmpty)
  }
 
- func testChallengeDefaultsPreserveLegacyModeBehaviorButRemainIndependent() throws {
+ func testChallengeDefaultsUseModeFloorsButRemainIndependent() throws {
   let time=try AlarmTime(hour:6,minute:30,weekdays:[])
   XCTAssertEqual(SavedAlarm(time:time,mode:.gentle).challenge,.none)
-  XCTAssertEqual(SavedAlarm(time:time,mode:.balanced).challenge,.pushUps(repetitions:3))
-  XCTAssertEqual(SavedAlarm(time:time,mode:.focused).challenge,.pushUps(repetitions:5))
+  XCTAssertEqual(SavedAlarm(time:time,mode:.balanced).challenge,.pushUps(repetitions:5))
+  XCTAssertEqual(SavedAlarm(time:time,mode:.focused).challenge,.pushUps(repetitions:10))
   XCTAssertEqual(ChallengeSelection.pushUps(repetitions:0).repetitions,1)
-  XCTAssertEqual(ChallengeSelection.pushUps(repetitions:99).repetitions,5)
+  XCTAssertEqual(ChallengeSelection.pushUps(repetitions:99).repetitions,50)
 
   let focusedReading=SavedAlarm(time:time,mode:.focused,challenge:.readAloud)
   XCTAssertEqual(focusedReading.mode,.focused)
@@ -97,10 +97,34 @@ final class CoreTests: XCTestCase {
 
   var legacyObject=try XCTUnwrap(JSONSerialization.jsonObject(with:encoded) as? [String:Any])
   legacyObject.removeValue(forKey:"challenge")
-  legacyObject["mode"]="focused"
-  let legacyData=try JSONSerialization.data(withJSONObject:legacyObject)
-  let migrated=try JSONDecoder().decode(SavedAlarm.self,from:legacyData)
-  XCTAssertEqual(migrated.challenge,.pushUps(repetitions:5))
+  for (mode,expected) in [(WakeMode.gentle,ChallengeSelection.none),(.balanced,.pushUps(repetitions:3)),(.focused,.pushUps(repetitions:5))] {
+   legacyObject["mode"]=mode.rawValue
+   let legacyData=try JSONSerialization.data(withJSONObject:legacyObject)
+   let migrated=try JSONDecoder().decode(SavedAlarm.self,from:legacyData)
+   XCTAssertEqual(migrated.challenge,expected)
+  }
+ }
+
+ func testHistoricalExplicitTargetsDecodeWithoutBeingRaised() throws {
+  for target in 1...5 {
+   let data=Data("{\"kind\":\"push_ups\",\"repetitions\":\(target)}".utf8)
+   XCTAssertEqual(try JSONDecoder().decode(ChallengeSelection.self,from:data).repetitions,target)
+  }
+ }
+ func testCaptureStoresFiftyCompleteCyclesWithinEvidenceBounds() {
+  var capture=CycleCapture(target:50)
+  for index in 0..<250 {
+   capture.observe(angle:[165.0,120,80,120,165][index%5],visible:true,jpeg:Data(repeating:1,count:50000),timestampMs:index*1200)
+  }
+  XCTAssertTrue(capture.ready);XCTAssertEqual(capture.completedReps,50);XCTAssertEqual(capture.frames.count,250)
+  capture.observe(angle:165,visible:true,jpeg:Data([1]),timestampMs:300000)
+  XCTAssertEqual(capture.frames.count,250)
+  var buffer=EvidenceBuffer()
+  for index in 0..<250 {XCTAssertTrue(buffer.append(Data(repeating:1,count:50000),timestampMs:index*1200))}
+  XCTAssertFalse(buffer.append(Data([1]),timestampMs:300000))
+  var expired=EvidenceBuffer()
+  XCTAssertFalse(expired.append(Data([1]),timestampMs:300001))
+  XCTAssertEqual(ChallengeSelection.pushUps(repetitions:51).repetitions,50)
  }
 
  func testLocalCompletionInvalidatesPendingCloudResult() {

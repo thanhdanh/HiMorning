@@ -23,6 +23,9 @@ final class AlarmEditingTests:XCTestCase {
   XCTAssertEqual(alarms.first?.state,.confirmed)
   XCTAssertEqual(scheduled.map(\.id),[original.id,original.id])
   XCTAssertEqual(scheduled.last?.sound,.softChime)
+  let events=await scheduler.events,cancelled=await scheduler.cancelled
+  XCTAssertEqual(events,["schedule:sunrise","cancel","schedule:softChime"])
+  XCTAssertEqual(cancelled,[original.id])
   XCTAssertEqual(try persistence.load(),alarms)
  }
 
@@ -39,6 +42,8 @@ final class AlarmEditingTests:XCTestCase {
   let alarms=await library.all(),attempts=await scheduler.attempts
   XCTAssertEqual(alarms,[edited])
   XCTAssertTrue(attempts.isEmpty)
+  let cancelled=await scheduler.cancelled
+  XCTAssertTrue(cancelled.isEmpty)
   XCTAssertEqual(try persistence.load(),alarms)
   let restarted=try AlarmLibrary(persistence:persistence,scheduler:scheduler)
   let restored=await restarted.all()
@@ -62,6 +67,8 @@ final class AlarmEditingTests:XCTestCase {
    let alarms=await library.all(),attempts=await scheduler.attempts
    XCTAssertEqual(alarms,[edited])
    XCTAssertTrue(attempts.isEmpty)
+  let cancelled=await scheduler.cancelled
+  XCTAssertTrue(cancelled.isEmpty)
    XCTAssertEqual(try persistence.load(),alarms)
   }
  }
@@ -78,6 +85,8 @@ final class AlarmEditingTests:XCTestCase {
   let alarms=await library.all(),attempts=await scheduler.attempts
   XCTAssertEqual(alarms,[edited])
   XCTAssertTrue(attempts.isEmpty)
+  let cancelled=await scheduler.cancelled
+  XCTAssertTrue(cancelled.isEmpty)
   XCTAssertEqual(try persistence.load(),alarms)
  }
 
@@ -91,6 +100,8 @@ final class AlarmEditingTests:XCTestCase {
   let alarms=await library.all(),attempts=await scheduler.attempts
   XCTAssertEqual(alarms,[original])
   XCTAssertTrue(attempts.isEmpty)
+  let cancelled=await scheduler.cancelled
+  XCTAssertTrue(cancelled.isEmpty)
   XCTAssertEqual(try persistence.load(),alarms)
  }
 
@@ -107,6 +118,8 @@ final class AlarmEditingTests:XCTestCase {
    let alarms=await library.all(),attempts=await scheduler.attempts
    XCTAssertEqual(alarms,[edited])
    XCTAssertTrue(attempts.isEmpty)
+  let cancelled=await scheduler.cancelled
+  XCTAssertTrue(cancelled.isEmpty)
    XCTAssertEqual(try persistence.load(),alarms)
   }
  }
@@ -123,6 +136,8 @@ final class AlarmEditingTests:XCTestCase {
   let alarms=await library.all(),attempts=await scheduler.attempts
   XCTAssertEqual(alarms,[original])
   XCTAssertTrue(attempts.isEmpty)
+  let cancelled=await scheduler.cancelled
+  XCTAssertTrue(cancelled.isEmpty)
   XCTAssertEqual(try persistence.load(),alarms)
  }
 
@@ -157,6 +172,8 @@ final class AlarmEditingTests:XCTestCase {
   XCTAssertEqual(alarms.first?.sound,.softChime)
   XCTAssertEqual(alarms.first?.time,edited.time)
   XCTAssertEqual(scheduled.count,1)
+  let cancelled=await scheduler.cancelled
+  XCTAssertEqual(cancelled,[original.id])
   XCTAssertTrue(ids.isEmpty)
   XCTAssertEqual(try persistence.load(),alarms)
  }
@@ -170,18 +187,52 @@ final class AlarmEditingTests:XCTestCase {
   let edited=SavedAlarm(id:original.id,time:original.time,sound:.softChime)
   await scheduler.expectSchedule(edited)
   await scheduler.failNext()
+  var restored=original;restored.state = .confirmed
+  await scheduler.expectSchedule(restored)
   do {try await library.update(edited);preconditionFailure("Expected schedule failure")} catch {}
   let failed=await library.all()
   XCTAssertEqual(failed.count,1)
   XCTAssertEqual(failed.first?.sound,.sunrise)
   XCTAssertEqual(failed.first?.state,.needsReview)
   XCTAssertEqual(try persistence.load(),failed)
+  let restoredEvents=await scheduler.events,restoredIDs=try await scheduler.scheduledIDs()
+  XCTAssertEqual(restoredEvents,["schedule:sunrise","cancel","schedule:softChime","cancel","schedule:sunrise"])
+  XCTAssertEqual(restoredIDs,[original.id])
   await scheduler.expectSchedule(edited)
   try await library.update(edited)
   let retried=await library.all()
   XCTAssertEqual(retried.count,1)
   XCTAssertEqual(retried.first?.sound,.softChime)
   XCTAssertEqual(retried.first?.state,.confirmed)
+ }
+
+ func testCancellationFailureKeepsWorkingAlarmAndDoesNotTryReplacement() async throws {
+  let persistence=EditingPersistence(),scheduler=EditingScheduler()
+  let library=try AlarmLibrary(persistence:persistence,scheduler:scheduler)
+  let original=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),sound:.sunrise)
+  await scheduler.expectSchedule(original);try await library.add(original)
+  await scheduler.failCancellation()
+  do {try await library.update(SavedAlarm(id:original.id,time:original.time,sound:.softChime));preconditionFailure("Expected cancellation failure")} catch {}
+  let alarms=await library.all(),events=await scheduler.events,ids=try await scheduler.scheduledIDs()
+  XCTAssertEqual(alarms.first?.sound,.sunrise);XCTAssertEqual(alarms.first?.state,.needsReview)
+  XCTAssertEqual(events,["schedule:sunrise","cancel"]);XCTAssertEqual(ids,[original.id])
+  XCTAssertEqual(try persistence.load(),alarms)
+ }
+
+ func testReplacementAndRestoreFailurePreservesPreviousSettingsForReview() async throws {
+  let persistence=EditingPersistence(),scheduler=EditingScheduler()
+  let library=try AlarmLibrary(persistence:persistence,scheduler:scheduler)
+  let original=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),sound:.sunrise)
+  await scheduler.expectSchedule(original);try await library.add(original)
+  let edited=SavedAlarm(id:original.id,time:original.time,sound:.softChime)
+  var restored=original;restored.state = .confirmed
+  await scheduler.expectSchedule(edited);await scheduler.expectSchedule(restored)
+  await scheduler.failNext(count:2)
+  do {try await library.update(edited);preconditionFailure("Expected scheduling failure")} catch {}
+  let alarms=await library.all(),events=await scheduler.events,ids=try await scheduler.scheduledIDs()
+  XCTAssertEqual(alarms.first?.sound,.sunrise);XCTAssertEqual(alarms.first?.state,.needsReview)
+  XCTAssertEqual(events,["schedule:sunrise","cancel","schedule:softChime","cancel","schedule:sunrise"])
+  XCTAssertTrue(ids.isEmpty);XCTAssertEqual(try persistence.load(),alarms)
  }
 
  func testEditPersistenceFailureDoesNotRescheduleOrLoseOriginal() async throws {
@@ -263,18 +314,23 @@ private enum EditingSchedulerError:Error {case unexpectedSchedule}
 private actor EditingScheduler:AlarmScheduler {
  var scheduled:[SavedAlarm]=[]
  var attempts:[SavedAlarm]=[]
+ var events:[String]=[]
+ var cancelled:[UUID]=[]
  private var expected:[SavedAlarm]=[]
  private var ids:Set<UUID>=[]
- private var fail=false
+ private var failures=0
+ private var cancellationFails=false
  func expectSchedule(_ alarm:SavedAlarm) {expected.append(alarm)}
- func failNext() {fail=true}
+ func failNext(count:Int=1) {failures=count}
+ func failCancellation() {cancellationFails=true}
  func schedule(_ alarm:SavedAlarm) async throws {
-  attempts.append(alarm)
+  attempts.append(alarm);events.append("schedule:\(alarm.sound.rawValue)")
   guard !expected.isEmpty,expected.removeFirst() == alarm else {throw EditingSchedulerError.unexpectedSchedule}
-  if fail {fail=false;throw DomainError.invalidAlarmTime}
+  if failures>0 {failures-=1;throw DomainError.invalidAlarmTime}
+  guard !ids.contains(alarm.id) else {throw EditingSchedulerError.unexpectedSchedule}
   scheduled.append(alarm);ids.insert(alarm.id)
  }
- func cancel(id:UUID) async throws {ids.remove(id)}
+ func cancel(id:UUID) async throws {events.append("cancel");cancelled.append(id);if cancellationFails {cancellationFails=false;throw DomainError.invalidAlarmTime};ids.remove(id)}
  func stop(id:UUID) async throws {}
  func scheduledIDs() async throws ->Set<UUID> {ids}
 }

@@ -10,7 +10,7 @@
       ]
     },
     "reps": {
-      "maxItems": 5,
+      "maxItems": 50,
       "type": "array",
       "items": {
         "type": "object",

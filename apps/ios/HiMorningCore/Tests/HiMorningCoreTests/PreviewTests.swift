@@ -77,9 +77,9 @@ final class PreviewTests:XCTestCase {
  func testAccessPreservesExplicitLocalChallengesAndCapsOnlyFreePushUps() {
   let local:[ChallengeSelection]=[.none,.readAndChoose,.guidedRhythm(variant:.standing),.guidedRhythm(variant:.seated),.readAloud]
   for challenge in local {XCTAssertEqual(MorningAccess.free.effectiveChallenge(challenge),challenge)}
-  for target in 1...5 {
+  for target in 1...ChallengeSelection.maximumPushUps {
    let challenge=ChallengeSelection.pushUps(repetitions:target)
-   XCTAssertEqual(MorningAccess.free.effectiveChallenge(challenge),.pushUps(repetitions:min(target,3)))
+   XCTAssertEqual(MorningAccess.free.effectiveChallenge(challenge),.pushUps(repetitions:min(target,5)))
    for access in [MorningAccess.preview,.pro] {XCTAssertEqual(access.effectiveChallenge(challenge),challenge)}
   }
  }
@@ -91,7 +91,7 @@ final class PreviewTests:XCTestCase {
    XCTAssertEqual(effective.id,saved.id);XCTAssertEqual(effective.time,saved.time)
    XCTAssertEqual(effective.enabled,saved.enabled);XCTAssertEqual(effective.state,saved.state)
    XCTAssertEqual(effective.mode,.balanced);XCTAssertEqual(effective.sound,.system)
-   XCTAssertEqual(effective.challenge,challenge.kind == .pushUps ? .pushUps(repetitions:3) : challenge)
+   XCTAssertEqual(effective.challenge,challenge.kind == .pushUps ? .pushUps(repetitions:5) : challenge)
    XCTAssertEqual(saved.mode,.focused);XCTAssertEqual(saved.sound,.sunrise);XCTAssertEqual(saved.challenge,challenge)
    for access in [MorningAccess.preview,.pro] {XCTAssertEqual(access.effectiveAlarm(saved),saved)}
   }

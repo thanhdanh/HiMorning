@@ -30,7 +30,7 @@ final class ChallengeCelebrationUITests:XCTestCase {
    app.buttons["morningProgress"].tap()
    let history=app.otherElements["selectedDayChallenges"]
    XCTAssertTrue(history.waitForExistence(timeout:5))
-   XCTAssertTrue(history.staticTexts.matching(NSPredicate(format:"identifier BEGINSWITH %@","historyMode-")).firstMatch.label.contains(vietnamese ? "Cân bằng" : "Balanced"))
+   XCTAssertTrue(history.staticTexts.matching(NSPredicate(format:"identifier BEGINSWITH %@","historyMode-")).firstMatch.label.contains(vietnamese ? "Tỉnh táo" : "Awake"))
    XCTAssertTrue(history.staticTexts.matching(NSPredicate(format:"identifier BEGINSWITH %@","historyChallenge-")).firstMatch.label.contains(vietnamese ? "Đọc và chọn" : "Read & Choose"))
    app.terminate()
   }

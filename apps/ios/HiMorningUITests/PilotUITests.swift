@@ -11,15 +11,15 @@ final class PilotUITests:XCTestCase {
    capture(app,name:mode+"-"+language)
   }
   let chooseSound=app.buttons["chooseSound"]
-  for _ in 0..<6 where !chooseSound.isHittable {app.swipeUp()}
+  XCTAssertTrue(chooseSound.isHittable,"Sound selection must be reachable without scrolling")
   chooseSound.tap()
-  XCTAssertTrue(app.navigationBars[language == "vi" ? "Âm thanh" : "Sound"].waitForExistence(timeout:5))
+  XCTAssertTrue(app.buttons["sound-system"].waitForExistence(timeout:5))
   app.buttons["sound-sunrise"].tap()
   let slider=app.sliders["previewVolume"]
   for _ in 0..<10 where !slider.isHittable {app.swipeUp()}
   XCTAssertTrue(slider.isHittable)
   capture(app,name:"sounds-"+language)
-  app.navigationBars.buttons.element(boundBy:0).tap()
+  app.buttons["chooseSound"].tap()
  }
  private func launch(language:String,expired:Bool=false,awakeReady:Bool=false)->XCUIApplication {
   let app=XCUIApplication()
@@ -170,17 +170,17 @@ final class PilotUITests:XCTestCase {
    }
    let today=dayButton(0),mixed=dayButton(-2),legacy=dayButton(-6),empty=dayButton(-5)
    XCTAssertTrue(today.waitForExistence(timeout:5))
-   XCTAssertTrue(today.label.contains(vi ? "Tập trung" : "Focused"))
+   XCTAssertTrue(today.label.contains(vi ? "Bứt phá" : "Energized"))
    XCTAssertTrue(today.isSelected)
    let details=app.otherElements["selectedDayChallenges"]
    XCTAssertTrue(details.staticTexts[vi ? "5 lần chống đẩy" : "5 push-ups"].exists)
-   XCTAssertTrue(details.staticTexts[vi ? "Tập trung" : "Focused"].exists)
+   XCTAssertTrue(details.staticTexts[vi ? "Bứt phá" : "Energized"].exists)
    XCTAssertTrue(mixed.label.contains(vi ? "Nhiều mức" : "Mixed modes"))
    for _ in 0..<4 where !mixed.isHittable {app.swipeUp()}
    mixed.tap()
    XCTAssertTrue(mixed.isSelected)
    XCTAssertTrue(details.staticTexts[vi ? "Đọc và chọn" : "Read & Choose"].exists)
-   XCTAssertTrue(details.staticTexts[vi ? "Cân bằng" : "Balanced"].exists)
+   XCTAssertTrue(details.staticTexts[vi ? "Tỉnh táo" : "Awake"].exists)
    XCTAssertTrue(details.staticTexts[vi ? "Nhẹ nhàng" : "Gentle"].exists)
    XCTAssertTrue(details.staticTexts[vi ? "Đã dừng" : "Stopped"].exists)
    XCTAssertTrue(details.staticTexts[vi ? "Chưa lưu chi tiết thử thách" : "Challenge details not recorded"].exists)
@@ -189,7 +189,7 @@ final class PilotUITests:XCTestCase {
    XCTAssertTrue(legacy.label.contains(vi ? "Chưa lưu chi tiết thử thách" : "Challenge details not recorded"))
    legacy.tap()
    XCTAssertTrue(details.staticTexts[vi ? "Chưa lưu chi tiết thử thách" : "Challenge details not recorded"].exists)
-   XCTAssertFalse(details.staticTexts[vi ? "Tập trung" : "Focused"].exists,"Legacy history must not borrow the current alarm mode")
+   XCTAssertFalse(details.staticTexts[vi ? "Bứt phá" : "Energized"].exists,"Legacy history must not borrow the current alarm mode")
    empty.tap()
    XCTAssertTrue(details.staticTexts[vi ? "Chưa có thử thách được ghi nhận" : "No challenges recorded"].exists)
    app.terminate()
@@ -240,7 +240,7 @@ final class PilotUITests:XCTestCase {
    for _ in 0..<6 where !today.isHittable {app.swipeUp()}
    XCTAssertTrue(today.isHittable)
    XCTAssertGreaterThanOrEqual(today.frame.height,44)
-   XCTAssertTrue(today.label.contains(vi ? "Tập trung" : "Focused"))
+   XCTAssertTrue(today.label.contains(vi ? "Bứt phá" : "Energized"))
    today.tap()
    let challenge=app.otherElements["selectedDayChallenges"].staticTexts[vi ? "5 lần chống đẩy" : "5 push-ups"]
    for _ in 0..<4 where !challenge.isHittable {app.swipeUp()}
@@ -269,7 +269,7 @@ final class PilotUITests:XCTestCase {
   app.buttons["preview-softChime"].tap()
   app.buttons["sound-system"].tap()
   XCTAssertFalse(app.sliders["previewVolume"].exists)
-  app.navigationBars.buttons.element(boundBy:0).tap()
+  app.buttons["chooseSound"].tap()
   app.buttons["Cancel"].tap()
   XCTAssertTrue(app.buttons["addAlarm"].waitForExistence(timeout:5))
   app.buttons["addAlarm"].tap()
@@ -288,11 +288,13 @@ final class PilotUITests:XCTestCase {
    for _ in 0..<10 where !sound.isHittable {app.swipeUp()}
    XCTAssertTrue(sound.isHittable)
    sound.tap()
+   XCTAssertTrue(sound.isSelected,"The visible row must select the sound")
    app.buttons["preview-saxDaybreak"].tap()
    app.buttons["preview-saxGlow"].tap()
+   XCTAssertFalse(app.staticTexts["alarmSaveError"].exists,"Preview controls must not activate Save")
    capture(app,name:"expanded-sounds-"+language)
-   app.navigationBars.buttons.element(boundBy:0).tap()
-   XCTAssertTrue(app.staticTexts[language == "vi" ? "Sax ban mai" : "Sax daybreak"].exists)
+   app.buttons["chooseSound"].tap()
+   XCTAssertTrue(app.buttons["chooseSound"].label.contains(language == "vi" ? "Sax ban mai" : "Sax daybreak"),app.buttons["chooseSound"].debugDescription)
    app.buttons[language == "vi" ? "Hủy" : "Cancel"].tap()
    app.terminate()
   }
@@ -365,15 +367,53 @@ final class PilotUITests:XCTestCase {
   app.buttons["addAlarm"].tap()
   app.buttons["mode-focused"].tap()
   app.swipeUp()
-  let target=app.steppers["pushUpTarget"]
+  let target=app.staticTexts["pushUpTarget"]
   XCTAssertTrue(target.waitForExistence(timeout:3))
-  XCTAssertTrue(target.label.contains("5"))
+  XCTAssertTrue(target.label.contains("10"))
   app.buttons["challenge-readAndChoose"].tap()
   app.swipeDown()
   app.buttons["mode-balanced"].tap()
   app.swipeUp()
   XCTAssertTrue(app.buttons["challenge-readAndChoose"].isSelected)
-  XCTAssertFalse(app.steppers["pushUpTarget"].exists)
+  XCTAssertFalse(app.staticTexts["pushUpTarget"].exists)
+  app.buttons["Cancel"].tap()
+ }
+ func testPushUpTargetRespectsModeFloorsAndMaximum() {
+  let app=launch(language:"en")
+  app.buttons["addAlarm"].tap()
+  app.buttons["mode-balanced"].tap()
+  let target=app.staticTexts["pushUpTarget"],increase=app.buttons["increasePushUpTarget"],decrease=app.buttons["decreasePushUpTarget"]
+  for _ in 0..<6 where !increase.isHittable {app.swipeUp()}
+  XCTAssertTrue(target.label.contains("5"))
+  XCTAssertTrue(decrease.exists)
+  XCTAssertFalse(decrease.isEnabled,"Awake cannot go below 5")
+  increase.tap()
+  XCTAssertTrue(target.label.contains("6"))
+  decrease.tap()
+  XCTAssertTrue(target.label.contains("5"))
+  XCTAssertFalse(decrease.isEnabled)
+  increase.tap()
+  for _ in 0..<6 where !app.buttons["mode-focused"].isHittable || app.buttons["mode-focused"].frame.minY<app.buttons["editorChallengeSection"].frame.maxY {app.swipeDown()}
+  app.buttons["mode-focused"].tap()
+  for _ in 0..<6 where !increase.isHittable {app.swipeUp()}
+  XCTAssertTrue(target.label.contains("10"))
+  XCTAssertFalse(decrease.isEnabled,"Energized cannot go below 10")
+  increase.tap()
+  decrease.tap()
+  XCTAssertTrue(target.label.contains("10"))
+  XCTAssertFalse(decrease.isEnabled)
+  increase.tap()
+  XCTAssertTrue(target.label.contains("11"))
+  for _ in 0..<6 where !app.buttons["mode-balanced"].isHittable || app.buttons["mode-balanced"].frame.minY<app.buttons["editorChallengeSection"].frame.maxY {app.swipeDown()}
+  app.buttons["mode-balanced"].tap()
+  for _ in 0..<6 where !increase.isHittable {app.swipeUp()}
+  XCTAssertTrue(target.label.contains("11"),"Switching to an easier mode must preserve the chosen target")
+  for _ in 0..<39 {increase.tap()}
+  XCTAssertTrue(target.label.contains("50"))
+  XCTAssertFalse(increase.isEnabled,"The target must stop at the supported maximum")
+  decrease.tap()
+  XCTAssertTrue(target.label.contains("49"))
+  XCTAssertTrue(increase.isEnabled)
   app.buttons["Cancel"].tap()
  }
  func testLocalPracticeCanReturnHomeBeforeRequestingPermissions() {
@@ -394,7 +434,7 @@ final class PilotUITests:XCTestCase {
    let app=launch(language:language,expired:true)
    app.buttons["addAlarm"].tap()
    app.buttons["mode-balanced"].tap()
-   XCTAssertEqual(app.staticTexts["modeExplanation"].label,language == "vi" ? "Gợi ý 3 lần chống đẩy" : "Try 3 push-ups")
+   XCTAssertEqual(app.staticTexts["modeExplanation"].label,language == "vi" ? "Gợi ý 5 lần chống đẩy" : "Try 5 push-ups")
    app.buttons["mode-focused"].tap()
    XCTAssertTrue(app.buttons["closePro"].waitForExistence(timeout:5))
    capture(app,name:"expired-pro-"+language)
@@ -419,7 +459,7 @@ final class PilotUITests:XCTestCase {
    let system=app.buttons["sound-system"]
    for _ in 0..<10 where !system.isHittable {app.swipeDown()}
    XCTAssertTrue(system.isSelected)
-   app.navigationBars.buttons.element(boundBy:0).tap()
+   app.buttons["chooseSound"].tap()
    app.buttons[language == "vi" ? "Hủy" : "Cancel"].tap()
    app.buttons["morningProgress"].tap()
    XCTAssertTrue(app.buttons["explorePro"].waitForExistence(timeout:5))
@@ -434,11 +474,10 @@ final class PilotUITests:XCTestCase {
   app.buttons["addAlarm"].tap()
   app.buttons["mode-balanced"].tap()
   app.swipeUp()
-  let target=app.steppers["pushUpTarget"]
+  let target=app.staticTexts["pushUpTarget"]
   XCTAssertTrue(target.waitForExistence(timeout:3))
-  XCTAssertTrue(target.label.contains("3"))
-  target.buttons["pushUpTarget-Increment"].tap()
-  XCTAssertTrue(target.label.contains("3"))
+  XCTAssertTrue(target.label.contains("5"))
+  XCTAssertFalse(app.buttons["increasePushUpTarget"].isEnabled)
   app.buttons["challenge-readAndChoose"].tap()
   app.swipeDown()
   app.buttons["mode-gentle"].tap()

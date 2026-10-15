@@ -337,3 +337,15 @@
 "No challenges recorded" = "No challenges recorded";
 "Completed challenges" = "Completed challenges";
 "View this day’s challenges" = "View this day’s challenges";
+
+"Awake" = "Awake";
+"Energized" = "Energized";
+"Default: 10 push-ups" = "Default: 10 push-ups";
+"Expanded" = "Expanded";
+"Collapsed" = "Collapsed";
+"Increase push-up target" = "Increase push-up target";
+"This sound is no longer available. Choose System sound or unlock Pro." = "This sound is no longer available. Choose System sound or unlock Pro.";
+"These challenge settings require Pro. Choose another challenge or unlock Pro." = "These challenge settings require Pro. Choose another challenge or unlock Pro.";
+"Decrease push-up target" = "Decrease push-up target";
+
+"Movement capture timed out. Try again or choose another challenge." = "Movement capture timed out. Try again or choose another challenge.";

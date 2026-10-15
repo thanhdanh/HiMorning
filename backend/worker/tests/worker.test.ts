@@ -23,6 +23,11 @@ describe('free demo trust boundaries',()=>{
   expect((await prepareDemoEvidence(data,1)).frames).toHaveLength(5);
   for(const frames of [data.frames.slice(1),[...data.frames].reverse(),data.frames.map((frame,i)=>i?frame:{...frame,jpegBase64:fixture.frames[7].jpegBase64}),data.frames.map((frame,i)=>i?frame:{...frame,id:'f9'})])await expect(prepareDemoEvidence({...data,frames},1)).rejects.toMatchObject({code:'invalid-argument'});
  });
+ it.each([5,10,20,50])('accepts an exact %i-cycle demo prefix but never synthetic success',async target=>{
+  const data={...submit({sessionID:'a'.repeat(64),nonce:uuid(1)}),frames:fixture.frames.slice(0,target*5)};
+  expect((await prepareDemoEvidence(data,target)).frames).toHaveLength(target*5);
+  expect(()=>parseVerdict(completion({status:'complete',reps:Array.from({length:target},(_,i)=>({frameIDs:Array.from({length:5},(_,j)=>`f${i*5+j}`)})),cue:'none'}))).toThrow();
+ });
  it('pins the free model, default quotas and a separate consent boundary',()=>{
   expect(workerConfig(env)).toMatchObject({model:'gemini-3.5-flash-lite',userDailyLimit:3,globalDailyLimit:10,consentVersion:'2026-10-15-free-demo'});
   for(const bad of [{FIREBASE_APP_ID:''},{FIREBASE_PROJECT_ID:'../other'},{FIREBASE_PROJECT_NUMBER:'not-a-number'},{AI_VERIFICATION_ENABLED:'yes'},{GEMINI_API_KEY:''}])expect(()=>workerConfig({...env,...bad})).toThrow();

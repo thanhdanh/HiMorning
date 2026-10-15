@@ -69,3 +69,17 @@ The free path requires consent `2026-10-15-free-demo`; the retained paid path
 rejects it. Workers rejects any image outside the generated fixture. Demo results
 never become `ai_verified`, even if a provider returns a hallucinated success.
 See [free remote demo](../../docs/FREE-REMOTE-DEMO.md).
+
+Push-up targets accept 1–50 cycles (including legacy 1–5 requests). Evidence remains
+limited to exactly five ordered, distinct JPEG frames per requested cycle:
+surplus evidence is rejected before inference rather than discarded. Limits are at most 250 frames,
+50,000 decoded bytes per frame and 12,500,000 total bytes, 512px per dimension,
+and timestamps within 300 seconds. Transport is bounded to 18 MiB including JSON
+and base64. Real inference runs sequential batches of at most 25 images/five
+cycles on the unchanged 32,768-token L4 model context, within the original shared
+180-second job deadline and cancellation handle. Every batch must independently
+identify its ordered, non-overlapping frame IDs; missing, malformed or truncated
+output fails closed. Synthetic free-demo prefixes now cover 250 frames; the
+original 25/100-frame prefixes are unchanged and generated images can never
+verify a person’s movement. Latency and real exercise evidence still require
+remote calibration before release; no paid inference is part of local tests.

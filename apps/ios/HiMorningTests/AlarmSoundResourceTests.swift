@@ -4,6 +4,10 @@ import XCTest
 @testable import HiMorning
 
 final class AlarmSoundResourceTests:XCTestCase {
+ func testRemoteDemoEvidenceIsBundledForTheLargestTarget() throws {
+  let url=try XCTUnwrap(Bundle.main.url(forResource:"free-demo-frames",withExtension:"json"))
+  XCTAssertEqual(try RemoteDemo.frames(from:Data(contentsOf:url),target:50).count,250)
+ }
  func testSoundGroupsContainEveryChoiceExactlyOnce() {
   let grouped=AlarmSound.groups.flatMap(\.sounds)
   XCTAssertEqual(grouped,AlarmSound.allCases)

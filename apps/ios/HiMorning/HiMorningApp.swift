@@ -8,6 +8,7 @@ import HiMorningCore
  @AppStorage("appLanguage") private var language="system"
  var body:some Scene {WindowGroup {HomeView(model:model).environment(\.locale,Locale(identifier:(AppLanguage(rawValue:language) ?? .system).resolved(preferredLanguages:Locale.preferredLanguages)))}}
 }
+enum AlarmSaveError:Error {case soundUnavailable,challengeUnavailable}
 @MainActor final class PilotModel:ObservableObject {
  @Published var alarms:[SavedAlarm]=[]
  @Published var error:String?
@@ -19,6 +20,7 @@ import HiMorningCore
  var access:MorningAccess {preview.access}
  @Published var journal:MorningJournal?
  @Published var progressError:String?
+ @Published var celebrationID:UUID?
  let scheduler=NativeAlarmScheduler()
  let cloud:(any CloudVerification)?
  private let library:AlarmLibrary?
@@ -125,7 +127,16 @@ import HiMorningCore
   }
   #endif
   guard let library else {throw LibraryError.notFound}
+  #if DEBUG
+  if ProcessInfo.processInfo.arguments.contains("--ui-testing"),ProcessInfo.processInfo.arguments.contains("--ui-sound-access-expires") {
+   var period=PreviewPeriod();period.start(now:Date().addingTimeInterval(-31*86_400))
+   let data=try JSONEncoder().encode(period)
+   preview=PreviewStore(subscriptions:subscriptions,load:{data},save:{_ in})
+  }
+  #endif
   preview.refresh()
+  guard access.allows(sound:alarm.sound) else {throw AlarmSaveError.soundUnavailable}
+  guard access.allows(mode:alarm.mode),access.hasFullAccess || (alarm.challenge.repetitions ?? 0)<=WakeMode.balanced.policy.reps else {throw AlarmSaveError.challengeUnavailable}
   do {
    let effective=access.effectiveAlarm(alarm)
    if await library.all().contains(where:{$0.id==alarm.id}) {try await library.update(effective)}
@@ -150,7 +161,7 @@ import HiMorningCore
  }
 }
 extension WakeMode {
- var title:String {switch self {case .gentle:return appText("Gentle");case .balanced:return appText("Balanced");case .focused:return appText("Focused")}}
+ var title:String {switch self {case .gentle:return appText("Gentle");case .balanced:return appText("Awake");case .focused:return appText("Energized")}}
  var icon:String {switch self {case .gentle:return "leaf";case .balanced:return "circle.lefthalf.filled";case .focused:return "scope"}}
 }
 extension AlarmSound {
@@ -204,6 +215,7 @@ struct HomeView:View {
  private struct AlarmDraft:Identifiable {let id=UUID();let alarm:SavedAlarm?}
  @ObservedObject var model:PilotModel
  @Environment(\.scenePhase) private var phase
+ @Environment(\.accessibilityReduceMotion) private var reduceMotion
  @State private var editor:AlarmDraft?
  @State private var progress=false
  @State private var pro=false
@@ -214,7 +226,7 @@ struct HomeView:View {
    ScrollView {
     VStack(alignment:.leading,spacing:16) {
      HStack(spacing:12) {
-      Label("HiMorning.",systemImage:"sunrise").font(.title3.bold()).labelStyle(.titleAndIcon)
+      Label("HiMorning.",systemImage:"sunrise").font(.system(size:20,weight:.bold)).labelStyle(.titleAndIcon)
        .fixedSize(horizontal:false,vertical:true).accessibilityLabel("Hi Morning")
       Spacer()
       GlassEffectContainer(spacing:12) {
@@ -286,6 +298,15 @@ struct HomeView:View {
    .sheet(isPresented:$progress) {MorningProgressView(model:model,store:model.subscriptions)}
    .sheet(isPresented:$pro) {ProView(store:model.subscriptions,preview:model.preview)}
    .fullScreenCover(item:$model.selected,onDismiss:{Task {await model.refresh()}}) {alarm in ChallengeView(alarm:alarm,model:model)}
+   .overlay {
+    if model.selected == nil,let id=model.celebrationID,!reduceMotion {
+     ChallengeConfetti().id(id).ignoresSafeArea()
+      .task {
+       defer {if model.celebrationID==id {model.celebrationID=nil}}
+       do {try await Task.sleep(for:.seconds(2))} catch {return}
+      }
+    }
+   }
    .alert(appText("Please check"),isPresented:Binding(get:{model.error != nil},set:{visible in
     guard !visible,let shown=model.error else {return}
     DispatchQueue.main.async {if model.error==shown {model.error=nil}}
@@ -294,6 +315,7 @@ struct HomeView:View {
    .task {model.subscriptions.start();await model.subscriptions.refresh()}
    .onReceive(NotificationCenter.default.publisher(for:UserDefaults.didChangeNotification).receive(on:RunLoop.main)) {_ in model.openPending()}
    .onChange(of:phase) {_,value in if value == .active {Task {await model.refresh();await model.subscriptions.refresh()}}}
+   .onChange(of:reduceMotion) {_,value in if value {model.celebrationID=nil}}
   }
  }
  private func alarmCard(_ alarm:SavedAlarm,now:Date)->some View {

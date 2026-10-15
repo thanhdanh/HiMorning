@@ -14,13 +14,14 @@ public enum GuidedRhythmVariant: String, Codable, CaseIterable, Sendable {
 }
 
 public struct ChallengeSelection: Codable, Equatable, Sendable {
+ public static let maximumPushUps=50
  public let kind:ChallengeKind
  public let repetitions:Int?
  public let rhythmVariant:GuidedRhythmVariant?
 
  public init(kind:ChallengeKind,repetitions:Int?=nil,rhythmVariant:GuidedRhythmVariant?=nil) {
   self.kind=kind
-  self.repetitions=kind == .pushUps ? min(5,max(1,repetitions ?? 3)) : nil
+  self.repetitions=kind == .pushUps ? min(Self.maximumPushUps,max(1,repetitions ?? 5)) : nil
   self.rhythmVariant=kind == .guidedRhythm ? rhythmVariant ?? .standing : nil
  }
 
@@ -33,8 +34,8 @@ public struct ChallengeSelection: Codable, Equatable, Sendable {
  public static func legacyDefault(for mode:WakeMode) -> ChallengeSelection {
   switch mode {
   case .gentle:return .none
-  case .balanced:return .pushUps(repetitions:3)
-  case .focused:return .pushUps(repetitions:5)
+  case .balanced:return .pushUps(repetitions:5)
+  case .focused:return .pushUps(repetitions:10)
   }
  }
 

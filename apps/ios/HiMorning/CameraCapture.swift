@@ -65,7 +65,9 @@ final class CameraCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDelegate,
   guard active,!isCancelled,!counter.ready,now-lastSample>=0.12,let buffer=CMSampleBufferGetImageBuffer(sampleBuffer) else {return}
   lastSample=now
   let timestamp=Int((now-started)*1000)
-  guard timestamp<=120000 else {stopCamera();publish(ended:true,message:appText("This attempt has timed out. You can start again."));return}
+  guard timestamp<=EvidenceBuffer.maximumDurationMs else {
+   stopCamera();publish(ended:true,message:appText("Movement capture timed out. Try again or choose another challenge."));return
+  }
   do {
    let request=VNDetectHumanBodyPoseRequest()
    try VNImageRequestHandler(cvPixelBuffer:buffer,orientation:.leftMirrored).perform([request])
