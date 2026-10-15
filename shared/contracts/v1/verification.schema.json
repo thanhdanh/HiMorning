@@ -22,7 +22,10 @@
         },
         "consentVersion": {
           "type": "string",
-          "const": "2026-10-11"
+          "enum": [
+            "2026-10-15",
+            "2026-10-15-free-demo"
+          ]
         }
       },
       "required": [
@@ -111,7 +114,10 @@
         },
         "consentVersion": {
           "type": "string",
-          "const": "2026-10-11"
+          "enum": [
+            "2026-10-15",
+            "2026-10-15-free-demo"
+          ]
         },
         "frames": {
           "minItems": 1,
@@ -150,6 +156,25 @@
         "evidenceID",
         "consentVersion",
         "frames"
+      ],
+      "additionalProperties": false
+    },
+    "ResultRequest": {
+      "type": "object",
+      "properties": {
+        "sessionID": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "evidenceID": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        }
+      },
+      "required": [
+        "sessionID",
+        "evidenceID"
       ],
       "additionalProperties": false
     },

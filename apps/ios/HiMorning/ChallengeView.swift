@@ -36,9 +36,11 @@ struct ChallengeView:View {
  @State private var consent=false
  @State private var busy=false
  @State private var consentDialog=false
+ @State private var demoSubmitted=false
+ private var isDemoOnly:Bool {model.cloud?.isDemoOnly ?? true}
  @State private var completion:WakeOutcome?
  private var finished:Bool {completion != nil}
- private var celebrates:Bool {completion == .localCompleted || completion == .openaiVerified}
+ private var celebrates:Bool {completion == .localCompleted || completion == .openaiVerified || completion == .aiVerified}
  @State private var historyID=UUID()
  @State private var stopping=false
  @State private var result:String?
@@ -88,7 +90,8 @@ struct ChallengeView:View {
      }
     }
     if challenge.kind == .pushUps && camera == nil && !finished {
-     Button {consentDialog=true} label: {ChallengeStartLabel(title:"Start AI challenge")}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startChallenge")
+     Button {consentDialog=true} label: {ChallengeStartLabel(title:isDemoOnly ? "Test remote AI":"Start AI challenge")}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping || demoSubmitted).accessibilityIdentifier("startChallenge")
+     if isDemoOnly {Text(appText("Remote demo uses generated images. It does not verify your movement.")).font(.footnote).foregroundStyle(MorningTheme.muted)}
     }
     if challenge.kind == .guidedRhythm && rhythmCamera == nil && !finished {
      Button {Task {await startRhythm()}} label: {ChallengeStartLabel(title:"Start guided rhythm")}.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startGuidedRhythm")
@@ -122,8 +125,8 @@ struct ChallengeView:View {
      }
     }.padding(.horizontal,24).padding(.vertical,12).background(MorningTheme.canvas)
    }.tint(MorningTheme.accent)
-   .confirmationDialog(appText("Movement photos go through HiMorning to OpenAI for checking. No audio is recorded. HiMorning does not save these photos; OpenAI data policies apply. You can stop at any time."),isPresented:$consentDialog,titleVisibility:.visible) {
-    Button(appText("Agree and open camera")) {Task {await startCamera()}}
+   .confirmationDialog(appText(isDemoOnly ? "This test sends generated color images to Gemini through Cloudflare. Your camera stays off. Google may use demo inputs and outputs to improve its products. No movement will be verified.":"Movement photos go through HiMorning to Qwen on Modal. Modal may retain inputs and outputs for up to 7 days. No audio is uploaded. You can stop at any time."),isPresented:$consentDialog,titleVisibility:.visible) {
+    Button(appText(isDemoOnly ? "Agree and run test":"Agree and open camera")) {Task {if isDemoOnly {await startDemo()} else {await startCamera()}}}
     Button(appText("Choose another way")) {consentDialog=false}
    }
    .task {
@@ -148,7 +151,7 @@ struct ChallengeView:View {
     }
     if arguments.contains("--ui-testing"),model.rehearsal,arguments.contains("--ui-complete-challenge") {
      switch challenge.kind {
-     case .pushUps:complete(.openaiVerified)
+     case .pushUps:complete(.aiVerified)
      case .guidedRhythm:complete(.localCompleted,success:appText("Guided rhythm completed. Have a good morning!"))
      case .readAloud:
       transcript=appText(readAloudPrompt.text);speechEnded=true
@@ -171,6 +174,7 @@ struct ChallengeView:View {
   }
  }
  @MainActor private func startCamera() async {
+  guard !isDemoOnly else {return}
   guard !busy,!finished,!stopping,scene == .active,let coordinator,let target=challenge.repetitions else {return};busy=true;message=appText("Getting the camera ready…")
   let generation=UUID();captureGeneration=generation
   defer {busy=false}
@@ -186,11 +190,27 @@ struct ChallengeView:View {
    camera=capture;await capture.start()
   } catch {message=appText("AI is not available. You can confirm you are awake or stop.")}
  }
- @MainActor private func submit(_ frames:[EvidenceFrame]) async {
-  guard let coordinator,!busy else {return};busy=true;message=appText("Checking your movement… You can still stop.")
+ @MainActor private func startDemo() async {
+  guard isDemoOnly,!busy,!finished,!stopping,!demoSubmitted,scene == .active,let coordinator,let target=challenge.repetitions else {return}
+  busy=true;let generation=UUID();captureGeneration=generation
   defer {busy=false}
   do {
-   if try await coordinator.submit(frames) {complete(coordinator.session.outcome ?? .openaiVerified)}
+   guard let url=Bundle.main.url(forResource:"free-demo-frames",withExtension:"json") else {throw ChallengeError.insufficientEvidence}
+   let frames=try RemoteDemo.frames(from:Data(contentsOf:url),target:target)
+   try await coordinator.startCloud(consent:true)
+   guard coordinator.session.outcome == nil,captureGeneration==generation,scene == .active,!stopping else {return}
+   demoSubmitted=true;message=appText("Waiting for the AI server. You can still stop.")
+   _ = try await coordinator.submit(frames)
+   guard coordinator.session.outcome == nil,captureGeneration==generation,scene == .active,!stopping else {return}
+   if let decision=coordinator.lastDecision,["uncertain","incomplete"].contains(decision.status),!decision.decisionID.isEmpty {message=appText("The remote AI replied. Demo complete; no movement was verified.")}
+   else {message=appText("The remote test is unavailable. You can still stop.")}
+  } catch {if captureGeneration==generation,!finished,!stopping {message=appText("The remote test is unavailable. You can still stop.")}}
+ }
+ @MainActor private func submit(_ frames:[EvidenceFrame]) async {
+  guard let coordinator,!busy else {return};busy=true;message=appText("Waiting for the AI server. You can still stop.")
+  defer {busy=false}
+  do {
+   if try await coordinator.submit(frames) {complete(coordinator.session.outcome ?? .aiVerified)}
    else if coordinator.session.outcome == nil {message=appText("The movement could not be fully checked. You can choose another way.")}
   } catch {message=appText("The movement could not be checked right now. You can still stop.")}
  }
@@ -211,7 +231,7 @@ struct ChallengeView:View {
   model.recordMorning(id:historyID,outcome:outcome,rehearsal:model.rehearsal)
   switch outcome {
   case .localCompleted:result=success ?? appText("Local challenge completed. Have a good morning!")
-  case .openaiVerified:result=appText("Movement checked. Have a good morning!")
+  case .openaiVerified,.aiVerified:result=appText("Movement checked. Have a good morning!")
   case .selfConfirmed:result=appText("You confirmed you are awake. Have a good morning!")
   case .dismissed:result=model.rehearsal ? appText("Practice ended. Your alarms are unchanged.") : appText("Alarm stopped. Take care today.")
   }
@@ -222,7 +242,7 @@ struct ChallengeView:View {
   readAloudPrompt=EnglishChallengeContent.readAloud.randomElement() ?? readAloudPrompt
   switch challenge.kind {
   case .none:message=appText("You can confirm you’re awake when the countdown ends.")
-  case .pushUps:message=appText("Place your phone so your whole body is visible, then tap Start AI challenge.")
+  case .pushUps:message=appText(isDemoOnly ? "Remote demo uses generated images. It does not verify your movement.":"Place your phone so your whole body is visible, then tap Start AI challenge.")
   case .readAndChoose:message=appText("Read the sentence, then choose the closest meaning. You can try again.")
   case .guidedRhythm:message=challenge.rhythmVariant == .seated ? appText("Stay seated. Lower your arms, raise them, then lower them. Complete 3 cycles. Video stays on this device.") : appText("Stand, bend your knees gently, then stand again. Complete 3 cycles. Video stays on this device.")
   case .readAloud:message=appText("Tap Start reading, then read the English sentence aloud. Match at least 80% of the words.")

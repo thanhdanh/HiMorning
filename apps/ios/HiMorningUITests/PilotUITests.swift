@@ -81,16 +81,18 @@ final class PilotUITests:XCTestCase {
   trial.tap()
   app.buttons["practice-pushUps"].tap()
   XCTAssertTrue(app.buttons["startChallenge"].waitForExistence(timeout:5))
+  XCTAssertEqual(app.staticTexts.matching(identifier:"challengeMessage").count,1)
   capture(app,name:"challenge-ready-"+language)
   app.buttons["startChallenge"].tap()
-  XCTAssertTrue(app.buttons[vi ? "Đồng ý và mở camera" : "Agree and open camera"].waitForExistence(timeout:5))
+  XCTAssertTrue(app.buttons[vi ? "Đồng ý và chạy thử" : "Agree and run test"].waitForExistence(timeout:5))
   capture(app,name:"consent-"+language)
   app.buttons[vi ? "Chọn cách khác" : "Choose another way"].tap()
   XCTAssertTrue(app.buttons["stopAlarm"].exists)
   app.buttons["startChallenge"].tap()
-  app.buttons[vi ? "Đồng ý và mở camera" : "Agree and open camera"].tap()
-  let unavailable=vi ? "AI chưa sẵn sàng. Bạn có thể tự xác nhận hoặc dừng ngay." : "AI is not available. You can confirm you are awake or stop."
+  app.buttons[vi ? "Đồng ý và chạy thử" : "Agree and run test"].tap()
+  let unavailable=vi ? "Chưa chạy được phép thử từ xa. Bạn vẫn có thể dừng." : "The remote test is unavailable. You can still stop."
   XCTAssertTrue(app.staticTexts[unavailable].waitForExistence(timeout:5))
+  XCTAssertFalse(app.staticTexts[vi ? "Hoan hô!" : "Hooray!"].exists)
   capture(app,name:"ai-unavailable-"+language)
   app.buttons["confirmAwake"].tap()
   let confirmed=vi ? "Bạn đã tự xác nhận thức dậy. Chúc buổi sáng tốt lành!" : "You confirmed you are awake. Have a good morning!"

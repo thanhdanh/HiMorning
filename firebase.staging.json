@@ -1,0 +1,9 @@
+{
+  "functions": [{
+    "source": ".firebase/functions",
+    "codebase": "himorning",
+    "runtime": "nodejs22",
+    "predeploy": ["pnpm run prepare:firebase"]
+  }],
+  "firestore": {"rules": "firestore.rules", "indexes": "firestore.indexes.json"}
+}

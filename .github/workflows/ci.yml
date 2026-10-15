@@ -2,14 +2,26 @@ name: HiMorning checks
 on:
   push:
     branches: [main, 'codex/**']
+  pull_request:
+    types: [closed]
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: checks-${{ github.ref }}
+  # A merged PR cancels its head branch's runs; the closed event never needs a runner.
+  group: >-
+    checks-${{ github.event_name == 'pull_request'
+      && (github.event.pull_request.merged
+      && github.event.pull_request.head.repo.full_name == github.repository
+      && github.event.pull_request.head.ref != github.event.repository.default_branch
+      && format('refs/heads/{0}', github.event.pull_request.head.ref)
+      || format('closed-pr-{0}', github.event.pull_request.number))
+      || github.ref }}
   cancel-in-progress: true
 jobs:
   backend:
+    if: github.event_name != 'pull_request'
+    name: ${{ github.event_name == 'pull_request' && 'PR closure (backend)' || 'backend' }}
     runs-on: [self-hosted, macOS, ARM64, himorning]
     timeout-minutes: 12
     steps:
@@ -26,14 +38,31 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm run typecheck
       - run: pnpm run build
+      - run: pnpm run build:worker
       - run: node scripts/export-contracts.mjs
-      - run: git diff --exit-code -- shared/contracts/v1/verification.schema.json
+      - run: git diff --exit-code -- shared/contracts/v1/verification.schema.json backend/inference/verdict.schema.json
       - run: node scripts/prepare-firebase.mjs
       - run: pnpm --dir .firebase/functions install --prod --frozen-lockfile
       - run: node -e "import('./.firebase/functions/lib/index.js')"
       - run: pnpm run test:coverage
       - run: pnpm audit --prod
+  inference:
+    if: github.event_name != 'pull_request'
+    name: ${{ github.event_name == 'pull_request' && 'PR closure (inference)' || 'inference' }}
+    runs-on: [self-hosted, macOS, ARM64, himorning]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.11 from Homebrew
+        run: |
+          brew list --versions python@3.11 >/dev/null || brew install python@3.11
+          "$(brew --prefix python@3.11)/bin/python3.11" -m venv backend/inference/.venv
+      - run: backend/inference/.venv/bin/python -m pip install -r backend/inference/requirements.lock
+      - run: backend/inference/.venv/bin/python -m unittest discover -s backend/inference -p 'test_*.py' -v
+      - run: cd backend/inference && .venv/bin/python -c "import app"
   ios:
+    if: github.event_name != 'pull_request'
+    name: ${{ github.event_name == 'pull_request' && 'PR closure (ios)' || 'ios' }}
     needs: backend
     runs-on: [self-hosted, macOS, ARM64, himorning]
     timeout-minutes: 25

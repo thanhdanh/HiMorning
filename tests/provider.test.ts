@@ -1,28 +1,24 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-const sdk=vi.hoisted(()=>({parse:vi.fn(),options:vi.fn()}));
-vi.mock('openai',()=>({default:class { responses={parse:sdk.parse};constructor(options:unknown){sdk.options(options);} }}));
-import { OpenAIVerifier } from '../backend/functions/src/openai.js';
-import { prepareEvidence } from '../backend/functions/src/evidence.js';
-import { frames, uuid, complete } from './helpers.js';
-beforeEach(()=>{vi.clearAllMocks();});
-describe('OpenAI bounded adapter',()=>{
- it('uses ordered images, strict schema, store false, capped output and zero SDK retries',async()=>{
-  sdk.parse.mockResolvedValue({status:'completed',output_parsed:complete(),usage:{input_tokens:500,output_tokens:50}});
-  const evidence=await prepareEvidence({sessionID:'a'.repeat(64),nonce:uuid(1),evidenceID:uuid(2),consentVersion:'2026-10-11',frames:await frames()},1);
-  const meter=vi.fn();const verifier=new OpenAIVerifier('not-a-real-key','test-model',meter); const result=await verifier.verify(evidence,1);
-  expect(result).toEqual(complete());expect(meter).toHaveBeenCalledWith({model:'test-model',inputTokens:500,outputTokens:50,reasoningTokens:0});expect(sdk.options).toHaveBeenCalledWith(expect.objectContaining({maxRetries:0,timeout:15000}));
-  const request=sdk.parse.mock.calls[0][0];expect(request).toMatchObject({model:'test-model',store:false,max_output_tokens:800});
-  expect(request.reasoning).toEqual({effort:'none'});expect(request.text.verbosity).toBe('low');expect(request.text.format.strict).toBe(true);const content=request.input[1].content;
-  expect(content.filter((c:any)=>c.type==='input_image')).toHaveLength(5);
-  expect(content.filter((c:any)=>c.type==='input_text').map((c:any)=>c.text).join(' ')).toMatch(/f0.*0.*f1.*300.*f2/s);
-  expect(request).not.toHaveProperty('tools');expect(sdk.parse).toHaveBeenCalledOnce();
+import { describe, it, expect, vi } from 'vitest';
+import { ModalVerifier } from '../backend/functions/src/modal.js';
+const evidence={frames:[{id:'f0',timestampMs:0,dataURL:'data:image/jpeg;base64,eA=='}],payloadHash:'hash',sufficient:true};
+function setup(){const request=vi.fn<typeof fetch>();const meter=vi.fn();return {request,meter,provider:new ModalVerifier('https://pilot.modal.run','key','secret','qwen',meter,request)};}
+describe('Modal transport boundary',()=>{
+ it('dispatches once over authenticated HTTPS and reads results without sending images again',async()=>{
+  const s=setup();s.request.mockResolvedValueOnce(Response.json({jobID:'fc-job'})).mockResolvedValueOnce(Response.json({status:'pending'})).mockResolvedValueOnce(Response.json({status:'completed',verdict:{status:'uncertain',reps:[],cue:'none'}})).mockResolvedValueOnce(Response.json({status:'cancelled'}));
+  expect(await s.provider.start(evidence,1,123)).toBe('fc-job');expect(await s.provider.get('fc-job')).toEqual({status:'pending'});expect((await s.provider.get('fc-job')).status).toBe('completed');await s.provider.cancel('fc-job');
+  const [url,options]=s.request.mock.calls[0];expect(url).toBe('https://pilot.modal.run/jobs');expect(options).toMatchObject({method:'POST',redirect:'error',headers:{'Modal-Key':'key','Modal-Secret':'secret'}});expect(JSON.parse(options!.body as string)).toEqual({model:'qwen',target:1,deadlineAt:123,frames:evidence.frames});
+  expect(s.request.mock.calls[1][1]).not.toHaveProperty('body');expect(JSON.stringify(s.meter.mock.calls)).not.toMatch(/dataURL|secret|base64/);
  });
- it.each([{status:'incomplete',output_parsed:complete()},{status:'completed',output_parsed:null},{status:'completed',output_parsed:{status:'complete'}}])('treats incomplete/refused/unparsed output as uncertain',async(response)=>{
-  sdk.parse.mockResolvedValue(response); const verifier=new OpenAIVerifier('fake','test-model');
-  expect((await verifier.verify({frames:[],payloadHash:'x',sufficient:true},1)).status).toBe('uncertain');
+ it('does not retry rejected requests or return provider error bodies',async()=>{
+  const s=setup();s.request.mockResolvedValue(new Response('sensitive request body',{status:429}));await expect(s.provider.start(evidence,1,123)).rejects.toThrow('Inference service unavailable');expect(s.request).toHaveBeenCalledOnce();
  });
- it('propagates provider errors without retrying',async()=>{
-  sdk.parse.mockRejectedValue(new Error('429'));const verifier=new OpenAIVerifier('fake','test-model');
-  await expect(verifier.verify({frames:[],payloadHash:'x',sufficient:true},1)).rejects.toThrow('429');expect(sdk.parse).toHaveBeenCalledOnce();
+ it.each([{jobID:'https://attacker.test'},{jobID:'fc-ok',extra:true}])('rejects untrusted job identifiers',async body=>{
+  const s=setup();s.request.mockResolvedValue(Response.json(body));await expect(s.provider.start(evidence,1,123)).rejects.toThrow();await expect(s.provider.get('../secret')).rejects.toThrow();expect(s.request).toHaveBeenCalledOnce();
+ });
+ it('bounds responses and tolerates logging failures',async()=>{
+  const request=vi.fn<typeof fetch>().mockResolvedValueOnce(new Response('x'.repeat(65537))).mockResolvedValueOnce(Response.json({jobID:'fc-job'}));
+  const provider=new ModalVerifier('https://pilot.modal.run','key','secret','qwen',()=>{throw new Error('logger');},request);
+  await expect(provider.start(evidence,1,123)).rejects.toThrow('too large');expect(await provider.start(evidence,1,123)).toBe('fc-job');
+  expect(()=>new ModalVerifier('https://pilot.modal.run','','secret','qwen')).toThrow();
  });
 });

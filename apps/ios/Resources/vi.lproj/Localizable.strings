@@ -29,7 +29,6 @@
 "Move slowly up and down, within the camera view." = "Lên và xuống chậm, trong vùng camera.";
 "Movement captured. Checking…" = "Đã ghi đủ chuyển động. Đang xác minh…";
 "Movement checked. Have a good morning!" = "Đã xác minh động tác. Chúc bạn một ngày nhiều năng lượng!";
-"Movement photos go through HiMorning to OpenAI for checking. No audio is recorded. HiMorning does not save these photos; OpenAI data policies apply. You can stop at any time." = "Ảnh động tác được gửi qua HiMorning đến OpenAI để kiểm tra. Không thu âm. HiMorning không lưu ảnh; chính sách dữ liệu OpenAI được áp dụng. Bạn có thể dừng bất cứ lúc nào.";
 "New alarm" = "Báo thức mới";
 "No alarms yet" = "Chưa có báo thức";
 "Off" = "Đã tắt";
@@ -107,8 +106,6 @@
 "Pro is active" = "Đã có Pro";
 "Close" = "Đóng";
 "Apple handles subscription payments. HiMorning uses verified purchases to unlock Pro and does not receive your card or wallet details." = "Apple xử lý thanh toán gói đăng ký. HiMorning xác minh giao dịch để mở Pro và không nhận thông tin thẻ hay ví của bạn.";
-"Cloud challenges use a guest Firebase account. Movement photos are sent to OpenAI only after you agree. Progress history contains dates and outcomes, not camera photos or audio." = "Nhiệm vụ qua máy chủ dùng tài khoản khách Firebase. Ảnh chuyển động chỉ được gửi đến OpenAI khi bạn đồng ý. Lịch sử tiến độ chỉ gồm thời gian và kết quả, không có ảnh camera hay âm thanh.";
-"OpenAI data policies" = "Chính sách dữ liệu OpenAI";
 "Privacy policy" = "Chính sách quyền riêng tư";
 "Past 7 days" = "7 ngày qua";
 "%lld mornings" = "%lld buổi sáng";
@@ -254,6 +251,19 @@
 "Your word match score is below 80. Review the highlighted words and try again." = "Điểm khớp từ chưa đạt 80. Xem các từ được đánh dấu và thử đọc lại.";
 "Recognition is taking too long. Try again or choose another challenge." = "Nhận dạng mất quá nhiều thời gian. Hãy thử lại hoặc chọn thử thách khác.";
 "Great reading. Have a good morning!" = "Bạn đọc tốt lắm. Chúc bạn buổi sáng tốt lành!";
+"Movement photos go through HiMorning to Qwen on Modal. Modal may retain inputs and outputs for up to 7 days. No audio is uploaded. You can stop at any time." = "Ảnh động tác được gửi qua HiMorning đến Qwen trên Modal. Modal có thể lưu dữ liệu đầu vào và kết quả tối đa 7 ngày. Không tải lên âm thanh. Bạn có thể dừng bất cứ lúc nào.";
+"Cloud challenges use a guest Firebase account. With your consent, movement photos are processed by Qwen on Modal and may be retained by Modal for up to 7 days. Local progress contains dates and outcomes, not photos or audio." = "Nhiệm vụ qua máy chủ dùng tài khoản khách Firebase. Khi bạn đồng ý, ảnh động tác được Qwen trên Modal xử lý và Modal có thể lưu tối đa 7 ngày. Tiến độ trên thiết bị chỉ gồm thời gian và kết quả, không có ảnh hay âm thanh.";
+"Modal data policies" = "Chính sách dữ liệu Modal";
+"Waiting for the AI server. You can still stop." = "Đang chờ máy chủ AI. Bạn vẫn có thể dừng.";
+"Test remote AI" = "Thử AI từ xa";
+"Remote demo uses generated images. It does not verify your movement." = "Bản demo từ xa dùng ảnh tạo sẵn và không xác minh động tác của bạn.";
+"This test sends generated color images to Gemini through Cloudflare. Your camera stays off. Google may use demo inputs and outputs to improve its products. No movement will be verified." = "Phép thử này gửi ảnh màu tạo sẵn qua Cloudflare đến Gemini. Camera không được mở. Google có thể dùng dữ liệu demo và kết quả để cải thiện sản phẩm. Phép thử không xác minh động tác.";
+"Agree and run test" = "Đồng ý và chạy thử";
+"The remote AI replied. Demo complete; no movement was verified." = "AI từ xa đã trả lời. Demo đã xong; không có động tác nào được xác minh.";
+"The remote test is unavailable. You can still stop." = "Chưa chạy được phép thử từ xa. Bạn vẫn có thể dừng.";
+"The free remote demo sends only generated color images through Cloudflare to Gemini. Google may use these demo inputs and outputs to improve its products. Camera photos are not accepted by this demo." = "Bản demo miễn phí chỉ gửi ảnh màu tạo sẵn qua Cloudflare đến Gemini. Google có thể dùng dữ liệu demo và kết quả để cải thiện sản phẩm. Demo không nhận ảnh camera.";
+"Gemini data policies" = "Chính sách dữ liệu Gemini";
+"Cloud features use a guest Firebase account. Your local progress contains dates and outcomes, not photos or audio." = "Tính năng từ xa dùng tài khoản khách Firebase. Tiến độ trên thiết bị chỉ gồm thời gian và kết quả, không có ảnh hay âm thanh.";
 "This month" = "Tháng này";
 "/ 100 points" = "/ 100 điểm";
 "Monthly consistency" = "Chuyên cần tháng này";

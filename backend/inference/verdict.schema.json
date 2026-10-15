@@ -1,0 +1,47 @@
+{
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "complete",
+        "incomplete",
+        "uncertain"
+      ]
+    },
+    "reps": {
+      "maxItems": 5,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "frameIDs": {
+            "minItems": 5,
+            "maxItems": 5,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "frameIDs"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "cue": {
+      "type": "string",
+      "enum": [
+        "none",
+        "adjust_camera"
+      ]
+    }
+  },
+  "required": [
+    "status",
+    "reps",
+    "cue"
+  ],
+  "additionalProperties": false
+}

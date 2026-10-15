@@ -57,7 +57,7 @@ final class CoreTests: XCTestCase {
   let generation=flow.beginVerification()
   XCTAssertTrue(flow.applyVerified(generation:generation))
   XCTAssertFalse(flow.applyVerified(generation:generation))
-  XCTAssertEqual(flow.outcome,.openaiVerified)
+  XCTAssertEqual(flow.outcome,.aiVerified)
  }
  func testFallbackAndSnoozeRemainExplicit() {
   var flow=WakeSession(mode:.gentle)

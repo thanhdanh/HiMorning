@@ -24,7 +24,11 @@ import HiMorningCore
  private let library:AlarmLibrary?
  init() {
   if Bundle.main.url(forResource:"GoogleService-Info",withExtension:"plist") != nil {
-   AppCheck.setAppCheckProviderFactory(AttestationFactory());FirebaseApp.configure();cloud=FirebaseCloud()
+   AppCheck.setAppCheckProviderFactory(AttestationFactory());FirebaseApp.configure()
+   if let configURL=Bundle.main.url(forResource:"HiMorningCloud-Info",withExtension:"plist") {
+    if let data=try? Data(contentsOf:configURL),let values=try? PropertyListDecoder().decode([String:String].self,from:data),let origin=values["WorkerURL"],let endpoint=try? WorkerEndpoint(origin) {cloud=FirebaseCloud(endpoint:endpoint)}
+    else {cloud=nil}
+   } else {cloud=nil}
   } else {cloud=nil}
   do {
    var url=try FileManager.default.url(for:.applicationSupportDirectory,in:.userDomainMask,appropriateFor:nil,create:true).appendingPathComponent("HiMorning/alarms.json")

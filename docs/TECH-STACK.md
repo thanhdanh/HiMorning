@@ -1,114 +1,74 @@
 # Tech stack
 
-HiMorning uses native iOS code for alarms and camera access, Firebase for a small
-backend, and OpenAI to check consented movement evidence. Each part has a clear job.
+HiMorning uses native iOS code for local alarms and a Workers/Gemini free demo
+with Firebase Spark identity. The earlier Functions/Modal backend remains separate.
 
-**Status:** Pilot source and contract tests are implemented. No cloud deployment
-or exercise-accuracy benchmark has been run. A separate [local Qwen check](LM-STUDIO.md)
-confirms synthetic image/JSON compatibility; the app adapter remains unchanged.
+**Status:** Source and local tests implemented. Remote staging, pinned GPU runtime
+compatibility and real exercise accuracy still require validation. **Audience:** Developers.
 
-The proposed next direction evaluates the user-selected bartowski Qwen3.5-9B GGUF
-with its vision projector through LM Studio headless. Short rhythm and English
-activities use their own local timing/content checks; optional speech needs a
-separate recognition engine. The [architecture proposal](AI-AND-CHALLENGES-PLAN.md)
-and [product brief](PRODUCT-BRIEF.md) separate these plans from the OpenAI
-implementation described below.
+## At a glance
 
-## Stack at a glance
+| Part | Choice |
+|---|---|
+| Native UI / alarms | SwiftUI, AlarmKit, App Intents, iOS 26+ |
+| Local state | Swift domain and atomic JSON journal |
+| Capture | AVFoundation, Vision, Core Image; bounded foreground JPEGs |
+| Languages | Native English/Vietnamese strings and permission resources |
+| Cloud identity | Firebase anonymous Auth and App Check |
+| Current backend / AI | TypeScript Workers Free, SQLite Durable Object, Gemini free API; generated fixtures only |
+| Retained paid backend / AI | Node 22 Functions v2, Firestore, Qwen3.5-9B on Modal L4 |
+| Validation | Zod/sharp in Firebase; bounded Python/Pillow gateway checks |
+| Tests | Vitest, Firestore Emulator, Swift portable/XCTest, native XCUITest, Python unittest |
+| Build | pnpm 10.34.6, XcodeGen, pinned Python requirements and GPU artifact hashes |
 
-| Part | Choice | Why it is here |
-|---|---|---|
-| Native UI | SwiftUI, iOS 26+ | Direct access to platform behavior and accessible controls |
-| Alarm scheduling | AlarmKit + App Intents | Let the OS keep the schedule and provide user controls |
-| Local state | Swift domain + atomic JSON journal | Save intent before scheduling and recover after interruption |
-| Camera | AVFoundation + Vision + Core Image | Foreground capture, provisional pose checks and bounded JPEGs |
-| Languages | Foundation `.strings` resources, English + Vietnamese | Native UI and permission copy, with a saved in-app choice |
-| Cloud identity | Firebase anonymous Auth + App Check | Identify cloud callers and enforce attestation |
-| Database | Cloud Firestore | Server-owned sessions, attempts and quotas |
-| Compute | Callable Functions v2, TypeScript, Node 22 | Validate evidence and keep the API key on the server |
-| AI | OpenAI Responses + structured output | Assess ordered image evidence; the backend checks the result |
-| Validation | Zod + sharp | Check schemas, decode images and strip metadata |
-| Tests | Vitest, Firestore Emulator, Swift harness/XCTest, XCUITest | Test rules, races, domain behavior and native UI |
-| Build | pnpm workspace and lockfile, XcodeGen, GitHub Actions | Repeatable dependencies, project generation and CI |
+## How it works
 
-Pinned package versions are recorded in the manifests and lockfile. Firebase iOS
-is pinned to 13.0.1 in `apps/ios/project.yml`. No analytics SDK, subscriptions or alarm
-sync are required for the current pilot.
+The current native demo sends generated fixtures through a Worker URL using the
+Firebase callable client SDK. Workers verifies Auth/App Check, stores metadata in
+SQLite and calls Gemini once. No camera evidence or verified outcome is accepted.
+See the [free-demo guide](FREE-REMOTE-DEMO.md). The remaining sections describe the
+separate paid path and its evaluation boundaries.
 
-## What OpenAI receives
+The app submits evidence once. Firebase reserves quota and dispatches a queued
+GPU job; the app receives `pending` and polls the result without uploading again.
+Firebase remains the authority on observed cycles. Local alarm delivery, Stop,
+self-confirm, reading, rhythm and speech do not depend on inference.
 
-The app does not stream continuous video to the model. It selects a short ordered
-sequence of JPEGs covering top, descent, bottom, ascent and return for each cycle.
-Frame IDs and relative timestamps describe the order. They do not prove movement
-by themselves.
+## Key choices
 
 | Limit | Pilot value |
 |---|---|
 | Requested reps | 1–5 |
-| Evidence | 5 phases per provisional cycle, at most 25 frames |
-| Image size | 512px long edge, 50KB per JPEG, 1.25MB total |
-| Session life | 120 seconds |
-| Paid attempts | 1 per session; no automatic provider retry |
-| Daily AI quota | 3 per user, 100 globally, using UTC days |
-| Provider timeout / lease | 15 seconds / 25 seconds; no lease reclaim |
-| Model output | At most 800 tokens, reasoning `none`, verbosity `low` |
-| Default cloud state | Off |
+| Evidence | Five phases per cycle, at most 25 ordered JPEGs |
+| Image size | 512px long edge, 50KB each, 1.25MB total |
+| Session / job | 10 minutes / 180 seconds |
+| Attempts | One per session; no application dispatch retry or paid fallback |
+| Daily AI quota | Three per user, ten globally, UTC days; configurable bounds |
+| Model output | 800 tokens, strict JSON schema, thinking disabled |
+| Cloud default | Off; zero warm containers/Functions instances |
 
-The configured candidate is `gpt-5.6-terra`. It has not been chosen through a real
-accuracy/cost comparison, and no measured success rate is claimed.
+New history uses `ai_verified`; legacy `openai_verified` still decodes. Modal
+Functions can retain inputs/outputs for up to seven days. No images go into our
+Firestore, Storage or application logs. Runtime/model/projector pins are recorded
+in `backend/inference/pins.json`, pending a real GPU compatibility smoke check.
 
-The OpenAI adapter uses `responses.parse`, a strict Zod output schema, low-detail
-images and `store: false`. Refusal, incomplete output or invalid evidence cannot
-become `verified`. Only reviewed cue codes are accepted; free-text coaching is
-not displayed. See [OpenAI image inputs](https://developers.openai.com/api/docs/guides/images-vision)
-and [structured output](https://developers.openai.com/api/docs/guides/structured-outputs).
+## Try it
 
-## Callable contract
+Use the [remote pilot guide](REMOTE-PILOT.md) for Python setup, budgets, secrets,
+explicit staging deployment, device configuration and rollback.
 
-These functions exist in source; they are not deployed URLs:
+## What we checked
 
-```text
-createVerificationSession({ requestID, challenge: "pushup", target, consentVersion })
-  -> { sessionID, nonce, expiresAt, limits }
+Local tests cover auth, contracts, ordered evidence, async races, quota, duplicate
+suppression, cancellation, bounded polling and historical outcome decoding. These
+checks do not establish movement accuracy or cloud availability.
 
-verifyChallenge({ sessionID, nonce, evidenceID, consentVersion, frames })
-  -> { status, reasonCode, decisionID, verifiedRepCount?, cue? }
+## Limits and next steps
 
-cancelVerificationSession({ sessionID })
-  -> { status: "cancelled" }
-```
-
-Possible verification statuses include `verified`, `incomplete`, `uncertain`,
-`unavailable`, `pending`, `cancelled` and `expired`. Ownership, nonce, expiry and
-current session state are checked on the server. An identical replay returns a
-cached/pending result; changed content under the same evidence ID is rejected.
-
-## When something goes wrong
-
-| Situation | User-facing behavior |
-|---|---|
-| Camera cannot see enough | A short framing cue; no guessed rep |
-| Evidence is ready | Show a checking state and keep Stop available |
-| AI confirms valid evidence | Record `openai_verified` |
-| Network/model/evidence is unclear | Offer self-confirm or stop; do not loop forever |
-| User confirms being awake | Record `self_confirmed` |
-| User stops or leaves | Cancel/invalidate cloud work and ignore late success |
-
-The pilot is not an identity, liveness, anti-replay or exercise-safety system.
-Native sound behavior still needs device tests.
-
-## Data and cost
-
-Images are handled in memory, not saved to a default bucket or database. OpenAI's
-retention rules still apply; `store: false` does not mean zero retention. Review
-[data controls](https://developers.openai.com/api/docs/guides/your-data) before launch.
-
-The backend emits numeric `verification_token_usage` events. No real paid call has
-been made in these tests. Cost per verified session needs measured provider usage,
-current pricing, outcomes and Firebase costs. The [agent token ledger](metrics/README.md)
-is a separate measure of development work, not an app API bill.
+The $20 monthly target requires scale-to-zero GPU operation. Modal has a workspace
+spend limit; Google budget alerts do not impose a hard Firebase spend cap. Measure
+startup, 5/15/25-frame latency and actual invoices before expanding the pilot.
 
 ## Read next
 
-[Setup](RUNNING.md) · [Backend policy](FIREBASE.md) · [Architecture](ARCHITECTURE.md) ·
-[Implementation plan](IMPLEMENTATION-PLAN.md)
+[Remote pilot](REMOTE-PILOT.md) · [Firebase](FIREBASE.md) · [Architecture](ARCHITECTURE.md)

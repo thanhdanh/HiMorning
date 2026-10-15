@@ -163,13 +163,13 @@ extension ConsistencyRating {
 extension WakeOutcome {
  var progressIcon:String {
   switch self {
-  case .openaiVerified,.localCompleted:return "checkmark.circle.fill"
+  case .openaiVerified,.aiVerified,.localCompleted:return "checkmark.circle.fill"
   case .selfConfirmed,.dismissed:return "minus.circle"
   }
  }
  var progressTitle:String {
   switch self {
-  case .openaiVerified:return appText("AI checked")
+  case .openaiVerified,.aiVerified:return appText("AI checked")
   case .selfConfirmed:return appText("You confirmed")
   case .localCompleted:return appText("Local challenge completed")
   case .dismissed:return appText("Stopped")

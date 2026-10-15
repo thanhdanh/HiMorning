@@ -18,7 +18,6 @@ validation and next steps. Separate tested behavior from plans and unknowns.
 
 Use pnpm 10.34.6, pinned in package.json, and pnpm-lock.yaml. Native projects use
 SwiftPM/Xcode and, when implemented, Gradle; pnpm manages JavaScript tooling only.
-Keep Apple code in apps/ios, future Android code in apps/android, server code in
-backend/functions and language-neutral contracts/fixtures in shared/contracts.
+Keep Apple code in apps/ios, future Android code in apps/android, Firebase code in backend/functions, Cloudflare code in backend/worker, Python inference in backend/inference and language-neutral contracts/fixtures in shared/contracts.
 Do not import server code into native clients or native APIs into domain modules.
 Update shared fixtures and both relevant test runners when wire behavior changes.

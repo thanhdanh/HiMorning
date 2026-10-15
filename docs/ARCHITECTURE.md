@@ -1,5 +1,10 @@
 # Architecture
 
+The current native cloud path is the [free remote demo](FREE-REMOTE-DEMO.md):
+Firebase Spark Auth/App Check -> Workers -> SQLite-backed session/quota state ->
+Gemini free API. It accepts generated fixtures only and cannot record verified
+movement. The Functions/Modal flow below is retained for separate paid evaluation.
+
 HiMorning keeps the alarm on the phone and uses cloud AI only for consented push-up
 verification. Guided Rhythm and English challenges complete locally. This keeps
 the morning flow simple and gives users a way out when capture or checking fails.
@@ -64,7 +69,7 @@ flowchart LR
   CAMERA --> EVIDENCE[Bounded ordered JPEGs]
   EVIDENCE -->|User consent| FN[Firebase callable functions]
   FN --> DB[(Firestore metadata + quotas)]
-  FN --> AI[OpenAI Responses]
+  FN --> AI[Modal queued Qwen GPU job]
   AI --> POLICY[Strict backend decision policy]
   POLICY --> UI
 ```
@@ -107,7 +112,7 @@ Existing-alarm editing, revision sync and a shared intent inbox are future work.
 2. Capture only in the foreground. Vision estimates visibility and arm movement.
 3. Select five ordered phases for each provisional cycle, within the image budget.
 4. Reserve one attempt and daily quota in a Firestore transaction.
-5. Call OpenAI outside the transaction, then validate the structured verdict.
+5. Dispatch a Modal job outside the transaction and return pending. Poll by session/evidence ID, then validate the structured verdict.
 6. Apply a result only if the session is still current, unexpired and not cancelled.
 
 Local counts are provisional. A valid completion needs the requested number of
@@ -134,7 +139,7 @@ stateDiagram-v2
   Recovery --> Dismissed: user stops
 ```
 
-`self_confirmed`, `openai_verified` and `dismissed` are different outcomes. QR is
+`self_confirmed`, `ai_verified` and `dismissed` (plus historical `openai_verified`) are different outcomes. QR is
 planned and must have its own outcome. Stopping an OS alarm does not prove a task
 was completed or that someone stayed awake.
 
@@ -154,10 +159,11 @@ English and Vietnamese copy lives in native localization resources. The app can
 follow the device language or save a local choice. System permission prompts use
 iOS localization; an in-app choice does not change the phone's settings.
 
-Frames stay in bounded memory and are not saved to Firestore or Storage. OpenAI's
-data policies still apply to sent images; `store: false` is not a zero-retention
-promise. Credentials stay on the server. Analytics and research consent are separate
-future decisions, not implied by challenge consent.
+Frames are not saved to Firestore or Storage. Modal Functions can retain encrypted
+inputs and outputs for up to seven days, including sent images. Spawned payloads
+can be stored in the US even with Southeast Asia compute. Credentials stay on the
+server. See the [remote pilot](REMOTE-PILOT.md) for consent and retention details.
+Analytics and research consent are separate future decisions.
 
 ## What we checked
 
@@ -192,5 +198,13 @@ Platform references: [AlarmKit](https://developer.apple.com/videos/play/wwdc2025
 
 The current diagrams describe implemented source. The new
 [affordable AI and challenge plan](AI-AND-CHALLENGES-PLAN.md) adds a proposed
-Qwen/LM Studio path behind the existing verifier port, with future QR and math
+Qwen/Modal implementation behind the async verifier port, with future QR and math
 checked on the phone. These remain separate from the implemented local activities.
+
+## Remote staging
+
+The [remote pilot guide](REMOTE-PILOT.md) is the current deployment source of truth.
+Python inference is kept in `backend/inference`; pnpm still manages JavaScript only.
+The client submits images once and polls `getVerificationResult` without photos.
+Session lifetime is ten minutes; each attempt has a non-reclaimable 180-second
+deadline. Stop/cancellation wins over late results. Provider job handles stay private.

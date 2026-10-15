@@ -81,7 +81,7 @@ public struct MorningScore:Identifiable,Sendable {
  }
  init(date:Date,entries:[MorningEntry]) {
   self.date=date;attempts=entries.count
-  completed=entries.filter { [.localCompleted,.openaiVerified].contains($0.outcome) }.count
+  completed=entries.filter { [.localCompleted,.openaiVerified,.aiVerified].contains($0.outcome) }.count
  }
 }
 

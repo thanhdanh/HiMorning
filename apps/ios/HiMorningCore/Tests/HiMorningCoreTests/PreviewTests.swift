@@ -109,7 +109,7 @@ final class MorningScoreTests:XCTestCase {
   let now=date("2026-10-15T06:30:00+07:00")
   let empty=MorningScore(date:now,entries:[])
   XCTAssertNil(empty.score);XCTAssertEqual(empty.rating,.noData)
-  for outcome:WakeOutcome in [.localCompleted,.openaiVerified,.selfConfirmed,.dismissed] {
+  for outcome:WakeOutcome in [.localCompleted,.openaiVerified,.aiVerified,.selfConfirmed,.dismissed] {
    let score=MorningScore(date:now,entries:[MorningEntry(date:now,outcome:outcome)])
    XCTAssertEqual(score.score,[.selfConfirmed,.dismissed].contains(outcome) ? 0 : 100)
   }

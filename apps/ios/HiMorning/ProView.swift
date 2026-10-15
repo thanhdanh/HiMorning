@@ -44,8 +44,9 @@ struct MorningPrivacyView:View {
    VStack(alignment:.leading,spacing:20) {
     Text(appText("Your morning history and goal are saved on this device. New entries keep the most recent 31 days, so monthly ratings include every day of the month."))
     Text(appText("Apple handles subscription payments. HiMorning uses verified purchases to unlock Pro and does not receive your card or wallet details."))
-    Text(appText("Cloud challenges use a guest Firebase account. Movement photos are sent to OpenAI only after you agree. Progress history contains dates and outcomes, not camera photos or audio."))
-    Link(appText("OpenAI data policies"),destination:URL(string:"https://platform.openai.com/docs/guides/your-data")!)
+    Text(appText("Cloud features use a guest Firebase account. Your local progress contains dates and outcomes, not photos or audio."))
+    Text(appText("The free remote demo sends only generated color images through Cloudflare to Gemini. Google may use these demo inputs and outputs to improve its products. Camera photos are not accepted by this demo."))
+    Link(appText("Gemini data policies"),destination:URL(string:"https://ai.google.dev/gemini-api/terms#unpaid-services")!)
    }.padding(24)
   }.background(MorningTheme.canvas).foregroundStyle(MorningTheme.ink).navigationTitle(appText("Privacy policy"))
  }

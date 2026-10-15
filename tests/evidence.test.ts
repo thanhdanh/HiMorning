@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import sharp from 'sharp';
 import { prepareEvidence, decide } from '../backend/functions/src/evidence.js';
 import { frames, uuid, complete } from './helpers.js';
-const request = async () => ({ sessionID: 'a'.repeat(64), nonce: uuid(1), evidenceID: uuid(2), consentVersion: '2026-10-11', frames: await frames() });
+const request = async () => ({ sessionID: 'a'.repeat(64), nonce: uuid(1), evidenceID: uuid(2), consentVersion: '2026-10-15', frames: await frames() });
 describe('bounded evidence and conservative decision', () => {
  it('validates, strips image metadata and hashes content deterministically', async () => {
   const data = await request(); const a = await prepareEvidence(data, 1); const b = await prepareEvidence(data, 1);

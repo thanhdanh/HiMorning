@@ -24,7 +24,7 @@ inspected for this review.
 | Area | Current evidence | Work before release |
 |---|---|---|
 | Native alarms | AlarmKit scheduling, persistence and Stop are implemented; core and simulator checks pass | Record physical-device delivery, dismissal, permission and interruption results |
-| AI challenge | Push-up capture and an OpenAI backend adapter exist; cloud AI is off by default | For an AI launch, integrate the selected provider, update consent and validate real movement clips end to end |
+| AI challenge | Push-up capture and an async Qwen/Modal adapter exist; cloud AI is off by default | For an AI launch, deploy staging, verify the pinned GPU runtime and validate real movement clips end to end |
 | Local Qwen | Ordered-image API smoke checks passed on synthetic fixtures | Connect it through the backend; provide an authenticated, reachable service and measure real challenge accuracy and latency |
 | Distribution | Simulator Release build passes; native tests use ad-hoc simulator signing | Add device/distribution signing, app icon and versioning; validate an archive and upload a TestFlight build |
 | Privacy and support | Camera consent exists; anonymous Firebase accounts are created when cloud features are used | Add accessible privacy/support links, account/data deletion and a privacy/API inventory for the release archive |

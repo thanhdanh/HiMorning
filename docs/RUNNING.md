@@ -5,6 +5,8 @@ and sound behavior still needs an iPhone; no Firebase configuration is needed to
 review or use the local alarm flow.
 
 **Status:** iOS 26+ pilot. Cloud verification is off by default.
+The private free staging deployment is enabled and has passed a real synthetic
+Gemini request; camera movement verification remains a separate evaluation.
 
 ## Prerequisites
 
@@ -16,6 +18,13 @@ review or use the local alarm flow.
 | Physical iPhone | iOS 26+, development signing/team |
 
 The working checkout is `~/Projects/HiMorning`. Run commands from its root.
+
+## Free remote demo
+
+Use [Workers + Gemini free setup](FREE-REMOTE-DEMO.md) for the current native
+remote test. It sends generated images only, keeps the camera off and needs no
+Firebase Functions billing. The paid Qwen backend commands below remain available
+for separate evaluation.
 
 ## Check the backend
 
@@ -30,8 +39,8 @@ pnpm run test:coverage
 ```
 
 `pnpm test` runs tests without Firestore. Coverage starts the real Firestore Emulator
-under the safe `demo-himorning` project, then adds transaction/rules tests. OpenAI
-uses SDK mocks. If the emulator cannot find Java, install/select Java 21 and check
+under the safe `demo-himorning` project, then adds transaction/rules tests. Inference
+uses transport mocks. If the emulator cannot find Java, install/select Java 21 and check
 `JAVA_HOME`; do not count an environment failure as a behavior-test RED.
 
 Production audit: `pnpm audit --prod`. The historical full development audit had
@@ -64,26 +73,41 @@ snooze/countdown are planned. See [subscriptions](SUBSCRIPTIONS.md) for current 
 
 The user's LM Studio server at `http://localhost:1235/v1` passed synthetic vision
 and JSON checks. See the [local server guide](LM-STUDIO.md) for tested request
-settings and the remaining adapter/emulator work. The native app still uses the
-current default-off OpenAI path; starting LM Studio alone does not switch it.
+settings and the remaining adapter/emulator work. The native app uses the
+default-off [free remote demo](FREE-REMOTE-DEMO.md). LM Studio remains a local
+compatibility reference; the earlier [Modal staging path](REMOTE-PILOT.md) is
+retained separately.
 
-## Optional Firebase setup
+## Free remote demo setup
+
+Follow [FREE-REMOTE-DEMO.md](FREE-REMOTE-DEMO.md) for the deployed Worker, Firebase
+Spark and Gemini secret setup. Debug builds for `himorning-staging-0109` use the
+Firebase debug provider, which needs a separately registered private token per
+test device. Release and every other project use App Attest. A registered debug
+token allows unverified test devices; the Worker still validates both signed
+Auth and App Check JWTs. Apple Personal Team can be used for private device
+installation, with seven-day provisioning limits.
+The dedicated Simulator's private token is registered and live Auth/App Check
+exchange passed. See the linked guide for the explicit deploy override that keeps
+AI enabled; a normal default-config deploy switches it off.
+
+## Retained paid Firebase/Modal setup
 
 Do this only when ready for real cloud testing:
 
 1. Register the app bundle ID in your Firebase project and enable anonymous Auth.
 2. Configure App Attest and add an untracked `GoogleService-Info.plist` to app resources.
-3. Configure backend values using `backend/functions/.env.example`; keep OpenAI credentials
-   in Secret Manager and bind them only to verification.
+3. Configure backend values using `backend/functions/.env.example`; keep Modal proxy
+   credentials in Secret Manager and bind them to submission, status and cancellation.
 4. Review quotas, TTL, provider limits and billing before enabling cloud verification.
 
-A simulator may need a separately registered App Check debug provider. Production
-source uses App Attest and contains no attestation bypass. Missing Firebase config
-leaves cloud unavailable while local alarms remain usable.
+Release uses App Attest and the server contains no attestation bypass. Missing
+Firebase config leaves cloud unavailable while local alarms remain usable.
 
 Enable TTL on `deleteAt` for `verificationSessions`, `attempts` and `quotaBuckets`.
 TTL is not enabled by this repo and cleanup is not immediate. No image Storage
-bucket is required. Deployment and billing have not been performed in this work.
+bucket is required. This paid path is not deployed and has no billing setup; the
+free Worker deployment is documented separately above.
 
 ## Rehearse without setting an alarm
 
@@ -100,7 +124,7 @@ python3 scripts/preview.py
 
 Open http://127.0.0.1:4173/design/. This Vietnamese web simulation has extra planned
 screens and sample data; it does not schedule real alarms, open the camera or call
-OpenAI. It is separate from the bilingual native app.
+a real model. It is separate from the bilingual native app.
 
 ## Before inviting users
 
