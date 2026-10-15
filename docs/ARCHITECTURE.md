@@ -1,8 +1,8 @@
 # Architecture
 
-HiMorning keeps the alarm on the phone and uses cloud AI only when a person chooses
-a movement challenge. This keeps the morning flow simple and gives users a clear
-way out when the camera, network or model cannot help.
+HiMorning keeps the alarm on the phone and uses cloud AI only for consented push-up
+verification. Guided Rhythm and English challenges complete locally. This keeps
+the morning flow simple and gives users a way out when capture or checking fails.
 
 **Status:** iOS 26+ pilot implemented. Device reliability and model accuracy are
 not yet validated. Android and several product features remain planned.
@@ -12,6 +12,7 @@ not yet validated. Android and several product features remain planned.
 ![Native apps share contracts and one verification service](images/architecture.svg)
 
 The dashed Android card is planned. The iOS app and Firebase service are implemented.
+See the [current feature list](../README.md#implemented-pilot) for available activities.
 
 ## Repository boundaries
 
@@ -191,5 +192,5 @@ Platform references: [AlarmKit](https://developer.apple.com/videos/play/wwdc2025
 
 The current diagrams describe implemented source. The new
 [affordable AI and challenge plan](AI-AND-CHALLENGES-PLAN.md) adds a proposed
-Qwen/LM Studio path behind the existing verifier port, with QR and math checked
-on the phone. That server and those challenges are not implemented yet.
+Qwen/LM Studio path behind the existing verifier port, with future QR and math
+checked on the phone. These remain separate from the implemented local activities.

@@ -7,8 +7,9 @@ is not right for their morning. Keep the alarm and its exit controls local.
 2026. **Audience:** Product and engineering. The running source still uses the
 OpenAI adapter with cloud verification off by default. The user's LM Studio server
 passed bounded synthetic vision/JSON checks; Qwen is not wired into the app and
-exercise accuracy is unmeasured. The new challenges below are not implemented. The [product brief](PRODUCT-BRIEF.md) proposes rhythm
-and practical English activities as the main differentiation experiments.
+exercise accuracy is unmeasured. See the [current feature list](../README.md#implemented-pilot)
+for implemented local challenges. The [product brief](PRODUCT-BRIEF.md) proposes
+further rhythm and practical English experiments.
 
 ## At a glance
 
@@ -16,7 +17,7 @@ and practical English activities as the main differentiation experiments.
 |---|---|---|
 | Movement model | Evaluate the user-selected bartowski Qwen3.5-9B GGUF with its vision projector | Exact runtime/quantization, multi-image support, accuracy, RAM and delay |
 | Server | LM Studio's headless `llmster` for a small pilot | Availability, authentication, capacity and a reachable backend route |
-| Local challenges | Prototype Read & Choose and guided rhythm; QR is a practical fallback | Repeated appeal, fair completion, saved settings and interruption tests |
+| Local challenges | Evaluate the existing local prototypes; QR remains a proposed fallback | Repeated appeal, fair completion and device interruption behavior |
 | Exercise expansion | Evaluate one movement at a time | Its own capture phases, rules and representative recordings |
 | User experience | One challenge choice; short goal; clear exit | English/Vietnamese usability and device checks |
 
@@ -53,7 +54,8 @@ JPEG batch, not a live video stream. Preserve its existing 25-frame and one-atte
 bounds initially; reducing evidence needs an accuracy comparison of its own. These
 five-phase cycle rules are specific to push-ups, not a general dance contract. An
 outage or unclear answer must offer another way to finish, without an automatic
-paid fallback. The local task branches are proposals, not existing native flows.
+paid fallback. This diagram includes proposed QR and combined speaking/meaning
+flows; see the [current feature list](../README.md#implemented-pilot) for availability.
 
 `llmster` can run without the desktop UI, on a local machine or a server.
 [LM Studio's headless guide](https://lmstudio.ai/docs/developer/core/headless)
@@ -148,13 +150,15 @@ availability cost. No dollar saving is claimed without measurements.
 
 ## Challenge choices
 
-These are product proposals; only the existing push-up evidence path is in source.
+This table describes activity scope, including future experiments. The
+[current feature list](../README.md#implemented-pilot) is the source for availability.
 
 | Choice | Check | Suitable context | Scope |
 |---|---|---|---|
 | Push-ups | Local preview plus optional remote image verdict | People who choose exercise and have space | Current pilot; model accuracy unmeasured |
-| Read & Choose | One reviewed English sentence and a local meaning question | A useful, quiet start without a camera or mic | First differentiation prototype; not implemented |
-| Guided rhythm | A few known moves with local pose/timing rules | People who enjoy a short playful movement; seated option | Second differentiation prototype; framing and timing uncalibrated |
+| Read & Choose | One reviewed English sentence and a local meaning question | A useful, quiet start without a camera or mic | Evaluate repeated usefulness of the prototype |
+| Guided rhythm | A few known moves with local pose/timing rules | People who enjoy a short playful movement; seated option | Validate framing and movement thresholds on devices |
+| Read Aloud | On-device English word matching and a spoken example | People who want to speak and have privacy | Validate recognition, downloaded assets and audio interruptions |
 | Speak & Choose | Optional speech content check plus a meaning question | People who want to speak and have privacy | Later, after demand and device/locale checks |
 | Scan a QR | Match a locally enrolled random code using the camera | A reason to reach a chosen place | Practical offline fallback, not unique positioning |
 | Short math | Check a small arithmetic answer locally | Quiet/shared rooms, no camera or floor space | Defer until the first activities are evaluated |
@@ -171,8 +175,8 @@ incorrect answer calmly, keep the input large and support interruption. This che
 the answer, not physical wakefulness. Difficulty should be a user's choice, not an
 escalating penalty after mistakes.
 
-Keep Gentle/Balanced/Focused as suggested effort levels. Add one compact challenge
-selector and only the relevant target, with a trial action before saving. QR needs
+Keep Gentle/Balanced/Focused as suggested effort levels and the existing compact
+challenge selector with a trial action before saving. A future QR task needs
 no rep count; Read & Choose needs a level/topic, not exercise settings. Keep any
 optional speech setup before bed and provide a quiet alternative. Do not expose
 model/server settings in the morning flow. Local completion must never be labeled “AI verified”. Avoid

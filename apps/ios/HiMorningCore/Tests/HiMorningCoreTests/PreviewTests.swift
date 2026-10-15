@@ -1,5 +1,8 @@
+import Foundation
+#if !PORTABLE_TESTS
 import XCTest
 @testable import HiMorningCore
+#endif
 
 final class PreviewTests:XCTestCase {
  private let now=Date(timeIntervalSince1970:1800000000)
@@ -52,10 +55,12 @@ final class PreviewTests:XCTestCase {
   XCTAssertFalse(MorningAccess.free.allows(mode:.focused))
   XCTAssertEqual(MorningAccess.free.effectiveMode(.focused),.balanced)
   XCTAssertEqual(MorningAccess.free.effectiveMode(.gentle),.gentle)
+  XCTAssertEqual(MorningAccess.free.effectiveMode(.balanced),.balanced)
   XCTAssertTrue(MorningAccess.free.allows(sound:.system))
   XCTAssertFalse(MorningAccess.free.allows(sound:.sunrise))
   XCTAssertFalse(MorningAccess.free.allows(sound:.softChime))
   XCTAssertEqual(MorningAccess.free.effectiveSound(.sunrise),.system)
+  XCTAssertEqual(MorningAccess.free.effectiveSound(.system),.system)
   for sound in AlarmSound.allCases {
    XCTAssertEqual(MorningAccess.free.allows(sound:sound),sound == .system)
    XCTAssertEqual(MorningAccess.free.effectiveSound(sound),.system)

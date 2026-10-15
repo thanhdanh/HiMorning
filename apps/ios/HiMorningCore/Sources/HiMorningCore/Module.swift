@@ -27,12 +27,10 @@ public enum WakeOutcome: String, Codable, Sendable { case selfConfirmed = "self_
 public struct WakeSession: Sendable {
  public let mode: WakeMode
  public private(set) var outcome: WakeOutcome?
- public private(set) var localReps=0
  public private(set) var snoozesUsed=0
  public private(set) var generation=0
  private var pending=false
  public init(mode:WakeMode) {self.mode=mode}
- public mutating func recordLocalRep() {if outcome == nil && !pending {localReps=min(localReps+1,mode.policy.reps)}}
  @discardableResult public mutating func beginVerification() -> Int {generation+=1;pending=outcome == nil;return generation}
  @discardableResult public mutating func applyVerified(generation:Int) -> Bool {
   guard pending,outcome == nil,generation == self.generation else {return false}
@@ -48,23 +46,6 @@ public struct WakeSession: Sendable {
  @discardableResult public mutating func snooze() -> Bool {
   guard outcome == nil,snoozesUsed<mode.policy.snoozes else{return false}
   snoozesUsed+=1;generation+=1;pending=false;return true
- }
-}
-// Provisional motion signal only. Camera visibility/geometry must be calibrated on-device.
-public struct RepCounter: Sendable {
- private enum Phase: Sendable {case uncalibrated,up,down}
- private var phase:Phase = .uncalibrated
- public private(set) var count=0
- public init() {}
- public mutating func interrupt() {phase = .uncalibrated}
- @discardableResult public mutating func observe(angle:Double,visible:Bool) -> Bool {
-  guard visible,angle.isFinite,(0...180).contains(angle) else {interrupt();return false}
-  switch phase {
-  case .uncalibrated: if angle>=160 {phase = .up}
-  case .up: if angle<=90 {phase = .down}
-  case .down: if angle>=160 {phase = .up;count+=1;return true}
-  }
-  return false
  }
 }
 public struct EvidenceFrame: Sendable { public let jpeg:Data; public let timestampMs:Int }

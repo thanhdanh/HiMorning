@@ -1,11 +1,16 @@
+import Foundation
+#if !PORTABLE_TESTS
 import XCTest
 @testable import HiMorningCore
+#endif
 final class CoreTests: XCTestCase {
-
-
  func testLanguageSelectionAndFallback() {
   XCTAssertEqual(AppLanguage.system.resolved(preferredLanguages:["vi-VN","en"]), "vi")
   XCTAssertEqual(AppLanguage.system.resolved(preferredLanguages:["fr","en-GB"]), "en")
+  XCTAssertEqual(AppLanguage.system.resolved(preferredLanguages:["fr-FR","EN_gb"]), "en")
+  XCTAssertEqual(AppLanguage.system.resolved(preferredLanguages:["fr","vi"]), "vi")
+  XCTAssertEqual(AppLanguage.system.resolved(preferredLanguages:["fr"]), "en")
+  XCTAssertNil(AppLanguage(rawValue:"fr"))
   XCTAssertEqual(AppLanguage.system.resolved(preferredLanguages:[]), "en")
   XCTAssertEqual(AppLanguage.english.resolved(preferredLanguages:["vi"]), "en")
   XCTAssertEqual(AppLanguage.vietnamese.resolved(preferredLanguages:["en"]), "vi")
@@ -46,9 +51,9 @@ final class CoreTests: XCTestCase {
   XCTAssertFalse(flow.applyVerified(generation:generation))
   XCTAssertEqual(flow.outcome,.dismissed)
  }
- func testLocalCountNeverCompletesCloudChallengeAndDuplicateResultCannotApply() {
+ func testVerifiedResultCanOnlyApplyOnce() {
   var flow=WakeSession(mode:.balanced)
-  flow.recordLocalRep(); XCTAssertNil(flow.outcome)
+  XCTAssertNil(flow.outcome)
   let generation=flow.beginVerification()
   XCTAssertTrue(flow.applyVerified(generation:generation))
   XCTAssertFalse(flow.applyVerified(generation:generation))
@@ -60,22 +65,7 @@ final class CoreTests: XCTestCase {
   flow.selfConfirm();XCTAssertEqual(flow.outcome,.selfConfirmed)
   var focused=WakeSession(mode:.focused);XCTAssertFalse(focused.snooze())
  }
- func testInterruptedRepResetsButRetainsCompletedReps() {
-  var counter=RepCounter()
-  XCTAssertFalse(counter.observe(angle:165,visible:true))
-  XCTAssertFalse(counter.observe(angle:80,visible:true))
-  XCTAssertFalse(counter.observe(angle:165,visible:false))
-  XCTAssertFalse(counter.observe(angle:165,visible:true))
-  XCTAssertEqual(counter.count,0)
-  XCTAssertFalse(counter.observe(angle:80,visible:true))
-  XCTAssertTrue(counter.observe(angle:165,visible:true))
-  XCTAssertEqual(counter.count,1)
-  counter.interrupt();XCTAssertEqual(counter.count,1)
- }
- func testNoiseDoesNotCountAndBufferNeverExceedsCap() {
-  var counter=RepCounter()
-  for angle in [Double.nan,140,100,150,120] { XCTAssertFalse(counter.observe(angle:angle,visible:true)) }
-  XCTAssertEqual(counter.count,0)
+ func testEvidenceBufferNeverExceedsCap() {
   var evidence=EvidenceBuffer(maxFrames:2,maxBytes:6)
   XCTAssertTrue(evidence.append(Data([1,2,3]),timestampMs:0))
   XCTAssertFalse(evidence.append(Data([1]),timestampMs:0))

@@ -1,5 +1,8 @@
+import Foundation
+#if !PORTABLE_TESTS
 import XCTest
 @testable import HiMorningCore
+#endif
 
 final class AlarmSoundTests:XCTestCase {
  func testCatalogKeepsLegacyIDsAndAddsTwelveDistinctChoices() {

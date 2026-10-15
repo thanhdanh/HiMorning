@@ -122,6 +122,7 @@ struct ChallengeView:View {
    let capture=CameraCapture(target:target) {update in Task {@MainActor in
     guard captureGeneration == generation,consent,!finished,!stopping else {return};reps=update.reps;message=update.message
     if update.ready {await submit(update.frames)}
+    else if update.ended {camera?.stop();camera=nil;consent=false;await coordinator.suspend()}
    }}
    camera=capture;await capture.start()
   } catch {message=appText("AI is not available. You can confirm you are awake or stop.")}

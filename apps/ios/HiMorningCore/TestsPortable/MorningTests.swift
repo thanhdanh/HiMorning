@@ -74,58 +74,6 @@ func runMorningTests() throws {
  }
 }
 
-func runPreviewPeriodTests() throws {
- var preview=PreviewPeriod()
- XCTAssertNil(preview.startedAt)
- XCTAssertNil(preview.expiresAt)
- XCTAssertEqual(preview.access(now:morningNow),.free)
- preview.observe(now:morningNow)
- XCTAssertNil(preview.lastSeenAt)
- preview.start(now:morningNow)
- XCTAssertEqual(preview.startedAt,morningNow)
- XCTAssertEqual(preview.remainingDays(now:morningNow),30)
- preview.start(now:morningNow.addingTimeInterval(86400))
- XCTAssertEqual(preview.startedAt,morningNow)
- let expiry=morningNow.addingTimeInterval(30*86400)
- XCTAssertEqual(preview.expiresAt,expiry)
- preview.observe(now:expiry.addingTimeInterval(-86400))
- XCTAssertEqual(preview.remainingDays(now:morningNow),1)
- XCTAssertEqual(preview.access(now:expiry.addingTimeInterval(-1)),.preview)
- XCTAssertEqual(preview.remainingDays(now:expiry.addingTimeInterval(-1)),1)
- XCTAssertEqual(preview.access(now:expiry),.free)
- preview.observe(now:expiry)
- preview.observe(now:morningNow)
- XCTAssertEqual(preview.lastSeenAt,expiry)
- XCTAssertEqual(preview.access(now:morningNow),.free)
- XCTAssertEqual(preview.remainingDays(now:morningNow),0)
- let restored=try JSONDecoder().decode(PreviewPeriod.self,from:JSONEncoder().encode(preview))
- XCTAssertEqual(restored,preview)
- XCTAssertEqual(restored.access(now:morningNow),.free)
- for access in [MorningAccess.preview,.pro] {
-  XCTAssertTrue(access.hasFullAccess)
-  XCTAssertEqual(access.historyDays,30)
-  XCTAssertEqual(access.weeklyGoal(stored:5),5)
-  for mode in WakeMode.allCases {XCTAssertTrue(access.allows(mode:mode));XCTAssertEqual(access.effectiveMode(mode),mode)}
-  for sound in AlarmSound.allCases {XCTAssertTrue(access.allows(sound:sound));XCTAssertEqual(access.effectiveSound(sound),sound)}
- }
- XCTAssertFalse(MorningAccess.free.hasFullAccess)
- XCTAssertTrue(MorningAccess.free.allows(mode:.gentle))
- XCTAssertTrue(MorningAccess.free.allows(mode:.balanced))
- XCTAssertFalse(MorningAccess.free.allows(mode:.focused))
- XCTAssertEqual(MorningAccess.free.effectiveMode(.focused),.balanced)
- XCTAssertEqual(MorningAccess.free.effectiveMode(.balanced),.balanced)
- XCTAssertEqual(MorningAccess.free.effectiveMode(.gentle),.gentle)
- XCTAssertTrue(MorningAccess.free.allows(sound:.system))
- XCTAssertFalse(MorningAccess.free.allows(sound:.sunrise))
- XCTAssertFalse(MorningAccess.free.allows(sound:.softChime))
- XCTAssertEqual(MorningAccess.free.effectiveSound(.sunrise),.system)
- XCTAssertEqual(MorningAccess.free.effectiveSound(.system),.system)
- let saved=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:[]),mode:.focused,sound:.sunrise)
- _=MorningAccess.free.effectiveMode(saved.mode)
- XCTAssertEqual(saved.mode,.focused)
- XCTAssertEqual(saved.sound,.sunrise)
-}
-
 func runSubscriptionPeriodTests() {
  XCTAssertEqual(MorningAccess.verifiedPeriod(expiresAt:morningNow.addingTimeInterval(1),now:morningNow),.pro)
  XCTAssertEqual(MorningAccess.verifiedPeriod(expiresAt:morningNow,now:morningNow),.free)

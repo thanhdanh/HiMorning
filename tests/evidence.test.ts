@@ -13,6 +13,13 @@ describe('bounded evidence and conservative decision', () => {
  it('keeps too-short evidence uncertain without guessing', async () => {
   expect((await prepareEvidence(await request(), 2)).sufficient).toBe(false);
  });
+ it('rejects adjacent cycles that share their boundary frame', async () => {
+  const evidence = await prepareEvidence({...await request(), frames: await frames(10)}, 2);
+  const verdict = complete(2);
+  verdict.reps[1].frameIDs = ['f4','f5','f6','f7','f8'];
+  expect(decide(verdict, evidence, 2).status).toBe('uncertain');
+  expect(decide(complete(2), evidence, 2).status).toBe('verified');
+ });
  it.each(['url', 'bad-base64', 'png', 'oversize', 'dimensions', 'duplicate-id', 'duplicate-image', 'time-order', 'too-many', 'negative-time', 'unknown-field', 'consent'])('rejects %s before inference', async (kind) => {
   const data: any = await request();
   if (kind === 'url') data.frames[0].jpegBase64 = 'https://example.com/image.jpg';

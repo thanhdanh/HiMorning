@@ -7,127 +7,10 @@ func XCTAssertNil<T>(_ value: T?) { precondition(value == nil) }
 func XCTAssertGreaterThan<T: Comparable>(_ a: T, _ b: T) { precondition(a > b) }
 func XCTAssertThrowsError<T>(_ expression: @autoclosure () throws -> T) { do { _ = try expression(); preconditionFailure("Expected error") } catch {} }
 func XCTAssertNoThrow<T>(_ expression: @autoclosure () throws -> T) { do { _ = try expression() } catch { preconditionFailure("Unexpected error: \(error)") } }
-final class CoreTests {
- func testPresetsAreGentleAndBounded() {
-  XCTAssertEqual(WakeMode.gentle.policy.snoozes, 2)
-  XCTAssertEqual(WakeMode.gentle.policy.reps, 0)
-  XCTAssertEqual(WakeMode.balanced.policy.reps, 3)
-  XCTAssertEqual(WakeMode.focused.policy.reps, 5)
-  XCTAssertEqual(WakeMode.focused.policy.snoozes, 0)
- }
- func testAlarmValidation() throws {
-  XCTAssertThrowsError(try AlarmTime(hour:24,minute:0,weekdays:[]))
-  XCTAssertThrowsError(try AlarmTime(hour:6,minute:60,weekdays:[]))
-  XCTAssertThrowsError(try AlarmTime(hour:6,minute:30,weekdays:[0]))
-  XCTAssertNoThrow(try AlarmTime(hour:6,minute:30,weekdays:[2,3,4,5,6]))
- }
- func testNextWeekdayInVietnamAndOneTimeTomorrow() throws {
-  var calendar=Calendar(identifier:.gregorian); calendar.timeZone=TimeZone(identifier:"Asia/Ho_Chi_Minh")!
-  let now=ISO8601DateFormatter().date(from:"2026-10-11T22:15:00+07:00")!
-  let next=try AlarmTime(hour:6,minute:30,weekdays:[2,3,4,5,6]).next(after:now,calendar:calendar)
-  XCTAssertEqual(calendar.component(.weekday,from:next!),2)
-  XCTAssertEqual(calendar.component(.hour,from:next!),6)
-  let tomorrow=try AlarmTime(hour:6,minute:30,weekdays:[]).next(after:now,calendar:calendar)!
-  XCTAssertEqual(calendar.component(.day,from:tomorrow),12)
- }
- func testSpringDSTDoesNotCreatePastAlarm() throws {
-  var calendar=Calendar(identifier:.gregorian); calendar.timeZone=TimeZone(identifier:"America/New_York")!
-  let now=ISO8601DateFormatter().date(from:"2026-03-08T00:00:00-05:00")!
-  let next=try AlarmTime(hour:2,minute:30,weekdays:[]).next(after:now,calendar:calendar)!
-  XCTAssertGreaterThan(next,now)
-  XCTAssertEqual(calendar.component(.day,from:next),8)
- }
- func testStopInvalidatesPendingResponseAndDoesNotCountAsSuccess() {
-  var flow=WakeSession(mode:.balanced)
-  let generation=flow.beginVerification()
-  flow.stop()
-  XCTAssertFalse(flow.applyVerified(generation:generation))
-  XCTAssertEqual(flow.outcome,.dismissed)
- }
- func testLocalCountNeverCompletesCloudChallengeAndDuplicateResultCannotApply() {
-  var flow=WakeSession(mode:.balanced)
-  flow.recordLocalRep(); XCTAssertNil(flow.outcome)
-  let generation=flow.beginVerification()
-  XCTAssertTrue(flow.applyVerified(generation:generation))
-  XCTAssertFalse(flow.applyVerified(generation:generation))
-  XCTAssertEqual(flow.outcome,.openaiVerified)
- }
- func testFallbackAndSnoozeRemainExplicit() {
-  var flow=WakeSession(mode:.gentle)
-  XCTAssertTrue(flow.snooze());XCTAssertTrue(flow.snooze());XCTAssertFalse(flow.snooze())
-  flow.selfConfirm();XCTAssertEqual(flow.outcome,.selfConfirmed)
-  var focused=WakeSession(mode:.focused);XCTAssertFalse(focused.snooze())
- }
- func testInterruptedRepResetsButRetainsCompletedReps() {
-  var counter=RepCounter()
-  XCTAssertFalse(counter.observe(angle:165,visible:true))
-  XCTAssertFalse(counter.observe(angle:80,visible:true))
-  XCTAssertFalse(counter.observe(angle:165,visible:false))
-  XCTAssertFalse(counter.observe(angle:165,visible:true))
-  XCTAssertEqual(counter.count,0)
-  XCTAssertFalse(counter.observe(angle:80,visible:true))
-  XCTAssertTrue(counter.observe(angle:165,visible:true))
-  XCTAssertEqual(counter.count,1)
-  counter.interrupt();XCTAssertEqual(counter.count,1)
- }
- func testNoiseDoesNotCountAndBufferNeverExceedsCap() {
-  var counter=RepCounter()
-  for angle in [Double.nan,140,100,150,120] { XCTAssertFalse(counter.observe(angle:angle,visible:true)) }
-  XCTAssertEqual(counter.count,0)
-  var evidence=EvidenceBuffer(maxFrames:2,maxBytes:6)
-  XCTAssertTrue(evidence.append(Data([1,2,3]),timestampMs:0))
-  XCTAssertFalse(evidence.append(Data([1]),timestampMs:0))
-  XCTAssertTrue(evidence.append(Data([4,5,6]),timestampMs:300))
-  XCTAssertFalse(evidence.append(Data([7]),timestampMs:600))
-  XCTAssertEqual(evidence.frames.count,2)
-  evidence.clear();XCTAssertTrue(evidence.frames.isEmpty)
- }
- func testChallengeDefaultsPreserveLegacyModeBehaviorButRemainIndependent() throws {
-  let time=try AlarmTime(hour:6,minute:30,weekdays:[])
-  XCTAssertEqual(SavedAlarm(time:time,mode:.gentle).challenge,.none)
-  XCTAssertEqual(SavedAlarm(time:time,mode:.balanced).challenge,.pushUps(repetitions:3))
-  XCTAssertEqual(SavedAlarm(time:time,mode:.focused).challenge,.pushUps(repetitions:5))
-  XCTAssertEqual(ChallengeSelection.pushUps(repetitions:0).repetitions,1)
-  XCTAssertEqual(ChallengeSelection.pushUps(repetitions:99).repetitions,5)
-  let focusedReading=SavedAlarm(time:time,mode:.focused,challenge:.readAloud)
-  XCTAssertEqual(focusedReading.mode,.focused)
-  XCTAssertEqual(focusedReading.challenge.kind,.readAloud)
-  XCTAssertNil(focusedReading.challenge.repetitions)
- }
- func testLocalCompletionInvalidatesPendingCloudResult() {
-  var flow=WakeSession(mode:.balanced)
-  let generation=flow.beginVerification()
-  XCTAssertTrue(flow.completeLocally())
-  XCTAssertEqual(flow.outcome,.localCompleted)
-  XCTAssertFalse(flow.applyVerified(generation:generation))
-  XCTAssertFalse(flow.completeLocally())
- }
- func testRecognizedWordScoreAndEightyPercentThreshold() {
-  XCTAssertEqual(RecognizedWordMatch.score(target:"Good morning, WORLD!",recognized:"good morning world"),1)
-  XCTAssertEqual(RecognizedWordMatch.score(target:"one two three four five",recognized:"one two tree four five"),0.8)
-  XCTAssertTrue(RecognizedWordMatch.passes(target:"one two three four five",recognized:"one two tree four five"))
-  XCTAssertFalse(RecognizedWordMatch.passes(target:"one two three four",recognized:"one too four"))
-  XCTAssertFalse(RecognizedWordMatch.passes(target:"",recognized:""))
- }
- func testGuidedRhythmStateMachine() {
-  var standing=GuidedRhythmSession(variant:.standing,maxSequenceDurationMs:1_000)
-  XCTAssertFalse(standing.observe(.standing,timestampMs:0,visible:true))
-  XCTAssertFalse(standing.observe(.standing,timestampMs:100,visible:true))
-  XCTAssertFalse(standing.observe(.lowered,timestampMs:250,visible:true))
-  XCTAssertTrue(standing.observe(.standing,timestampMs:500,visible:true))
-  XCTAssertEqual(standing.completedCycles,1)
-  standing.observe(.standing,timestampMs:700,visible:true)
-  standing.observe(.lowered,timestampMs:800,visible:false)
-  standing.observe(.lowered,timestampMs:900,visible:true)
-  XCTAssertEqual(standing.completedCycles,1)
-  var seated=GuidedRhythmSession(variant:.seated,maxSequenceDurationMs:1_000)
-  seated.observe(.armsDown,timestampMs:0,visible:true)
-  seated.observe(.armsDown,timestampMs:100,visible:true)
-  seated.observe(.armsUp,timestampMs:200,visible:true)
-  XCTAssertTrue(seated.observe(.armsDown,timestampMs:400,visible:true))
- }
-}
-
+class XCTestCase {}
+func XCTAssertEqual(_ a:Double,_ b:Double,accuracy:Double) {precondition(abs(a-b)<=accuracy)}
+func XCTAssertNotNil<T>(_ value:T?,_ message:String="") {precondition(value != nil,message)}
+func XCTUnwrap<T>(_ value:T?) throws ->T {guard let value else {preconditionFailure("Expected a value")};return value}
 actor FakeScheduler: AlarmScheduler {
  var ids:Set<UUID>=[]
  var shouldFail=false
@@ -161,18 +44,6 @@ func testNativeLibrary() async throws {
  let failed=await library.all();XCTAssertEqual(failed.last?.state,.needsReview)
  try await library.reconcile()
 }
-func testChallengePersistenceMigration() throws {
- let time=try AlarmTime(hour:7,minute:15,weekdays:[2,4,6])
- let explicit=SavedAlarm(time:time,mode:.gentle,sound:.softChime,challenge:.guidedRhythm(variant:.seated))
- let encoded=try JSONEncoder().encode(explicit)
- XCTAssertEqual(try JSONDecoder().decode(SavedAlarm.self,from:encoded),explicit)
- var object=try JSONSerialization.jsonObject(with:encoded) as! [String:Any]
- object.removeValue(forKey:"challenge");object["mode"]="focused"
- let migrated=try JSONDecoder().decode(SavedAlarm.self,from:JSONSerialization.data(withJSONObject:object))
- XCTAssertEqual(migrated.challenge,.pushUps(repetitions:5))
- XCTAssertFalse(EnglishChallengeContent.readAndChoose.isEmpty)
- XCTAssertFalse(EnglishChallengeContent.readAloud.isEmpty)
-}
 func testCaptureSelectsCompleteCyclesAndDiscardsInterruptedEvidence() {
  var capture=CycleCapture(target:1)
  for (i,angle) in [165.0,120,80,120,165].enumerated() {capture.observe(angle:angle,visible:true,jpeg:Data([UInt8(i+1)]),timestampMs:i*300)}
@@ -191,33 +62,6 @@ func testCaptureSelectsCompleteCyclesAndDiscardsInterruptedEvidence() {
 }
 func testPersistedTimeCannotBypassValidation() {
  XCTAssertThrowsError(try JSONDecoder().decode(AlarmTime.self,from:Data(#"{"hour":24,"minute":30,"weekdays":[]}"#.utf8)))
-}
-func testAlarmSoundCatalogPersistenceAndResources() throws {
- XCTAssertEqual(AlarmSound.allCases.count,15)
- XCTAssertEqual(Set(AlarmSound.allCases.map(\.rawValue)).count,15)
- for raw in ["system","sunrise","softChime","pizzicatoDawn","pizzicatoSteps","pizzicatoRise","pizzicatoBloom","steelShimmer","steelBreeze","steelMorning","steelSparkle","saxHello","saxStroll","saxGlow","saxDaybreak"] {
-  XCTAssertTrue(AlarmSound(rawValue:raw) != nil)
- }
- let directory=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
- defer {try? FileManager.default.removeItem(at:directory)}
- let persistence=FileAlarmPersistence(url:directory.appendingPathComponent("alarms.json"))
- let time=try AlarmTime(hour:7,minute:15,weekdays:[2,4,6])
- let alarms=AlarmSound.allCases.map {SavedAlarm(time:time,sound:$0)}
- try persistence.save(alarms)
- XCTAssertEqual(try persistence.load(),alarms)
- var resources=URL(fileURLWithPath:#filePath)
- for _ in 0..<3 {resources.deleteLastPathComponent()}
- resources.appendPathComponent("Resources")
- XCTAssertEqual(AlarmSound.allCases.filter {$0 != .system}.count,14)
- for sound in AlarmSound.allCases {
-  XCTAssertEqual(try JSONDecoder().decode(AlarmSound.self,from:Data("\"\(sound.rawValue)\"".utf8)),sound)
-  if sound != .system {
-   let data=try Data(contentsOf:resources.appendingPathComponent(sound.rawValue+".wav"))
-   XCTAssertGreaterThan(data.count,44)
-   XCTAssertEqual(String(data:Data(data.prefix(4)),encoding:.ascii),"RIFF")
-   XCTAssertEqual(String(data:Data(data.dropFirst(8).prefix(4)),encoding:.ascii),"WAVE")
-  }
- }
 }
 actor FakeCloud: CloudVerification {
  var continuation:CheckedContinuation<CloudDecision,Error>?
@@ -288,34 +132,40 @@ actor FakeCloud: CloudVerification {
 }
 
 let suite = CoreTests()
+suite.testLanguageSelectionAndFallback()
 suite.testPresetsAreGentleAndBounded()
 try suite.testAlarmValidation()
 try suite.testNextWeekdayInVietnamAndOneTimeTomorrow()
 try suite.testSpringDSTDoesNotCreatePastAlarm()
 suite.testStopInvalidatesPendingResponseAndDoesNotCountAsSuccess()
-suite.testLocalCountNeverCompletesCloudChallengeAndDuplicateResultCannotApply()
+suite.testVerifiedResultCanOnlyApplyOnce()
 suite.testFallbackAndSnoozeRemainExplicit()
-suite.testInterruptedRepResetsButRetainsCompletedReps()
-suite.testNoiseDoesNotCountAndBufferNeverExceedsCap()
+suite.testEvidenceBufferNeverExceedsCap()
 try suite.testChallengeDefaultsPreserveLegacyModeBehaviorButRemainIndependent()
+try suite.testSavedAlarmDecodesLegacyPayloadAndRoundTripsExplicitChallenge()
 suite.testLocalCompletionInvalidatesPendingCloudResult()
-suite.testRecognizedWordScoreAndEightyPercentThreshold()
-suite.testGuidedRhythmStateMachine()
+suite.testRecognizedWordScoreUsesNormalizedTokenEditDistanceAndPassesAtEightyPercent()
+suite.testCuratedEnglishChallengesAreValidAndStable()
+suite.testGuidedRhythmSupportsStandingAndSeatedWithoutImageEvidence()
+suite.testGuidedRhythmResetsOnOcclusionOutOfOrderAndExpiredWindow()
+let sounds=AlarmSoundTests()
+sounds.testCatalogKeepsLegacyIDsAndAddsTwelveDistinctChoices()
+try sounds.testEverySoundPersistsAndRestoresWithoutChangingTheSelection()
+try sounds.testEveryCustomCatalogChoiceHasANonemptyWAVResource()
+let preview=PreviewTests()
+preview.testPreviewStartsOnceAndExpiresAtExactlyThirtyDays()
+try preview.testClockRollbackCannotRestoreExpiredPreviewAfterRelaunch()
+preview.testPreviewAndProUnlockAllCapabilities()
+try preview.testFreeKeepsBasicAlarmCapabilitiesWithoutChangingSavedPreferences()
+preview.testPaidVerificationNeverReturnsPreview()
+preview.testAccessPreservesExplicitLocalChallengesAndCapsOnlyFreePushUps()
+try preview.testEffectiveAlarmPreservesIdentityStateAndSavedPreferences()
+try await CloudTests().testRestartDuringCancellationKeepsTheNewSessionAndConsent()
 try await testNativeLibrary()
-try testChallengePersistenceMigration()
 testCaptureSelectsCompleteCyclesAndDiscardsInterruptedEvidence()
 testPersistedTimeCannotBypassValidation()
-try testAlarmSoundCatalogPersistenceAndResources()
 try await testCloudStopRaceAndConsent()
 try await testLocalChallengePrivacyBoundariesAndExplicitPushUpTarget()
-XCTAssertEqual(AppLanguage.system.resolved(preferredLanguages:["vi-VN","en-US"]), "vi")
-XCTAssertEqual(AppLanguage.system.resolved(preferredLanguages:["fr-FR","EN_gb"]), "en")
-XCTAssertEqual(AppLanguage.system.resolved(preferredLanguages:["fr","vi"]), "vi")
-XCTAssertEqual(AppLanguage.system.resolved(preferredLanguages:[]), "en")
-XCTAssertEqual(AppLanguage.system.resolved(preferredLanguages:["fr"]), "en")
-XCTAssertEqual(AppLanguage.english.resolved(preferredLanguages:["vi"]), "en")
-XCTAssertEqual(AppLanguage.vietnamese.resolved(preferredLanguages:["en"]), "vi")
-XCTAssertNil(AppLanguage(rawValue:"fr"))
 func testSharedMobileFixtures() throws {
  let root=URL(fileURLWithPath:CommandLine.arguments[1])
  let data=try Data(contentsOf:root.appendingPathComponent("wire-fixtures.json"))
@@ -340,5 +190,4 @@ try testSharedMobileFixtures()
 
 try runMorningTests()
 runSubscriptionPeriodTests()
-try runPreviewPeriodTests()
-print("PASS: 29 portable Swift domain and integration journeys")
+print("PASS: shared Swift core tests and portable integration journeys")

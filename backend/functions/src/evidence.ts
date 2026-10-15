@@ -44,7 +44,7 @@ export function decide(raw: unknown, evidence: Evidence, target: number): Decisi
  let previousEnd = -1;
  for (const rep of value.reps) {
   const indices = rep.frameIDs.map(id => evidence.frames.findIndex(frame => frame.id === id));
-  if (indices.some((index,i) => index < 0 || (i > 0 && index <= indices[i-1])) || indices[0] < previousEnd) return uncertain;
+  if (indices.some((index,i) => index < 0 || (i > 0 && index <= indices[i-1])) || indices[0] <= previousEnd) return uncertain;
   previousEnd = indices[4];
  }
  const verified = value.status === 'complete' && value.reps.length === target && evidence.sufficient;

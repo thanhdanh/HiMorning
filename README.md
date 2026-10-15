@@ -27,6 +27,23 @@ released or device-validated alarm app.
 
 ## A morning with HiMorning
 
+### Implemented pilot
+
+This is the current feature list. Product and architecture plans describe further
+experiments; implemented features still need physical-device and user validation.
+
+| Feature | Current behavior |
+|---|---|
+| Alarms | AlarmKit scheduling, saved weekday choices and recovery checks |
+| Challenge choice | No challenge, Push-ups, Read & Choose, Guided Rhythm, or Read Aloud; saved separately from the mode |
+| Local challenges | Meaning questions, standing/seated pose sequences, and on-device English speech recognition with spoken examples |
+| Push-up verification | Bounded photos sent to OpenAI after consent; cloud verification is off by default |
+| Sounds | System default and 14 bundled sounds with individual previews |
+| Progress and access | Local history and goals, a 30-day preview, and optional monthly/annual Pro |
+
+QR, math, native snooze/countdown, existing-alarm editing, Android and Qwen/LM Studio
+integration remain planned.
+
 Set a time, choose a mode and pick a sound. The phone's alarm system keeps the
 schedule. A regular alarm works without cloud sign-in.
 
@@ -53,7 +70,7 @@ and sandbox/TestFlight billing still need setup. See [subscriptions](docs/SUBSCR
 for preview storage, saved-alarm behavior and validation limits.
 
 Native snooze/countdown UI is still planned. Core policy tests do not prove it is
-connected to AlarmKit. The app includes system sound and two original chime sketches;
+connected to AlarmKit. The app includes system sound and 14 bundled sounds;
 preview volume is separate from alarm volume.
 
 ## Quick start
@@ -73,6 +90,10 @@ Swift core checks work with Apple's Command Line Tools:
 ```sh
 sh scripts/test-swift.sh
 ```
+
+The portable runner compiles the same core test bodies used by XCTest, with small
+assertion replacements for hosts without XCTest. Additional portable journeys check
+the journal, cloud lifecycle and shared wire fixtures.
 
 For the native app, use Xcode 26+ and XcodeGen:
 
@@ -129,11 +150,10 @@ and [setup](docs/RUNNING.md) for pnpm and Firebase packaging.
 ## What comes next?
 
 Test alarm delivery, camera placement and sounds on iPhone. Evaluate consented
-movement clips for accuracy, delay and cost before enabling AI for users. The
-[product brief](docs/PRODUCT-BRIEF.md) proposes short rhythm and practical English
-activities to test with users; they are not native features yet. QR,
-existing-alarm editing, native snooze, deeper form guidance and
-Android remain planned. No Firebase project, billing setup or paid OpenAI call was
+movement clips for accuracy, delay and cost before enabling AI for users. Evaluate
+the [implemented pilot](#implemented-pilot) with users before expanding the
+activities in the [product brief](docs/PRODUCT-BRIEF.md). Deeper form guidance is a
+separate proposal. No Firebase project, billing setup or paid OpenAI call was
 created during the implementation tests.
 
 Erly's public [App Store](https://apps.apple.com/us/app/erly-wake-up-early/id6751428380)
