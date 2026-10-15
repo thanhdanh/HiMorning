@@ -24,7 +24,7 @@ final class PilotUITests:XCTestCase {
  private func launch(language:String,expired:Bool=false,awakeReady:Bool=false)->XCUIApplication {
   let app=XCUIApplication()
   app.terminate()
-  app.launchArguments=["-AppleLanguages","(en)","-AppleLocale","en_US","--ui-testing"]
+  app.launchArguments=["-AppleLanguages","(en)","-AppleLocale","en_US","--ui-testing","--ui-camera-denied"]
   if language == "vi" {app.launchArguments.append("--ui-language-vi")}
   if expired {app.launchArguments.append("--preview-expired")}
   if awakeReady {app.launchArguments.append("--ui-awake-ready")}
@@ -81,19 +81,20 @@ final class PilotUITests:XCTestCase {
   trial.tap()
   app.buttons["practice-pushUps"].tap()
   XCTAssertTrue(app.buttons["startChallenge"].waitForExistence(timeout:5))
+  XCTAssertEqual(app.buttons["startChallenge"].label,vi ? "Bắt đầu thử thách":"Start challenge")
   XCTAssertEqual(app.staticTexts.matching(identifier:"challengeMessage").count,1)
   capture(app,name:"challenge-ready-"+language)
   app.buttons["startChallenge"].tap()
-  XCTAssertTrue(app.buttons[vi ? "Đồng ý và chạy thử" : "Agree and run test"].waitForExistence(timeout:5))
+  XCTAssertTrue(app.buttons[vi ? "Mở camera" : "Open camera"].waitForExistence(timeout:5))
   capture(app,name:"consent-"+language)
   app.buttons[vi ? "Chọn cách khác" : "Choose another way"].tap()
   XCTAssertTrue(app.buttons["backToHome"].exists)
   app.buttons["startChallenge"].tap()
-  app.buttons[vi ? "Đồng ý và chạy thử" : "Agree and run test"].tap()
-  let unavailable=vi ? "Chưa chạy được phép thử từ xa. Bạn vẫn có thể dừng." : "The remote test is unavailable. You can still stop."
+  app.buttons[vi ? "Mở camera" : "Open camera"].tap()
+  let unavailable=vi ? "Chưa có quyền camera. Bạn vẫn có thể dừng." : "Camera access is off. You can still stop."
   XCTAssertTrue(app.staticTexts[unavailable].waitForExistence(timeout:5))
   XCTAssertFalse(app.staticTexts[vi ? "Hoan hô!" : "Hooray!"].exists)
-  capture(app,name:"ai-unavailable-"+language)
+  capture(app,name:"camera-denied-"+language)
   app.buttons["confirmAwake"].tap()
   let confirmed=vi ? "Bạn đã tự xác nhận thức dậy. Chúc buổi sáng tốt lành!" : "You confirmed you are awake. Have a good morning!"
   XCTAssertTrue(app.staticTexts[confirmed].waitForExistence(timeout:5))
