@@ -360,17 +360,17 @@ struct ChallengeView:View {
   speech?.stop();speech=nil
   spokenExample.stop()
  }
- 
+
  // MARK: - Behavior Detection Functions
  private func startBehaviorDetection() {
   behaviorDetectionActive = true
   behaviorDetectionResult = "Analyzing your movement..."
-  
+
   Task {
    do {
     // Simulate AI analysis (would connect to Vision/CoreML in real implementation)
     try await Task.sleep(for: .seconds(3))
-    
+
     DispatchQueue.main.async {
      behaviorDetectionResult = "Movement verified successfully!"
      finish(.localCompleted, success: "Behavior detection confirmed. Challenge completed!")
