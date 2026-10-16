@@ -2,11 +2,14 @@ import AVFoundation
 import Vision
 import HiMorningCore
 
+struct LocalMovementUpdate:Sendable {let reps:Int;let ready:Bool;let ended:Bool;let message:String}
+
 final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDelegate,@unchecked Sendable {
  let session=AVCaptureSession()
  private let kind:ChallengeKind
  private let queue=DispatchQueue(label:"com.himorning.local-movement",qos:.userInitiated)
- private let onUpdate:@Sendable(CaptureUpdate)->Void
+ private let onUpdate:@Sendable(LocalMovementUpdate)->Void
+ private var waveMotion=WaveHandMotion()
  private var progress:MovementChallengeProgress
  private var started=0.0
  private var lastSample=0.0
@@ -14,7 +17,7 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
  private var cancelled=false
  private let lifecycleLock=NSLock()
 
- init(kind:ChallengeKind,onUpdate:@escaping @Sendable(CaptureUpdate)->Void) {
+ init(kind:ChallengeKind,onUpdate:@escaping @Sendable(LocalMovementUpdate)->Void) {
   precondition(kind.usesLocalMovement)
   self.kind=kind;progress=MovementChallengeProgress(kind:kind);self.onUpdate=onUpdate;super.init()
  }
@@ -41,7 +44,7 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
     started=ProcessInfo.processInfo.systemUptime;lastSample=0;active=true;session.startRunning()
     queue.asyncAfter(deadline:.now()+90) { [weak self] in
      guard let self,active,!progress.ready else {return}
-     active=false;progress.interrupt();session.stopRunning()
+     active=false;progress.interrupt();waveMotion.reset();session.stopRunning()
      publish(progress.completed,ended:true,"Movement capture timed out. Try again or choose another challenge.")
     }
    } catch {publish(0,ended:true,"The camera could not open. Please choose another way.")}
@@ -50,7 +53,7 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
 
  func stop() {
   lifecycleLock.lock();cancelled=true;lifecycleLock.unlock()
-  queue.async { [self] in active=false;progress.interrupt();session.stopRunning() }
+  queue.async { [self] in active=false;progress.interrupt();waveMotion.reset();session.stopRunning() }
  }
 
  func captureOutput(_ output:AVCaptureOutput,didOutput sampleBuffer:CMSampleBuffer,from connection:AVCaptureConnection) {
@@ -59,7 +62,7 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
   lastSample=now
   let timestamp=Int((now-started)*1000)
   guard timestamp<=90_000 else {
-   active=false;progress.interrupt();session.stopRunning()
+   active=false;progress.interrupt();waveMotion.reset();session.stopRunning()
    publish(progress.completed,ended:true,"Movement capture timed out. Try again or choose another challenge.");return
   }
   do {
@@ -68,11 +71,8 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
    case .waveHand:
     let request=VNDetectHumanHandPoseRequest();request.maximumHandCount=1
     try VNImageRequestHandler(cvPixelBuffer:buffer,orientation:.leftMirrored).perform([request])
-    guard let hand=request.results?.first,let tip=try? hand.recognizedPoint(.indexTip),let wrist=try? hand.recognizedPoint(.wrist),tip.confidence>=0.6,wrist.confidence>=0.6 else {lastHandX=nil;lastHandDirection=nil;observe(.unavailable,timestamp);publish(progress.completed,"Place your hand in view and wave it side to side.");return}
-    let x=tip.location.x
-    if let previous=lastHandX,abs(x-previous)>=0.08 {lastHandDirection=x>previous ? 1:-1}
-    lastHandX=x
-    observation=lastHandDirection.map(MovementObservation.wave) ?? .unavailable
+    guard let hand=request.results?.first,let tip=try? hand.recognizedPoint(.indexTip),let wrist=try? hand.recognizedPoint(.wrist),tip.confidence>=0.6,wrist.confidence>=0.6 else {waveMotion.reset();observe(.unavailable,timestamp);publish(progress.completed,"Place your hand in view and wave it side to side.");return}
+    observation=waveMotion.observe(x:Double(tip.location.x))
    case .neckRotation:
     let request=VNDetectFaceLandmarksRequest()
     try VNImageRequestHandler(cvPixelBuffer:buffer,orientation:.leftMirrored).perform([request])
@@ -110,14 +110,12 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
     let message=kind == .waveHand ? "Place your hand in view and wave it side to side." : kind == .neckRotation ? "Keep your face visible and turn your head left and right." : kind == .stretching ? "Raise both hands above your shoulders, then lower them.":"Keep your whole body visible and move through the jumping jack."
     publish(progress.completed,message)
    }
-  } catch {observe(.unavailable,timestamp);publish(progress.completed,"The view is unclear. Try moving your phone.")}
+  } catch {waveMotion.reset();observe(.unavailable,timestamp);publish(progress.completed,"The view is unclear. Try moving your phone.")}
  }
 
- private var lastHandX:CGFloat?
- private var lastHandDirection:Int?
  private func observe(_ value:MovementObservation,_ timestamp:Int) { _ = progress.observe(value,timestampMs:timestamp) }
  private func publish(_ reps:Int,ended:Bool=false,_ message:String) {
-  onUpdate(.init(reps:reps,frames:[],ready:ended && progress.ready,ended:ended,message:appText(message)))
+  onUpdate(.init(reps:reps,ready:ended && progress.ready,ended:ended,message:appText(message)))
  }
  private var isCancelled:Bool {lifecycleLock.lock();defer {lifecycleLock.unlock()};return cancelled}
 }

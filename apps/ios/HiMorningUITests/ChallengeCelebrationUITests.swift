@@ -1,6 +1,15 @@
 import XCTest
 
 final class ChallengeCelebrationUITests:XCTestCase {
+ private func answerReadAndChoose(in app:XCUIApplication,until result:XCUIElement) {
+  for index in 0..<3 {
+   let choice=app.buttons["readChoice-\(index)"]
+   XCTAssertTrue(choice.waitForExistence(timeout:5),"The reading challenge should offer three answer choices")
+   choice.tap()
+   if result.waitForExistence(timeout:1) {return}
+  }
+  XCTFail("One of the answer choices should complete the reading challenge")
+ }
  private func launch(_ arguments:[String]=[],vietnamese:Bool=false)->XCUIApplication {
   let app=XCUIApplication()
   app.launchArguments=["-AppleLanguages","(en)","-AppleLocale","en_US","--ui-testing"]+arguments
@@ -13,10 +22,9 @@ final class ChallengeCelebrationUITests:XCTestCase {
   let first="00000000-0000-0000-0000-000000000001",second="00000000-0000-0000-0000-000000000002"
   for vietnamese in [false,true] {
    let largeText=vietnamese ? ["-UIPreferredContentSizeCategoryName","UICTContentSizeCategoryAccessibilityM"] : []
-   let app=launch(["--ui-home-alarms","--ui-open-alarm"]+largeText,vietnamese:vietnamese)
-   let choice=app.buttons["readChoice-0"]
-   XCTAssertTrue(choice.waitForExistence(timeout:5));choice.tap()
+   let app=launch(["--ui-home-alarms","--ui-open-alarm","--ui-reading-correct-first"]+largeText,vietnamese:vietnamese)
    let completed=app.staticTexts["alarmCompleted-"+first]
+   answerReadAndChoose(in:app,until:completed)
    XCTAssertTrue(completed.waitForExistence(timeout:5),"A real completed challenge must return Home automatically")
    XCTAssertEqual(completed.label,vietnamese ? "Đã xong hôm nay" : "Completed today")
    XCTAssertFalse(app.descendants(matching:.any)["alarmCompleted-"+second].exists)
@@ -36,10 +44,10 @@ final class ChallengeCelebrationUITests:XCTestCase {
   }
  }
  func testRealAlarmProgressSaveFailureReturnsHomeWithAnHonestWarning() {
-  let app=launch(["--ui-home-alarms","--ui-open-alarm","--ui-progress-save-error"])
-  let choice=app.buttons["readChoice-0"]
-  XCTAssertTrue(choice.waitForExistence(timeout:5));choice.tap()
-  XCTAssertTrue(app.staticTexts["homeProgressError"].waitForExistence(timeout:5))
+  let app=launch(["--ui-home-alarms","--ui-open-alarm","--ui-progress-save-error","--ui-reading-correct-first"])
+  let progressError=app.staticTexts["homeProgressError"]
+  answerReadAndChoose(in:app,until:progressError)
+  XCTAssertTrue(progressError.waitForExistence(timeout:5))
   XCTAssertFalse(app.descendants(matching:.any)["alarmCompleted-00000000-0000-0000-0000-000000000001"].exists)
   app.terminate()
  }
@@ -73,7 +81,7 @@ final class ChallengeCelebrationUITests:XCTestCase {
  }
  func testReadingSuccessCelebratesAndReturnsHomeInBothLanguages() {
   for vietnamese in [false,true] {
-   let app=launch(vietnamese:vietnamese)
+   let app=launch(["--ui-reading-correct-first"],vietnamese:vietnamese)
    app.buttons["practiceChallenges"].tap();app.buttons["practice-readAndChoose"].tap()
    XCTAssertTrue(app.buttons["readChoice-0"].waitForExistence(timeout:5))
    for index in 0..<3 {

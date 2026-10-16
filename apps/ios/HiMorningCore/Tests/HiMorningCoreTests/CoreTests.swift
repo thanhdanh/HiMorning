@@ -161,6 +161,19 @@ final class CoreTests: XCTestCase {
   }
   XCTAssertTrue(stretch.ready)
  }
+ func testWaveHandAccumulatesSparseCameraMotionAndCountsReversals() {
+  var motion=WaveHandMotion(),progress=MovementChallengeProgress(kind:.waveHand,target:1)
+  for (index,x) in [0.50,0.52,0.55,0.59,0.63,0.60,0.56,0.52,0.48,0.52,0.56,0.60].enumerated() {
+   _ = progress.observe(motion.observe(x:x),timestampMs:index*250)
+  }
+  XCTAssertTrue(progress.ready)
+
+  var still=WaveHandMotion(),noWave=MovementChallengeProgress(kind:.waveHand,target:1)
+  for (index,x) in [0.50,0.51,0.49,0.52,0.50,0.51].enumerated() {
+   _ = noWave.observe(still.observe(x:x),timestampMs:index*250)
+  }
+  XCTAssertEqual(noWave.completed,0)
+ }
  func testCaptureStoresFiftyCompleteCyclesWithinEvidenceBounds() {
   var capture=CycleCapture(target:50)
   for index in 0..<250 {
