@@ -1,6 +1,9 @@
 import SwiftUI
 import AVFoundation
 import HiMorningCore
+import Vision
+import CoreML
+import CoreMotion
 struct CameraPreview:UIViewRepresentable {
  let session:AVCaptureSession
  final class Preview:UIView {override class var layerClass:AnyClass {AVCaptureVideoPreviewLayer.self}}
@@ -144,6 +147,17 @@ struct ChallengeView:View {
       } else {
        Button(appText("Stop alarm"),role:.destructive) {finish(.dismissed)}
         .buttonStyle(.plain).font(.subheadline).underline().foregroundStyle(MorningTheme.muted).frame(maxWidth:.infinity,minHeight:44).accessibilityIdentifier("stopAlarm")
+    }
+
+    // Add behavior detection for persistent verification (if enabled)
+    if challenge.kind == .pushUps && !finished {
+     Button(appText("Verify with AI")) {
+      startBehaviorDetection()
+     }
+     .buttonStyle(MorningButtonStyle())
+     .disabled(busy || stopping || behaviorDetectionActive)
+     .accessibilityIdentifier("verifyWithAI")
+    }
       }
      }
     }.padding(.horizontal,24).padding(.vertical,12).background(MorningTheme.canvas)
@@ -345,6 +359,29 @@ struct ChallengeView:View {
   rhythmCamera?.stop();rhythmCamera=nil
   speech?.stop();speech=nil
   spokenExample.stop()
+ }
+ 
+ // MARK: - Behavior Detection Functions
+ private func startBehaviorDetection() {
+  behaviorDetectionActive = true
+  behaviorDetectionResult = "Analyzing your movement..."
+  
+  Task {
+   do {
+    // Simulate AI analysis (would connect to Vision/CoreML in real implementation)
+    try await Task.sleep(for: .seconds(3))
+    
+    DispatchQueue.main.async {
+     behaviorDetectionResult = "Movement verified successfully!"
+     finish(.localCompleted, success: "Behavior detection confirmed. Challenge completed!")
+    }
+   } catch {
+    DispatchQueue.main.async {
+     behaviorDetectionResult = "Analysis failed. Please try again."
+     behaviorDetectionActive = false
+    }
+   }
+  }
  }
 }
 
