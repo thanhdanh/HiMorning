@@ -46,8 +46,13 @@ public struct MovementChallengeProgress:Sendable {
  private var lastWaveDirection:Int?
  private var waveReversals=0
  private var lastWaveChange:Int?
+ private var lossSinceMs:Int?
  public private(set) var completed=0
  public var ready:Bool {completed>=target}
+
+ /// Grace window (ms) before a brief tracking loss resets an in-progress sequence.
+ /// One or two low-confidence frames must not throw away rep progress.
+ private static let trackingLossGraceMs=600
 
  public init(kind:ChallengeKind,target:Int?=nil) {
   precondition(kind.usesLocalMovement)
@@ -55,7 +60,14 @@ public struct MovementChallengeProgress:Sendable {
  }
 
  public mutating func interrupt() {
-  candidate=nil;candidateSince=0;candidateConsumed=false;phase=0;lastWaveDirection=nil;waveReversals=0;lastWaveChange=nil
+  candidate=nil;candidateSince=0;candidateConsumed=false;phase=0;lastWaveDirection=nil;waveReversals=0;lastWaveChange=nil;lossSinceMs=nil
+ }
+
+ /// Clears transient hold state (held pose, wave direction) without discarding completed
+ /// reps or the in-progress sequence position. Used to absorb brief tracking loss.
+ private mutating func softReset() {
+  candidate=nil;candidateSince=0;candidateConsumed=false
+  lastWaveDirection=nil;lastWaveChange=nil
  }
 
  @discardableResult public mutating func observe(_ observation:MovementObservation,timestampMs:Int)->Int {
@@ -72,10 +84,16 @@ public struct MovementChallengeProgress:Sendable {
     if waveReversals==2 {completed+=1;waveReversals=0}
    } else if lastWaveDirection == nil {lastWaveChange=timestampMs}
    lastWaveDirection=direction
-   candidate=nil;candidateConsumed=false
+   candidate=nil;candidateConsumed=false;lossSinceMs=nil
    return completed
   }
-  if case .transition=observation {candidate=nil;candidateConsumed=false;return completed}
+  if case .transition=observation {candidate=nil;candidateConsumed=false;lossSinceMs=nil;return completed}
+  if case .unavailable=observation {
+   if let lost=lossSinceMs, timestampMs-lost>=Self.trackingLossGraceMs {interrupt();return completed}
+   if lossSinceMs == nil {lossSinceMs=timestampMs}
+   softReset();return completed
+  }
+  lossSinceMs=nil
   let pose:Pose
   switch (kind,observation) {
   case (.waveHand,.wave(let direction)) where direction == -1:pose = .left

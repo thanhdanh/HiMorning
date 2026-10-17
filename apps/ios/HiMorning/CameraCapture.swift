@@ -74,12 +74,12 @@ final class CameraCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDelegate,
    guard let body=request.results?.first else {counter.interrupt();publish(ended:false,message:appText("Place your phone so your whole body is visible."));return}
    let points=try body.recognizedPoints(.all)
    let sides:[[VNHumanBodyPoseObservation.JointName]] = [[.leftShoulder,.leftElbow,.leftWrist,.leftHip,.leftAnkle],[.rightShoulder,.rightElbow,.rightWrist,.rightHip,.rightAnkle]]
-   guard let selected=sides.firstIndex(where:{names in names.allSatisfy {name in guard let point=points[name] else {return false};return point.confidence>=0.6 && point.location.x>0.02 && point.location.x<0.98 && point.location.y>0.02 && point.location.y<0.98}}) else {counter.interrupt();publish(ended:false,message:appText("The view is unclear. Try moving your phone."));return}
+   guard let selected=sides.firstIndex(where:{names in names.allSatisfy {name in PoseGeometry.isVisible(points[name], minConfidence: 0.6)}}) else {counter.interrupt();publish(ended:false,message:appText("The view is unclear. Try moving your phone."));return}
    if let side,side != selected {counter.interrupt()};side=selected
    let joints=sides[selected].map {points[$0]!.location}
    let size=CGSize(width:CVPixelBufferGetHeight(buffer),height:CVPixelBufferGetWidth(buffer))
-   let elbow=GuidedRhythmCapture.jointAngle(joints[0],joints[1],joints[2],imageSize:size)
-   let bodyAngle=GuidedRhythmCapture.jointAngle(joints[0],joints[3],joints[4],imageSize:size)
+   let elbow=PoseGeometry.jointAngle(joints[0],joints[1],joints[2],imageSize:size)
+   let bodyAngle=PoseGeometry.jointAngle(joints[0],joints[3],joints[4],imageSize:size)
    let dx=abs(joints[0].x-joints[4].x)*size.width,dy=abs(joints[0].y-joints[4].y)*size.height
    let incline=atan2(dy,dx)*180 / .pi
    let supported=joints[0].y>=joints[2].y-0.02 && abs(joints[2].y-joints[4].y)*size.height<=max(20,hypot(dx,dy)*0.2)

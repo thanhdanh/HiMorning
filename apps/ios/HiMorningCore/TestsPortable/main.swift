@@ -75,6 +75,27 @@ func testMovementRequiresStableOrderedPoses() {
  for (open,time) in [(true,1_200),(true,1_500),(false,1_800),(false,2_100)] {_ = partial.observe(.jumpingJack(open:open),timestampMs:time)}
  XCTAssertEqual(partial.completed,1)
 }
+func testBriefTrackingLossKeepsProgressWhileSustainedLossResets() {
+ var brief=MovementChallengeProgress(kind:.jumpingJacks,target:1)
+ for (open,time) in [(false,0),(false,300),(true,600),(true,900)] {_ = brief.observe(.jumpingJack(open:open),timestampMs:time)}
+ _ = brief.observe(.unavailable,timestampMs:1_000)
+ _ = brief.observe(.unavailable,timestampMs:1_100)
+ for (open,time) in [(false,1_200),(false,1_500)] {_ = brief.observe(.jumpingJack(open:open),timestampMs:time)}
+ XCTAssertEqual(brief.completed,1)
+
+ var sustained=MovementChallengeProgress(kind:.jumpingJacks,target:1)
+ for (open,time) in [(false,0),(false,300),(true,600),(true,900)] {_ = sustained.observe(.jumpingJack(open:open),timestampMs:time)}
+ _ = sustained.observe(.unavailable,timestampMs:1_000)
+ _ = sustained.observe(.unavailable,timestampMs:1_700)
+ for (open,time) in [(false,2_000),(false,2_300)] {_ = sustained.observe(.jumpingJack(open:open),timestampMs:time)}
+ XCTAssertEqual(sustained.completed,0)
+
+ var neck=MovementChallengeProgress(kind:.neckRotation,target:1)
+ for (obs,time) in [(MovementObservation.headYaw(0),0),(.headYaw(0),300)] {_ = neck.observe(obs,timestampMs:time)}
+ _ = neck.observe(.unavailable,timestampMs:400)
+ for (obs,time) in [(MovementObservation.headYaw(-0.5),600),(.headYaw(-0.5),900),(.headYaw(0),1_200),(.headYaw(0),1_500),(.headYaw(0.5),1_800),(.headYaw(0.5),2_100),(.headYaw(0),2_400),(.headYaw(0),2_700)] {_ = neck.observe(obs,timestampMs:time)}
+ XCTAssertTrue(neck.ready)
+}
 func testWaveHandAccumulatesSparseCameraMotionAndCountsReversals() {
  var motion=WaveHandMotion(),progress=MovementChallengeProgress(kind:.waveHand,target:1)
  for (index,x) in [0.50,0.52,0.55,0.59,0.63,0.60,0.56,0.52,0.48,0.52,0.56,0.60].enumerated() {
@@ -87,6 +108,29 @@ func testWaveHandAccumulatesSparseCameraMotionAndCountsReversals() {
   _ = noWave.observe(still.observe(x:x),timestampMs:index*250)
  }
  precondition(noWave.completed==0,"Small hand jitter must not count as a wave")
+}
+func testExpMovingAverageAdaptsToFrameRateAndResetsOnNonFinite() {
+ var first=ExpMovingAverage(halfLifeMs:100)
+ XCTAssertEqual(first.smooth(0.5,timestampMs:0),0.5,accuracy:0.0001)
+ var step=ExpMovingAverage(halfLifeMs:100)
+ _ = step.smooth(0,timestampMs:0)
+ XCTAssertEqual(step.smooth(1,timestampMs:100),0.5,accuracy:0.0001)
+ XCTAssertEqual(step.smooth(1,timestampMs:200),0.75,accuracy:0.0001)
+ var coarse=ExpMovingAverage(halfLifeMs:100)
+ _ = coarse.smooth(0,timestampMs:0)
+ let coarseAt100=coarse.smooth(1,timestampMs:100)
+ var fine=ExpMovingAverage(halfLifeMs:100)
+ _ = fine.smooth(0,timestampMs:0)
+ var fineAt100=0.0
+ for t in stride(from:25,through:100,by:25) {fineAt100=fine.smooth(1,timestampMs:t)}
+ XCTAssertEqual(coarseAt100,fineAt100,accuracy:0.0001)
+ var gap=ExpMovingAverage(halfLifeMs:100)
+ _ = gap.smooth(0,timestampMs:0)
+ XCTAssertEqual(gap.smooth(1,timestampMs:10_000),1,accuracy:0.01)
+ var nanReset=ExpMovingAverage(halfLifeMs:100)
+ _ = nanReset.smooth(0.9,timestampMs:0)
+ XCTAssertTrue(nanReset.smooth(Double.nan,timestampMs:100).isNaN)
+ XCTAssertEqual(nanReset.smooth(0.2,timestampMs:200),0.2,accuracy:0.0001)
 }
 func testPersistedTimeCannotBypassValidation() {
  XCTAssertThrowsError(try JSONDecoder().decode(AlarmTime.self,from:Data(#"{"hour":24,"minute":30,"weekdays":[]}"#.utf8)))
@@ -249,6 +293,8 @@ try await RemoteDemoTests().testDemoCannotStopAnAlarmOrRecordVerifiedEvenWithAMa
 try await testNativeLibrary()
 testCaptureSelectsCompleteCyclesAndDiscardsInterruptedEvidence()
 testMovementRequiresStableOrderedPoses()
+testBriefTrackingLossKeepsProgressWhileSustainedLossResets()
+testExpMovingAverageAdaptsToFrameRateAndResetsOnNonFinite()
 testPersistedTimeCannotBypassValidation()
 try await testCloudStopRaceAndConsent()
 try await testLocalChallengePrivacyBoundariesAndExplicitPushUpTarget()
