@@ -131,9 +131,9 @@ final class GuidedRhythmCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDel
    [.leftHip,.leftKnee,.leftAnkle],
    [.rightHip,.rightKnee,.rightAnkle]
   ]
-  guard let joints=sides.first(where:{names in names.allSatisfy {isVisible(points[$0])}}) else {return .occluded}
+  guard let joints=sides.first(where:{names in names.allSatisfy {PoseGeometry.isVisible(points[$0], minConfidence: 0.55)}}) else {return .occluded}
   guard let hip=points[joints[0]],let knee=points[joints[1]],let ankle=points[joints[2]] else {return .occluded}
-  let angle=Self.jointAngle(hip.location,knee.location,ankle.location,imageSize:imageSize)
+  let angle=PoseGeometry.jointAngle(hip.location,knee.location,ankle.location,imageSize:imageSize)
   if angle>=155 {return .pose(.standing)}
   if angle<=125 {return .pose(.lowered)}
   return .transition
@@ -141,27 +141,13 @@ final class GuidedRhythmCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDel
 
  private func classifySeatedArms(_ points:[VNHumanBodyPoseObservation.JointName:VNRecognizedPoint]) -> PoseClassification {
   let names:[VNHumanBodyPoseObservation.JointName]=[.leftShoulder,.leftWrist,.rightShoulder,.rightWrist]
-  guard names.allSatisfy({isVisible(points[$0])}),
+  guard names.allSatisfy({PoseGeometry.isVisible(points[$0], minConfidence: 0.55)}),
         let leftShoulder=points[.leftShoulder],let leftWrist=points[.leftWrist],
         let rightShoulder=points[.rightShoulder],let rightWrist=points[.rightWrist] else {return .occluded}
   let margin=0.08
   if leftWrist.location.y>leftShoulder.location.y+margin && rightWrist.location.y>rightShoulder.location.y+margin {return .pose(.armsUp)}
   if leftWrist.location.y<leftShoulder.location.y-margin && rightWrist.location.y<rightShoulder.location.y-margin {return .pose(.armsDown)}
   return .transition
- }
-
- private func isVisible(_ point:VNRecognizedPoint?) -> Bool {
-  guard let point else {return false}
-  return point.confidence>=0.55 && point.location.x>0.02 && point.location.x<0.98 && point.location.y>0.02 && point.location.y<0.98
- }
-
- static func jointAngle(_ a:CGPoint,_ b:CGPoint,_ c:CGPoint,imageSize:CGSize) -> Double {
-  let first=CGVector(dx:(a.x-b.x)*imageSize.width,dy:(a.y-b.y)*imageSize.height)
-  let second=CGVector(dx:(c.x-b.x)*imageSize.width,dy:(c.y-b.y)*imageSize.height)
-  let denominator=sqrt((first.dx*first.dx+first.dy*first.dy)*(second.dx*second.dx+second.dy*second.dy))
-  guard denominator>0 else {return 0}
-  let cosine=Double(max(-1,min(1,(first.dx*second.dx+first.dy*second.dy)/denominator)))
-  return acos(cosine)*180 / Double.pi
  }
 
  private func handleOcclusion(timestamp:Int) {
