@@ -226,9 +226,18 @@ public struct GuidedRhythmSession: Sendable {
   lostSinceMs=nil
  }
 
+ /// Intermediate angles break a pose hold without discarding the completed sequence steps.
+ public mutating func transition(timestampMs:Int) {
+  guard timestampMs>=0,latestTimestampMs.map({timestampMs>$0}) ?? true else {interrupt();return}
+  if let last=latestTimestampMs,timestampMs-last>lossGraceMs {interrupt()}
+  latestTimestampMs=timestampMs;candidatePose=nil
+  if let started=sequenceStartedAtMs,timestampMs-started>maxSequenceDurationMs {interrupt()}
+ }
+
  @discardableResult public mutating func observe(_ pose:GuidedRhythmPose,timestampMs:Int,visible:Bool) -> Bool {
   guard timestampMs>=0 else {interrupt();return false}
   guard latestTimestampMs.map({timestampMs>$0}) ?? true else {interrupt();return false}
+  if let last=latestTimestampMs,timestampMs-last>lossGraceMs {interrupt()}
   latestTimestampMs=timestampMs
   guard visible else {
    let since=lostSinceMs ?? timestampMs

@@ -36,7 +36,7 @@
 "Mode" = "Mode";
 "Mon" = "Mon";
 "Move slowly up and down, within the camera view." = "Move slowly up and down, within the camera view.";
-"Movement captured. Checking…" = "Movement captured. Checking…";
+"Movement detected. Checking…" = "Movement detected. Checking…";
 "Movement checked. Have a good morning!" = "Movement checked. Have a good morning!";
 "New alarm" = "New alarm";
 "No alarms yet" = "No alarms yet";
@@ -149,7 +149,7 @@
 "Read one short sentence and choose its meaning." = "Read one short sentence and choose its meaning.";
 "Follow a simple standing or seated rhythm on camera." = "Follow a simple standing or seated rhythm on camera.";
 "Read the sentence aloud. 80% recognized-word match completes it." = "Read the sentence aloud. 80% recognized-word match completes it.";
-"Local challenge completed" = "Local challenge completed";
+"Challenge completed" = "Challenge completed";
 "I am ready for a bright new day." = "I am ready for a bright new day.";
 "Small steps create steady progress." = "Small steps create steady progress.";
 "This morning is full of new energy." = "This morning is full of new energy.";
@@ -170,7 +170,7 @@
 "Recognized-word match" = "Recognized-word match";
 "Start guided rhythm" = "Start guided rhythm";
 "Start reading" = "Start reading";
-"Local challenge completed. Have a good morning!" = "Local challenge completed. Have a good morning!";
+"Challenge completed. Have a good morning!" = "Challenge completed. Have a good morning!";
 "Complete the selected push-ups in view of the camera." = "Complete the selected push-ups in view of the camera.";
 "Choose the closest meaning." = "Choose the closest meaning.";
 "Stay seated. Lower your arms, raise them, then lower them. Complete 3 cycles. Video stays on this device." = "Stay seated. Lower your arms, raise them, then lower them. Complete 3 cycles. Video stays on this device.";
@@ -307,14 +307,13 @@
 "Riddle" = "Riddle";
 "Jumping jacks" = "Jumping jacks";
 "Reach up" = "Reach up";
-"Wave your hand side to side while your camera checks locally." = "Wave your hand side to side while your camera checks locally.";
-"Turn your head left and right while your camera checks locally." = "Turn your head left and right while your camera checks locally.";
+"Hold your hand in view and wave it side to side." = "Hold your hand in view and wave it side to side.";
+"Face the camera and turn your head left and right." = "Face the camera and turn your head left and right.";
 "Solve a short riddle in your language." = "Solve a short riddle in your language.";
 "Complete 10 gentle jumping jacks. Checked on this device." = "Complete 10 gentle jumping jacks. Checked on this device.";
 "Raise both hands above your shoulders, then lower them." = "Raise both hands above your shoulders, then lower them.";
 "On-device camera" = "On-device camera";
 "%@ · saved choice" = "%@ · saved choice";
-"Start on-device challenge" = "Start on-device challenge";
 "Camera video stays on this device." = "Camera video stays on this device.";
 "Solve the riddle, then choose your answer. You can try again." = "Solve the riddle, then choose your answer. You can try again.";
 "Place your hand in view and wave it side to side. Video stays on this device." = "Place your hand in view and wave it side to side. Video stays on this device.";
@@ -330,7 +329,7 @@
 "Decrease push-up target" = "Decrease push-up target";
 
 "Movement capture timed out. Try again, or tap I’m awake when it unlocks." = "Movement capture timed out. Try again, or tap I’m awake when it unlocks.";
-"Movement captured." = "Movement captured.";
+"Movement detected." = "Movement detected.";
 "Default: Read & Choose" = "Default: Read & Choose";
 "Some backup rings could not be updated. Please check your system alarms." = "Some backup rings could not be updated. Please check your system alarms.";
 "Step back so your whole body fits." = "Step back so your whole body fits.";
@@ -356,3 +355,34 @@
 "The little details" = "The little details";
 "Today · Once" = "Today · Once";
 "Tomorrow · Once" = "Tomorrow · Once";
+
+"Mode: %@" = "Mode: %@";
+
+"Movement guide" = "Movement guide";
+"Follow the movement" = "Follow the movement";
+"Lower, then push up" = "Lower, then push up";
+"Wave side to side" = "Wave side to side";
+"Turn left, then right" = "Turn left, then right";
+"Open, then close" = "Open, then close";
+"Arms up, then down" = "Arms up, then down";
+"Seated · Arms up, then down" = "Seated · Arms up, then down";
+"Bend, then stand" = "Bend, then stand";
+"Play movement guide" = "Play movement guide";
+"Pause movement guide" = "Pause movement guide";
+"Alarm options" = "Alarm options";
+"Tracking movement" = "Tracking movement";
+"Waiting for a clear view" = "Waiting for a clear view";
+"Side view · Whole body" = "Side view · Whole body";
+"Front view · Whole body" = "Front view · Whole body";
+"Front view · Upper body" = "Front view · Upper body";
+"Tracking preview (test fixture)" = "Tracking preview (test fixture)";
+
+"Front view · Hand" = "Front view · Hand";
+
+"Front view · Face" = "Front view · Face";
+
+"Delete alarm?" = "Delete alarm?";
+
+"This alarm and its scheduled rings will be removed." = "This alarm and its scheduled rings will be removed.";
+
+"Back to alarm" = "Back to alarm";

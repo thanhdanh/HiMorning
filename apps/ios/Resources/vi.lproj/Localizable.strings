@@ -36,7 +36,7 @@
 "Mode" = "Chế độ";
 "Mon" = "T2";
 "Move slowly up and down, within the camera view." = "Lên và xuống chậm, trong vùng camera.";
-"Movement captured. Checking…" = "Đã ghi đủ chuyển động. Đang xác minh…";
+"Movement detected. Checking…" = "Đã nhận diện động tác. Đang kiểm tra…";
 "Movement checked. Have a good morning!" = "Đã xác minh động tác. Chúc bạn một ngày nhiều năng lượng!";
 "New alarm" = "Báo thức mới";
 "No alarms yet" = "Chưa có báo thức";
@@ -149,7 +149,7 @@
 "Read one short sentence and choose its meaning." = "Đọc một câu ngắn và chọn ý nghĩa của nó.";
 "Follow a simple standing or seated rhythm on camera." = "Theo nhịp điệu đơn giản khi đứng hoặc ngồi trên camera.";
 "Read the sentence aloud. 80% recognized-word match completes it." = "Đọc câu to. 80% từ được nhận diện hoàn thành thử thách.";
-"Local challenge completed" = "Thử thách cục bộ đã xong";
+"Challenge completed" = "Đã hoàn thành thử thách";
 "I am ready for a bright new day." = "Tôi đã sẵn sàng cho một ngày mới rực rỡ.";
 "Small steps create steady progress." = "Những bước nhỏ tạo ra tiến bộ ổn định.";
 "This morning is full of new energy." = "Buổi sáng này tràn đầy năng lượng mới.";
@@ -170,11 +170,11 @@
 "Recognized-word match" = "Trùng khớp từ được nhận diện";
 "Start guided rhythm" = "Bắt đầu nhịp điệu hướng dẫn";
 "Start reading" = "Bắt đầu đọc";
-"Local challenge completed. Have a good morning!" = "Thử thách cục bộ đã hoàn thành. Chúc buổi sáng tốt lành!";
+"Challenge completed. Have a good morning!" = "Bạn đã hoàn thành thử thách. Chúc buổi sáng tốt lành!";
 "Complete the selected push-ups in view of the camera." = "Hoàn thành số lần chống đẩy được chọn trong tầm nhìn của camera.";
 "Choose the closest meaning." = "Chọn ý nghĩa gần nhất.";
-"Stay seated. Lower your arms, raise them, then lower them. Complete 3 cycles. Video stays on this device." = "Ngồi yên. Hạ tay xuống, đưa lên rồi hạ xuống. Hoàn thành 3 chu kỳ. Video lưu trên thiết bị này.";
-"Stand, bend your knees gently, then stand again. Complete 3 cycles. Video stays on this device." = "Đứng, gập đầu gối nhẹ rồi đứng thẳng lại. Hoàn thành 3 chu kỳ. Video lưu trên thiết bị này.";
+"Stay seated. Lower your arms, raise them, then lower them. Complete 3 cycles. Video stays on this device." = "Ngồi yên. Hạ tay xuống, đưa lên rồi hạ xuống. Hoàn thành 3 chu kỳ. Video chỉ được xử lý trên thiết bị này.";
+"Stand, bend your knees gently, then stand again. Complete 3 cycles. Video stays on this device." = "Đứng, gập đầu gối nhẹ rồi đứng thẳng lại. Hoàn thành 3 chu kỳ. Video chỉ được xử lý trên thiết bị này.";
 "Speech is recognized on this device. This checks words, not accent quality." = "Lời nói được nhận diện trên thiết bị này. Kiểm tra từ vựng chứ không phải chất lượng giọng nói.";
 "Correct. Challenge completed!" = "Đúng rồi. Thử thách hoàn thành!";
 "Not quite. Read the sentence and try again." = "Chưa chính xác. Đọc lại câu và thử lại.";
@@ -242,7 +242,7 @@
 "Recognition is taking too long. Try again, or tap I’m awake when it unlocks." = "Nhận diện mất quá nhiều thời gian. Hãy thử lại, hoặc nhấn “Tôi đã thức dậy” khi nút mở khóa.";
 "Great reading. Have a good morning!" = "Đọc tốt. Chúc buổi sáng tốt lành!";
 "Movement photos go through HiMorning to Qwen on Modal. Modal may retain inputs and outputs for up to 7 days. No audio is uploaded. You can stop at any time." = "Ảnh động tác đi qua HiMorning đến Qwen trên Modal. Modal có thể giữ dữ liệu đầu vào và đầu ra trong tối đa 7 ngày. Không có âm thanh nào được tải lên. Bạn có thể dừng bất cứ lúc nào.";
-"Cloud challenges use a guest Firebase account. With your consent, movement photos are processed by Qwen on Modal and may be retained by Modal for up to 7 days. Local progress contains dates and outcomes, not photos or audio." = "Các thử thách đám mây sử dụng tài khoản khách Firebase. Với sự đồng ý của bạn, ảnh động tác được xử lý bởi Qwen trên Modal và có thể được giữ lại bởi Modal trong tối đa 7 ngày. Tiến độ cục bộ chứa các ngày và kết quả, không phải ảnh hay âm thanh.";
+"Cloud challenges use a guest Firebase account. With your consent, movement photos are processed by Qwen on Modal and may be retained by Modal for up to 7 days. Local progress contains dates and outcomes, not photos or audio." = "Các thử thách đám mây sử dụng tài khoản khách Firebase. Với sự đồng ý của bạn, ảnh động tác được xử lý bởi Qwen trên Modal và có thể được giữ lại bởi Modal trong tối đa 7 ngày. Lịch sử trên iPhone chỉ lưu ngày và kết quả, không lưu ảnh hay âm thanh.";
 "Modal data policies" = "Chính sách dữ liệu Modal";
 "Waiting for the AI server. You can still stop." = "Đang chờ máy chủ AI. Bạn vẫn có thể dừng.";
 "Test remote AI" = "Thử AI từ xa";
@@ -253,7 +253,7 @@
 "The remote test is unavailable. You can still stop." = "Bản thử nghiệm từ xa không sẵn sàng. Bạn vẫn có thể dừng.";
 "The free remote demo sends only generated color images through Cloudflare to Gemini. Google may use these demo inputs and outputs to improve its products. Camera photos are not accepted by this demo." = "Bản trình diễn miễn phí từ xa chỉ gửi ảnh màu được tạo ra qua Cloudflare đến Gemini. Google có thể dùng đầu vào và đầu ra bản trình diễn để cải thiện sản phẩm của họ. Ảnh camera không được chấp nhận bởi bản trình diễn này.";
 "Gemini data policies" = "Chính sách dữ liệu Gemini";
-"Cloud features use a guest Firebase account. Your local progress contains dates and outcomes, not photos or audio." = "Tính năng đám mây sử dụng tài khoản khách Firebase. Tiến độ cục bộ chứa các ngày và kết quả, không phải ảnh hay âm thanh.";
+"Cloud features use a guest Firebase account. Your local progress contains dates and outcomes, not photos or audio." = "Tính năng đám mây sử dụng tài khoản khách Firebase. Lịch sử trên iPhone chỉ lưu ngày và kết quả, không lưu ảnh hay âm thanh.";
 "This month" = "Tháng này";
 "/ 100 points" = "/ 100 điểm";
 "Monthly consistency" = "Tính nhất quán hàng tháng";
@@ -304,22 +304,21 @@
 "Wave hello" = "Vẫy chào";
 "Neck turns" = "Xoay cổ";
 "Riddle" = "Đố vui";
-"Jumping jacks" = "Nhảy dây";
+"Jumping jacks" = "Bật nhảy dang tay chân";
 "Reach up" = "Giơ tay lên";
-"Wave your hand side to side while your camera checks locally." = "Vẫy tay qua lại trong khi camera kiểm tra cục bộ.";
-"Turn your head left and right while your camera checks locally." = "Xoay đầu trái phải trong khi camera kiểm tra cục bộ.";
+"Hold your hand in view and wave it side to side." = "Giơ tay trước camera rồi vẫy qua lại.";
+"Face the camera and turn your head left and right." = "Nhìn vào camera rồi quay đầu sang trái và phải.";
 "Solve a short riddle in your language." = "Giải một câu đố ngắn bằng ngôn ngữ của bạn.";
-"Complete 10 gentle jumping jacks. Checked on this device." = "Hoàn thành 10 lần nhảy dây nhẹ nhàng. Kiểm tra trên thiết bị này.";
+"Complete 10 gentle jumping jacks. Checked on this device." = "Hoàn thành 10 lần bật nhảy dang tay chân nhẹ nhàng. Kiểm tra trên thiết bị này.";
 "Raise both hands above your shoulders, then lower them." = "Giơ cả hai tay lên trên vai rồi hạ xuống.";
-"On-device camera" = "Camera trên thiết bị";
+"On-device camera" = "Camera trên iPhone";
 "%@ · saved choice" = "%@ · lựa chọn đã lưu";
-"Start on-device challenge" = "Bắt đầu thử thách trên thiết bị";
-"Camera video stays on this device." = "Video camera lưu lại trên thiết bị này.";
+"Camera video stays on this device." = "Video camera chỉ được xử lý trên thiết bị này.";
 "Solve the riddle, then choose your answer. You can try again." = "Giải câu đố rồi chọn đáp án của bạn. Bạn có thể thử lại.";
-"Place your hand in view and wave it side to side. Video stays on this device." = "Đặt tay trong tầm nhìn và vẫy qua lại. Video lưu trên thiết bị này.";
-"Keep your face visible and turn your head left and right. Video stays on this device." = "Giữ khuôn mặt thấy được và xoay đầu trái phải. Video lưu trên thiết bị này.";
-"Keep your whole body visible and complete 10 gentle jumping jacks. Video stays on this device." = "Giữ toàn thân thấy được và hoàn thành 10 lần nhảy dây nhẹ nhàng. Video lưu trên thiết bị này.";
-"Raise both hands above your shoulders, then lower them. Video stays on this device." = "Giơ cả hai tay lên trên vai rồi hạ xuống. Video lưu trên thiết bị này.";
+"Place your hand in view and wave it side to side. Video stays on this device." = "Đặt tay trong tầm nhìn và vẫy qua lại. Video chỉ được xử lý trên thiết bị này.";
+"Keep your face visible and turn your head left and right. Video stays on this device." = "Giữ khuôn mặt thấy được và xoay đầu trái phải. Video chỉ được xử lý trên thiết bị này.";
+"Keep your whole body visible and complete 10 gentle jumping jacks. Video stays on this device." = "Giữ toàn thân thấy được và hoàn thành 10 lần bật nhảy dang tay chân nhẹ nhàng. Video chỉ được xử lý trên thiết bị này.";
+"Raise both hands above your shoulders, then lower them. Video stays on this device." = "Giơ cả hai tay lên trên vai rồi hạ xuống. Video chỉ được xử lý trên thiết bị này.";
 "Not quite. Think it over and try again." = "Chưa đúng. Nghĩ lại và thử lại.";
 "Expanded" = "Mở rộng";
 "Collapsed" = "Đóng lại";
@@ -329,7 +328,7 @@
 "Decrease push-up target" = "Giảm mục tiêu chống đẩy";
 
 "Movement capture timed out. Try again, or tap I’m awake when it unlocks." = "Đã hết thời gian ghi nhận chuyển động. Hãy thử lại, hoặc nhấn “Tôi đã thức dậy” khi nút mở khóa.";
-"Movement captured." = "Chuyển động đã được chụp.";
+"Movement detected." = "Đã nhận diện động tác.";
 "Default: Read & Choose" = "Mặc định: Đọc và Chọn";
 "Some backup rings could not be updated. Please check your system alarms." = "Chưa thể cập nhật một số chuông dự phòng. Hãy kiểm tra báo thức trong hệ thống.";
 "Step back so your whole body fits." = "Lùi lại để camera thấy toàn thân.";
@@ -338,7 +337,7 @@
 "Stand where the camera can see you." = "Hãy đứng trong khung hình camera.";
 "Turn your head to each side, then back to the middle." = "Quay đầu sang mỗi bên, rồi trở về giữa.";
 "Place your hand in view and wave it side to side." = "Đặt tay trong tầm nhìn và vẫy qua lại.";
-"Keep your whole body visible and move through the jumping jack." = "Giữ toàn thân trong khung hình và thực hiện động tác nhảy dây.";
+"Keep your whole body visible and move through the jumping jack." = "Giữ toàn thân trong khung hình và thực hiện động tác bật nhảy dang tay chân.";
 "Reading aloud isn't available on this iPhone, so here is a reading question instead." = "Chưa thể đọc to trên iPhone này, nên đây là một câu hỏi đọc hiểu thay thế.";
 "Backup rings are unavailable right now. Your main alarms still work." = "Chuông dự phòng tạm thời không dùng được. Báo thức chính vẫn hoạt động.";
 "Label" = "Nhãn";
@@ -355,3 +354,34 @@
 "The little details" = "Thiết lập thêm";
 "Today · Once" = "Hôm nay · Một lần";
 "Tomorrow · Once" = "Ngày mai · Một lần";
+
+"Mode: %@" = "Chế độ: %@";
+
+"Movement guide" = "Hướng dẫn động tác";
+"Follow the movement" = "Làm theo động tác";
+"Lower, then push up" = "Hạ người rồi đẩy lên";
+"Wave side to side" = "Vẫy tay qua hai bên";
+"Turn left, then right" = "Quay đầu sang trái rồi phải";
+"Open, then close" = "Bật dang rồi khép tay chân";
+"Arms up, then down" = "Giơ tay lên rồi hạ xuống";
+"Seated · Arms up, then down" = "Ngồi · Giơ tay rồi hạ xuống";
+"Bend, then stand" = "Khuỵu gối rồi đứng lên";
+"Play movement guide" = "Phát hướng dẫn động tác";
+"Pause movement guide" = "Tạm dừng hướng dẫn động tác";
+"Alarm options" = "Tùy chọn báo thức";
+"Tracking movement" = "Đang nhận diện";
+"Waiting for a clear view" = "Cần thấy rõ hơn";
+"Side view · Whole body" = "Góc ngang · Toàn thân";
+"Front view · Whole body" = "Chính diện · Toàn thân";
+"Front view · Upper body" = "Chính diện · Thân trên";
+"Tracking preview (test fixture)" = "Xem thử nhận diện (dữ liệu mẫu)";
+
+"Front view · Hand" = "Chính diện · Bàn tay";
+
+"Front view · Face" = "Chính diện · Khuôn mặt";
+
+"Delete alarm?" = "Xóa báo thức?";
+
+"This alarm and its scheduled rings will be removed." = "Báo thức này và các lần reo đã đặt sẽ được xóa.";
+
+"Back to alarm" = "Về báo thức";

@@ -7,15 +7,26 @@ import CoreMotion
 
 struct CameraPreview: UIViewRepresentable {
  let session: AVCaptureSession
- final class Preview: UIView { override class var layerClass: AnyClass { AVCaptureVideoPreviewLayer.self } }
- func makeUIView(context: Context) -> Preview {
-  let view = Preview()
-  let layer = view.layer as! AVCaptureVideoPreviewLayer
-  layer.session = session
-  layer.videoGravity = .resizeAspect
-  return view
+ final class Preview:UIView {
+  override class var layerClass:AnyClass {AVCaptureVideoPreviewLayer.self}
+  init(session:AVCaptureSession) {
+   super.init(frame:.zero)
+   let previewLayer=layer as! AVCaptureVideoPreviewLayer
+   previewLayer.session=session
+   previewLayer.videoGravity = .resizeAspect
+  }
+  required init?(coder:NSCoder) {super.init(coder:coder)}
+  func configure() {
+   guard let connection=(layer as? AVCaptureVideoPreviewLayer)?.connection else {return}
+   if connection.isVideoRotationAngleSupported(90),connection.videoRotationAngle != 90 {connection.videoRotationAngle=90}
+   if connection.isVideoMirroringSupported,connection.automaticallyAdjustsVideoMirroring || !connection.isVideoMirrored {connection.automaticallyAdjustsVideoMirroring=false;connection.isVideoMirrored=true}
+  }
+  override func layoutSubviews() {super.layoutSubviews();configure()}
  }
- func updateUIView(_ uiView: Preview, context: Context) {}
+ func makeUIView(context: Context) -> Preview {
+  Preview(session:session)
+ }
+ func updateUIView(_ uiView:Preview,context:Context) {uiView.configure()}
 }
 
 struct ChallengeView: View {
@@ -31,6 +42,7 @@ struct ChallengeView: View {
   return fallback
  }
  @ObservedObject var model: PilotModel
+ var rehearsal=false
  @Environment(\.dismiss) private var dismiss
  @Environment(\.scenePhase) private var scene
  @State private var coordinator: ChallengeCoordinator?
@@ -53,13 +65,14 @@ struct ChallengeView: View {
  @State private var riddlePrompt: ChallengePrompt?
  @State private var readAloudItem: ChallengeContentItem?
  @State private var message = appText("Good morning. Choose what feels right today.")
+ @State private var tracking:CameraTrackingSnapshot = .empty
  @State private var reps = 0
  @State private var consent = false
  @State private var busy = false
  @State private var consentDialog = false
  @State private var completion: WakeOutcome?
  @State private var retrying = false
- private var practicing: Bool { model.rehearsal || retrying }
+ private var practicing: Bool { rehearsal || model.rehearsal || retrying }
  private var finished: Bool { completion != nil }
  private var celebrates: Bool { completion == .localCompleted || completion == .openaiVerified || completion == .aiVerified }
  @State private var historyID = UUID()
@@ -75,12 +88,18 @@ struct ChallengeView: View {
      } else {
       Text(practicing ? appText("Try a challenge") : appText("Good morning ☀️")).font(.headline)
       if practicing { Text(appText("Practice only. Your alarms stay as they are.")).font(.footnote).foregroundStyle(MorningTheme.muted) }
-      if let camera {
+      if testingTrackingOverlay {
+       #if DEBUG
+       CameraTrackingFixturePreview()
+       #endif
+      } else if let camera {
        cameraBlock(camera.session, counter: "\(reps) / \(challenge.repetitions ?? 0)")
       } else if let movementCamera {
        cameraBlock(movementCamera.session, counter: "\(reps) / \(challenge.kind.localMovementTarget ?? 0)")
       } else if let rhythmCamera {
        cameraBlock(rhythmCamera.session, counter: "\(rhythmCycles) / 3")
+      } else if challenge.kind.hasMovementIllustration {
+       MovementGuide(selection:challenge)
       } else {
        HStack(spacing: 16) {
         MorningSun(size: 64)
@@ -91,6 +110,9 @@ struct ChallengeView: View {
      Text(challenge.displayTitle).font(.subheadline.weight(.medium)).padding(.horizontal, 14).padding(.vertical, 8).background(MorningTheme.soft, in: Capsule())
      if effectiveAlarm.mode != alarm.mode || effectiveAlarm.challenge != alarm.challenge {
       Text(appText("Your preview has ended. This morning uses the basic challenge. Your saved choice stays the same.")).font(.footnote).foregroundStyle(MorningTheme.muted)
+     }
+     if !finished,challenge.kind.hasMovementIllustration,camera != nil || movementCamera != nil || rhythmCamera != nil {
+      MovementGuide(selection:challenge,compact:true)
      }
      Text(result ?? message)
       .font(distanceLayout ? .system(size: 34, weight: .semibold) : .title3.weight(.medium))
@@ -119,14 +141,9 @@ struct ChallengeView: View {
       }
      }
      if challenge.kind == .pushUps && camera == nil && !finished {
-      Button { consentDialog = true } label: { ChallengeStartLabel(title: "Start challenge") }.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startChallenge")
       Text(appText("The camera counts push-ups on this iPhone. Video is not saved or uploaded.")).font(.footnote).foregroundStyle(MorningTheme.muted)
      }
-     if challenge.kind == .guidedRhythm && rhythmCamera == nil && !finished {
-      Button { Task { await startRhythm() } } label: { ChallengeStartLabel(title: "Start guided rhythm") }.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startGuidedRhythm")
-     }
      if challenge.kind.usesLocalMovement && movementCamera == nil && !finished {
-      Button { Task { await startMovement() } } label: { ChallengeStartLabel(title: "Start on-device challenge") }.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startLocalMovement")
       Text(appText("Camera video stays on this device.")).font(.footnote).foregroundStyle(MorningTheme.muted)
      }
     }.padding(24).frame(maxWidth: .infinity).id("challengeTop")
@@ -143,8 +160,17 @@ struct ChallengeView: View {
        Button(appText("Try again")) { retryChallenge() }.buttonStyle(MorningButtonStyle(primary: false))
         .disabled(busy || stopping || preparingExample).accessibilityIdentifier("retryChallenge")
       }
-      Button(appText("Back to home")) { dismiss() }.buttonStyle(MorningButtonStyle()).accessibilityIdentifier("backToHome")
+      Button(appText(rehearsal ? "Back to alarm" : "Back to home")) { dismiss() }.buttonStyle(MorningButtonStyle()).accessibilityIdentifier("backToHome")
      } else {
+      if challenge.kind == .pushUps && camera == nil {
+       Button { consentDialog = true } label: { ChallengeStartLabel(title: "Start challenge") }.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startChallenge")
+      }
+      if challenge.kind == .guidedRhythm && rhythmCamera == nil {
+       Button { Task { await startRhythm() } } label: { ChallengeStartLabel(title: "Start guided rhythm") }.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startGuidedRhythm")
+      }
+      if challenge.kind.usesLocalMovement && movementCamera == nil {
+       Button { Task { await startMovement() } } label: { ChallengeStartLabel(title: "Start challenge") }.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startLocalMovement")
+      }
       if challenge.kind == .readAloud {
        if let speech {
         Button(appText("Finish reading")) { speech.finishReading() }.buttonStyle(MorningButtonStyle()).disabled(busy || stopping || speechFinishing).accessibilityIdentifier("finishReadAloud")
@@ -152,6 +178,7 @@ struct ChallengeView: View {
         Button { Task { await startSpeech() } } label: { ChallengeStartLabel(title: "Start reading", symbol: "mic.fill") }.buttonStyle(MorningButtonStyle()).disabled(busy || stopping || preparingExample || spokenExample.isSpeaking).accessibilityIdentifier("startReadAloud")
        }
       }
+      if !rehearsal {
       TimelineView(.periodic(from: .now, by: 1)) { context in
        let remaining = max(0, Int(ceil(awakeAvailableAt.timeIntervalSince(context.date))))
        Button { finish(.selfConfirmed) } label: {
@@ -161,8 +188,9 @@ struct ChallengeView: View {
         }
        }.buttonStyle(MorningButtonStyle(primary: challenge.kind == .none)).disabled(remaining > 0 || stopping).accessibilityIdentifier("confirmAwake")
       }
+      }
       if practicing {
-       Button(appText("Back to home")) { dismiss() }
+       Button(appText(rehearsal ? "Back to alarm" : "Back to home")) { dismiss() }
         .buttonStyle(.plain).font(.subheadline).underline().foregroundStyle(MorningTheme.muted).frame(maxWidth: .infinity, minHeight: 44).accessibilityIdentifier("backToHome")
       }
      }
@@ -195,10 +223,10 @@ struct ChallengeView: View {
      readAloudItem = ChallengeContentItem(id: "ui-reading", kind: .readAloud, language: appLocale().identifier, text: appText("Small steps create steady progress."), choices: nil, answerIndex: nil, source: "ui-test", license: "original", attribution: nil)
      transcript = arguments[index + 1]; speechEnded = arguments.contains("--ui-reading-finished")
     }
-    if arguments.contains("--ui-testing"), model.rehearsal, arguments.contains("--ui-reading-listening") {
+    if arguments.contains("--ui-testing"), practicing, arguments.contains("--ui-reading-listening") {
      speechListening = true; message = appText("Listening… Read the sentence aloud.")
     }
-    if arguments.contains("--ui-testing"), model.rehearsal, arguments.contains("--ui-complete-challenge") {
+    if arguments.contains("--ui-testing"), practicing, arguments.contains("--ui-complete-challenge") {
      switch challenge.kind {
      case .pushUps: complete(.localCompleted, success: appText("Push-ups complete. Have a good morning!"))
      case .guidedRhythm: complete(.localCompleted, success: appText("Guided rhythm completed. Have a good morning!"))
@@ -207,7 +235,7 @@ struct ChallengeView: View {
       speechEnded = true
       complete(.localCompleted, success: appText("Great reading. Have a good morning!"))
      case .readAndChoose, .riddle: complete(.localCompleted, success: appText("Correct. Challenge completed!"))
-     case .waveHand, .neckRotation, .jumpingJacks, .stretching: complete(.localCompleted, success: appText("Local challenge completed. Have a good morning!"))
+     case .waveHand, .neckRotation, .jumpingJacks, .stretching: complete(.localCompleted, success: appText("Challenge completed. Have a good morning!"))
      case .none: break
      }
     }
@@ -229,15 +257,18 @@ struct ChallengeView: View {
   return challenge.kind == .jumpingJacks || (challenge.kind == .guidedRhythm && (challenge.rhythmVariant ?? .standing) == .standing)
  }
 
- @ViewBuilder private func cameraBlock(_ session: AVCaptureSession, counter: String) -> some View {
-  let preview = CameraPreview(session: session)
-  if distanceLayout {
-   preview.aspectRatio(3.0 / 4.0, contentMode: .fit).frame(maxHeight: 360).clipShape(RoundedRectangle(cornerRadius: 24))
-    .overlay(alignment: .bottom) { Text(counter).font(.system(size: 96, weight: .bold, design: .rounded)).lineLimit(1).minimumScaleFactor(0.5).padding(12).background(.regularMaterial, in: Capsule()).padding() }
-  } else {
-   preview.frame(height: 280).clipShape(RoundedRectangle(cornerRadius: 24))
-    .overlay(alignment: .bottom) { Text(counter).font(.largeTitle.bold()).padding(12).background(.regularMaterial, in: Capsule()).padding() }
-  }
+ private var testingTrackingOverlay:Bool {
+  #if DEBUG
+  ProcessInfo.processInfo.arguments.contains("--ui-testing") && ProcessInfo.processInfo.arguments.contains("--ui-tracking-overlay")
+  #else
+  false
+  #endif
+ }
+ @ViewBuilder private func cameraBlock(_ session:AVCaptureSession,counter:String)->some View {
+  let preview=TrackedCameraPreview(session:session,tracking:tracking,counter:counter,largeCounter:distanceLayout)
+  // Keep the complete portrait camera frame, including the person and the room.
+  preview.aspectRatio(3.0/4.0,contentMode:.fit).frame(maxWidth:300)
+   .frame(maxWidth:.infinity)
  }
 
  private func beginCoaching() {
@@ -250,12 +281,13 @@ struct ChallengeView: View {
  @MainActor private func startCamera() async {
   guard !busy, !finished, !stopping, scene == .active, let coordinator, let target = challenge.repetitions else { return }
   busy = true; reps = 0; message = appText("Getting the camera ready…")
-  let generation = UUID(); captureGeneration = generation; consent = true
+  let generation = UUID(); captureGeneration = generation; consent = true; tracking = .empty
   defer { busy = false }
   let capture = CameraCapture(target: target) { update in Task { @MainActor in
    guard captureGeneration == generation, consent, !finished, !stopping else { return }
    if update.reps > reps { voice?.rep(update.reps, spoken: !update.ready) }
    if update.message != message { voice?.hint(update.message) }
+   tracking=update.tracking
    reps = update.reps; message = update.message
    if update.ready { await completePushUps(update.counter) }
    else if update.ended { camera?.stop(); camera = nil; consent = false; await coordinator.suspend() }
@@ -292,7 +324,7 @@ struct ChallengeView: View {
   model.recordMorning(id: historyID, alarm: performedAlarm, outcome: outcome, rehearsal: practicing)
   if !practicing, celebrates { model.celebrationID = reduceMotion ? nil : UUID(); dismiss(); return }
   switch outcome {
-  case .localCompleted: result = success ?? appText("Local challenge completed. Have a good morning!")
+  case .localCompleted: result = success ?? appText("Challenge completed. Have a good morning!")
   case .openaiVerified, .aiVerified: result = appText("Movement checked. Have a good morning!")
   case .selfConfirmed: result = appText("You confirmed you are awake. Have a good morning!")
   case .dismissed: break
@@ -330,7 +362,7 @@ struct ChallengeView: View {
   case .neckRotation: return appText("Keep your face visible and turn your head left and right. Video stays on this device.")
   case .jumpingJacks: return appText("Keep your whole body visible and complete 10 gentle jumping jacks. Video stays on this device.")
   case .stretching: return appText("Raise both hands above your shoulders, then lower them. Video stays on this device.")
-  case .guidedRhythm: return challenge.rhythmVariant == .seated ? appText("Stay seated. Lower your arms, raise them, then lower them. Complete 3 cycles. Video stays on this device.") : appText("Stand, bend your knees gently, then stand again. Complete 3 cycles. Video stays on this device.")
+  case .guidedRhythm: return challenge.rhythmVariant == .seated ? appText("Stay seated. Lower your arms, raise them, then lower them. Complete 3 cycles. Video stays on this device.") : appText("Stand sideways in view, bend your knees gently, then stand again.")
   case .readAloud: return appText("Tap Start reading, then read the sentence aloud. Match at least 80% of the words.")
   }
  }
@@ -343,10 +375,12 @@ struct ChallengeView: View {
  @MainActor private func startRhythm() async {
   guard rhythmCamera == nil, !busy, !finished, !stopping, scene == .active else { return }; busy = true; message = appText("Getting the camera ready…")
   let generation = UUID(); captureGeneration = generation
+  tracking = .empty
   let capture = GuidedRhythmCapture(variant: challenge.rhythmVariant ?? .standing, targetCycles: 3) { update in Task { @MainActor in
    guard captureGeneration == generation, !finished, !stopping else { return }
    if update.cycles > rhythmCycles { voice?.rep(update.cycles, spoken: !update.completed) }
    if update.message != message { voice?.hint(update.message) }
+   tracking=update.tracking
    rhythmCycles = update.cycles; message = update.message
    if update.completed { finish(.localCompleted, success: appText("Guided rhythm completed. Have a good morning!")) }
    else if update.ended { rhythmCamera?.stop(); rhythmCamera = nil }
@@ -358,12 +392,14 @@ struct ChallengeView: View {
   guard movementCamera == nil, !busy, !finished, !stopping, scene == .active, challenge.kind.usesLocalMovement else { return }
   busy = true; message = appText("Getting the camera ready…")
   let generation = UUID(); captureGeneration = generation
+  tracking = .empty
   let capture = MovementChallengeCapture(kind: challenge.kind) { update in Task { @MainActor in
    guard captureGeneration == generation, !finished, !stopping else { return }
    if update.reps > reps { voice?.rep(update.reps, spoken: !update.ready) }
    if update.message != message { voice?.hint(update.message) }
+   tracking=update.tracking
    reps = update.reps; message = update.message
-   if update.ready { finish(.localCompleted, success: appText("Local challenge completed. Have a good morning!")) }
+   if update.ready { finish(.localCompleted, success: appText("Challenge completed. Have a good morning!")) }
    else if update.ended { movementCamera?.stop(); movementCamera = nil }
   }}
   beginCoaching(); movementCamera = capture; await capture.start(); busy = false
@@ -406,7 +442,7 @@ struct ChallengeView: View {
  }
 
  private func pauseResources() {
-  captureGeneration = UUID(); consent = false; speechListening = false; speechFinishing = false
+  captureGeneration = UUID(); consent = false; speechListening = false; speechFinishing = false; tracking = .empty
   voice?.stop()
   camera?.stop(); camera = nil
   movementCamera?.stop(); movementCamera = nil

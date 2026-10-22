@@ -6,6 +6,7 @@ struct CaptureUpdate:Sendable {
  let counter:PushUpCounter
  let ended:Bool
  let message:String
+ var tracking:CameraTrackingSnapshot = .empty
  var reps:Int {counter.completedReps}
  var ready:Bool {counter.ready}
 }
@@ -16,6 +17,7 @@ final class CameraCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDelegate,
  private var started:TimeInterval=0
  private let request=VNDetectHumanBodyPoseRequest()
  private var side:Int?
+ private var tracking:CameraTrackingSnapshot = .empty
  private var active=false
  private let lifecycleLock=NSLock()
  private var cancelled=false
@@ -63,6 +65,8 @@ final class CameraCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDelegate,
  func captureOutput(_ output:AVCaptureOutput,didOutput sampleBuffer:CMSampleBuffer,from connection:AVCaptureConnection) {
   let now=ProcessInfo.processInfo.systemUptime
   guard active,!isCancelled,!counter.ready,let buffer=CMSampleBufferGetImageBuffer(sampleBuffer) else {return}
+  tracking = .empty
+  let size=CGSize(width:CVPixelBufferGetHeight(buffer),height:CVPixelBufferGetWidth(buffer))
   let timestamp=Int((now-started)*1000)
   guard timestamp<=EvidenceBuffer.maximumDurationMs else {
    stopCamera();publish(ended:true,message:appText("Movement capture timed out. Try again, or tap I’m awake when it unlocks."));return
@@ -71,11 +75,11 @@ final class CameraCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDelegate,
    try VNImageRequestHandler(cvPixelBuffer:buffer,orientation:.leftMirrored).perform([request])
    guard let body=request.results?.first else {counter.observe(elbowAngle:0,bodyAngle:0,incline:0,visible:false,timestampMs:timestamp);publish(ended:false,message:appText("Place your phone so your whole body is visible."));return}
    let points=try body.recognizedPoints(.all)
+   tracking = .body(points,imageSize:size)
    let sides:[[VNHumanBodyPoseObservation.JointName]] = [[.leftShoulder,.leftElbow,.leftWrist,.leftHip,.leftAnkle],[.rightShoulder,.rightElbow,.rightWrist,.rightHip,.rightAnkle]]
    guard let selected=sides.firstIndex(where:{names in names.allSatisfy {name in PoseGeometry.isVisible(points[name], minConfidence: 0.6)}}) else {counter.observe(elbowAngle:0,bodyAngle:0,incline:0,visible:false,timestampMs:timestamp);publish(ended:false,message:appText("The view is unclear. Try moving your phone."));return}
    if let side,side != selected {counter.interrupt()};side=selected
    let joints=sides[selected].map {points[$0]!.location}
-   let size=CGSize(width:CVPixelBufferGetHeight(buffer),height:CVPixelBufferGetWidth(buffer))
    let elbow=PoseGeometry.jointAngle(joints[0],joints[1],joints[2],imageSize:size)
    let bodyAngle=PoseGeometry.jointAngle(joints[0],joints[3],joints[4],imageSize:size)
    let dx=abs(joints[0].x-joints[4].x)*size.width,dy=abs(joints[0].y-joints[4].y)*size.height
@@ -89,6 +93,6 @@ final class CameraCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDelegate,
  }
  private func publish(ended:Bool,message:String) {
   guard !isCancelled else {return}
-  onUpdate(.init(counter:counter,ended:ended,message:message))
+  onUpdate(.init(counter:counter,ended:ended,message:message,tracking:ended ? .empty : tracking))
  }
 }

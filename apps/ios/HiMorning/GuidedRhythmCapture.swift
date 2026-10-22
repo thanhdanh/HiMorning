@@ -8,6 +8,7 @@ struct RhythmUpdate:Sendable {
  let ended:Bool
  let message:String
  let hint:FramingHint
+ var tracking:CameraTrackingSnapshot = .empty
 }
 
 /// Converts camera frames into local pose labels. It never creates image data or uploads frames.
@@ -21,6 +22,7 @@ final class GuidedRhythmCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDel
  private var rhythm:GuidedRhythmSession
  private var generation=0
  private var stopped=false
+ private var tracking:CameraTrackingSnapshot = .empty
  private var active=false
  private var started:TimeInterval=0
  private let request=VNDetectHumanBodyPoseRequest()
@@ -92,17 +94,20 @@ final class GuidedRhythmCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDel
  func captureOutput(_ output:AVCaptureOutput,didOutput sampleBuffer:CMSampleBuffer,from connection:AVCaptureConnection) {
   let uptime=ProcessInfo.processInfo.systemUptime
   guard active,rhythm.completedCycles<targetCycles,let buffer=CMSampleBufferGetImageBuffer(sampleBuffer) else {return}
+  tracking = .empty
   let timestamp=Int((uptime-started)*1_000)
   do {
    try VNImageRequestHandler(cvPixelBuffer:buffer,orientation:.leftMirrored).perform([request])
    guard let body=request.results?.first else {handleOcclusion(timestamp:timestamp,hint:.noPerson);return}
    let points=try body.recognizedPoints(.all)
+   tracking = .body(points,imageSize:CGSize(width:CVPixelBufferGetHeight(buffer),height:CVPixelBufferGetWidth(buffer)))
    let hint=BodyFraming.hint(PoseGeometry.jointSamples(points),needsFeet:variant == .standing)
    let orientedSize=CGSize(width:CVPixelBufferGetHeight(buffer),height:CVPixelBufferGetWidth(buffer))
    switch classify(points,imageSize:orientedSize) {
    case .occluded:
     handleOcclusion(timestamp:timestamp,hint:hint)
    case .transition:
+    rhythm.transition(timestampMs:timestamp)
     publish(completed:false,ended:false,message:appText("Move smoothly and follow the rhythm."),hint:hint)
    case .pose(let pose):
     let completedCycle=rhythm.observe(pose,timestampMs:timestamp,visible:true)
@@ -169,7 +174,7 @@ final class GuidedRhythmCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDel
 
  private func publish(completed:Bool,ended:Bool,message:String,hint framing:FramingHint = .ok) {
   let hint:FramingHint=completed || ended ? .ok : framing
-  onUpdate(.init(cycles:rhythm.completedCycles,completed:completed,ended:ended,message:hint.message ?? message,hint:hint))
+  onUpdate(.init(cycles:rhythm.completedCycles,completed:completed,ended:ended,message:hint.message ?? message,hint:hint,tracking:ended ? .empty : tracking))
  }
 
  private func beginStartup() -> Int? {

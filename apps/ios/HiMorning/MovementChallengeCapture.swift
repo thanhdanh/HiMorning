@@ -2,7 +2,7 @@ import AVFoundation
 import Vision
 import HiMorningCore
 
-struct LocalMovementUpdate:Sendable {let reps:Int;let ready:Bool;let ended:Bool;let message:String;let hint:FramingHint}
+struct LocalMovementUpdate:Sendable {let reps:Int;let ready:Bool;let ended:Bool;let message:String;let hint:FramingHint;var tracking:CameraTrackingSnapshot = .empty}
 
 private enum MovementCounter {
  case wave(WaveCounter),neck(NeckTurnCounter),body(MovementChallengeProgress)
@@ -53,6 +53,7 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
  }()
  private let bodyRequest=VNDetectHumanBodyPoseRequest()
  private var started=0.0
+ private var tracking:CameraTrackingSnapshot = .empty
  private var active=false
  private var cancelled=false
  private let lifecycleLock=NSLock()
@@ -100,6 +101,7 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
  func captureOutput(_ output:AVCaptureOutput,didOutput sampleBuffer:CMSampleBuffer,from connection:AVCaptureConnection) {
   let now=ProcessInfo.processInfo.systemUptime
   guard active,let buffer=CMSampleBufferGetImageBuffer(sampleBuffer) else {return}
+  tracking = .empty
   let timestamp=Int((now-started)*1000)
   guard timestamp<=90_000 else {
    active=false;session.stopRunning()
@@ -109,7 +111,7 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
   do {
    switch kind {
    case .waveHand:try observeWave(buffer,size:size,timestamp:timestamp)
-   case .neckRotation:try observeNeck(buffer,timestamp:timestamp)
+   case .neckRotation:try observeNeck(buffer,size:size,timestamp:timestamp)
    case .jumpingJacks,.stretching:try observeBody(buffer,size:size,timestamp:timestamp)
    default:return
    }
@@ -121,22 +123,28 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
 
  private func observeWave(_ buffer:CVPixelBuffer,size:CGSize,timestamp:Int) throws {
   try VNImageRequestHandler(cvPixelBuffer:buffer,orientation:.leftMirrored).perform([handRequest])
+  if let hand=handRequest.results?.first,let points=try? hand.recognizedPoints(.all) {tracking = .hand(points,imageSize:size)}
   let names:[VNHumanHandPoseObservation.JointName]=[.wrist,.indexMCP,.middleMCP,.ringMCP,.littleMCP]
   guard let hand=handRequest.results?.first,
         let points=try? names.map({try hand.recognizedPoint($0)}),
-        points.allSatisfy({$0.confidence>=0.5}) else {
+        points.allSatisfy({PoseGeometry.isVisible($0,minConfidence:0.6)}) else {
    counter.observeLoss(timestampMs:timestamp);publish(kind.movementInstruction);return
   }
   let centerX=points.map {Double($0.location.x)}.reduce(0,+)/Double(points.count)*Double(size.width)
+  let centerY=points.map {Double($0.location.y)}.reduce(0,+)/Double(points.count)*Double(size.height)
   let handWidth=hypot(Double(points[0].location.x-points[2].location.x)*Double(size.width),Double(points[0].location.y-points[2].location.y)*Double(size.height))
+  guard handWidth>=min(Double(size.width),Double(size.height))*0.025 else {
+   counter.observeLoss(timestampMs:timestamp);publish("The view is unclear. Try moving your phone.");return
+  }
   guard case .wave(var wave)=counter else {return}
-  wave.observe(centerX:centerX,handWidth:handWidth,timestampMs:timestamp)
+  wave.observe(centerX:centerX,centerY:centerY,handWidth:handWidth,timestampMs:timestamp)
   counter = .wave(wave)
   finishFrame()
  }
 
- private func observeNeck(_ buffer:CVPixelBuffer,timestamp:Int) throws {
+ private func observeNeck(_ buffer:CVPixelBuffer,size:CGSize,timestamp:Int) throws {
   try VNImageRequestHandler(cvPixelBuffer:buffer,orientation:.leftMirrored).perform([faceRequest])
+  tracking = .face(faceRequest.results?.first,imageSize:size)
   guard let face=faceRequest.results?.first,face.confidence>=0.6,let yaw=face.yaw?.doubleValue,case .neck(var neck)=counter else {
    counter.observeLoss(timestampMs:timestamp);publish(kind.movementInstruction);return
   }
@@ -151,6 +159,7 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
    counter.observeLoss(timestampMs:timestamp);publish(kind.movementInstruction,hint:.noPerson);return
   }
   let allPoints=try body.recognizedPoints(.all)
+  tracking = .body(allPoints,imageSize:size)
   let hint=BodyFraming.hint(PoseGeometry.jointSamples(allPoints),needsFeet:kind == .jumpingJacks)
   func point(_ name:VNHumanBodyPoseObservation.JointName)->CGPoint? {
    guard let p=allPoints[name],PoseGeometry.isVisible(p,minConfidence:0.6) else {return nil}
@@ -183,14 +192,15 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
 
  private func finishFrame(hint:FramingHint = .ok) {
   if counter.ready {
-   active=false;session.stopRunning();publish(ended:true,"Movement captured.")
+   active=false;session.stopRunning();publish(ended:true,"Movement detected.")
   } else {
    publish(kind.movementInstruction,hint:hint)
   }
  }
 
  private func publish(ended:Bool=false,_ message:String,hint:FramingHint = .ok) {
-  onUpdate(.init(reps:counter.completed,ready:ended && counter.ready,ended:ended,message:hint.message ?? appText(message),hint:hint))
+  guard !isCancelled else {return}
+  onUpdate(.init(reps:counter.completed,ready:ended && counter.ready,ended:ended,message:hint.message ?? appText(message),hint:hint,tracking:ended ? .empty : tracking))
  }
  private var isCancelled:Bool {lifecycleLock.lock();defer {lifecycleLock.unlock()};return cancelled}
 }

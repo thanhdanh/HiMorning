@@ -66,6 +66,16 @@ struct NoopBackupScheduler:BackupRingScheduler {
      fixture=SavedAlarm(id:fixture.id,time:fixture.time,mode:.balanced,challenge:.readAndChoose);fixture.state = .confirmed
      var upcoming=SavedAlarm(id:UUID(uuidString:"00000000-0000-0000-0000-000000000002")!,time:try AlarmTime(hour:20,minute:30,weekdays:[2,4,6]),mode:.focused,challenge:.readAloud);upcoming.state = .confirmed
      var disabled=SavedAlarm(id:UUID(uuidString:"00000000-0000-0000-0000-000000000003")!,time:try AlarmTime(hour:9,minute:0,weekdays:[]));disabled.enabled=false;disabled.state = .off
+     if ProcessInfo.processInfo.arguments.contains("--ui-card-layout") {
+      fixture=SavedAlarm(id:fixture.id,time:fixture.time,mode:.focused,challenge:.pushUps(repetitions:50),label:"Morning routine before work")
+      fixture.state = .confirmed
+      upcoming=SavedAlarm(id:upcoming.id,time:try AlarmTime(hour:20,minute:30,weekdays:[]),mode:.balanced,challenge:.readAndChoose)
+      upcoming.state = .needsReview
+     }
+     if ProcessInfo.processInfo.arguments.contains("--ui-movement-cards") {
+      fixture=SavedAlarm(id:fixture.id,time:fixture.time,mode:.focused,challenge:.pushUps(repetitions:10));fixture.state = .confirmed
+      upcoming=SavedAlarm(id:upcoming.id,time:upcoming.time,mode:.gentle,challenge:.none);upcoming.state = .confirmed
+     }
      fixtures=[fixture,upcoming,disabled]
      if ProcessInfo.processInfo.arguments.contains("--ui-open-alarm") {UserDefaults.standard.set(fixture.id.uuidString,forKey:"pendingAlarmID")}
     }
@@ -267,8 +277,8 @@ extension ChallengeKind {
   case .readAndChoose:return appText("Read one short sentence and choose its meaning.")
   case .guidedRhythm:return appText("Follow a simple standing or seated rhythm on camera.")
   case .readAloud:return appText("Read the sentence aloud. See your score and matching words as you read.")
-  case .waveHand:return appText("Wave your hand side to side while your camera checks locally.")
-  case .neckRotation:return appText("Turn your head left and right while your camera checks locally.")
+  case .waveHand:return appText("Hold your hand in view and wave it side to side.")
+  case .neckRotation:return appText("Face the camera and turn your head left and right.")
   case .riddle:return appText("Solve a short riddle in your language.")
   case .jumpingJacks:return appText("Complete 10 gentle jumping jacks. Checked on this device.")
   case .stretching:return appText("Raise both hands above your shoulders, then lower them.")
@@ -288,13 +298,16 @@ extension ScheduleState {
 struct HomeView:View {
  private struct AlarmDraft:Identifiable {let id=UUID();let alarm:SavedAlarm?}
  @ObservedObject var model:PilotModel
+ @Environment(\.dynamicTypeSize) private var dynamicTypeSize
  @Environment(\.scenePhase) private var phase
  @Environment(\.accessibilityReduceMotion) private var reduceMotion
  @State private var editor:AlarmDraft?
+ @State private var revealedAlarmID:UUID?
+ @State private var alarmToDelete:SavedAlarm?
  @State private var progress=false
  @State private var pro=false
  @AppStorage("appLanguage") private var language="system"
- @ScaledMetric(relativeTo:.largeTitle) private var clockSize=46
+ @ScaledMetric(relativeTo:.largeTitle) private var clockSize=48
  var body:some View {
   NavigationStack {
    ScrollView {
@@ -343,7 +356,11 @@ struct HomeView:View {
       Label(error,systemImage:"exclamationmark.triangle").font(.footnote).foregroundStyle(MorningTheme.muted).accessibilityIdentifier("homeProgressError")
      }
      TimelineView(.everyMinute) {_ in
-      ForEach(model.alarms) {alarm in alarmCard(alarm,now:Date())}
+      ForEach(model.alarms) {alarm in
+       SwipeableAlarmCard(id:alarm.id,revealedID:$revealedAlarmID,delete:{alarmToDelete=alarm}) {
+        alarmCard(alarm,now:Date())
+       }
+      }
      }
      if model.backupWarning {Text(appText("Some backup rings could not be updated. Please check your system alarms.")).font(.footnote).foregroundStyle(MorningTheme.muted)}
      Button {editor=AlarmDraft(alarm:nil)} label:{Label(appText("Add alarm"),systemImage:"plus")}
@@ -370,7 +387,8 @@ struct HomeView:View {
     }.padding(20)
    }.background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink).tint(MorningTheme.accent)
    .navigationTitle("HiMorning").toolbar(.hidden,for:.navigationBar)
-   .sheet(item:$editor) {draft in AlarmEditor(alarm:draft.alarm,store:model.subscriptions,preview:model.preview,save:model.save)}
+   .preferredColorScheme(testingColorScheme)
+   .sheet(item:$editor) {draft in AlarmEditor(alarm:draft.alarm,store:model.subscriptions,preview:model.preview,practiceModel:model,save:model.save)}
    .sheet(isPresented:$progress) {MorningProgressView(model:model,store:model.subscriptions)}
    .sheet(isPresented:$pro) {ProView(store:model.subscriptions,preview:model.preview)}
    .fullScreenCover(item:$model.selected,onDismiss:{Task {await model.refresh()}}) {alarm in ChallengeView(alarm:alarm,model:model)}
@@ -386,6 +404,11 @@ struct HomeView:View {
       }
     }
    }
+   .alert(appText("Delete alarm?"),isPresented:Binding(get:{alarmToDelete != nil},set:{if !$0 {alarmToDelete=nil}}),presenting:alarmToDelete) {alarm in
+    Button(appText("Delete"),role:.destructive) {alarmToDelete=nil;Task {await model.remove(alarm)}}
+     .accessibilityIdentifier("confirmDeleteAlarm")
+    Button(appText("Cancel"),role:.cancel) {alarmToDelete=nil}
+   } message: {_ in Text(appText("This alarm and its scheduled rings will be removed."))}
    .alert(appText("Please check"),isPresented:Binding(get:{model.error != nil},set:{visible in
     guard !visible,let shown=model.error else {return}
     DispatchQueue.main.async {if model.error==shown {model.error=nil}}
@@ -398,6 +421,13 @@ struct HomeView:View {
    .onChange(of:reduceMotion) {_,value in if value {model.celebrationID=nil}}
   }
  }
+ private var testingColorScheme:ColorScheme? {
+  #if DEBUG
+  ProcessInfo.processInfo.arguments.contains("--ui-dark-mode") ? .dark : nil
+  #else
+  nil
+  #endif
+ }
  private func alarmRepeatSummary(_ days:Set<Int>)->String {
   if days.isEmpty {return appText("Rings once")}
   if days.count == 7 {return appText("Every day")}
@@ -408,70 +438,107 @@ struct HomeView:View {
   let completed=model.journal?.completedToday(alarmID:alarm.id,now:now) ?? false
   let time=String(format:"%02d:%02d",alarm.time.hour%12 == 0 ? 12 : alarm.time.hour%12,alarm.time.minute)
   let period=alarm.time.hour<12 ? "AM" : "PM"
-  return VStack(alignment:.leading,spacing:10) {
-   HStack(spacing:12) {
-    VStack(alignment:.leading,spacing:4) {
-     HStack(spacing:8) {
-      HStack(alignment:.firstTextBaseline,spacing:6) {
-        Text(time).font(.system(size:clockSize,weight:.medium,design:.rounded)).monospacedDigit().lineLimit(1).minimumScaleFactor(0.7)
-         .accessibilityLabel(time+" "+period).accessibilityIdentifier("alarmTime-"+alarm.id.uuidString)
-        Text(verbatim:period).font(.caption.weight(.semibold)).accessibilityHidden(true)
-      }
-      if completed,!alarm.enabled {
-       Image(systemName:"checkmark.circle.fill").foregroundStyle(MorningTheme.success).accessibilityLabel(appText("Completed today")).accessibilityIdentifier("alarmCompleted-"+alarm.id.uuidString)
-      }
-     }
-     if !alarm.enabled {Text(appText("Off")).font(.caption.weight(.medium)).foregroundStyle(MorningTheme.ink)}
-     else if alarm.state == .confirmed,let next=alarm.time.next(after:now) {
-      Text(String(format:appText("Next: %@"),locale:appLocale(),next.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).locale(appLocale()))))
-       .font(.caption).foregroundStyle(MorningTheme.onYellow.opacity(0.75)).accessibilityIdentifier("nextAlarm-"+alarm.id.uuidString)
-     }
-    }
-    Spacer()
-    Toggle(appText(alarm.enabled ? "Turn off" : "Turn on"),isOn:Binding(get:{alarm.enabled},set:{_ in Task {await model.toggle(alarm)}}))
-     .labelsHidden().tint(alarm.enabled ? MorningTheme.successOnYellow : MorningTheme.success).accessibilityIdentifier("toggleAlarm-"+alarm.id.uuidString)
-    if !alarm.enabled {
-    Button(role:.destructive) {Task {await model.remove(alarm)}} label: {Image(systemName:"trash").frame(width:44,height:44).contentShape(Rectangle())}
-     .buttonStyle(.plain).accessibilityLabel(appText("Delete")).accessibilityIdentifier("deleteAlarm-"+alarm.id.uuidString)
-    }
-   }
+  let clock=HStack(alignment:.firstTextBaseline,spacing:5) {
+   Text(time).font(.system(size:clockSize,weight:.medium,design:.rounded)).monospacedDigit().lineLimit(1).minimumScaleFactor(0.7)
+    .accessibilityLabel(time+" "+period).accessibilityIdentifier("alarmTime-"+alarm.id.uuidString)
+   Text(verbatim:period).font(.caption.weight(.semibold)).accessibilityHidden(true)
+  }
+  let toggle=Toggle(appText(alarm.enabled ? "Turn off" : "Turn on"),isOn:Binding(get:{alarm.enabled},set:{_ in Task {await model.toggle(alarm)}}))
+   .labelsHidden().fixedSize().tint(alarm.enabled ? MorningTheme.successOnYellow : MorningTheme.success).accessibilityIdentifier("toggleAlarm-"+alarm.id.uuidString)
+  let repeatDays=Text(alarmRepeatSummary(alarm.time.weekdays)).font(.caption.weight(.medium))
+   .foregroundStyle(MorningTheme.onYellow.opacity(0.8)).fixedSize(horizontal:false,vertical:true)
+   .accessibilityIdentifier("alarmRepeat-"+alarm.id.uuidString)
+  let clockBlock=VStack(alignment:.leading,spacing:6) {
    if !alarm.label.isEmpty {
-    Text(alarm.label).font(.subheadline.weight(.semibold)).accessibilityIdentifier("alarmLabel-"+alarm.id.uuidString)
+    Text(alarm.label).font(.subheadline.weight(.medium)).lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
+     .fixedSize(horizontal:false,vertical:true).accessibilityIdentifier("alarmLabel-"+alarm.id.uuidString)
    }
-   if alarm.enabled {
-    Label(alarmRepeatSummary(alarm.time.weekdays),systemImage:"calendar")
-     .font(.caption.weight(.semibold)).foregroundStyle(MorningTheme.onYellow.opacity(0.8))
-     .accessibilityIdentifier("alarmRepeat-"+alarm.id.uuidString)
-    Label(alarm.challenge.displayTitle,systemImage:alarm.challenge.kind.icon).font(.subheadline.weight(.semibold)).accessibilityIdentifier("alarmChallenge-"+alarm.id.uuidString)
-    HStack(alignment:.top,spacing:12) {
-     Label(alarm.mode.title,systemImage:alarm.mode.icon).font(.caption.weight(.medium)).foregroundStyle(MorningTheme.onYellow.opacity(0.75))
-      .accessibilityIdentifier("alarmMode-"+alarm.id.uuidString)
-     Spacer(minLength:8)
-     if completed {
-      Label(appText("Completed today"),systemImage:"checkmark.circle.fill").font(.caption.weight(.medium)).foregroundStyle(MorningTheme.successOnYellow).accessibilityIdentifier("alarmCompleted-"+alarm.id.uuidString)
-     }
+   clock
+   if alarm.enabled {repeatDays}
+   else {Text(appText("Off")).font(.caption.weight(.medium))}
+  }
+  let mainLayout=dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment:.leading,spacing:16)) : AnyLayout(HStackLayout(alignment:.top,spacing:16))
+  let footerLayout=dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment:.leading,spacing:8)) : AnyLayout(HStackLayout(alignment:.center,spacing:8))
+  return VStack(alignment:.leading,spacing:12) {
+   if alarm.enabled,alarm.challenge.kind != .none {
+    mainLayout {
+     clockBlock.frame(maxWidth:.infinity,alignment:.leading)
+     alarmChallengeSummary(alarm)
+    }
+    Rectangle().fill(MorningTheme.onYellow.opacity(0.12)).frame(height:0.5).accessibilityHidden(true)
+    footerLayout {
+     alarmStatus(alarm,now:now,completed:completed).frame(maxWidth:.infinity,alignment:.leading)
+     HStack(spacing:8) {tryAlarmButton(alarm);toggle}
+    }
+   } else {
+    HStack(alignment:.top,spacing:16) {
+     VStack(alignment:.leading,spacing:6) {
+      clockBlock
+      alarmStatus(alarm,now:now,completed:completed)
+     }.frame(maxWidth:.infinity,alignment:.leading)
+     toggle
     }
    }
-   if alarm.state == .needsReview || alarm.state == .pending {
-    Label(alarm.state.title,systemImage:alarm.state == .needsReview ? "exclamationmark.triangle" : "clock")
-     .font(.caption.weight(.semibold)).accessibilityIdentifier("alarmState-"+alarm.id.uuidString)
-   }
-   if alarm.enabled {
-    Divider().overlay(MorningTheme.onYellow.opacity(0.15))
-    HStack(spacing:0) {
-     Button {model.rehearsal=true;model.selected=alarm} label:{Label(appText("Try"),systemImage:"play.fill").frame(maxWidth:.infinity,minHeight:44).contentShape(Rectangle())}
-      .accessibilityLabel(appText("Try this challenge"))
-     Divider().overlay(MorningTheme.onYellow.opacity(0.15)).frame(height:20).accessibilityHidden(true)
-     Button(role:.destructive) {Task {await model.remove(alarm)}} label:{Label(appText("Delete"),systemImage:"trash").frame(maxWidth:.infinity,minHeight:44).contentShape(Rectangle())}
-      .accessibilityIdentifier("deleteAlarm-"+alarm.id.uuidString)
-    }.buttonStyle(.plain).font(.subheadline.weight(.medium)).foregroundStyle(MorningTheme.onYellow.opacity(0.8))
-   }
-  }.padding(alarm.enabled ? 18 : 16).foregroundStyle(alarm.enabled ? MorningTheme.onYellow : MorningTheme.muted)
-   .background(alarm.enabled ? MorningTheme.hero : MorningTheme.soft,in:RoundedRectangle(cornerRadius:22))
-   .overlay {RoundedRectangle(cornerRadius:22).strokeBorder(alarm.enabled ? (completed ? MorningTheme.successOnYellow.opacity(0.35) : MorningTheme.onYellow.opacity(0.12)) : MorningTheme.line,lineWidth:1)}
-   .contentShape(RoundedRectangle(cornerRadius:22))
+  }.padding(18).foregroundStyle(alarm.enabled ? MorningTheme.onYellow : MorningTheme.muted)
+   .background(alarm.enabled ? MorningTheme.alarmCard : MorningTheme.soft,in:RoundedRectangle(cornerRadius:26))
+   .overlay {RoundedRectangle(cornerRadius:26).strokeBorder(alarm.enabled ? MorningTheme.onYellow.opacity(0.08) : MorningTheme.line,lineWidth:1)}
+   .contentShape(RoundedRectangle(cornerRadius:26))
    .accessibilityElement(children:.contain).accessibilityIdentifier("alarmCard-"+alarm.id.uuidString)
-   .onTapGesture {editor=AlarmDraft(alarm:alarm)}
+   .onTapGesture {if revealedAlarmID == alarm.id {revealedAlarmID=nil} else {revealedAlarmID=nil;editor=AlarmDraft(alarm:alarm)}}
    .accessibilityAction(.default) {editor=AlarmDraft(alarm:alarm)}
  }
+ @ViewBuilder private func alarmChallengeSummary(_ alarm:SavedAlarm)->some View {
+  let accessible=dynamicTypeSize.isAccessibilitySize
+  let layout=accessible ? AnyLayout(HStackLayout(alignment:.center,spacing:12)) : AnyLayout(VStackLayout(alignment:.trailing,spacing:6))
+  layout {
+   Group {
+    if alarm.challenge.kind.hasMovementIllustration {
+     MovementIllustration(selection:alarm.challenge)
+    } else {
+     Image(systemName:alarm.challenge.kind.icon).font(.system(size:21,weight:.medium))
+      .frame(maxWidth:.infinity,maxHeight:.infinity)
+      .background(MorningTheme.onYellow.opacity(0.05),in:Circle()).accessibilityHidden(true)
+    }
+   }.frame(width:44,height:44)
+   VStack(alignment:accessible ? .leading : .trailing,spacing:3) {
+    Text(alarm.challenge.displayTitle).font(.subheadline.weight(.semibold)).fixedSize(horizontal:false,vertical:true)
+     .accessibilityIdentifier("alarmChallenge-"+alarm.id.uuidString)
+    Text(alarm.mode.title).font(.caption).foregroundStyle(MorningTheme.onYellow.opacity(0.7)).fixedSize(horizontal:false,vertical:true)
+     .accessibilityLabel(String(format:appText("Mode: %@"),locale:appLocale(),alarm.mode.title))
+     .accessibilityIdentifier("alarmMode-"+alarm.id.uuidString)
+   }.multilineTextAlignment(accessible ? .leading : .trailing)
+  }.frame(width:accessible ? nil : 132,alignment:accessible ? .leading : .trailing)
+   .frame(maxWidth:accessible ? .infinity : nil,alignment:accessible ? .leading : .trailing)
+ }
+ @ViewBuilder private func alarmStatus(_ alarm:SavedAlarm,now:Date,completed:Bool)->some View {
+  VStack(alignment:.leading,spacing:4) {
+   if alarm.state == .needsReview || alarm.state == .pending {
+    Label {
+     Text(alarm.state.title).accessibilityIdentifier("alarmState-"+alarm.id.uuidString)
+    } icon: {
+     Image(systemName:alarm.state == .needsReview ? "exclamationmark.triangle" : "clock").accessibilityHidden(true)
+    }.font(.caption.weight(.semibold)).fixedSize(horizontal:false,vertical:true)
+   } else if alarm.enabled,alarm.state == .confirmed,let next=alarm.time.next(after:now) {
+    Text(String(format:appText("Next: %@"),locale:appLocale(),next.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).locale(appLocale()))))
+     .font(.caption).foregroundStyle(MorningTheme.onYellow.opacity(0.7)).fixedSize(horizontal:false,vertical:true)
+     .accessibilityIdentifier("nextAlarm-"+alarm.id.uuidString)
+   }
+   if completed {
+    Label(appText("Completed today"),systemImage:"checkmark.circle.fill")
+     .font(.caption.weight(.medium)).foregroundStyle(alarm.enabled ? MorningTheme.successOnYellow : MorningTheme.success).fixedSize(horizontal:false,vertical:true)
+     .accessibilityIdentifier("alarmCompleted-"+alarm.id.uuidString)
+   }
+  }
+ }
+ @ViewBuilder private func tryAlarmButton(_ alarm:SavedAlarm)->some View {
+  if alarm.enabled,alarm.challenge.kind != .none {
+   Button {revealedAlarmID=nil;model.rehearsal=true;model.selected=alarm} label: {
+    Image(systemName:"play.circle").font(.system(size:22,weight:.medium))
+     .foregroundStyle(MorningTheme.onYellow.opacity(0.8))
+     .frame(width:44,height:44).contentShape(Rectangle())
+   }.buttonStyle(.plain).accessibilityLabel(appText("Try this challenge"))
+    .accessibilityIdentifier("tryAlarm-"+alarm.id.uuidString)
+  }
+ }
+
 }

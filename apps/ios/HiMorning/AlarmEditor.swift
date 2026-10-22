@@ -23,16 +23,18 @@ struct AlarmEditor:View {
  @State private var volume:Double=0.3
  @State private var soundPreview=SoundPreview()
  @State private var pro=false
+ @State private var practiceAlarm:SavedAlarm?
  @State private var saving=false
  @State private var saveError:String?
  @State private var alarmAccessDenied=false
  @ObservedObject var store:SubscriptionStore
  @ObservedObject var preview:PreviewStore
  @State private var alarmID:UUID
+ let practiceModel:PilotModel
  let editing:Bool
  let save:(SavedAlarm) async throws ->Void
- init(alarm:SavedAlarm?=nil,store:SubscriptionStore,preview:PreviewStore,save:@escaping (SavedAlarm) async throws ->Void) {
-  self.store=store;self.preview=preview;self.save=save;_alarmID=State(initialValue:alarm?.id ?? UUID());editing=alarm != nil
+ init(alarm:SavedAlarm?=nil,store:SubscriptionStore,preview:PreviewStore,practiceModel:PilotModel,save:@escaping (SavedAlarm) async throws ->Void) {
+  self.store=store;self.preview=preview;self.practiceModel=practiceModel;self.save=save;_alarmID=State(initialValue:alarm?.id ?? UUID());editing=alarm != nil
   if let alarm {
    _time=State(initialValue:Calendar.current.date(from:DateComponents(hour:alarm.time.hour,minute:alarm.time.minute)) ?? Date())
    _mode=State(initialValue:alarm.mode);_sound=State(initialValue:alarm.sound)
@@ -91,6 +93,7 @@ struct AlarmEditor:View {
         ForEach(ChallengeKind.available(in:mode),id:\.self) {challengeButton($0)}
        }
        if challenge.kind == .pushUps || challenge.kind == .guidedRhythm {challengeSettings}
+       if challenge.kind != .none {practiceButton}
       }
       VStack(alignment:.leading,spacing:12) {
        Text(appText("The little details")).font(.headline)
@@ -118,7 +121,28 @@ struct AlarmEditor:View {
     .environment(\.composerReduceTransparency,transparencyReduced)
     .sheet(isPresented:$pro) {ProView(store:store,preview:preview)}
     .sheet(isPresented:$choosingSound) {soundPicker}
+    .fullScreenCover(item:$practiceAlarm) {alarm in
+     ChallengeView(alarm:alarm,model:practiceModel,rehearsal:true)
+    }
   }
+ }
+ private var practiceButton:some View {
+  Button {
+   labelFocused=false;soundPreview.stop()
+   let components=Calendar.current.dateComponents([.hour,.minute],from:time)
+   guard let alarmTime=try? AlarmTime(hour:components.hour ?? 0,minute:components.minute ?? 0,weekdays:days) else {return}
+   practiceAlarm=SavedAlarm(time:alarmTime,mode:mode,sound:sound,challenge:challenge,label:label)
+  } label: {
+   HStack(spacing:10) {
+    Image(systemName:"play.circle.fill").font(.title3)
+    Text(appText("Try this challenge")).font(.subheadline.weight(.semibold))
+    Spacer(minLength:0)
+    Image(systemName:"arrow.up.forward").font(.caption.weight(.semibold))
+   }.padding(16).frame(minHeight:52).contentShape(RoundedRectangle(cornerRadius:18))
+  }.buttonStyle(.plain).foregroundStyle(challengeColor)
+   .background(MorningTheme.surface.opacity(0.8),in:RoundedRectangle(cornerRadius:18))
+   .overlay {RoundedRectangle(cornerRadius:18).strokeBorder(challengeColor.opacity(0.2),lineWidth:1)}
+   .accessibilityIdentifier("tryDraftChallenge")
  }
  private var occurrenceSummary:String {
   guard days.isEmpty else {return repeatSummary}
@@ -312,7 +336,7 @@ struct AlarmEditor:View {
      }
      Text(legacy ? String(format:appText("%@ · saved choice"),kind.title) : kind.title)
       .font(.subheadline.weight(.bold)).multilineTextAlignment(.leading).fixedSize(horizontal:false,vertical:true)
-     if kind.usesLocalMovement {
+     if kind == .pushUps || kind == .guidedRhythm || kind.usesLocalMovement {
       HStack(alignment:.top,spacing:5) {
        Image(systemName:"camera.fill").accessibilityHidden(true)
        Text(appText("On-device camera")).fixedSize(horizontal:false,vertical:true)

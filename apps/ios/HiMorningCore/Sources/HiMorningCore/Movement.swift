@@ -8,15 +8,27 @@ public enum MovementObservation:Sendable {
 }
 
 public struct WaveCounter:Sendable {
- private static let swingThreshold=0.35
+ private static let swingThreshold=0.65
+ private static let minimumSwingMs=80
+ private static let acquisitionMs=180
  private static let pairWindowMs=2_000
  private static let lossGraceMs=600
  private let target:Int
- private var filter=OneEuroFilter(minCutoff:1.0,beta:0.3,derivativeCutoff:1.0)
- private var high=0.0
- private var low=0.0
+ private var horizontalFilter=OneEuroFilter(minCutoff:3.0,beta:0.3,derivativeCutoff:1.0)
+ private var verticalFilter=OneEuroFilter(minCutoff:3.0,beta:0.3,derivativeCutoff:1.0)
+ // Scale displacement, never absolute screen coordinates, so hand rotation cannot create travel.
+ private var widthFilter=OneEuroFilter(minCutoff:0.3,beta:0)
+ private var lastCenterX:Double?
+ private var lastCenterY:Double?
+ private var travelX=0.0
+ private var travelY=0.0
+ private var extremeX=0.0
+ private var extremeY=0.0
+ private var extremeMs=0
  private var direction=0
- private var started=false
+ private var seedLow=(x:0.0,y:0.0,time:0)
+ private var seedHigh=(x:0.0,y:0.0,time:0)
+ private var acquiredAtMs:Int?
  private var pendingSwingMs:Int?
  private var lossSinceMs:Int?
  private var lastSampleMs:Int?
@@ -24,22 +36,50 @@ public struct WaveCounter:Sendable {
  public var ready:Bool {completed>=target}
 
  public init(target:Int) {self.target=max(1,target)}
-
  public mutating func reset() {clearTracking();completed=0}
 
- @discardableResult public mutating func observe(centerX:Double,handWidth:Double,timestampMs:Int)->Int {
+ @discardableResult public mutating func observe(centerX:Double,centerY:Double,handWidth:Double,timestampMs:Int)->Int {
   guard !ready else {return completed}
-  guard handWidth > 0,handWidth.isFinite,centerX.isFinite else {observeLoss(timestampMs:timestampMs);return completed}
-  let ratio=centerX/handWidth
-  guard ratio.isFinite else {observeLoss(timestampMs:timestampMs);return completed}
+  guard (0...90_000).contains(timestampMs),lastSampleMs.map({timestampMs>$0}) ?? true else {clearTracking();return completed}
+  guard handWidth>0,handWidth.isFinite,centerX.isFinite,centerY.isFinite,
+        (centerX/handWidth).isFinite,(centerY/handWidth).isFinite else {observeLoss(timestampMs:timestampMs);return completed}
+  if let last=lastSampleMs,timestampMs-last>Self.lossGraceMs {clearTracking()}
   if let lost=lossSinceMs,timestampMs-lost>Self.lossGraceMs {clearTracking()}
   lossSinceMs=nil;lastSampleMs=timestampMs
-  let u=filter.filter(ratio,timestampMs:timestampMs)
-  guard started else {high=u;low=u;started=true;return completed}
-  if direction>=0 {high=max(high,u)}
-  if direction<=0 {low=min(low,u)}
-  if direction>=0 && high-u>=Self.swingThreshold {direction = -1;low=u;swing(at:timestampMs)}
-  else if direction<=0 && u-low>=Self.swingThreshold {direction=1;high=u;swing(at:timestampMs)}
+  let width=widthFilter.filter(handWidth,timestampMs:timestampMs)
+  if let lastCenterX,let lastCenterY {
+   travelX+=(centerX-lastCenterX)/width;travelY+=(centerY-lastCenterY)/width
+  }
+  lastCenterX=centerX;lastCenterY=centerY
+  guard travelX.isFinite,travelY.isFinite else {clearTracking();return completed}
+  let x=horizontalFilter.filter(travelX,timestampMs:timestampMs)
+  let y=verticalFilter.filter(travelY,timestampMs:timestampMs)
+  if acquiredAtMs == nil {acquiredAtMs=timestampMs}
+  guard timestampMs-(acquiredAtMs ?? timestampMs)>=Self.acquisitionMs else {
+   anchor(x:x,y:y,at:timestampMs);return completed
+  }
+  if direction == 0 {
+   // Seed from both observed extremes, so starting at the middle of a wave is valid.
+   if x<seedLow.x {seedLow=(x,y,timestampMs)}
+   if x>seedHigh.x {seedHigh=(x,y,timestampMs)}
+   if seedHigh.x-x>=Self.swingThreshold {
+    extremeX=seedHigh.x;extremeY=seedHigh.y;extremeMs=seedHigh.time
+   } else if x-seedLow.x>=Self.swingThreshold {
+    extremeX=seedLow.x;extremeY=seedLow.y;extremeMs=seedLow.time
+   }
+  }
+  if (direction>0 && x>extremeX) || (direction<0 && x<extremeX) {
+   extremeX=x;extremeY=y;extremeMs=timestampMs
+  }
+  let dx=x-extremeX,dy=abs(y-extremeY)
+  // Lifting/lowering the hand must clear a pending swing rather than complete it.
+  if dy>0.35 && dy*1.4>abs(dx) {anchor(x:x,y:y,at:timestampMs);return completed}
+  let reversing=direction == 0 || (direction>0 && dx<0) || (direction<0 && dx>0)
+  guard reversing,abs(dx)>=Self.swingThreshold,abs(dx)>=dy*1.4,
+        timestampMs-extremeMs>=Self.minimumSwingMs else {return completed}
+  direction=dx>0 ? 1:-1
+  extremeX=x;extremeY=y;extremeMs=timestampMs
+  swing(at:timestampMs)
   return completed
  }
 
@@ -48,14 +88,19 @@ public struct WaveCounter:Sendable {
   lossSinceMs=lost
   if timestampMs-lost>Self.lossGraceMs {clearTracking();lossSinceMs=lost}
  }
-
+ private mutating func anchor(x:Double,y:Double,at timestampMs:Int) {
+  extremeX=x;extremeY=y;extremeMs=timestampMs;direction=0;pendingSwingMs=nil
+  seedLow=(x,y,timestampMs);seedHigh=(x,y,timestampMs)
+ }
  private mutating func swing(at timestampMs:Int) {
   if let pending=pendingSwingMs,timestampMs-pending<=Self.pairWindowMs {completed+=1;pendingSwingMs=nil}
   else {pendingSwingMs=timestampMs}
  }
-
  private mutating func clearTracking() {
-  filter.reset();started=false;direction=0;pendingSwingMs=nil;lossSinceMs=nil;lastSampleMs=nil
+  horizontalFilter.reset();verticalFilter.reset();widthFilter.reset()
+  lastCenterX=nil;lastCenterY=nil;travelX=0;travelY=0
+  extremeX=0;extremeY=0;extremeMs=0;direction=0;seedLow=(0,0,0);seedHigh=(0,0,0);acquiredAtMs=nil
+  pendingSwingMs=nil;lossSinceMs=nil;lastSampleMs=nil
  }
 }
 
@@ -161,13 +206,15 @@ public struct NeckTurnCounter:Sendable {
 
  @discardableResult public mutating func observe(yawDegrees:Double,timestampMs:Int)->Int {
   guard !ready else {return completed}
+  guard (0...90_000).contains(timestampMs),lastSampleMs.map({timestampMs>$0}) ?? true else {clearTracking();return completed}
   guard yawDegrees.isFinite else {observeLoss(timestampMs:timestampMs);return completed}
+  if let last=lastSampleMs,timestampMs-last>lossLimitMs {clearTracking()}
   if let lost=lossSinceMs,timestampMs-lost>lossLimitMs {clearTracking()}
   lossSinceMs=nil;lastSampleMs=timestampMs
   let y=filter.filter(yawDegrees,timestampMs:timestampMs)
   lastAbsYaw=abs(y)
   let zone:Zone?=y >= Self.sideDegrees ? .right:y <= -Self.sideDegrees ? .left:abs(y) <= Self.centerDegrees ? .center:nil
-  guard let zone else {return completed}
+  guard let zone else {candidate=nil;return completed}
   if zone != candidate {candidate=zone;candidateSinceMs=timestampMs}
   if zone != committed && timestampMs-candidateSinceMs>=Self.commitMs {commit(zone)}
   return completed
@@ -193,6 +240,6 @@ public struct NeckTurnCounter:Sendable {
  }
 
  private mutating func clearTracking() {
-  filter.reset();candidate=nil;committed=nil;lastAbsYaw=0;lossSinceMs=nil;lastSampleMs=nil
+  filter.reset();candidate=nil;committed=nil;lastAbsYaw=0;lossSinceMs=nil;lastSampleMs=nil;leftDone=false;rightDone=false
  }
 }

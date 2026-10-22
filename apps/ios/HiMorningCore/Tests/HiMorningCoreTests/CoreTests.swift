@@ -253,6 +253,45 @@ final class CoreTests: XCTestCase {
   XCTAssertEqual(longHidden.completedCycles,0)
  }
 
+ func testGuidedTransitionsCannotBridgeUnheldPoses() {
+  for variant in [GuidedRhythmVariant.standing,.seated] {
+   let rest:GuidedRhythmPose=variant == .standing ? .standing:.armsDown
+   let action:GuidedRhythmPose=variant == .standing ? .lowered:.armsUp
+   var rhythm=GuidedRhythmSession(variant:variant)
+   for time in [0,200] {_=rhythm.observe(rest,timestampMs:time,visible:true)}
+   _=rhythm.observe(action,timestampMs:400,visible:true)
+   rhythm.transition(timestampMs:500)
+   _=rhythm.observe(action,timestampMs:700,visible:true)
+   for time in [733,933] {_=rhythm.observe(rest,timestampMs:time,visible:true)}
+   XCTAssertEqual(rhythm.completedCycles,0)
+  }
+ }
+ func testMissingCameraFramesCannotCompleteGuidedRhythm() {
+  for variant in [GuidedRhythmVariant.standing,.seated] {
+   let rest:GuidedRhythmPose=variant == .standing ? .standing:.armsDown
+   let action:GuidedRhythmPose=variant == .standing ? .lowered:.armsUp
+   var rhythm=GuidedRhythmSession(variant:variant)
+   for time in [0,200] {_=rhythm.observe(rest,timestampMs:time,visible:true)}
+   for time in [400,1800] {_=rhythm.observe(action,timestampMs:time,visible:true)}
+   for time in [2000,2200] {_=rhythm.observe(rest,timestampMs:time,visible:true)}
+   XCTAssertEqual(rhythm.completedCycles,0)
+  }
+ }
+ func testJacksAndStretchingRejectSpikesAndPartialCycles() {
+  for kind in [ChallengeKind.jumpingJacks,.stretching] {
+   var progress=MovementChallengeProgress(kind:kind,target:1)
+   let rest:MovementObservation=kind == .jumpingJacks ? .jumpingJack(open:false):.stretch(overhead:false)
+   let action:MovementObservation=kind == .jumpingJacks ? .jumpingJack(open:true):.stretch(overhead:true)
+   for time in [0,300] {_=progress.observe(rest,timestampMs:time)}
+   _=progress.observe(action,timestampMs:400)
+   _=progress.observe(.transition,timestampMs:433)
+   for time in [600,900] {_=progress.observe(rest,timestampMs:time)}
+   XCTAssertEqual(progress.completed,0)
+   for time in [1200,1500,1900] {_=progress.observe(action,timestampMs:time)}
+   for time in [2200,2500] {_=progress.observe(rest,timestampMs:time)}
+   XCTAssertEqual(progress.completed,1)
+  }
+ }
  func testGuidedRhythmSingleFramePoseIsIgnored() {
   var rhythm=GuidedRhythmSession(variant:.standing,maxSequenceDurationMs:3_000)
   XCTAssertFalse(rhythm.observe(.standing,timestampMs:0,visible:true))

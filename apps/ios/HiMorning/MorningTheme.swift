@@ -10,6 +10,7 @@ enum MorningTheme {
  static let muted=color(0x756F63,0xC2BBAE)
  static let line=color(0xE9E5DC,0x49463D)
  static let yellow=Color(red:245/255,green:200/255,blue:66/255)
+ static let alarmCard=Color(red:249/255,green:224/255,blue:125/255)
  static let hero=Color(red:248/255,green:217/255,blue:96/255)
  static let onYellow=Color(red:41/255,green:37/255,blue:29/255)
  static let accent=color(0x967211,0xF5C842)

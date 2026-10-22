@@ -7,13 +7,16 @@ public struct PushUpCounter:Sendable {
  private static let occlusionGraceMs=600
  private var phase=0
  private var began:Int?
+ private var loweredAt:Int?
  private var lastObservation:Int?
  private var lostSince:Int?
- public init(target:Int) {self.target=min(5,max(1,target))}
- public mutating func interrupt() {phase=0;began=nil;lastObservation=nil;lostSince=nil}
+ // ChallengeCoordinator.completePushUps requires target == the saved repetitions, so this must accept every saved value.
+ public init(target:Int) {self.target=min(ChallengeSelection.maximumPushUps,max(1,target))}
+ public mutating func interrupt() {phase=0;began=nil;loweredAt=nil;lastObservation=nil;lostSince=nil}
  public mutating func observe(elbowAngle:Double,bodyAngle:Double,incline:Double,visible:Bool,timestampMs:Int) {
   guard !ready else {return}
-  guard (0...120000).contains(timestampMs) else {interrupt();return}
+  // Same limit as CameraCapture, so a long target never keeps the camera open after counting has stopped.
+  guard (0...EvidenceBuffer.maximumDurationMs).contains(timestampMs) else {interrupt();return}
   if let lastObservation {
    guard timestampMs>lastObservation else {interrupt();return}
    if timestampMs-lastObservation>1500 {interrupt()}
@@ -36,7 +39,13 @@ public struct PushUpCounter:Sendable {
   }
   guard matches else {return}
   if phase == 0 {began=timestampMs}
+  if phase == 1 {
+   guard let began,timestampMs-began>=150 else {interrupt();return}
+   loweredAt=timestampMs
+  }
   if phase == 2 {
+   // A one-frame elbow dip must not become a completed rep after holding the plank.
+   guard let loweredAt,timestampMs-loweredAt>=150 else {interrupt();return}
    if let began,timestampMs-began>=800 {completedReps+=1}
    interrupt()
   } else {phase+=1}

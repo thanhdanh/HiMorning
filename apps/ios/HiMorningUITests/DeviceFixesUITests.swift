@@ -31,6 +31,19 @@ final class DeviceFixesUITests:XCTestCase {
   }
   XCTAssertTrue(element.isHittable)
  }
+ private func revealAlarmDelete(_ id:String,in app:XCUIApplication) {
+  let card=app.descendants(matching:.any)["alarmCard-"+id]
+  reveal(card,in:app);card.swipeLeft()
+  XCTAssertTrue(app.buttons["deleteAlarm-"+id].isHittable)
+ }
+ private func tryAlarm(_ id:String,in app:XCUIApplication) {
+  let button=app.buttons["tryAlarm-"+id]
+  reveal(button,in:app);button.tap()
+ }
+ private func confirmDelete(in app:XCUIApplication) {
+  let button=app.alerts.buttons["confirmDeleteAlarm"].firstMatch
+  XCTAssertTrue(button.waitForExistence(timeout:3));button.tap()
+ }
  private func toggleSound(in app:XCUIApplication) {
   if app.buttons["doneSound"].exists {app.buttons["doneSound"].tap()}
   else {let button=app.buttons["chooseSound"];reveal(button,in:app);button.tap()}
@@ -43,6 +56,62 @@ final class DeviceFixesUITests:XCTestCase {
   XCTAssertTrue(app.buttons["saveAlarm"].isEnabled,"The user must be able to retry after changing Settings")
   guard settings.isHittable,app.buttons["saveAlarm"].isEnabled else {return}
   throw XCTSkip("Real AlarmKit scheduling is blocked by denied system alarm access; same-ID rescheduling is unverified.")
+ }
+ func testSwipeDeleteRequiresConfirmationAndCancelPreservesTheAlarm() {
+  let id="00000000-0000-0000-0000-000000000001"
+  let other="00000000-0000-0000-0000-000000000002"
+  for vietnamese in [false,true] {
+   let app=launch(["--ui-home-alarms"],vietnamese:vietnamese)
+   XCTAssertFalse(app.buttons["deleteAlarm-"+id].exists)
+   XCTAssertFalse(app.buttons["alarmOptions-"+id].exists)
+   revealAlarmDelete(id,in:app)
+   XCTAssertFalse(app.navigationBars["Edit alarm"].exists)
+   let shown=XCTAttachment(screenshot:app.screenshot());shown.name="swipe-delete-"+(vietnamese ? "vi" : "en");shown.lifetime = .keepAlways;add(shown)
+   app.buttons["deleteAlarm-"+id].tap()
+   XCTAssertTrue(app.staticTexts["alarmTime-"+id].exists)
+   let confirmation=app.alerts[vietnamese ? "Xóa báo thức?" : "Delete alarm?"]
+   XCTAssertTrue(confirmation.waitForExistence(timeout:3))
+   confirmation.buttons[vietnamese ? "Hủy" : "Cancel"].firstMatch.tap()
+   XCTAssertTrue(app.staticTexts["alarmTime-"+id].exists)
+   XCTAssertFalse(app.buttons["deleteAlarm-"+id].exists)
+   // A vertical drag on the card must still scroll the page.
+   app.descendants(matching:.any)["alarmCard-"+id].swipeUp()
+   XCTAssertFalse(app.buttons["deleteAlarm-"+id].exists)
+   revealAlarmDelete(id,in:app);app.buttons["deleteAlarm-"+id].tap();confirmDelete(in:app)
+   let removed=XCTNSPredicateExpectation(predicate:NSPredicate(format:"exists == false"),object:app.staticTexts["alarmTime-"+id])
+   XCTAssertEqual(XCTWaiter.wait(for:[removed],timeout:5),.completed)
+   XCTAssertTrue(app.staticTexts["alarmTime-"+other].exists)
+   app.terminate()
+  }
+ }
+ func testDraftChallengePracticeReturnsToTheUnsavedForm() {
+  let app=launch(["--ui-home-alarms","--ui-reading-correct-first"])
+  let alarms=app.staticTexts.matching(NSPredicate(format:"identifier BEGINSWITH %@","alarmTime-"))
+  let before=Set(alarms.allElementsBoundByIndex.map(\.identifier))
+  app.buttons["addAlarm"].tap()
+  XCTAssertFalse(app.buttons["tryDraftChallenge"].exists)
+  reveal(app.buttons["mode-balanced"],in:app);app.buttons["mode-balanced"].tap()
+  reveal(app.buttons["challenge-readAndChoose"],in:app);app.buttons["challenge-readAndChoose"].tap()
+  reveal(app.textFields["alarmLabel"],in:app);app.textFields["alarmLabel"].tap();app.textFields["alarmLabel"].typeText("My morning")
+  reveal(app.buttons["alarmRepeatDay-3"],in:app);app.buttons["alarmRepeatDay-3"].tap()
+  let selectedTime=app.datePickers["alarmTimePicker"].value as? String
+  reveal(app.buttons["tryDraftChallenge"],in:app);app.buttons["tryDraftChallenge"].tap()
+  XCTAssertTrue(app.buttons["backToHome"].waitForExistence(timeout:5))
+  XCTAssertEqual(app.buttons["backToHome"].label,"Back to alarm")
+  XCTAssertFalse(app.buttons["confirmAwake"].exists)
+  XCTAssertTrue(app.staticTexts["Practice only. Your alarms stay as they are."].exists)
+  let demo=XCTAttachment(screenshot:app.screenshot());demo.name="draft-challenge-practice";demo.lifetime = .keepAlways;add(demo)
+  app.buttons["readChoice-0"].tap()
+  XCTAssertTrue(app.buttons["retryChallenge"].waitForExistence(timeout:5))
+  app.buttons["backToHome"].tap()
+  XCTAssertTrue(app.navigationBars["New alarm"].waitForExistence(timeout:5))
+  XCTAssertTrue(app.buttons["challenge-readAndChoose"].isSelected)
+  reveal(app.textFields["alarmLabel"],in:app);XCTAssertEqual(app.textFields["alarmLabel"].value as? String,"My morning")
+  XCTAssertTrue(app.buttons["alarmRepeatDay-3"].isSelected)
+  if let selectedTime {XCTAssertEqual(app.datePickers["alarmTimePicker"].value as? String,selectedTime)}
+  app.buttons["Cancel"].tap()
+  XCTAssertEqual(Set(alarms.allElementsBoundByIndex.map(\.identifier)),before)
+  app.terminate()
  }
  func testAlarmLabelPersistsAndOpensDisabledCardInBothLanguages() {
   let id="00000000-0000-0000-0000-000000000001"
@@ -108,7 +177,7 @@ final class DeviceFixesUITests:XCTestCase {
   card.coordinate(withNormalizedOffset:CGVector(dx:0.04,dy:0.5)).tap()
   XCTAssertTrue(app.navigationBars["Edit alarm"].waitForExistence(timeout:5))
   app.buttons["Cancel"].tap()
-  app.buttons["Try this challenge"].firstMatch.tap()
+  tryAlarm(id,in:app)
   XCTAssertTrue(app.buttons["backToHome"].waitForExistence(timeout:5))
   XCTAssertFalse(app.navigationBars["Edit alarm"].exists)
   app.buttons["backToHome"].tap()
@@ -116,34 +185,134 @@ final class DeviceFixesUITests:XCTestCase {
   app.switches["toggleAlarm-"+id].tap()
   XCTAssertTrue(app.staticTexts["Off"].waitForExistence(timeout:5))
   XCTAssertFalse(app.navigationBars["Edit alarm"].exists)
+  revealAlarmDelete(id,in:app)
   app.buttons["deleteAlarm-"+id].tap()
+   confirmDelete(in:app)
   XCTAssertFalse(app.staticTexts["alarmTime-"+id].waitForExistence(timeout:1))
   XCTAssertFalse(app.navigationBars["Edit alarm"].exists)
   app.terminate()
  }
- func testActiveAlarmShowsChallengeModeAndKeepsDeleteInTheFooter() {
+ func testAlarmCardPrioritizesTimeAndChallengeWithoutInlineActions() {
   let id="00000000-0000-0000-0000-000000000001"
   for vietnamese in [false,true] {
    let app=launch(["--ui-home-alarms","--ui-completed-alarm"],vietnamese:vietnamese)
-   let time=app.staticTexts["alarmTime-"+id],delete=app.buttons["deleteAlarm-"+id]
-   let practice=app.buttons[vietnamese ? "Thử thử thách này" : "Try this challenge"].firstMatch
-   XCTAssertTrue(time.exists)
+   let time=app.staticTexts["alarmTime-"+id],options=app.buttons["tryAlarm-"+id]
+   let repeatDays=app.staticTexts["alarmRepeat-"+id],challenge=app.staticTexts["alarmChallenge-"+id]
    XCTAssertEqual(time.label,"07:15 AM")
+   XCTAssertGreaterThan(challenge.frame.minX,time.frame.maxX,"Time and challenge should occupy distinct columns")
+   XCTAssertGreaterThanOrEqual(repeatDays.frame.minY,time.frame.maxY)
    XCTAssertEqual(app.staticTexts["alarmTime-00000000-0000-0000-0000-000000000002"].label,"08:30 PM")
    XCTAssertTrue(app.staticTexts["alarmTime-00000000-0000-0000-0000-000000000003"].label.contains("09:00 AM"))
-   XCTAssertEqual(app.staticTexts["alarmChallenge-"+id].label,vietnamese ? "Đọc và Chọn" : "Read & Choose")
-   XCTAssertEqual(app.staticTexts["alarmRepeat-"+id].label,vietnamese ? "T2, T4, T6" : "Mon, Wed, Fri")
+   XCTAssertEqual(challenge.label,vietnamese ? "Đọc và Chọn" : "Read & Choose")
+   XCTAssertEqual(repeatDays.label,vietnamese ? "T2, T4, T6" : "Mon, Wed, Fri")
    XCTAssertTrue(app.staticTexts["alarmMode-"+id].label.contains(vietnamese ? "Đã thức dậy" : "Awake"))
-   XCTAssertGreaterThan(delete.frame.minY,time.frame.maxY,"Destructive actions belong below the alarm information")
-   XCTAssertEqual(practice.frame.width,delete.frame.width,accuracy:1,"The two footer actions should share the card evenly")
-   XCTAssertEqual(practice.frame.midY,delete.frame.midY,accuracy:1)
-   XCTAssertGreaterThanOrEqual(practice.frame.height,44)
-   XCTAssertTrue(app.descendants(matching:.any)["alarmCard-"+id].exists)
+   XCTAssertTrue(app.buttons["tryAlarm-"+id].isHittable)
+   XCTAssertFalse(app.buttons["deleteAlarm-"+id].exists)
+   XCTAssertGreaterThan(options.frame.minY,time.frame.maxY)
+   XCTAssertEqual(options.frame.midY,app.switches["toggleAlarm-"+id].frame.midY,accuracy:2)
+   XCTAssertGreaterThanOrEqual(options.frame.width,44);XCTAssertGreaterThanOrEqual(options.frame.height,44)
+   XCTAssertLessThan(app.descendants(matching:.any)["alarmCard-"+id].frame.height,215)
    XCTAssertEqual(app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@","editAlarm-")).count,0)
    let attachment=XCTAttachment(screenshot:app.screenshot())
    attachment.name="alarm-design-\(vietnamese ? "vi" : "en")";attachment.lifetime = .keepAlways;add(attachment)
-   print("DESIGN_VIEWPORT \(app.windows.firstMatch.frame.width)x\(app.windows.firstMatch.frame.height)")
    app.terminate()
+  }
+ }
+ func testYellowCardHandlesLongLabelsAndSchedulingWarningsWithLargeText() {
+  let first="00000000-0000-0000-0000-000000000001",second="00000000-0000-0000-0000-000000000002"
+  for largeText in [false,true] {
+   var arguments=["--ui-home-alarms","--ui-card-layout","--ui-completed-alarm"]
+   if largeText {arguments += ["-UIPreferredContentSizeCategoryName","UICTContentSizeCategoryAccessibilityM","--ui-dark-mode"]}
+   let app=launch(arguments,vietnamese:largeText)
+   let card=app.descendants(matching:.any)["alarmCard-"+first]
+   let name=app.staticTexts["alarmLabel-"+first],time=app.staticTexts["alarmTime-"+first]
+   let repeatDays=app.staticTexts["alarmRepeat-"+first],challenge=app.staticTexts["alarmChallenge-"+first]
+   let mode=app.staticTexts["alarmMode-"+first]
+   XCTAssertEqual(name.label,"Morning routine before work")
+   XCTAssertLessThanOrEqual(name.frame.maxY,time.frame.minY)
+   XCTAssertLessThanOrEqual(time.frame.maxY,repeatDays.frame.minY)
+   if largeText {XCTAssertLessThanOrEqual(repeatDays.frame.maxY,challenge.frame.minY)}
+   else {XCTAssertGreaterThanOrEqual(challenge.frame.minX,time.frame.maxX)}
+   XCTAssertLessThanOrEqual(challenge.frame.maxY,mode.frame.minY)
+   for element in [name,time,repeatDays,challenge,mode] {XCTAssertTrue(card.frame.contains(element.frame))}
+   XCTAssertTrue(app.staticTexts["nextAlarm-"+first].exists)
+   XCTAssertTrue(app.staticTexts["alarmCompleted-"+first].exists)
+   let overview=XCTAttachment(screenshot:app.screenshot())
+   overview.name=largeText ? "card-layout-dark-large" : "card-layout-long-label"
+   overview.lifetime = .keepAlways;add(overview)
+   let warning=app.descendants(matching:.any)["alarmState-"+second]
+   reveal(warning,in:app)
+   XCTAssertTrue(warning.isHittable)
+   XCTAssertEqual(app.staticTexts["alarmRepeat-"+second].label,largeText ? "Báo một lần" : "Rings once")
+   XCTAssertFalse(app.staticTexts["nextAlarm-"+second].exists,"Unconfirmed alarms must keep their scheduling warning")
+   let warningPreview=XCTAttachment(screenshot:app.screenshot())
+   warningPreview.name=largeText ? "card-layout-warning-vi-large" : "card-layout-warning-en"
+   warningPreview.lifetime = .keepAlways;add(warningPreview)
+   app.terminate()
+  }
+ }
+ func testMovementGuidesAndSimplerNoChallengeCard() {
+  let first="00000000-0000-0000-0000-000000000001",second="00000000-0000-0000-0000-000000000002"
+  let app=launch(["--ui-home-alarms","--ui-movement-cards"],vietnamese:true)
+  let movement=app.descendants(matching:.any)["alarmCard-"+first]
+  let plain=app.descendants(matching:.any)["alarmCard-"+second]
+  XCTAssertLessThan(plain.frame.height,movement.frame.height-40)
+  XCTAssertFalse(app.staticTexts["alarmChallenge-"+second].exists)
+  XCTAssertTrue(app.staticTexts["alarmRepeat-"+second].exists)
+  XCTAssertTrue(app.staticTexts["nextAlarm-"+second].exists)
+  XCTAssertFalse(app.buttons["tryAlarm-"+second].exists)
+  let overview=XCTAttachment(screenshot:app.screenshot());overview.name="movement-and-plain-cards";overview.lifetime = .keepAlways;add(overview)
+  for (kind,instruction) in [("pushUps","Hạ người rồi đẩy lên"),("waveHand","Vẫy tay qua hai bên"),("neckRotation","Quay đầu sang trái rồi phải"),("jumpingJacks","Bật dang rồi khép tay chân"),("stretching","Giơ tay lên rồi hạ xuống"),("guidedRhythm","Khuỵu gối rồi đứng lên")] {
+   reveal(app.buttons["practiceChallenges"],in:app);app.buttons["practiceChallenges"].tap();app.buttons["practice-"+kind].tap()
+   XCTAssertTrue(app.staticTexts["movementGuideInstruction"].waitForExistence(timeout:5))
+   XCTAssertEqual(app.staticTexts["movementGuideInstruction"].label,instruction)
+   let framing=["pushUps":"Góc ngang · Toàn thân","waveHand":"Chính diện · Bàn tay","neckRotation":"Chính diện · Khuôn mặt","jumpingJacks":"Chính diện · Toàn thân","stretching":"Chính diện · Thân trên","guidedRhythm":"Góc ngang · Toàn thân"]
+   XCTAssertEqual(app.staticTexts["movementCameraFraming"].label,framing[kind])
+   let pause=app.buttons["toggleMovementGuide"]
+   XCTAssertTrue(pause.isHittable);pause.tap();XCTAssertEqual(pause.label,"Phát hướng dẫn động tác")
+   let demo=XCTAttachment(screenshot:app.screenshot());demo.name="movement-guide-"+kind;demo.lifetime = .keepAlways;add(demo)
+   pause.tap();XCTAssertEqual(pause.label,"Tạm dừng hướng dẫn động tác")
+   app.buttons["backToHome"].tap()
+  }
+  reveal(app.buttons["practiceChallenges"],in:app);app.buttons["practiceChallenges"].tap();app.buttons["practice-none"].tap()
+  XCTAssertTrue(app.buttons["backToHome"].waitForExistence(timeout:5))
+  XCTAssertFalse(app.staticTexts["movementGuideInstruction"].exists)
+  app.terminate()
+ }
+ func testSeatedGuideAndReduceMotionAndCatalogIcons() {
+  for reduced in [false,true] {
+   let args=["--ui-enabled-alarm"]+(reduced ? ["--ui-reduce-motion","--ui-dark-mode","-UIPreferredContentSizeCategoryName","UICTContentSizeCategoryAccessibilityM"] : [])
+   let app=launch(args)
+   tryAlarm("00000000-0000-0000-0000-000000000001",in:app)
+   XCTAssertTrue(app.staticTexts["movementGuideInstruction"].waitForExistence(timeout:5))
+   XCTAssertEqual(app.staticTexts["movementGuideInstruction"].label,"Seated · Arms up, then down")
+   XCTAssertEqual(app.staticTexts["movementCameraFraming"].label,"Front view · Upper body")
+   XCTAssertEqual(app.buttons["toggleMovementGuide"].exists,!reduced)
+   XCTAssertTrue(app.buttons["startGuidedRhythm"].isHittable)
+   let demo=XCTAttachment(screenshot:app.screenshot());demo.name=reduced ? "movement-guide-reduced-large" : "movement-guide-seated";demo.lifetime = .keepAlways;add(demo)
+   app.buttons["backToHome"].tap()
+   app.staticTexts["alarmTime-00000000-0000-0000-0000-000000000001"].tap()
+   reveal(app.buttons["challenge-guidedRhythm"],in:app)
+   XCTAssertTrue(app.buttons["challenge-guidedRhythm"].label.contains("On-device camera"))
+   reveal(app.buttons["mode-focused"],in:app);app.buttons["mode-focused"].tap()
+   reveal(app.buttons["challenge-jumpingJacks"],in:app)
+   XCTAssertTrue(app.buttons["challenge-pushUps"].exists)
+   XCTAssertTrue(app.buttons["challenge-pushUps"].label.contains("On-device camera"))
+   let catalog=XCTAttachment(screenshot:app.screenshot());catalog.name=reduced ? "movement-catalog-dark-large" : "movement-catalog";catalog.lifetime = .keepAlways;add(catalog)
+   app.buttons["Cancel"].tap();app.terminate()
+  }
+ }
+ func testCameraTrackingPreviewAndEmptyStateDoNotCompleteAChallenge() {
+  for empty in [false,true] {
+   let app=launch(["--ui-home-alarms","--ui-movement-cards","--ui-tracking-overlay"]+(empty ? ["--ui-tracking-empty"] : []),vietnamese:true)
+   tryAlarm("00000000-0000-0000-0000-000000000001",in:app)
+   XCTAssertTrue(app.staticTexts["trackingFixtureLabel"].waitForExistence(timeout:5))
+   XCTAssertEqual(app.staticTexts["cameraTrackingStatus"].label,empty ? "Cần thấy rõ hơn" : "Đang nhận diện")
+   XCTAssertEqual(app.staticTexts["cameraRepCounter"].label,"0 / 3")
+   XCTAssertFalse(app.buttons["retryChallenge"].exists)
+   XCTAssertTrue(app.buttons["startChallenge"].isHittable)
+   let image=XCTAttachment(screenshot:app.screenshot());image.name=empty ? "camera-tracking-empty" : "camera-tracking-overlay-fixture";image.lifetime = .keepAlways;add(image)
+   app.buttons["backToHome"].tap();app.terminate()
   }
  }
  func testHomeAndProgressAccessibilityLabelsAndTargets() throws {
@@ -171,14 +340,13 @@ final class DeviceFixesUITests:XCTestCase {
    XCTAssertFalse(app.staticTexts.containing(NSPredicate(format:"label CONTAINS %@",vietnamese ? "Đã thức dậy" : "Awake")).firstMatch.exists)
    XCTAssertFalse(app.buttons[vietnamese ? "Thử thử thách này" : "Try this challenge"].exists)
    XCTAssertTrue(app.switches["toggleAlarm-"+id].isHittable)
-   let delete=app.buttons["deleteAlarm-"+id]
-   XCTAssertTrue(delete.isHittable)
-   XCTAssertGreaterThanOrEqual(delete.frame.width.rounded(),44)
-   XCTAssertGreaterThanOrEqual(delete.frame.height.rounded(),44)
+   XCTAssertFalse(app.buttons["alarmOptions-"+id].exists)
    app.staticTexts[vietnamese ? "Đã tắt" : "Off"].tap()
    XCTAssertTrue(app.navigationBars[vietnamese ? "Sửa báo thức" : "Edit alarm"].waitForExistence(timeout:5))
    app.buttons[vietnamese ? "Hủy" : "Cancel"].tap()
-   delete.tap()
+   revealAlarmDelete(id,in:app)
+   app.buttons["deleteAlarm-"+id].tap()
+   confirmDelete(in:app)
    let removed=XCTNSPredicateExpectation(predicate:NSPredicate(format:"exists == false"),object:edit)
    XCTAssertEqual(XCTWaiter.wait(for:[removed],timeout:5),.completed)
    XCTAssertEqual(app.alerts.count,0)
@@ -407,7 +575,7 @@ final class DeviceFixesUITests:XCTestCase {
     return
    }
    let alarmID=String(identifier.dropFirst("alarmTime-".count)),edit=app.staticTexts[identifier],delete=app.buttons["deleteAlarm-"+alarmID]
-   self.reveal(delete,in:app);delete.tap()
+   self.revealAlarmDelete(alarmID,in:app);delete.tap();self.confirmDelete(in:app)
    let removed=XCTNSPredicateExpectation(predicate:NSPredicate(format:"exists == false"),object:edit)
    self.wait(for:[removed],timeout:10)
   }

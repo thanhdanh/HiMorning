@@ -41,6 +41,16 @@ final class PushUpTests:XCTestCase {
    counter.observe(elbowAngle:angle,bodyAngle:175,incline:10,visible:visible,timestampMs:time)
   }
  }
+ func testSingleFrameElbowDipNeverCountsAsAPushUp() {
+  var counter=PushUpCounter(target:1)
+  feed(&counter,[(0,165,true),(400,165,true),(800,80,true),(833,165,true),(1100,165,true),(1400,165,true)])
+  XCTAssertEqual(counter.completedReps,0)
+ }
+ func testShallowBendsNeverCountAsAPushUp() {
+  var counter=PushUpCounter(target:1)
+  feed(&counter,[(0,165,true),(300,130,true),(600,110,true),(900,130,true),(1200,165,true)])
+  XCTAssertEqual(counter.completedReps,0)
+ }
  func testFastDescentWithoutMiddleBandSamplesCounts() {
   var counter=PushUpCounter(target:1)
   feed(&counter,[(0,165,true),(400,80,true),(900,165,true)])
@@ -83,6 +93,33 @@ final class PushUpTests:XCTestCase {
   XCTAssertFalse(late);XCTAssertEqual(stopped.session.outcome,.dismissed)
   let wrong=ChallengeCoordinator(alarm:SavedAlarm(time:alarm.time,challenge:.readAndChoose),cloud:nil,scheduler:scheduler)
   do {_=try await wrong.completePushUps(counter);preconditionFailure("Wrong challenge must reject camera completion")} catch {}
+ }
+ func testTargetsAboveFiveAreKeptAndCompleted() {
+  XCTAssertEqual(PushUpCounter(target:0).target,1)
+  XCTAssertEqual(PushUpCounter(target:ChallengeSelection.maximumPushUps+30).target,ChallengeSelection.maximumPushUps)
+  var counter=PushUpCounter(target:10)
+  XCTAssertEqual(counter.target,10)
+  for rep in 0..<9 {cycle(&counter,start:rep*1500)}
+  XCTAssertEqual(counter.completedReps,9);XCTAssertFalse(counter.ready)
+  cycle(&counter,start:9*1500)
+  XCTAssertTrue(counter.ready)
+ }
+ func testRepsKeepCountingUntilTheCameraLimit() {
+  var counter=PushUpCounter(target:1)
+  cycle(&counter,start:150_000)
+  XCTAssertTrue(counter.ready)
+  var late=PushUpCounter(target:1)
+  cycle(&late,start:EvidenceBuffer.maximumDurationMs)
+  XCTAssertFalse(late.ready)
+ }
+ @MainActor func testCameraCompletionAcceptsTheSelectedTargetAboveFive() async throws {
+  let scheduler=PushUpScheduler()
+  let alarm=SavedAlarm(time:try AlarmTime(hour:7,minute:0,weekdays:[]),challenge:.pushUps(repetitions:10))
+  let flow=ChallengeCoordinator(alarm:alarm,cloud:nil,scheduler:scheduler)
+  var counter=PushUpCounter(target:alarm.challenge.repetitions ?? 0)
+  for rep in 0..<10 {cycle(&counter,start:rep*1500)}
+  let applied=try await flow.completePushUps(counter),stops=await scheduler.stops
+  XCTAssertTrue(applied);XCTAssertEqual(flow.session.outcome,.localCompleted);XCTAssertEqual(stops,1)
  }
  @MainActor func testStopWinsWhileCameraCompletionIsWaitingForTheAlarm() async throws {
   let scheduler=PushUpStopGate()

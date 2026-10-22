@@ -15,7 +15,7 @@ JPEG archive or audio recording is created.
 | Input | Live front-camera frames; shoulder, elbow, wrist, hip and ankle landmarks |
 | Counting | Straight body near horizontal; extended, lowering, bottom, rising, extended arms |
 | Completion | Exact selected target, recorded as `local_completed` |
-| Limits | One to five repetitions; two-minute capture; no partial-cycle completion |
+| Limits | The saved target (1–50 repetitions); five-minute capture; no partial-cycle completion |
 | Recovery | Camera denial, interruption, backgrounding and leaving stop capture |
 
 ## How it works
