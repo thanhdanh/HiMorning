@@ -43,7 +43,7 @@ makes that useful.
 | Alarm scheduler | `AlarmScheduler` | Schedule/cancel/stop and report uncertain registrations |
 | Alarm persistence | `AlarmPersistence` | Durable pending writes and restart recovery |
 | Cloud verifier | `CloudVerification` | Map shared payloads through Firebase callable SDK |
-| Evidence capture | `CycleCapture` | Select complete ordered cycles; never claim AI success locally |
+| Movement / evidence | `PushUpCounter`, `CycleCapture` | Distinguish local completion from server-verified evidence |
 
 Keep the composition root responsible for wiring adapters into domain rules.
 Never require a network request or camera permission to stop a local alarm.

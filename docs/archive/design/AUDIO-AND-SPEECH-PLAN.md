@@ -1,11 +1,16 @@
 # Alarm sounds and on-device speech
 
+> **Historical document.** This is a superseded proposal or implementation
+> checkpoint, not current product behavior or instructions to execute. See the
+> [current documentation](../../README.md) and [challenge guide](../../MODE-CHALLENGES.md).
+> Original observations, limits and approvals below apply only to their dated scope.
+
 Give people more pleasant alarm sounds and a spoken example for the English
 read-aloud challenge. Move speech recognition to Apple's current on-device APIs
 while preserving the existing word-match completion rule.
 
 **Status:** Implemented and verified in focused core/native tests. See the
-[current feature list](../README.md#implemented-pilot). **Audience:** iOS implementation and review. Research
+[current feature list](../../../README.md#implemented-pilot). **Audience:** iOS implementation and review. Research
 snapshot: October 15, 2026.
 
 ## At a glance
@@ -214,9 +219,9 @@ primary sources linked above. Xcode 27 is available locally; compatibility must
 still be checked against the iOS 26 deployment target. The existing CI uses iOS
 26.2 for its StoreKit test setup.
 
-Implementation evidence is in [alarm-sounds.tdd.md](tdd/alarm-sounds.tdd.md),
-[speech-analysis.tdd.md](tdd/speech-analysis.tdd.md), and
-[audio-and-speech.tdd.md](tdd/audio-and-speech.tdd.md). No physical iPhone
+Implementation evidence is in [alarm-sounds.tdd.md](../../tdd/alarm-sounds.tdd.md),
+[speech-analysis.tdd.md](../../tdd/speech-analysis.tdd.md), and
+[audio-and-speech.tdd.md](../../tdd/audio-and-speech.tdd.md). No physical iPhone
 audition, locked-device AlarmKit delivery, or live microphone/asset-download run
 has been completed. Backend tests remain unnecessary because this change has no
 server or shared-contract impact.
@@ -237,4 +242,4 @@ hardware-dependent speech support, or interruption behavior.
 
 - [Apple: Bring advanced speech-to-text to your app](https://developer.apple.com/videos/play/wwdc2025/277/)
 - [Apple: Wake up to the AlarmKit API](https://developer.apple.com/videos/play/wwdc2025/230/)
-- [Repository documentation template](DOC-TEMPLATE.md)
+- [Repository documentation template](../../DOC-TEMPLATE.md)

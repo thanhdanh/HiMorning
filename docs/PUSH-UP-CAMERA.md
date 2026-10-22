@@ -4,7 +4,7 @@ Start a push-up challenge on an iPhone without server credentials or a network
 connection. The front camera feeds on-device body pose recognition; no video,
 JPEG archive or audio recording is created.
 
-**Status:** Implemented pilot; physical movement accuracy is not calibrated.
+**Status:** Implemented local pilot; physical movement accuracy remains under calibration.
 **Audience:** Pilot users and iOS developers.
 
 ## At a glance
@@ -33,10 +33,8 @@ Practice and retry never stop a real alarm or add progress entries.
 
 ## Key choices
 
-The former button used synthetic images against a free server and could not check
-real movement. Builds missing the ignored staging plist files produced a generic
-unavailable message. The product screen now performs real camera recognition on
-the phone; the old server remains a separate developer connectivity reference.
+The product screen performs camera recognition on the phone. The synthetic
+server demo remains a separate developer reference and cannot verify movement.
 No Firebase account, App Check token or cloud inference is needed for this flow.
 
 ## Try it
@@ -59,17 +57,18 @@ exact targets, duplicates, practice, native stop failure and the stop race.
 startup. Bilingual UI journeys check plain-language labels and denial recovery.
 These tests do not establish real-world recognition accuracy.
 
-On 16 October 2026, portable checks, 71 SwiftPM tests, 42 native unit tests and
-four focused UI tests passed. The signed development build installed and launched
-on the connected iPhone 15. Real repetitions remain pending user calibration.
+See [current validation](VALIDATION.md) for dated core/native/device results. The
+latest counter accepts a full cycle of at least 750 ms while retaining minimum
+descent/rise timing and posture checks. Do not reuse older 3/5-repetition presets
+as the current editor defaults; the [catalog guide](MODE-CHALLENGES.md) owns them.
 
 ## Limits and next steps
 
 The side-view thresholds are pilot heuristics, not a trained action classifier.
 Validate standard push-ups on the real iPhone across lighting, distance, camera
 placement and body sizes before relying on automatic completion. Knee push-ups
-and other exercises are not supported. Self-confirmation and leaving remain
-available without a successful movement check.
+and other exercises are not supported. Self-confirmation unlocks after the existing five-minute delay. System Stop
+can silence one ring; remaining backup rings are resolved separately.
 
 ## Read next
 

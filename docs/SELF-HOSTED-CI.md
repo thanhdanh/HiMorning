@@ -1,115 +1,91 @@
 # CI on the local Mac
 
-Run HiMorning's existing checks on a repository-scoped Apple silicon runner when
-GitHub-hosted jobs cannot start because of the account's Actions billing limit.
+Run repository checks on the configured Apple silicon runner. Workflow source,
+runner availability and a passing run are different kinds of evidence.
 
-**Status:** Runner registered and online with the machine owner's approval.
-CI results appear in the pull request checks. **Audience:** The repository and Mac owner.
+**Status:** Repository-scoped self-hosted workflow configured. Live runner status
+was not checked in this documentation review, dated 22 October 2026.
+**Audience:** Repository and Mac maintainers.
 
 ## At a glance
 
-| Setting | Value |
+| Setting | Source configuration |
 |---|---|
-| Repository | `thanhdanh/HiMorning` only |
-| Runner name | `himorning-mac-arm64` |
-| Workflow labels | `self-hosted`, `macOS`, `ARM64`, `himorning` |
-| Installation | `~/.local/share/actions-runner-himorning` |
-| Checkout directory | `_work` inside the runner installation |
-| Service | User LaunchAgent; starts after login |
+| Repository | `thanhdanh/HiMorning` |
+| Runner labels | `self-hosted`, `macOS`, `ARM64`, `himorning` |
+| Local runner installation | `~/.local/share/actions-runner-himorning` |
+| Toolchains | Node 22, pnpm 10.34.6, Java 21; Homebrew Python 3.11; installed Xcode/XcodeGen |
+| Native runtime | Available iPhone on iOS 26.2, selected explicitly |
+| Jobs | Backend, inference and iOS; iOS waits for backend |
 
-## How it works
+The [workflow](../.github/workflows/ci.yml) and
+[`test-ios.sh`](../scripts/test-ios.sh) are authoritative for job/test selection.
+The single runner serializes accepted jobs while it is available; the Mac must
+be awake, logged in and online. A runner registration observed in an older run
+does not prove that it is online now.
 
-The backend, inference and iOS jobs run one at a time on this runner. Node 22,
-pnpm and Java 21 are selected by the setup actions. The inference job uses
-Homebrew's `python@3.11` and its explicit interpreter path to create the virtual
-environment. `setup-python` macOS distributions require the fixed
-`/Users/runner/hostedtoolcache` directory, which this runner user cannot create;
-changing the tool-cache environment variable does not relocate those binaries.
-See [GitHub's macOS self-hosted Python requirements](https://github.com/actions/setup-python/blob/main/docs/advanced-usage.md#macos).
-Xcode and XcodeGen come from the Mac. Native tests require an available iPhone simulator
-using iOS 26.2 because of the documented StoreKitTest regression on newer runtimes.
+## What each event runs
 
-Each push runs both Swift core test paths, all native unit tests and four UI smoke
-tests: the English and Vietnamese alarm editor journeys, offline reading in both
-languages, and alarm-save failure recovery. Run **HiMorning checks → Run workflow**
-in GitHub Actions to run the complete UI suite before a release or when changing
-flows outside the smoke set. Manual runs keep the same unit tests and coverage.
+| Event | Checks |
+|---|---|
+| Push to `main` or `codex/**` | Backend/emulator checks, inference checks, both Swift core runners, all native unit tests and 15 selected UI tests |
+| Manual `workflow_dispatch` | Same non-UI checks, with the full native UI suite |
+| Merged same-repository PR closure | Cancels the head branch's concurrency group; closure jobs are skipped |
 
-Merging a same-repository PR cancels running or pending checks for its head branch.
-The `pull_request: closed` event acquires that branch's existing concurrency group
-while every runner job is skipped, so cleanup does not wait for the Mac or use
-hosted-runner minutes. Push checks on `main` use a separate group; skipped closure
-checks have distinct names so they cannot satisfy main's required checks. Unmerged closes,
-fork PRs and PRs whose head is the default branch use an isolated group instead.
-The mechanism applies after this workflow reaches the PR's base branch. See
-[GitHub's concurrency rules](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency).
+The 15 UI selectors cover the bilingual editor, reading, save/edit recovery,
+cards, swipe-delete confirmation, double-tap trial, draft preservation, progress
+and completion. `tests/ios-ci.test.ts` checks selection and selector existence;
+it does not itself execute those UI journeys.
 
-`xcodebuild test` builds the app and test bundles once. Derived data, including
-resolved Swift packages, stays in `runner.workspace/himorning-derived` so Xcode can
-reuse it between jobs on this runner. Remove that directory when troubleshooting
-stale build state or reclaiming disk space. Result bundles and exported screenshots
-use `runner.temp`, which GitHub's runner clears between jobs.
-Before testing, the script resolves packages. If resolution reports a missing ZIP
-under Firebase's cached artifacts, it discards only Firebase artifacts and the
-SwiftPM workspace-state file, then resolves once more. Other package caches and
-compiled derived data remain reusable. Unrelated resolution errors and native
-test failures still fail CI without retries.
-Repository credentials remain in the private runner
-directory and must never be committed or copied into documentation.
+CI's iOS 26.2 pin originated as a workaround for StoreKitTest behavior on newer
+runtimes. The latest local expired-purchase assertion also fails on 26.2; see
+[known failure](VALIDATION.md#known-failure). Do not claim that pin makes the
+whole native suite green.
 
-## Start and stop
+## Build state and artifacts
 
-From the runner installation directory, after registration:
+The native script resolves packages and performs one `xcodebuild test`. Derived
+data and Swift packages live under `runner.workspace/himorning-derived` for reuse.
+Result bundles and exported screenshots use `runner.temp`; uploaded
+`ios-ui-evidence` artifacts have seven-day retention. Save durable release evidence
+separately with its revision and environment.
+
+If package resolution reports a missing Firebase artifact ZIP, the script clears
+only Firebase artifacts and SwiftPM workspace state, then resolves once more.
+Other resolution errors and test failures propagate. The script disables automatic
+test diagnostics collection to avoid lengthy failure cleanup. It does not hide
+failed assertions or retry them to make CI green.
+
+The inference job uses Homebrew's explicit Python 3.11 path. Runner setup and
+credentials stay private. Do not copy registration/removal tokens into docs.
+
+## Start or stop the service
+
+After runner registration, from its local installation:
 
 ```sh
 cd "$HOME/.local/share/actions-runner-himorning"
-./svc.sh install
-./svc.sh start
 ./svc.sh status
+./svc.sh start
 ./svc.sh stop
 ```
 
-`./svc.sh uninstall` removes the login service. To retire the runner completely,
-also remove it from the repository's **Settings → Actions → Runners** page and
-follow GitHub's removal instructions. Do not publish registration or removal tokens.
+`./svc.sh install` registers the user login service; `./svc.sh uninstall` removes
+it. Retiring the runner also requires removing its repository registration through
+GitHub's runner settings. Verify service and repository status rather than
+assuming either from the other.
+
+Workflows execute with this Mac user's permissions. Keep the runner scoped to
+trusted repository code; stop the service when it should not receive work.
 
 ## What we checked
 
-The official macOS ARM64 runner archive was downloaded and its SHA-256 checked
-against GitHub's repository runner-download API. Registration and login-service
-startup succeeded, and GitHub reports the runner online with the required labels.
-See [PR #7 checks](https://github.com/thanhdanh/HiMorning/pull/7/checks) for end-to-end
-workflow results; runner availability alone does not prove those checks passed.
-
-Before the smoke change, [run 38750657831](https://github.com/thanhdanh/HiMorning/actions/runs/38750657831)
-took about 14 minutes for iOS: 88 seconds for the separate build and 679 seconds for
-native testing. The four selected UI tests took 85 seconds combined in that run;
-this excludes build, simulator startup and unit-test overhead. The new duration
-must be measured on the runner. `tests/ios-ci.test.ts` checks smoke/full selection,
-that smoke selectors exist, and that build/test failures still fail CI.
-
-`tests/ci-cancellation.test.ts` checks the workflow's concurrency expression for
-pushes, manual runs, merged PRs, unmerged closes, forks and default-branch heads.
-A [temporary GitHub probe](https://github.com/thanhdanh/HiMorning/actions/runs/38770937528)
-confirmed that a replacement run with all jobs skipped cancels the old group
-without using a runner; both the running and pending probe runs were cancelled.
-The actual PR-merge event remains to be observed after this workflow is merged.
-Package-recovery tests cover one retry, preservation of unrelated caches and
-propagation of resolution/test failures.
-
-## Limits and next steps
-
-The Mac must be awake, logged in and online to receive jobs. Workflows execute
-with the local user's permissions and can access that user's files. Keep this
-runner scoped to the private repository and allow only trusted code; do not enable
-untrusted pull-request jobs on it. Stop the service whenever it should not accept
-work.
-
-After startup, verify the runner is online in GitHub, push the workflow update,
-and require the backend and iOS checks to pass before merging the pull request.
+Current event labels, job selection, package recovery and artifact retention were
+read from source. Tests cover smoke/full selection, failure propagation and
+concurrency-group handling. Historical runner timings and probe runs are not
+current performance or availability measurements.
 
 ## Read next
 
-- [Workflow](../.github/workflows/ci.yml)
-- [Adding a runner](https://docs.github.com/en/actions/how-tos/manage-runners/self-hosted-runners/add-runners)
-- [Managing its service](https://docs.github.com/en/actions/how-tos/manage-runners/self-hosted-runners/configure-the-application?platform=mac)
+[Running](RUNNING.md) · [Validation](VALIDATION.md) ·
+[Workflow](../.github/workflows/ci.yml)

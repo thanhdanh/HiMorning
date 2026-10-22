@@ -56,7 +56,7 @@ The existing collector's eight tests passed for this capture.
 
 ## Local application inference, separate from development tokens
 
-The [13 October LM Studio smoke check](../LM-STUDIO.md) records seven local model
+The [13 October LM Studio smoke check](../archive/design/LM-STUDIO.md) records seven local model
 requests: 2,225 input + 846 output = 3,071 tokens. The 699 reasoning tokens are
 already within output. Its [sanitized evidence](../evaluations/lmstudio-smoke-2026-10-13.json)
 includes failures and individual timings; it does not update the frozen agent

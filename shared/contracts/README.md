@@ -13,7 +13,11 @@ Swift consume the same fixtures. Android consumption remains planned.
 | `v1/verification.schema.json` | JSON Schema definitions for request/response shapes, including async result lookup |
 | `v1/wire-fixtures.json` | Synthetic, valid callable payloads for client/server tests |
 | `v1/free-demo-wire.json` / `v1/free-demo-frames.json` | Demo consent payloads and exact generated images shared with Swift and Workers |
-| `v1/wake-modes.json` | Gentle, Balanced and Focused rep/snooze presets |
+| `v1/wake-modes.json` | Internal `gentle`, `balanced`, `focused` rep/snooze presets |
+
+Wake-mode fixtures describe pure core policy, not the editor catalog or native
+snooze support. The UI displays Challenging for `focused`; default editor choices
+are documented in [Challenges](../../docs/MODE-CHALLENGES.md).
 
 The five fixture JPEGs are generated flat colors. They contain no people and do
 not demonstrate exercise accuracy. The verified result is a test fixture, not a
@@ -40,7 +44,8 @@ targets and frame timestamps, as well as ordinary JSON clients.
 
 Requests reject extra fields. Clients should allow additive response fields while
 checking recognized status values before applying success. Unknown values must
-never become verified. Write `ai_verified` for new AI successes; preserve historical `openai_verified`, `self_confirmed` and `dismissed`
+never become verified. Local movement/reading uses `local_completed`; write `ai_verified` only for genuine
+server-verified successes. Preserve historical `openai_verified`, `self_confirmed` and `dismissed`
 as separate local outcomes; only the server can report `verified`.
 
 ## Change the contract

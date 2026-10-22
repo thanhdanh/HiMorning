@@ -1,5 +1,9 @@
 # iPhone fixes and usability verification
 
+> **Dated evidence.** Commands, approvals, test totals and local paths below
+> describe the original run. They are not current setup instructions or release
+> status. See [current validation](../VALIDATION.md) for newer results and known gaps.
+
 Record the implemented alarm, challenge and asset fixes, the checks they passed,
 and what remains to be tried on a physical iPhone.
 
@@ -209,6 +213,6 @@ backend and configuration changes are excluded, including mixed-file hunks.
 
 ## Read next
 
-[Approved plan](../IOS-DEVICE-FIXES-PLAN.md) ·
+[Approved plan](../archive/design/IOS-DEVICE-FIXES-PLAN.md) ·
 [Run the app](../RUNNING.md) ·
 [Resource provenance](../../apps/ios/Resources/README.md)

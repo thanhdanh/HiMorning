@@ -1,6 +1,9 @@
 # Challenge Content Pool Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Historical document.** This is a superseded proposal or implementation
+> checkpoint, not current product behavior or instructions to execute. See the
+> [current documentation](../../../README.md) and [challenge guide](../../../MODE-CHALLENGES.md).
+> Original observations, limits and approvals below apply only to their dated scope.
 
 **Goal:** Read-aloud, read-and-choose and riddle challenges draw from a much larger English and Vietnamese pool. The pool ships in the app, can be refreshed from our Cloudflare Worker, works offline, and avoids recent repeats.
 

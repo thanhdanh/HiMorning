@@ -97,4 +97,4 @@ endpoints, and the opaque 1024×1024 icon dimensions.
 No subjective audition, phone-speaker quality, locked-screen looping, perceptual
 loudness, Bluetooth route, or AlarmKit delivery result is claimed by signal checks.
 Audition these on an iPhone before release; the titles are catalog names, not
-measured acoustic or wake-up guarantees. See the [implementation plan](../../../docs/AUDIO-AND-SPEECH-PLAN.md).
+measured acoustic or wake-up guarantees. See the [implementation plan](../../../docs/archive/design/AUDIO-AND-SPEECH-PLAN.md).

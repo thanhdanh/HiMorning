@@ -1,5 +1,9 @@
 # No-card preview and two subscription plans
 
+> **Dated evidence.** Commands, approvals, test totals and local paths below
+> describe the original run. They are not current setup instructions or release
+> status. See [current validation](../VALIDATION.md) for newer results and known gaps.
+
 Let people judge HiMorning across 30 days before deciding whether to pay. This
 report preserves the approved behavior, test evidence and remaining release work.
 
@@ -131,6 +135,6 @@ available telemetry and the distinction between observed and proposed metrics.
 ## Read next
 
 - [Subscriptions](../SUBSCRIPTIONS.md)
-- [Business model](../BUSINESS-MODEL.md)
+- [Business model](../archive/design/BUSINESS-MODEL.md)
 - [AI engineering evidence](../AI-ENGINEERING.md)
 - [Historical monthly-only implementation](monthly-pro.tdd.md)

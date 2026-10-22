@@ -1,15 +1,17 @@
 # Test the app against remote AI
 
-The native pilot now uses the [free synthetic demo](FREE-REMOTE-DEMO.md). This
-document retains the earlier paid Functions/Modal backend setup; live camera
-verification is not enabled by the current native configuration.
+The normal native camera flow uses [on-device recognition](MODE-CHALLENGES.md).
+This guide retains the separate paid Functions/Modal evaluation setup. The
+[synthetic demo](FREE-REMOTE-DEMO.md) is another development reference, not the
+normal camera path.
 
-Run the native app against Firebase staging and a Qwen GPU service that continues
-working when the developer Mac is off. Keep the pilot's total target budget at
-$20/month; Kubernetes and a separate observability stack are deferred.
+Evaluate Firebase staging and a Qwen GPU service separately from local alarm
+use. The original $20/month budget is a planning target, not a measured bill or
+a current provider price.
 
-**Status:** Source implemented and locally verified. Firebase project
-`himorning-staging-0109` created; Functions and inference are not deployed or GPU-tested.
+**Status:** Backend source and local checks exist. Account, deployment, retention
+and cost observations below are dated 15 October 2026; this review did not verify
+live service state or GPU compatibility. Do not treat them as current availability.
 **Audience:** Developers setting up a small, consented pilot.
 
 ## At a glance
@@ -20,7 +22,7 @@ $20/month; Kubernetes and a separate observability stack are deferred.
 | Inference | Modal, one L4, Qwen3.5-9B Q4_K_S plus matching vision projector |
 | Placement | `ap-southeast` compute; gateway routes through `ap-south` |
 | Idle | No minimum containers, maximum one GPU container, 60-second idle window |
-| Limits | One submission/session, 25 JPEGs, 180-second job deadline, 10-minute session |
+| Limits | One submission/session; up to 250 JPEGs, 25 per sequential inference batch; 180-second shared job deadline, 10-minute session |
 | Client polling | 2, 4, 8, then 10 seconds; no image resubmission |
 | Budget | Modal workspace usage budget and spend limit: $15; Firebase target: $5 |
 

@@ -1,5 +1,9 @@
 # Monthly Pro: TDD evidence
 
+> **Dated evidence.** Commands, approvals, test totals and local paths below
+> describe the original run. They are not current setup instructions or release
+> status. See [current validation](../VALIDATION.md) for newer results and known gaps.
+
 Keep the path from the owner's $2–3 monthly budget to tested access rules visible.
 
 **Status:** GREEN for the pilot scope. [Source CI](https://github.com/thanhdanh/HiMorning/actions/runs/38409856341)
@@ -9,7 +13,7 @@ passed at `7cede1f8e942e650d1ccfc83ab6292c0f68b09a6`.
 ## Source and journeys
 
 The owner approved proceeding with an inexpensive subscription. The working US
-price is $2.99/month. [Business model](../BUSINESS-MODEL.md) and
+price is $2.99/month. [Business model](../archive/design/BUSINESS-MODEL.md) and
 [subscription scope](../SUBSCRIPTIONS.md) define this bounded first version:
 
 1. Use alarms and Stop without a purchase or subscription check.

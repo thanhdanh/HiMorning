@@ -1,5 +1,9 @@
 # Alarm catalog TDD evidence
 
+> **Dated evidence.** Commands, approvals, test totals and local paths below
+> describe the original run. They are not current setup instructions or release
+> status. See [current validation](../VALIDATION.md) for newer results and known gaps.
+
 Give the alarm picker fifteen stable choices with individual offline previews.
 
 **Status:** Core verification passed; native integration and device checks are
@@ -7,7 +11,7 @@ reported by the parent implementation run. **Audience:** iOS reviewers.
 
 ## Source and journeys
 
-The approved [audio and speech plan](../AUDIO-AND-SPEECH-PLAN.md) supplies the scope.
+The approved [audio and speech plan](../archive/design/AUDIO-AND-SPEECH-PLAN.md) supplies the scope.
 A person selects and saves any catalog sound, can preview another row without
 changing that selection, and retains existing saved system/sunrise/softChime IDs.
 Another selection, leaving the picker, or inactive/background state stops previews.

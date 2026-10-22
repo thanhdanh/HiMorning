@@ -1,6 +1,9 @@
 # Reliable Camera Challenges Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Historical document.** This is a superseded proposal or implementation
+> checkpoint, not current product behavior or instructions to execute. See the
+> [current documentation](../../../README.md) and [challenge guide](../../../MODE-CHALLENGES.md).
+> Original observations, limits and approvals below apply only to their dated scope.
 
 **Goal:** Wave hello, neck turn, push-up, guided rhythm and jumping jacks count correctly from the iPhone front camera. Full-body challenges must also be usable from about 2 m away.
 

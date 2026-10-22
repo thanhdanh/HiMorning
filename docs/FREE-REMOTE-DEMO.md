@@ -1,12 +1,12 @@
 # Free remote AI demo
 
-Test a real cloud request from the iPhone without running a Mac server, renting a
-GPU or enabling Firebase billing. This build uses generated color images, not
-camera evidence, and never records a verified movement.
+This reference exercises cloud connectivity with exact generated-color fixtures.
+It never accepts arbitrary camera images or records verified movement. The
+normal iPhone camera challenge does not use this server.
 
-**Status:** Staging AI enabled on 15 October 2026. Real Firebase Auth, App Check
-and a five-image Gemini request passed; the conservative verdict was `uncertain`
-with zero verified repetitions. Physical iPhone acceptance remains pending.
+**Status:** Source retained as a synthetic connectivity reference. The deployment
+and live-request observations below are from 15 October 2026 and have not been
+reverified by this review; current service availability and account tier are unknown.
 **Audience:** Pilot developers.
 
 The product Push-ups flow now uses [on-device camera recognition](PUSH-UP-CAMERA.md).

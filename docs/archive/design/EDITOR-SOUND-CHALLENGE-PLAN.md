@@ -1,5 +1,10 @@
 # Alarm choices and celebration refinement
 
+> **Historical document.** This is a superseded proposal or implementation
+> checkpoint, not current product behavior or instructions to execute. See the
+> [current documentation](../../README.md) and [challenge guide](../../MODE-CHALLENGES.md).
+> Original observations, limits and approvals below apply only to their dated scope.
+
 Make sound and challenge choices immediately accessible, reliably save the chosen
 sound, and make successful challenges feel more energetic.
 

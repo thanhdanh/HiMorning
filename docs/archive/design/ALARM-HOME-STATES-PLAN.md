@@ -1,5 +1,10 @@
 # Alarm completion and Home states
 
+> **Historical document.** This is a superseded proposal or implementation
+> checkpoint, not current product behavior or instructions to execute. See the
+> [current documentation](../../README.md) and [challenge guide](../../MODE-CHALLENGES.md).
+> Original observations, limits and approvals below apply only to their dated scope.
+
 **Status:** Implemented after Gate 1 approval; commit and PR authorized by the user.
 
 The refined visual contract and current verification live in

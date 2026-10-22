@@ -1,5 +1,9 @@
 # Challenge completion feedback
 
+> **Dated evidence.** Commands, approvals, test totals and local paths below
+> describe the original run. They are not current setup instructions or release
+> status. See [current validation](../VALIDATION.md) for newer results and known gaps.
+
 Record completion feedback and challenge guidance, including manual-confirmation
 timing and Read Aloud status.
 

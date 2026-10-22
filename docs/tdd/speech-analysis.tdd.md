@@ -1,5 +1,9 @@
 # On-device speech TDD evidence
 
+> **Dated evidence.** Commands, approvals, test totals and local paths below
+> describe the original run. They are not current setup instructions or release
+> status. See [current validation](../VALIDATION.md) for newer results and known gaps.
+
 Keep segmented speech accurate and cancel microphone startup safely while moving
 the read-aloud challenge to Apple's current on-device analyzer.
 
@@ -98,7 +102,7 @@ hardware conditions. Total adapter/feature coverage remains unmeasured here.
 
 ## Read next
 
-- [Approved audio and speech plan](../AUDIO-AND-SPEECH-PLAN.md)
+- [Approved audio and speech plan](../archive/design/AUDIO-AND-SPEECH-PLAN.md)
 - [SpeechAnalyzer](https://developer.apple.com/documentation/speech/speechanalyzer)
 - [SpeechTranscriber](https://developer.apple.com/documentation/speech/speechtranscriber)
 - [DictationTranscriber](https://developer.apple.com/documentation/speech/dictationtranscriber)

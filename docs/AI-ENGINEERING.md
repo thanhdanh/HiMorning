@@ -4,8 +4,10 @@ HiMorning is a practical case study in using an AI agent to build, test and expl
 a mobile product. The useful evidence is the chain from a user need to a decision,
 a test and a reviewable change—not the number of tools used.
 
-**Status:** Pilot source and [PR #1](https://github.com/thanhdanh/HiMorning/pull/1).
-No production deployment, paid inference benchmark or release certification.
+**Status:** Historical case study of earlier pilot work. Original examples,
+PRs, model names and metrics describe their dated checkpoints; they are not a
+current feature list, provider selection or release certification. Start with
+[current documentation](README.md) and [validation](VALIDATION.md).
 
 ## The problem and the human decisions
 
@@ -22,7 +24,7 @@ hand-written, or claim every line received human review unless that review happe
 
 | Stage | How AI helped | Reviewable artifact |
 |---|---|---|
-| Plan | Turn a broad idea into user choices, constraints and milestones | [Plan](IMPLEMENTATION-PLAN.md), [feedback proposal](POSE-FEEDBACK-PLAN.md) |
+| Plan | Turn a broad idea into user choices, constraints and milestones | [Plan](IMPLEMENTATION-PLAN.md), [feedback proposal](archive/design/POSE-FEEDBACK-PLAN.md) |
 | Design | Explore a calm yellow UI and simple morning flow | [UI guide](UI-DESIGN.md), `design/` study |
 | Architecture | Separate local alarms from optional cloud checking | [Architecture](ARCHITECTURE.md), [backend](FIREBASE.md) |
 | Code | Implement behavior around failing contracts and preserved checkpoints | [TDD evidence](tdd/cost-optimized-pilot.tdd.md), Git history |
@@ -122,7 +124,7 @@ a visual acceptance check after text-only tests missed a product requirement.
 ## Revisit the model choice with evidence
 
 The user later requested a cheaper open model and more challenge choices. The
-[updated proposal](AI-AND-CHALLENGES-PLAN.md) keeps Firebase policy and the existing
+[updated proposal](archive/design/AI-AND-CHALLENGES-PLAN.md) keeps Firebase policy and the existing
 verifier port and evaluates the user-selected bartowski Qwen3.5-9B GGUF with its
 matching vision projector on an exact host/runtime. Local tasks remain separate
 from the cloud provider. Official Jev documentation rules out a direct image
@@ -249,7 +251,7 @@ For the subscription revision, measure plan, implementation, test and review
 usage only where real request records can be attributed. Preserve mixed turns
 and subagent records separately, reconcile totals, and mark unavailable exact
 tokens or dollar cost as unavailable. The current docs add no invented token
-totals. Product metrics in the [business model](BUSINESS-MODEL.md) are a proposed
+totals. Product metrics in the [business model](archive/design/BUSINESS-MODEL.md) are a proposed
 measurement plan, not collected analytics or proof of wakefulness.
 
 ## A short interview story

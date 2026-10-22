@@ -1,5 +1,10 @@
 # A business model that supports better mornings
 
+> **Historical document.** This is a superseded proposal or implementation
+> checkpoint, not current product behavior or instructions to execute. See the
+> [current documentation](../../README.md) and [challenge guide](../../MODE-CHALLENGES.md).
+> Original observations, limits and approvals below apply only to their dated scope.
+
 Give people a useful free start, a clear reason to keep returning and an optional
 paid upgrade. Grow through friends without turning the alarm into a sales screen.
 
@@ -32,7 +37,7 @@ only when the person voluntarily opens the purchase sheet.
 Saved alarms, modes and sounds survive expiry. A saved Focused challenge runs a
 clearly explained Balanced fallback during Free access; saved preferences return
 when full access resumes. Progress is gated after expiry, while clearing retained
-history remains free. See [subscription setup](SUBSCRIPTIONS.md) for exact scope.
+history remains free. See [subscription setup](../../SUBSCRIPTIONS.md) for exact scope.
 Activity collections, paid cloud AI and rewarded referral attribution remain
 planned. Only advertise features that work in the submitted build.
 
@@ -176,6 +181,6 @@ App Store configuration must be recorded separately from this product decision.
 
 ## Read next
 
-- [Release readiness and subscription engineering](RELEASE-READINESS.md)
-- [Product direction and activity experiments](PRODUCT-BRIEF.md)
+- [Release readiness and subscription engineering](../../RELEASE-READINESS.md)
+- [Product direction and activity experiments](../../PRODUCT-BRIEF.md)
 - [AI and challenge architecture](AI-AND-CHALLENGES-PLAN.md)

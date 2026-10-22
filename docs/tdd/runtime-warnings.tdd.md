@@ -1,5 +1,9 @@
 # Sound preview and alert runtime warnings
 
+> **Dated evidence.** Commands, approvals, test totals and local paths below
+> describe the original run. They are not current setup instructions or release
+> status. See [current validation](../VALIDATION.md) for newer results and known gaps.
+
 Use runtime stacks to distinguish app defects from simulator diagnostics, then
 verify the affected UI journeys without hiding console output.
 

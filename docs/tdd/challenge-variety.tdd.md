@@ -1,5 +1,9 @@
 # Challenge variety — TDD evidence
 
+> **Dated evidence.** Commands, approvals, test totals and local paths below
+> describe the original run. They are not current setup instructions or release
+> status. See [current validation](../VALIDATION.md) for newer results and known gaps.
+
 Date: 2026-10-15
 
 ## Purpose and status

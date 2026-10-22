@@ -1,5 +1,9 @@
 # Audio and speech integration evidence
 
+> **Dated evidence.** Commands, approvals, test totals and local paths below
+> describe the original run. They are not current setup instructions or release
+> status. See [current validation](../VALIDATION.md) for newer results and known gaps.
+
 **Status:** Focused core and native unit tests passed. Gate 2 commit approval is
 pending. UI runner verification is blocked by an iOS 27 simulator bootstrap
 termination, before any UI assertion runs.

@@ -1,8 +1,13 @@
 # Reliable camera challenges
 
+> **Historical document.** This is a superseded proposal or implementation
+> checkpoint, not current product behavior or instructions to execute. See the
+> [current documentation](../../../README.md) and [challenge guide](../../../MODE-CHALLENGES.md).
+> Original observations, limits and approvals below apply only to their dated scope.
+
 Count wave hello, neck turn, push-up, guided rhythm and jumping jacks reliably on the iPhone front camera, and make full-body challenges usable from a distance.
 
-**Status:** planned (design approved 2026-10-17). **Audience:** iOS developers working on `MovementChallengeCapture`, `CameraCapture`, `GuidedRhythmCapture` and HiMorningCore `Movement`, `PushUps`, `SignalSmoothing`.
+**Original status:** Planned when approved on 17 October 2026. **Audience:** iOS developers working on `MovementChallengeCapture`, `CameraCapture`, `GuidedRhythmCapture` and HiMorningCore `Movement`, `PushUps`, `SignalSmoothing`.
 
 ## At a glance
 

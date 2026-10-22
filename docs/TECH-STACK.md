@@ -1,74 +1,46 @@
 # Tech stack
 
-HiMorning uses native iOS code for local alarms and a Workers/Gemini free demo
-with Firebase Spark identity. The earlier Functions/Modal backend remains separate.
+Keep the local iPhone runtime separate from backend experiments and the future
+Android port.
 
-**Status:** Source and local tests implemented. Remote staging, pinned GPU runtime
-compatibility and real exercise accuracy still require validation. **Audience:** Developers.
+**Status:** Source inventory reviewed on 22 October 2026. **Audience:** Developers.
 
 ## At a glance
 
-| Part | Choice |
+| Part | Current implementation |
 |---|---|
-| Native UI / alarms | SwiftUI, AlarmKit, App Intents, iOS 26+ |
-| Local state | Swift domain and atomic JSON journal |
-| Capture | AVFoundation, Vision, Core Image; bounded foreground JPEGs |
-| Languages | Native English/Vietnamese strings and permission resources |
-| Cloud identity | Firebase anonymous Auth and App Check |
-| Current backend / AI | TypeScript Workers Free, SQLite Durable Object, Gemini free API; generated fixtures only |
-| Retained paid backend / AI | Node 22 Functions v2, Firestore, Qwen3.5-9B on Modal L4 |
-| Validation | Zod/sharp in Firebase; bounded Python/Pillow gateway checks |
-| Tests | Vitest, Firestore Emulator, Swift portable/XCTest, native XCUITest, Python unittest |
-| Build | pnpm 10.34.6, XcodeGen, pinned Python requirements and GPU artifact hashes |
+| Native UI | SwiftUI, iOS 26+; native glass controls and adaptive EN/VI copy |
+| Alarms | AlarmKit and App Intents; atomic saved alarms and persisted backup-ring IDs |
+| Local recognition | AVFoundation + Vision for movement; Apple on-device speech APIs for Read Aloud |
+| Domain and persistence | Swift package; atomic JSON for alarms/history/content cache, Keychain preview dates |
+| Purchases | StoreKit 2, monthly/annual products and local StoreKit test configuration |
+| Optional content service | TypeScript Worker serving versioned JSON with ETag caching |
+| Synthetic cloud demo | Workers, SQLite Durable Object, Firebase Auth/App Check and Gemini; generated fixtures only |
+| Retained paid verifier | Node 22 Functions v2, Firestore, Python Qwen/llama.cpp service on Modal |
+| Tests | Vitest, Firestore Emulator, SwiftPM/XCTest, portable Swift, native XCUITest and Python unittest |
+| Tooling | pnpm 10.34.6, XcodeGen, pinned dependency/artifact files |
+| Android | Reserved directory and contract plan only |
 
 ## How it works
 
-The current native demo sends generated fixtures through a Worker URL using the
-Firebase callable client SDK. Workers verifies Auth/App Check, stores metadata in
-SQLite and calls Gemini once. No camera evidence or verified outcome is accepted.
-See the [free-demo guide](FREE-REMOTE-DEMO.md). The remaining sections describe the
-separate paid path and its evaluation boundaries.
+The normal alarm and challenge flow uses the iPhone's scheduler, camera and
+recognition APIs. No remote verdict is needed for local completion. The Worker
+can refresh content; failure leaves bundled/cached content available.
 
-The app submits evidence once. Firebase reserves quota and dispatches a queued
-GPU job; the app receives `pending` and polls the result without uploading again.
-Firebase remains the authority on observed cycles. Local alarm delivery, backup rings,
-"I'm awake", reading, rhythm and speech do not depend on inference.
+The separate synthetic demo validates connectivity with exact generated images.
+The retained Functions/Modal verifier has its own consent, quota, bounded evidence
+and cancellation policy. [Shared contracts](../shared/contracts/README.md) own
+its numeric limits. Neither backend is evidence of exercise accuracy.
 
-## Key choices
+## Source and checks
 
-| Limit | Pilot value |
-|---|---|
-| Requested reps | 1–5 |
-| Evidence | Five phases per cycle, at most 25 ordered JPEGs |
-| Image size | 512px long edge, 50KB each, 1.25MB total |
-| Session / job | 10 minutes / 180 seconds |
-| Attempts | One per session; no application dispatch retry or paid fallback |
-| Daily AI quota | Three per user, ten globally, UTC days; configurable bounds |
-| Model output | 800 tokens, strict JSON schema, thinking disabled |
-| Cloud default | Off; zero warm containers/Functions instances |
-
-New history uses `ai_verified`; legacy `openai_verified` still decodes. Modal
-Functions can retain inputs/outputs for up to seven days. No images go into our
-Firestore, Storage or application logs. Runtime/model/projector pins are recorded
-in `backend/inference/pins.json`, pending a real GPU compatibility smoke check.
-
-## Try it
-
-Use the [remote pilot guide](REMOTE-PILOT.md) for Python setup, budgets, secrets,
-explicit staging deployment, device configuration and rollback.
-
-## What we checked
-
-Local tests cover auth, contracts, ordered evidence, async races, quota, duplicate
-suppression, cancellation, bounded polling and historical outcome decoding. These
-checks do not establish movement accuracy or cloud availability.
-
-## Limits and next steps
-
-The $20 monthly target requires scale-to-zero GPU operation. Modal has a workspace
-spend limit; Google budget alerts do not impose a hard Firebase spend cap. Measure
-startup, 5/15/25-frame latency and actual invoices before expanding the pilot.
+Use [`project.yml`](../apps/ios/project.yml), [`package.json`](../package.json),
+the [workflow](../.github/workflows/ci.yml), and
+[`pins.json`](../backend/inference/pins.json) for actual dependencies/configuration.
+[Running](RUNNING.md) owns runnable setup commands; [Validation](VALIDATION.md)
+owns dated results and limitations. No library upgrade is proposed by this audit.
 
 ## Read next
 
-[Remote pilot](REMOTE-PILOT.md) · [Firebase](FIREBASE.md) · [Architecture](ARCHITECTURE.md)
+[Architecture](ARCHITECTURE.md) · [Android boundaries](ANDROID.md) ·
+[Backend references](README.md#backend-references)

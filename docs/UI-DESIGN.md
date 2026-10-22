@@ -1,184 +1,102 @@
-# UI and experience
+# UI and interaction rules
 
-HiMorning should be easy to understand before bed and easy to use half-awake. The
-sunny yellow theme suggests a fresh start; the interaction leaves room for different
-habits, energy levels and living situations.
+Keep time and challenge primary, with a warm yellow identity and familiar iPhone
+alarm interactions. Secondary settings should be easy to reach without competing
+for attention.
 
-**Status:** Native pilot screens exist in English and Vietnamese. The earlier
-Vietnamese web concept includes planned screens and simulated behavior.
+**Status:** Current native behavior reviewed against `6a1e1e7` on 22 October 2026.
+**Audience:** Design, product and iOS contributors.
 
-## Native screens
+## Home cards
 
-The original gallery contains **20 unedited XCUITest images: 10 screens/states in
-two languages**. Four newer subscription captures below show the preview and Free
-access. These are native captures, not a count of separate product screens.
+- Time anchors the left side; challenge and level sit on the right. Enabled cards
+  retain the HiMorning yellow background. Subtle concentric corner light indicates
+  level; color is reinforced by a text label. No-challenge cards stay simpler.
+- Show recurrence with a repeat symbol and a readable single weekday such as
+  “Every Wednesday” / “Thứ 4 hằng tuần”. Multiple days stay compact. One-time
+  alarms use a calendar/clock symbol and Today/Tomorrow/Once wording.
+- Tap anywhere on a yellow or disabled gray card to edit. Keep the toggle and
+  trial action distinct. Swipe left for Delete and confirm it; there is no Edit
+  button or three-dot delete menu.
+- Disabled cards remain compact and muted. Large text may rearrange/wrap content;
+  time, state and controls must remain readable and reachable.
 
-### Before bed
+## Alarm editor
 
-| Screen / state | English | Vietnamese |
-|---|---|---|
-| Home, before adding an alarm | <img src="images/ui/home-en.png" width="230" alt="Home, before adding an alarm in English"> | <img src="images/ui/home-vi.png" width="230" alt="Home, before adding an alarm in Vietnamese"> |
-| New alarm · Gentle default | <img src="images/ui/alarm-editor-en.png" width="230" alt="New alarm · Gentle default in English"> | <img src="images/ui/alarm-editor-vi.png" width="230" alt="New alarm · Gentle default in Vietnamese"> |
-| Balanced · three push-ups | <img src="images/ui/balanced-en.png" width="230" alt="Balanced · three push-ups in English"> | <img src="images/ui/balanced-vi.png" width="230" alt="Balanced · three push-ups in Vietnamese"> |
-| Focused · five push-ups | <img src="images/ui/focused-en.png" width="230" alt="Focused · five push-ups in English"> | <img src="images/ui/focused-vi.png" width="230" alt="Focused · five push-ups in Vietnamese"> |
-| Sound selection and preview volume | <img src="images/ui/sounds-en.png" width="230" alt="Sound selection and preview volume in English"> | <img src="images/ui/sounds-vi.png" width="230" alt="Sound selection and preview volume in Vietnamese"> |
+The time picker begins at now. No weekday is preselected: the default is a
+one-time alarm, today when still possible or tomorrow if the clock time has
+passed. Seven compact weekday circles share one row. Repeat, sound and the
+optional user label sit below the primary time/challenge choices.
 
-### Try the morning flow
+Use Gentle / Balanced / Challenging, translated as Nhẹ nhàng / Vừa sức /
+Năng động. These are display labels; persisted `focused` remains unchanged.
+The [catalog guide](MODE-CHALLENGES.md) owns compatible choices and targets.
 
-| Screen / state | English | Vietnamese |
-|---|---|---|
-| Rehearsal ready | <img src="images/ui/challenge-ready-en.png" width="230" alt="Rehearsal ready in English"> | <img src="images/ui/challenge-ready-vi.png" width="230" alt="Rehearsal ready in Vietnamese"> |
-| Camera/cloud consent | <img src="images/ui/consent-en.png" width="230" alt="Camera/cloud consent in English"> | <img src="images/ui/consent-vi.png" width="230" alt="Camera/cloud consent in Vietnamese"> |
-| AI unavailable · local choices remain | <img src="images/ui/ai-unavailable-en.png" width="230" alt="AI unavailable · local choices remain in English"> | <img src="images/ui/ai-unavailable-vi.png" width="230" alt="AI unavailable · local choices remain in Vietnamese"> |
-| Self-confirmed outcome | <img src="images/ui/self-confirmed-en.png" width="230" alt="Self-confirmed outcome in English"> | <img src="images/ui/self-confirmed-vi.png" width="230" alt="Self-confirmed outcome in Vietnamese"> |
-| Trial ended | <img src="images/ui/stopped-en.png" width="230" alt="Trial ended in English"> | <img src="images/ui/stopped-vi.png" width="230" alt="Trial ended in Vietnamese"> |
+Challenge tiles keep their colored static SF Symbols in the editor. A single
+tap selects; double-tapping prompts before practice. The accessible trial action
+is retained. Do not add back a separate large “Try this challenge” button.
+Save awaits scheduling; failure keeps the draft and offers the existing recovery.
 
-Open an image for full resolution. [Capture details](images/ui/README.md) record
-the run, commit and simulator. The trial uses 06:30 as a sample time without
-scheduling an alarm. Unavailable AI and self-confirmation are distinct outcomes;
-these images do not show a paid AI verification or a live camera feed.
+## Sound selection
 
-### Preview and Free access
+The catalog is system sound plus 14 bundled choices. Previewing is separate from
+selecting and leaves the picker open. Selecting an available row, including the
+already-selected sound, updates the draft and closes the picker; it does not
+save the alarm. Locked choices open Pro. Only one preview plays, and leaving or
+backgrounding stops it. Preview volume is not AlarmKit volume.
 
-These four captures come from passing bilingual UI tests for the revised
-subscription model. The Home fixture forces an unstarted preview while retaining
-an existing disabled alarm. The expired fixture hides history. They demonstrate UI states,
-not measured user behavior or a production purchase.
+## Challenge presentation
 
-| Screen / state | English | Vietnamese |
-|---|---|---|
-| Home before preview starts | <img src="images/ui/preview-home-en.png" width="230" alt="English home before the preview starts"> | <img src="images/ui/preview-home-vi.png" width="230" alt="Vietnamese home before the preview starts"> |
-| Progress after preview expiry | <img src="images/ui/expired-progress-en.png" width="230" alt="English Free progress after preview expiry"> | <img src="images/ui/expired-progress-vi.png" width="230" alt="Vietnamese Free progress after preview expiry"> |
+Animated movement illustrations guide framing on cards and the challenge screen;
+editor tiles retain static colored icons. Illustrations use balanced body
+proportions and a restrained circular camera boundary.
 
-See [subscription behavior and validation](SUBSCRIPTIONS.md) for access rules,
-saved-alarm fallbacks and the remaining sandbox/device checks.
+The active camera shows real video, including the person and room, with observed
+arm/body lines and a curved face guide for neck turns. It does not cut out the
+person or replace them with a silhouette. Show unclear framing as insufficient
+visibility, not a failed exercise. Keep spoken cues short and infrequent; see
+[coaching behavior](MODE-CHALLENGES.md#trying-a-challenge-and-hearing-guidance).
 
-## Following the original design
+A real completion returns Home and celebrates once. Practice keeps its retry/
+return behavior. Completion copy must fit any time of day; do not add a morning
+wish. “I'm awake” appears after its five-minute delay. System Stop can silence a
+ring even before then; the [backup plan](ARCHITECTURE.md#follow-one-alarm) remains.
 
-The original [web study](../design/index.html) remains the visual reference. The
-first native implementation used gray system groups and default yellow controls;
-its four screenshots only covered Home and the top of the editor. That was an
-incomplete implementation of the visual direction, not a new approved design.
+## Brand tokens
 
-| Original intent | Native implementation |
-|---|---|
-| Warm cream, sunshine yellow and brown text | Shared `MorningTheme.swift` palette across Home, editor, sounds and challenge |
-| Compact header and calm type | Small sunrise brand, language menu, restrained headings and large alarm time |
-| Rounded yellow actions and warm surfaces | 16pt action corners, 24pt alarm cards, adaptive light/dark surface colors |
-| Days and modes easy to scan | Monday-first day buttons and three visible mode choices |
-| A dedicated sound screen | Three actual native sounds, selection, preview and preview-volume control |
-| Friendly sun and a clear way out | Sun illustration, consent, a delayed "I'm awake" (5 min after the first ring) and an end-trial action. No in-app Stop alarm |
-
-The native time picker keeps the platform wheel. System confirmation dialogs keep
-iOS styling. Alarm labels, editable targets, QR, native snooze and the
-prototype's six-sound collection are still planned; their simulated controls have
-not been added to the native navigation.
-
-## Design at a glance
-
-- One clear next action on each screen, with "I'm awake" visible once it unlocks.
-- Gentle defaults; stronger modes are a choice, not a personality label.
-- Short, calm copy in both languages. See the [language guide](LOCALIZATION.md).
-- Dark text on yellow buttons, clear focus and large touch areas.
-- No ads, paywall or forced exercise in the morning wake path.
-
-## Different mornings, one simple app
-
-Leave room for work or school days, weekends, shift schedules and shared rooms.
-Do not assume everyone has space, privacy or the ability to exercise in the morning.
-A regular alarm must stay useful. Keep weekday choices editable, sound preview easy
-to reach, and challenge consent separate from setting a time. Review the wording
-with Vietnamese and English speakers rather than treating a literal translation as
-proof of cultural fit.
-
-## Look and feel
+[`MorningTheme.swift`](../apps/ios/HiMorning/MorningTheme.swift) owns app colors.
 
 | Token | Light | Dark |
 |---|---|---|
 | Canvas | `#FFFCF6` | `#201F1A` |
 | Surface | `#FFFFFF` | `#2C2A24` |
-| Primary | `#F5C842` | `#F5C842` |
-| Text on primary | `#29251D` | `#29251D` |
-| Text | `#29251D` | `#F8F4EA` |
+| Primary action | `#F5C842` | `#F5C842` |
+| Alarm card | `#F9E07D` | `#F9E07D` |
+| Text on yellow | `#29251D` | `#29251D` |
+| Main text | `#29251D` | `#F8F4EA` |
 | Muted text | `#756F63` | `#C2BBAE` |
 | Border | `#E9E5DC` | `#49463D` |
-| Success text | `#44634A` | `#BDD6BF` |
 
-`apps/ios/HiMorning/MorningTheme.swift` applies these values to native content.
-The UI tests sample the rendered cream canvas and yellow primary action in both
-languages. This protects those colors; it is not a complete pixel-snapshot or
-accessibility audit. System fonts, flexible text, 44pt touch areas and dark text on
-yellow keep the visual direction usable. The sun follows the original concept.
+Use platform fonts, native time wheels and confirmation dialogs. Apply glass to
+controls deliberately; respect Reduce Motion and Reduce Transparency. Review
+both languages, narrow widths, Dynamic Type and VoiceOver. Automated color and
+layout checks do not constitute a complete accessibility audit.
 
-## Follow the main flow
+## Native screens
 
-| Screen | What the person needs | Current native scope |
-|---|---|---|
-| Home | See alarms and add one | Add, on/off, delete, try a challenge, language menu |
-| New alarm | Set time without a long setup | Time, weekdays, mode and sound; Gentle default |
-| Sound | Hear a sound before choosing it | System sound + two chime sketches; preview volume |
-| Challenge | Understand consent and progress | Explicit consent, camera, provisional count, checking state |
-| Finish | Know what happened | AI checked, self-confirmed or stopped; clear return action |
-| History | See progress without shame | Thirty-day local history and custom weekly goal during preview/Pro; clearing remains free |
+The [committed screenshot gallery](images/ui/README.md) is a dated record of an
+older UI and cloud flow. It is retained for provenance, not as a current visual
+specification. The [web study](../design/index.html) is also a simulation. Use the
+current app and the interaction rules above when implementing changes.
 
-The web study also includes simulated QR, snooze, editing and weekly progress.
-Its sample data is separate from the native local journal. Review controls outside
-the phone simulate events; they do not access a real camera or cloud model.
+## What we checked
 
-## Modes and choices
-
-Gentle requires no exercise. Balanced suggests three push-ups, Focused five. The
-current native pilot does not offer target editing or QR. Modes never change the
-sound by themselves. A new choice should explain what changes before saving it.
-
-The [product brief](PRODUCT-BRIEF.md) proposes a short rhythm activity and one
-practical English thought, with quiet/seated alternatives. Use one compact task
-selector before bed, preview the task, then show familiar progress and one clear
-recovery action in the morning. Keep the cream/yellow theme. QR remains a practical
-fallback; optional speech needs separate setup and checks. The
-[challenge architecture proposal](AI-AND-CHALLENGES-PLAN.md) describes those limits.
-These controls are planned and are not shown as working native screens here.
-
-The tested core has snooze budgets of two, one and zero five-minute periods.
-Native snooze/countdown still needs implementation and device testing. Do not show
-a working-looking snooze control until it actually schedules the intended behavior.
-
-## Camera and feedback
-
-Ask for camera/cloud consent only when a person chooses the challenge. Show one
-short cue at a time. Poor visibility means insufficient evidence, not a wrong pose.
-Local counts remain provisional until the backend checks the evidence.
-
-Keep "I'm awake" available after its 5 minute delay during capture, checking and errors. Do not
-punish an unclear rep by adding more reps or extending the alarm. Deeper form advice
-is optional future work with separate validation; see the [feedback plan](POSE-FEEDBACK-PLAN.md).
-
-## Sound should be a choice
-
-The design study explores six sound sketches in soft, bright and clear families.
-The native pilot currently ships two original five-second chimes and system sound.
-Only one preview plays at a time. Leaving the editor stops it.
-
-Preview volume is not alarm volume. Before release, compare tone, loudness, peaks,
-looping, device speakers, headphones and the effect on people sharing a room.
-Volume ramps and ducking remain device/API questions, not promised controls.
-
-## Review both languages
-
-Check English and Vietnamese at small phone widths, large Dynamic Type and with
-VoiceOver. Look for clipped buttons, unclear weekdays, focus problems and long
-consent text. Use labels and symbols together; color alone should not carry meaning.
-Respect reduced motion. Prefer explicit outcomes over streaks that erase progress.
-
-The tests cover both editor languages, all three modes, sound selection, language
-persistence, rendered brand colors and trial recovery/exit. Device and native
-speaker review are still needed for sound, wording and layout. Large text, dark
-mode and VoiceOver have not received a dedicated runtime review.
+Current behavior is covered by the editor/card/trial/sound UI tests and native
+camera/voice tests. [Validation](VALIDATION.md) separates dated observations from
+remaining device and accessibility work. Do not copy an old screenshot's labels,
+buttons, default time or cloud consent back into the current app.
 
 ## Read next
 
-[Language guide](LOCALIZATION.md) · [Architecture](ARCHITECTURE.md) · [Setup](RUNNING.md)
-
-Research references: [Erly App Store](https://apps.apple.com/us/app/erly-wake-up-early/id6751428380),
-[Erly Google Play](https://play.google.com/store/apps/details?id=com.erly.myapp&hl=en),
-[Apple accessibility](https://developer.apple.com/design/human-interface-guidelines/accessibility).
+[Localization](LOCALIZATION.md) · [Challenges](MODE-CHALLENGES.md) ·
+[Resources](../apps/ios/Resources/README.md) · [Release readiness](RELEASE-READINESS.md)

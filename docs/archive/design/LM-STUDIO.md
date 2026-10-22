@@ -1,7 +1,12 @@
 # Connect the local Qwen server
 
+> **Historical document.** This is a superseded proposal or implementation
+> checkpoint, not current product behavior or instructions to execute. See the
+> [current documentation](../../README.md) and [challenge guide](../../MODE-CHALLENGES.md).
+> Original observations, limits and approvals below apply only to their dated scope.
+
 > Current integration: the async Qwen/Modal staging implementation supersedes the
-> proposed LM Studio deployment route below. See [remote pilot](REMOTE-PILOT.md).
+> proposed LM Studio deployment route below. See [remote pilot](../../REMOTE-PILOT.md).
 > The dated local compatibility observations remain historical evidence.
 
 Use the working LM Studio endpoint as the first step toward replacing the movement
@@ -95,7 +100,7 @@ than assuming parameter names work across runtimes.
 ## What we checked
 
 Seven local requests used only synthetic 512×256 JPEG shapes. The
-[sanitized results](evaluations/lmstudio-smoke-2026-10-13.json) preserve failures,
+[sanitized results](../../evaluations/lmstudio-smoke-2026-10-13.json) preserve failures,
 usage, request hashes and individual timings without image data or reasoning text.
 
 | Case | Observed result | Seconds |
@@ -145,5 +150,5 @@ server does not add speech recognition or precise beat scoring to the app.
 
 ## Read next
 
-[Provider migration scope](AI-AND-CHALLENGES-PLAN.md) · [Run the app](RUNNING.md) ·
-[Current stack](TECH-STACK.md) · [Product direction](PRODUCT-BRIEF.md)
+[Provider migration scope](AI-AND-CHALLENGES-PLAN.md) · [Run the app](../../RUNNING.md) ·
+[Current stack](../../TECH-STACK.md) · [Product direction](../../PRODUCT-BRIEF.md)

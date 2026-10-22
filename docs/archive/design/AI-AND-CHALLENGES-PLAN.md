@@ -1,7 +1,12 @@
 # Affordable AI and more morning choices
 
+> **Historical document.** This is a superseded proposal or implementation
+> checkpoint, not current product behavior or instructions to execute. See the
+> [current documentation](../../README.md) and [challenge guide](../../MODE-CHALLENGES.md).
+> Original observations, limits and approvals below apply only to their dated scope.
+
 > Current integration: the async Qwen/Modal staging implementation supersedes the
-> proposed LM Studio deployment route below. See [remote pilot](REMOTE-PILOT.md).
+> proposed LM Studio deployment route below. See [remote pilot](../../REMOTE-PILOT.md).
 > The dated local compatibility observations remain historical evidence.
 
 Reduce the cost of movement checks and give people a useful choice when exercise
@@ -11,8 +16,8 @@ is not right for their morning. Keep the alarm and its exit controls local.
 2026. **Audience:** Product and engineering. The running source still uses the
 OpenAI adapter with cloud verification off by default. The user's LM Studio server
 passed bounded synthetic vision/JSON checks; Qwen is not wired into the app and
-exercise accuracy is unmeasured. See the [current feature list](../README.md#implemented-pilot)
-for implemented local challenges. The [product brief](PRODUCT-BRIEF.md) proposes
+exercise accuracy is unmeasured. See the [current feature list](../../../README.md#implemented-pilot)
+for implemented local challenges. The [product brief](../../PRODUCT-BRIEF.md) proposes
 further rhythm and practical English experiments.
 
 ## At a glance
@@ -59,7 +64,7 @@ bounds initially; reducing evidence needs an accuracy comparison of its own. The
 five-phase cycle rules are specific to push-ups, not a general dance contract. An
 outage or unclear answer must offer another way to finish, without an automatic
 paid fallback. This diagram includes proposed QR and combined speaking/meaning
-flows; see the [current feature list](../README.md#implemented-pilot) for availability.
+flows; see the [current feature list](../../../README.md#implemented-pilot) for availability.
 
 `llmster` can run without the desktop UI, on a local machine or a server.
 [LM Studio's headless guide](https://lmstudio.ai/docs/developer/core/headless)
@@ -104,7 +109,7 @@ or reliable exercise judgment. Keep these proposed paths separate:
 
 Speech must not silently become a cloud upload when on-device recognition is
 unavailable. Dance participation and spoken content are not exercise-safety,
-pronunciation-quality or liveness proofs. See the [product brief](PRODUCT-BRIEF.md)
+pronunciation-quality or liveness proofs. See the [product brief](../../PRODUCT-BRIEF.md)
 for the scope, quiet alternatives and user validation.
 
 If the user's “Jev” means TypeSafe's Jev, it is not a direct camera verifier:
@@ -155,7 +160,7 @@ availability cost. No dollar saving is claimed without measurements.
 ## Challenge choices
 
 This table describes activity scope, including future experiments. The
-[current feature list](../README.md#implemented-pilot) is the source for availability.
+[current feature list](../../../README.md#implemented-pilot) is the source for availability.
 
 | Choice | Check | Suitable context | Scope |
 |---|---|---|---|
@@ -242,5 +247,5 @@ revisited if its exact model card is supplied; it does not block this 9B evaluat
 
 ## Read next
 
-[Product direction](PRODUCT-BRIEF.md) · [Current stack](TECH-STACK.md) · [Architecture](ARCHITECTURE.md) ·
-[Implementation plan](IMPLEMENTATION-PLAN.md) · [Metrics](metrics/README.md)
+[Product direction](../../PRODUCT-BRIEF.md) · [Current stack](../../TECH-STACK.md) · [Architecture](../../ARCHITECTURE.md) ·
+[Implementation plan](../../IMPLEMENTATION-PLAN.md) · [Metrics](../../metrics/README.md)

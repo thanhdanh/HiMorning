@@ -3,9 +3,9 @@
 HiMorning supports English and Vietnamese in the native app. The copy should feel
 clear and kind when someone has just woken up.
 
-**Status:** Both catalogs and the saved language picker are implemented. Native
-build and all three language UI journeys passed in [CI](https://github.com/thanhdanh/HiMorning/actions/runs/38135338781).
-See [TDD evidence](tdd/cost-optimized-pilot.tdd.md) for scope and earlier failures.
+**Status:** EN/VI catalogs and saved language selection are implemented. Reviewed
+22 October 2026; [validation](VALIDATION.md) separates current checks from older
+UI evidence. **Audience:** Copy, design and iOS contributors.
 
 ## Choosing a language
 
@@ -50,7 +50,12 @@ lazy, and claims that AI knows whether someone is truly awake.
 
 English is the language for code, comments, commits and developer docs. Vietnamese
 belongs in translation resources and clearly marked UI/test examples. Keep product
-terms consistent: **alarm**, **challenge**, **Gentle**, **Balanced**, **Focused**.
+terms consistent: **alarm**, **challenge**, **Gentle**, **Balanced**, **Challenging**.
+Vietnamese level labels are **Nhẹ nhàng**, **Vừa sức**, **Năng động**; reserve
+“Tôi đã thức dậy” for the self-confirmation action, not a difficulty label.
+The stored enum case `focused` remains unchanged. Prefer familiar words to terms
+such as “local challenge” in user copy. Completion messages must fit any time of
+day; use a short confirmation without a morning wish.
 
 ## Add or change a string
 
@@ -65,7 +70,7 @@ terms consistent: **alarm**, **challenge**, **Gentle**, **Balanced**, **Focused*
 6. Run the checks, then review both languages in the simulator.
 
 ```sh
-pnpm test tests/localization.test.ts
+pnpm exec vitest run tests/localization.test.ts
 sh scripts/test-swift.sh
 ```
 
@@ -81,7 +86,3 @@ quality, layout fit or correct delivery of an OS alarm.
 Native format references: [Apple strings files](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/MaintaingYourOwnStringsFiles/MaintaingYourOwnStringsFiles.html),
 [language resources](https://developer.apple.com/documentation/xcode/adding-support-for-languages-and-regions),
 [XcodeGen project options](https://github.com/yonaskolb/XcodeGen/blob/master/Docs/ProjectSpec.md).
-
-The expanded [design run](https://github.com/thanhdanh/HiMorning/actions/runs/38293447198)
-passed five UI tests, covering modes, sound choices, rendered brand colors and
-trial recovery in both languages. The [gallery](UI-DESIGN.md) preserves 20 captures.

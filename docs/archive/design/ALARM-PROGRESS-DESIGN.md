@@ -1,5 +1,10 @@
 # Alarm cards and challenge consistency
 
+> **Historical document.** This is a superseded proposal or implementation
+> checkpoint, not current product behavior or instructions to execute. See the
+> [current documentation](../../README.md) and [challenge guide](../../MODE-CHALLENGES.md).
+> Original observations, limits and approvals below apply only to their dated scope.
+
 Make daily alarm scanning calm and precise, and show the challenge modes behind
 recorded consistency. This extends the approved Home completion change.
 

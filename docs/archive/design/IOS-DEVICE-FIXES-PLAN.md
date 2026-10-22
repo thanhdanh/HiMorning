@@ -1,5 +1,10 @@
 # iPhone device fixes
 
+> **Historical document.** This is a superseded proposal or implementation
+> checkpoint, not current product behavior or instructions to execute. See the
+> [current documentation](../../README.md) and [challenge guide](../../MODE-CHALLENGES.md).
+> Original observations, limits and approvals below apply only to their dated scope.
+
 Fix the six reported iPhone problems with small, reviewable changes, prioritizing Read Aloud completion and reliable alarm confirmation.
 
 **Status:** Implemented and reviewed; simulator checks passed with the AlarmKit limitation below. Physical-device acceptance remains pending. **Audience:** iOS developers and reviewers.
@@ -32,7 +37,7 @@ Gate 1 was approved with the revisions above. The implementation and simulator r
 - [x] **Alarm editing and save feedback.** Added prefilled editing, stable identity, awaited save, duplicate-save prevention, failure recovery, and confirmed next-occurrence display. Core and disabled-alarm UI editing passed. Real enabled-alarm rescheduling could not be confirmed because the simulator denies alarm access.
 - [x] **App icon implementation.** Added an opaque 1024px icon and configured `project.yml`. Generated target and bundle checks passed; the icon was visible on the simulator Home Screen. Physical installation is pending.
 - [x] **Original sound replacements.** Replaced Sunrise and Soft Chime with softer piano/bell phrases, preserving IDs. WAV decoding, levels and silent-edge checks passed. Preview controls were exercised; subjective quality and locked-device looping still need listening on an iPhone.
-- [x] **Integrated verification and delegated review.** The isolated PR branch passed 40 SwiftPM core tests, portable checks with 98.53% core line coverage, four localization tests, 38 native tests, ten UI tests and the simulator build. One additional UI test was skipped because AlarmKit access was denied. Delegated code/security review completed; the final follow-up reported no actionable P1/P2 findings. Evidence and usability observations are in [the verification report](tdd/ios-device-fixes.tdd.md).
+- [x] **Integrated verification and delegated review.** The isolated PR branch passed 40 SwiftPM core tests, portable checks with 98.53% core line coverage, four localization tests, 38 native tests, ten UI tests and the simulator build. One additional UI test was skipped because AlarmKit access was denied. Delegated code/security review completed; the final follow-up reported no actionable P1/P2 findings. Evidence and usability observations are in [the verification report](../../tdd/ios-device-fixes.tdd.md).
 
 ### Device acceptance still open
 
@@ -54,10 +59,10 @@ Gate 1 was approved with the revisions above. The implementation and simulator r
 
 Source investigation snapshot: **2026-10-15**. Existing evidence identifies likely causes and affected call paths; it does not prove the physical-device speech or layout failure.
 
-- [`SpeechChallengeCapture.swift`](../apps/ios/HiMorning/SpeechChallengeCapture.swift), [`ChallengeView.swift`](../apps/ios/HiMorning/ChallengeView.swift), and [`SpeechAnalysisTests.swift`](../apps/ios/HiMorningTests/SpeechAnalysisTests.swift) cover capture integration and the existing regression surface.
-- [`SpokenExample.swift`](../apps/ios/HiMorning/SpokenExample.swift) and [`SpokenExampleTests.swift`](../apps/ios/HiMorningTests/SpokenExampleTests.swift) provide the existing voice implementation and checks.
-- [`AlarmEditor.swift`](../apps/ios/HiMorning/AlarmEditor.swift) and [`project.yml`](../apps/ios/project.yml) establish the editor flow and target configuration.
-- [`AlarmSoundResourceTests.swift`](../apps/ios/HiMorningTests/AlarmSoundResourceTests.swift), [`PilotUITests.swift`](../apps/ios/HiMorningUITests/PilotUITests.swift), and [`CoreTests.swift`](../apps/ios/HiMorningCore/Tests/HiMorningCoreTests/CoreTests.swift) are existing validation entry points.
+- [`SpeechChallengeCapture.swift`](../../../apps/ios/HiMorning/SpeechChallengeCapture.swift), [`ChallengeView.swift`](../../../apps/ios/HiMorning/ChallengeView.swift), and [`SpeechAnalysisTests.swift`](../../../apps/ios/HiMorningTests/SpeechAnalysisTests.swift) cover capture integration and the existing regression surface.
+- [`SpokenExample.swift`](../../../apps/ios/HiMorning/SpokenExample.swift) and [`SpokenExampleTests.swift`](../../../apps/ios/HiMorningTests/SpokenExampleTests.swift) provide the existing voice implementation and checks.
+- [`AlarmEditor.swift`](../../../apps/ios/HiMorning/AlarmEditor.swift) and [`project.yml`](../../../apps/ios/project.yml) establish the editor flow and target configuration.
+- [`AlarmSoundResourceTests.swift`](../../../apps/ios/HiMorningTests/AlarmSoundResourceTests.swift), [`PilotUITests.swift`](../../../apps/ios/HiMorningUITests/PilotUITests.swift), and [`CoreTests.swift`](../../../apps/ios/HiMorningCore/Tests/HiMorningCoreTests/CoreTests.swift) are existing validation entry points.
 - Structural lookup used the `HiMorning-remote-pilot` graph snapshot generated at `2026-10-15T12:58:11Z`. Coverage for affected UI files was partial or metadata-changed; direct source inspection supplied the missing evidence. The graph is not an exhaustive caller inventory.
 
 Implementation evidence is dated **2026-10-15**. The user's earlier confirmation that an alarm rang on time predates these fixes and does not establish acceptance of the changed sound/editing flow.
@@ -70,5 +75,5 @@ Physical iPhone checks must cover microphone permissions and capture, explicit s
 
 ## Read next
 
-- [`DOC-TEMPLATE.md`](DOC-TEMPLATE.md) — documentation format used for this plan.
-- [`orch-fix-defect` skill](/Users/danhvt0109/.codex/plugins/cache/ecc/ecc/2.2.3/skills/orch-fix-defect/SKILL.md) — regression-first implementation and approval gates.
+- [`DOC-TEMPLATE.md`](../../DOC-TEMPLATE.md) — documentation format used for this plan.
+- `orch-fix-defect` skill (historical local reference) — regression-first implementation and approval gates.

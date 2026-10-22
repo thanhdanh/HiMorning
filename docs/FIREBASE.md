@@ -1,14 +1,15 @@
 # Firebase verification backend
 
-The current [free remote demo](FREE-REMOTE-DEMO.md) uses Firebase Spark for Auth
+The separate [synthetic remote demo](FREE-REMOTE-DEMO.md) uses Firebase for Auth
 and App Check and Cloudflare for metadata/inference dispatch. The Functions and
 Firestore flow below is the retained paid-backend reference, not the native default.
 
 Firebase protects the boundary between the native app and paid inference. The GPU
 model runs on Modal; Firebase owns identity, sessions, evidence policy and quota.
 
-**Status:** Async backend source and local tests implemented; no remote deployment
-claimed. **Audience:** Backend and native developers.
+**Status:** Retained async backend source and local tests. It is not the normal
+camera path; live deployment and provider policies were not rechecked in this
+review. **Audience:** Backend and native developers.
 
 ## At a glance
 

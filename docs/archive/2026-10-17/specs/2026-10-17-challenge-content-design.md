@@ -1,8 +1,13 @@
 # Challenge content pool
 
+> **Historical document.** This is a superseded proposal or implementation
+> checkpoint, not current product behavior or instructions to execute. See the
+> [current documentation](../../../README.md) and [challenge guide](../../../MODE-CHALLENGES.md).
+> Original observations, limits and approvals below apply only to their dated scope.
+
 Grow the read-aloud, read-and-choose and riddle pools in English and Vietnamese, refresh them from our Cloudflare Worker, and keep every challenge working offline.
 
-**Status:** planned (design approved 2026-10-17). **Audience:** iOS and Worker developers.
+**Original status:** Planned when approved on 17 October 2026. **Audience:** iOS and Worker developers.
 
 ## At a glance
 

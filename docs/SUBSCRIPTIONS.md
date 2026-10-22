@@ -1,195 +1,84 @@
-# A full preview, then optional Pro
+# Preview, Free and Pro
 
-Let people experience useful mornings before asking them to pay. This guide
-explains the 30-day preview, Free fallback and native Apple subscription setup.
+A successfully saved first alarm starts a no-card preview. StoreKit purchases are
+optional and separate from basic alarm delivery and recovery.
 
-**Status:** Implemented with local checks passing on 15 October 2026. Real App
-Store products, sandbox/TestFlight billing and physical-device validation remain
-pending.
-**Audience:** Product owner, iOS developer and reviewer.
+**Status:** Local implementation; production products and sandbox/TestFlight
+billing acceptance remain pending. Reviewed on 22 October 2026.
+**Audience:** iOS developers and release reviewers.
 
 ## At a glance
 
-| Experience | Access |
+| Access | Current behavior |
 |---|---|
-| Before the first alarm | Set up and explore the app; the preview clock has not started |
-| Full preview | Thirty elapsed days from the first successfully saved alarm; no card, purchase approval or automatic charge |
-| Preview and Pro | All current features: Gentle, Balanced and Focused modes, extra sounds, thirty days of local history and a custom weekly goal |
-| Free after preview | Alarm scheduling, Gentle mode, Balanced's three push-ups, system sound for new alarms, backup rings and "I'm awake" |
-| Monthly Pro | `com.himorning.pro.monthly`; target US price **$2/month** |
-| Annual Pro | `com.himorning.pro.annual`; target US price **$20/year**, in the same subscription group |
-| Sharing | Optional system share sheet; no referral reward or attribution yet |
+| Before first save | Explore and create a draft; preview time has not started |
+| Preview | 30 elapsed days from the first confirmed alarm save; no purchase or automatic charge |
+| Preview / Pro | All catalog levels, bundled sounds, 30-day progress view and custom weekly goal |
+| Free after expiry | Alarm scheduling and recovery; Gentle/Balanced editor levels, system sound for new choices; effective saved push-up target capped at 5 |
+| Monthly Pro | `com.himorning.pro.monthly`, local target price US $2/month |
+| Annual Pro | `com.himorning.pro.annual`, local target price US $20/year, same subscription group |
 
-The preview is an app feature, not an Apple introductory subscription offer. It
-expires without starting a paid plan. The local StoreKit configuration has no
-introductory offer. A paid plan begins only after the person chooses it and
-approves Apple's purchase sheet; it then follows the displayed renewal terms.
-Live prices and currencies come from StoreKit. Local test prices never replace a
-missing production price.
+The live Apple purchase sheet owns actual localized price and renewal terms.
+The local StoreKit fixture is not a production price or a live product. There is
+no introductory offer in the checked-in fixture. Cloud AI quotas, referral rewards
+and server-side billing are not Pro benefits implemented here.
 
-Cloud AI remains a separate consented pilot with its existing quotas. It is not
-sold as a Pro benefit. Paid cloud access requires server-side Apple transaction
-verification and durable purchase ownership before backend policy can change.
+## How access works
 
-## How it works
+`PreviewPeriod` starts after a successful save, or for an existing confirmed alarm
+on refresh. Failed saves and unresolved schedule errors do not start it. Keychain
+stores start/latest-observed time to limit simple clock rollback; this is not a
+cross-device entitlement or a guarantee against reinstall/device changes.
 
-1. Save the first alarm successfully. This starts thirty elapsed days of full
-   access. A failed save does not consume the preview. For existing pilot users,
-   refresh starts a preview only when a confirmed saved alarm exists; an alarm
-   still needing review does not qualify.
-2. Try the app across real mornings. Progress scores each recorded challenge
-   completion at 100 and self-confirmation at zero. Rehearsals are excluded.
-   Daily scores average that day's recorded attempts; the monthly score is the
-   percentage of recorded attempts completed in the current local calendar month.
-   Missing records are unscored. Ratings are Excellent (90–100), Consistent (75–89),
-   Building (50–74) and Getting started (0–49); no records means no rating. The
-   weekly goal counts each day with a completed challenge once.
-3. Open Pro voluntarily. A nonblocking discovery prompt can appear after three
-   completed mornings, outside the active alarm; an explicit Pro button remains
-   available. Apple's `SubscriptionStoreView` displays both plans, localized
-   prices, renewal terms, purchase approval and restore.
-4. At preview expiry, Free keeps scheduling and recovery. History stays on the
-   device but its progress view and custom goal require full access. The progress
-   page has no history deletion action.
-5. A saved Focused alarm runs a clearly explained Balanced fallback while access
-   is Free. Its saved mode is preserved for a later return to full access. Saved
-   sounds, including re-enabled alarms, are preserved for reliability. New Free
-   alarms use system sound; expiry does not cancel or rewrite existing alarms.
+`SubscriptionStore` reads verified StoreKit entitlements, subscription status and
+transaction updates. The two products grant the same local Pro access. The source
+handles signed expiry, revocation, supersession and grace periods; see the
+[known failing expiry integration test](VALIDATION.md#known-failure) before treating
+that lifecycle as release-validated.
 
-```mermaid
-flowchart LR
-  A[First alarm saved] --> B[30-day full preview]
-  B --> C[Free basic alarms and challenge]
-  D[Optional monthly or annual purchase] --> E[Verified StoreKit entitlement]
-  E --> F[Pro full access]
-  G[Backup rings and I'm awake] --> H[Never paywalled]
-```
+Expiration does not cancel alarms, rewrite their saved settings or remove
+remaining backup rings. A saved `focused` mode is presented as an effective
+Balanced fallback when Free, and push-ups are capped at 5 for execution. Other
+explicit challenge kinds remain as saved. Existing native sound registrations are
+preserved; choosing a new restricted sound still requires full access.
+The [catalog guide](MODE-CHALLENGES.md) distinguishes display labels from storage IDs.
 
-The access decision combines preview dates with verified StoreKit entitlement.
-Either paid product grants the same Pro features. Turning off auto-renew leaves
-access through the paid period; expiry or revocation removes paid access unless
-an active preview remains. Signed grace-period information can extend paid
-access. Unrelated, unverified or superseded transactions do not grant it. See
-[Apple current entitlements](https://developer.apple.com/documentation/storekit/transaction/currententitlements).
+Local outcomes retain the effective mode/challenge at completion. Rehearsal is
+excluded. A completed challenge scores 100, self-confirmation scores zero, and
+missing records are unscored. History retains up to 31 local calendar days so a
+31-day month's first day is available; the paid progress view covers 30 days and
+shows a weekly goal. There is no history-deletion UI.
 
-## Key choices
+## Configure and test
 
-- **Experience before payment:** The preview needs no card or subscription signup.
-  Optional discovery follows demonstrated use and never interrupts a ringing alarm.
-- **Small native billing layer:** StoreKit 2 handles current local benefits.
-  No wallet SDK, RevenueCat dependency or Firebase billing service is needed yet.
-- **Local preview protection:** Keychain stores preview start and latest observed
-  time. Time never moves backwards for expiry decisions. This limits simple clock
-  rollback and often survives reinstall, but is not tamper-proof or a guaranteed
-  cross-device entitlement. Firebase plus App Attest/DeviceCheck can be evaluated
-  if abuse or paid service costs justify it.
-- **Private history:** Outcomes and goals stay in
-  `Application Support/HiMorning/mornings.json`. New entries retain 31 local
-  calendar days so the monthly rating includes day one of a 31-day month. This
-  feature does not upload contacts, recordings or progress events.
-- **Alarm reliability:** Access refresh does not cancel alarms, backup rings or "I'm awake".
-  Expiry changes the available challenge without rewriting saved preferences.
-- **Honest scope:** Full access covers implemented local features, not future
-  dance, speech, referral rewards or unvalidated AI verification.
-
-## Try it
-
-Use Xcode 26+, XcodeGen and an available iPhone simulator. Local StoreKit testing
-neither charges a card nor creates production products.
+Generate the Xcode project and use the checked-in
+[`HiMorning.storekit`](../apps/ios/StoreKit/HiMorning.storekit) configuration.
 
 ```sh
 xcodegen generate --spec apps/ios/project.yml
-xcodebuild -project apps/ios/HiMorning.xcodeproj -scheme HiMorning \
-  -destination 'platform=iOS Simulator,name=<your available iPhone>' test
+xcodebuild -project apps/ios/HiMorning.xcodeproj -scheme HiMorning   -destination 'platform=iOS Simulator,id=YOUR_SIMULATOR_UDID'   -only-testing:HiMorningTests/SubscriptionTests   -collect-test-diagnostics never CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- test
 ```
 
-Native tests load `apps/ios/StoreKit/HiMorning.storekit`. For manual purchases,
-select it under **Edit Scheme → Run → Options → StoreKit Configuration**. The
-unrelated product tests allowlisting and is never offered by the app.
-CI currently pins iOS 26.2 because of the StoreKitTest CLI issue described in
-[Apple Developer Forums](https://developer.apple.com/forums/thread/826971).
+StoreKitTest creates local transactions without charging a card. Keep the
+ad-hoc signature for Keychain-backed preview tests. The workflow pins iOS 26.2,
+but the signed-expired-purchase test also failed there in the latest local run.
+Do not dismiss that result as only a newer-runtime issue.
 
-For production, disable local StoreKit simulation and create both product IDs in
-one App Store Connect subscription group. Set the target US prices of $2/month
-and $20/year where supported, configure localized availability and metadata, and leave
-introductory offers unset for this model. Complete signing, paid-app agreements,
-review screenshots and public privacy/support URLs separately.
-
-If products fail to load, check StoreKit configuration or App Store Connect setup;
-do not invent prices or grant paid access. Provide restore and subscription
-management even after the preview has ended.
+For production, configure both IDs in one App Store Connect subscription group,
+verify localized product display, restore and management, then exercise purchase,
+renewal, cancellation, pending approval, refund/revocation, grace and expiry in
+sandbox/TestFlight. Recheck current Apple submission requirements at release.
+Paid cloud benefits would additionally need server-side signed transaction
+verification and durable purchase ownership; a client `isPro` flag is insufficient.
 
 ## What we checked
 
-The earlier [monthly Pro TDD record](tdd/monthly-pro.tdd.md) is historical evidence
-for the previous monthly-only model. The revised
-[no-card preview record](tdd/no-card-preview.tdd.md) tracks the new work separately.
-
-Checks reported on 15 October:
-
-| Scope | Result |
-|---|---|
-| Portable core journeys | 22 pass; 97.74% core line coverage, not whole-app coverage |
-| SwiftPM | 15 tests pass |
-| Vitest | 52 tests pass |
-| Signed native suite | All 15 pass: 11 billing and 4 PreviewStore tests, including real Keychain read/add/update |
-| Signed native coverage | `PreviewStore.swift`: 64/68 lines (94.12%); `Subscriptions.swift`: 86/87 lines (98.85%) |
-| Bilingual UI suite | All 8 UI tests pass; the containing earlier bundle also has an unsigned Keychain failure, so that entire bundle is not a pass |
-| Signed bilingual expiry UI | One selected test covers English and Vietnamese and passes in a separate signed run |
-| Release build | Pass; the compiled executable contains none of the UI-test, expired-preview or language-fixture flags |
-| Independent review | No high- or medium-priority findings |
-
-Two failures improved the checks. An unsigned Keychain test returned `-34018`
-because its access entitlement was missing. The fix uses one app-specific
-Keychain group and simulator-scoped ad-hoc signing; native CI tests now use
-signing. The signed suite verifies real persistence instead of relying only on
-in-memory storage.
-
-The original `expireSubscription` test mutation reported an expired test
-transaction while the verified signed entitlement still had a future expiry and
-subscribed status. Its cause is not established. Tests now use an injected clock
-(production defaults to `Date`) against real verified signed expirations and
-past purchases. This validates access decisions; simulator expiry-event
-propagation remains a manual follow-up. The original UI-runner startup failure
-is recorded separately from the later passing UI suite.
-
-Relevant source and test boundaries are the [core](../apps/ios/HiMorningCore/),
-[native StoreKit tests](../apps/ios/HiMorningTests/SubscriptionTests.swift),
-[UI journeys](../apps/ios/HiMorningUITests/PilotUITests.swift) and
-[copy checks](../tests/localization.test.ts). Validation results belong in a dated
-TDD record; this guide does not claim unexecuted checks passed.
-
-## Native examples
-
-These are actual captures from passing UI tests. The first row uses an unstarted
-preview fixture; an existing disabled sample alarm is still visible. The second
-uses an expired preview and hides history. These older captures predate the
-monthly rating redesign and removal of the clear action.
-The captures demonstrate access states, not an App Store purchase.
-
-| State | English | Vietnamese |
-|---|---|---|
-| Before the first alarm | <img src="images/ui/preview-home-en.png" width="230" alt="English home before the free preview starts"> | <img src="images/ui/preview-home-vi.png" width="230" alt="Vietnamese home before the free preview starts"> |
-| Free after preview expiry | <img src="images/ui/expired-progress-en.png" width="230" alt="English progress screen after preview expiry, with Free access"> | <img src="images/ui/expired-progress-vi.png" width="230" alt="Vietnamese progress screen after preview expiry, with Free access"> |
-
-See the [native gallery](UI-DESIGN.md#native-screens) for setup, sound and recovery
-screens. Neither test fixture grants a backend entitlement.
-
-## Limits and next steps
-
-Real purchase, Ask to Buy, grace/retry, interrupted restore and renewals still need
-sandbox/TestFlight validation. Physical alarm testing, public privacy/support
-pages and cloud-account deletion remain release gates. Keychain preview protection
-is appropriate for a local beta; it must not authorize a paid cloud quota.
-
-MoMo, ZaloPay and other available Vietnam payment methods are configured with
-Apple for StoreKit purchases. Direct wallet or bank checkout is separate work and
-needs a fresh storefront-policy review. See
-[Apple payment methods](https://support.apple.com/vi-vn/111741).
+[Validation](VALIDATION.md) owns the latest recorded results and known failure.
+Earlier [monthly](tdd/monthly-pro.tdd.md) and [preview](tdd/no-card-preview.tdd.md)
+reports remain historical checkpoints. Simulator fixtures do not prove live billing,
+actual renewal delivery or migration across App Store accounts/devices.
 
 ## Read next
 
-- [Business model and proposed outcome metrics](BUSINESS-MODEL.md)
-- [Release readiness](RELEASE-READINESS.md)
-- [Apple subscription store view](https://developer.apple.com/documentation/storekit/subscriptionstoreview)
-- [Apple sandbox testing](https://developer.apple.com/help/app-store-connect/test-in-app-purchases/overview-of-testing-in-sandbox)
+[Release readiness](RELEASE-READINESS.md) · [Running](RUNNING.md) ·
+[Local access rules](../apps/ios/HiMorningCore/Sources/HiMorningCore/Morning.swift)

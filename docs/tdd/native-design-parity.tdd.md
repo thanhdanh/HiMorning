@@ -1,5 +1,9 @@
 # Native design parity evidence
 
+> **Dated evidence.** Commands, approvals, test totals and local paths below
+> describe the original run. They are not current setup instructions or release
+> status. See [current validation](../VALIDATION.md) for newer results and known gaps.
+
 Restore the original warm visual direction and show the supported morning flow.
 Journeys come from the user's design feedback, not a separate plan file.
 

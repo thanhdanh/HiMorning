@@ -1,8 +1,13 @@
 # Alarm enforcement
 
+> **Historical document.** This is a superseded proposal or implementation
+> checkpoint, not current product behavior or instructions to execute. See the
+> [current documentation](../../../README.md) and [challenge guide](../../../MODE-CHALLENGES.md).
+> Original observations, limits and approvals below apply only to their dated scope.
+
 Make a ringing HiMorning alarm stop for good only when the wake challenge is finished, or when the user uses the delayed "I'm awake" recovery exit.
 
-**Status:** planned (design approved 2026-10-17). **Audience:** iOS developers working on scheduling, `ChallengeView` and `ChallengeCoordinator`.
+**Original status:** Planned when approved on 17 October 2026. **Audience:** iOS developers working on scheduling, `ChallengeView` and `ChallengeCoordinator`.
 
 ## At a glance
 

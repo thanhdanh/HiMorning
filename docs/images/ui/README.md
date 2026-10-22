@@ -1,9 +1,10 @@
-# Native screen captures
+# Historical native screen captures
 
-See the implemented pilot before bed and through a safe rehearsal, in both
-English and Vietnamese.
+These images preserve the earlier pilot's screens in English and Vietnamese.
+They do not show the current card/editor, challenge catalog, local camera flow
+or subscription state. Use the [current UI guide](../../UI-DESIGN.md) for behavior.
 
-**Status:** 20 actual, unedited XCUITest screenshots: 10 screens/states in two
+**Status:** Historical set of 20 actual, unedited XCUITest screenshots: 10 screens/states in two
 languages. **Audience:** Product and code reviewers. These are simulator captures,
 not generated mockups or a claim of 20 distinct product screens.
 
@@ -48,25 +49,18 @@ relaunch. All five passed with zero failures.
 Rehearsal uses a transient Balanced sample at 06:30, without scheduling an alarm.
 The unavailable state comes from the real unconfigured cloud path, not a fake AI
 answer. Self-confirmation and ending the trial are explicit local outcomes. The
-consent screen names OpenAI because that remains the implemented adapter; the
-[Qwen replacement](../../AI-AND-CHALLENGES-PLAN.md) is proposed, not deployed.
+consent screen names the adapter used at that old revision. It is not the
+current product consent or evidence of today's cloud configuration.
 
-## Reproduce
+## Reproduce or collect new evidence
 
-Run the native scheme's tests using the [setup guide](../../RUNNING.md). CI uses:
-
-```sh
-xcodebuild -project apps/ios/HiMorning.xcodeproj -scheme HiMorning \
-  -destination 'platform=iOS Simulator,id=YOUR_SIMULATOR_ID' \
-  CODE_SIGNING_ALLOWED=NO -resultBundlePath /tmp/himorning-ui.xcresult test
-xcrun xcresulttool export attachments --path /tmp/himorning-ui.xcresult \
-  --output-path /tmp/himorning-ui-attachments
-```
-
-Use a fresh result-bundle path for each run. Status-bar times can differ. None of
-these journeys grants camera or alarm permission or sends frames for inference.
-Selecting a custom sound exposes the preview controls; screenshots do not prove
-that the sound plays correctly on a physical device.
+Reproducing these exact images requires their recorded source revision and toolchain.
+Do not run the current suite and describe its output as this historical gallery.
+For new captures, follow [Running](../../RUNNING.md), keep simulator signing for
+Keychain tests, use a fresh result-bundle path and export attachments with
+`xcrun xcresulttool export attachments`. Record revision, device/runtime and test
+selector alongside each new image. A screenshot does not prove sound playback,
+real movement detection or alarm delivery.
 
 ## Limits and next steps
 

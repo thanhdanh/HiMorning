@@ -1,5 +1,10 @@
 # Movement feedback plan
 
+> **Historical document.** This is a superseded proposal or implementation
+> checkpoint, not current product behavior or instructions to execute. See the
+> [current documentation](../../README.md) and [challenge guide](../../MODE-CHALLENGES.md).
+> Original observations, limits and approvals below apply only to their dated scope.
+
 A person may be trying sincerely and still move in a way the camera cannot read.
 Feedback should help them understand what to try next, without blame or pressure.
 
@@ -75,7 +80,7 @@ from unmeasured data.
 
 ## Read next
 
-[UI guide](UI-DESIGN.md) · [Tech stack](TECH-STACK.md) · [Architecture](ARCHITECTURE.md)
+[UI guide](../../UI-DESIGN.md) · [Tech stack](../../TECH-STACK.md) · [Architecture](../../ARCHITECTURE.md)
 
 Technical references: [Vision body pose](https://developer.apple.com/documentation/vision/detecting-human-body-poses-in-images),
 [WWDC body and hand pose](https://developer.apple.com/videos/play/wwdc2020/10653/).
