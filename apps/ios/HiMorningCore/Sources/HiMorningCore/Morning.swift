@@ -107,6 +107,10 @@ public struct MorningJournal:Sendable {
  public func completedDays(inLast days:Int,now:Date=Date(),calendar:Calendar = .current)->Int {
   Set(recent(days:days,now:now,calendar:calendar).filter {$0.outcome != .dismissed}.map {calendar.startOfDay(for:$0.date)}).count
  }
+ /// A recent local-day summary of successful challenges, distinct from self-confirmed wake-ups.
+ public func completedChallengeDays(inLast days:Int,now:Date=Date(),calendar:Calendar = .current)->Int {
+  Set(recent(days:days,now:now,calendar:calendar).filter { [.localCompleted,.openaiVerified,.aiVerified].contains($0.outcome) }.map {calendar.startOfDay(for:$0.date)}).count
+ }
  public func completedToday(alarmID:UUID,now:Date=Date(),calendar:Calendar = .current)->Bool {
   recent(days:1,now:now,calendar:calendar).contains {$0.alarmID==alarmID && [.localCompleted,.openaiVerified,.aiVerified].contains($0.outcome)}
  }

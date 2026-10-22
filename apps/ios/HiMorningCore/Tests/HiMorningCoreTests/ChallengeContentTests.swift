@@ -101,8 +101,43 @@ final class ChallengeContentTests:XCTestCase {
   var picked:[String]=[]
   for _ in 0..<20 {picked.append(try XCTUnwrap(store.next(kind:.riddle,language:"en",history:&history)).id)}
   XCTAssertEqual(Set(picked).count,20)
-  XCTAssertEqual(history.recent(kind:.riddle,language:"en").count,ContentHistory.limit)
+  XCTAssertEqual(history.recent(kind:.riddle,language:"en").count,20)
   XCTAssertTrue(history.recent(kind:.riddle,language:"vi").isEmpty)
+ }
+
+ func testFullCuratedCycleSurvivesRelaunchAndChangesThemeWhenPossible() throws {
+  let pool=(0..<36).map {index -> ChallengeContentItem in
+   var value=item("cycle-\(index)");value.theme=Array(ChallengeContentStore.themes).sorted()[index % 6];return value
+  }
+  let store=ChallengeContentStore(bundled:pack(2,pool),cached:nil)
+  var history=ContentHistory(),seen=Set<String>(),last:ChallengeContentItem?
+  for index in 0..<36 {
+   let remaining=pool.filter {!seen.contains($0.id)}
+   let picked=try XCTUnwrap(store.next(kind:.riddle,language:"en",history:&history))
+   XCTAssertTrue(seen.insert(picked.id).inserted)
+   if let last,remaining.contains(where:{$0.theme != last.theme}) {XCTAssertTrue(picked.theme != last.theme)}
+   last=picked
+   if index == 17 {history=try JSONDecoder().decode(ContentHistory.self,from:JSONEncoder().encode(history))}
+  }
+  XCTAssertEqual(seen.count,36)
+  XCTAssertTrue(store.next(kind:.riddle,language:"en",history:&history)?.id != last?.id)
+ }
+
+ func testOldHistoryAndItemsWithoutMetadataRemainUsable() throws {
+  let data=Data("{\"entries\":[{\"kind\":\"riddle\",\"language\":\"en\",\"id\":\"old\"}]}".utf8)
+  var history=try JSONDecoder().decode(ContentHistory.self,from:data)
+  let store=ChallengeContentStore(bundled:pack(1,[item("old"),item("new")]),cached:nil)
+  XCTAssertEqual(store.next(kind:.riddle,language:"en",history:&history)?.id,"new")
+  let old=try JSONDecoder().decode(ChallengeContentItem.self,from:JSONEncoder().encode(item("old")))
+  XCTAssertNil(old.theme);XCTAssertNil(old.explanation)
+ }
+
+ func testMetadataAndDuplicateChoicesAreValidated() {
+  var unknown=item("unknown");unknown.theme="unrecognized"
+  var blank=item("blank");blank.explanation="   "
+  var duplicate=item("duplicate");duplicate.choices=["Tea"," tea ","Coffee"]
+  var valid=item("valid");valid.theme="curiosity";valid.explanation="The supplied clue rules out the other choices."
+  XCTAssertEqual(ChallengeContentStore.validItems(pack(2,[unknown,blank,duplicate,valid])).map(\.id),["valid"])
  }
 
  func testSmallPoolStillPicksAfterHistoryFills() throws {

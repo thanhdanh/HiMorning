@@ -10,7 +10,7 @@ enum ChallengeRequirements {
    return [appText("Place your phone to the side so your whole body is visible"),
     appText("Lower yourself, then push up %lld times",count:selection.repetitions ?? 5)]
   case .readAndChoose:
-   return [appText("Read the sentence"),appText("Choose the closest meaning")]
+   return [appText("Read the clues"),appText("Choose the answer supported by the clues")]
   case .riddle:
    return [appText("Solve the riddle"),appText("Choose your answer")]
   case .readAloud:

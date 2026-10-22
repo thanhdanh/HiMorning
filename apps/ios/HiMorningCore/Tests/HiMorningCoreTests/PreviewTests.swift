@@ -244,4 +244,42 @@ final class MorningScoreTests:XCTestCase {
   let midMonth=restored.monthlyScore(now:date("2026-10-15T08:00:00+07:00"),calendar:calendar)
   XCTAssertEqual(midMonth.attempts,1)
  }
+ func testRecentChallengeWinsUseDistinctLocalDatesAndExcludePracticeAndNonCompletions() throws {
+  let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+  defer {try? FileManager.default.removeItem(at:root)}
+  let url=root.appendingPathComponent("mornings.json")
+  var journal=try MorningJournal(url:url)
+  let now=date("2026-10-15T07:00:00+07:00")
+  let entries:[(String,WakeOutcome)]=[
+   ("2026-10-08T23:59:59+07:00",.localCompleted),
+   ("2026-10-09T00:00:00+07:00",.openaiVerified),
+   ("2026-10-13T07:00:00+07:00",.selfConfirmed),
+   ("2026-10-14T07:00:00+07:00",.dismissed),
+   ("2026-10-15T00:00:00+07:00",.localCompleted),
+   ("2026-10-15T06:30:00+07:00",.aiVerified),
+   ("2026-10-15T07:00:01+07:00",.localCompleted)]
+  for (timestamp,outcome) in entries {
+   try journal.record(MorningEntry(date:date(timestamp),outcome:outcome),now:now.addingTimeInterval(2),calendar:calendar)
+  }
+  let rehearsalRecorded=try journal.record(MorningEntry(date:date("2026-10-12T07:00:00+07:00"),outcome:.localCompleted),rehearsal:true,now:now,calendar:calendar)
+  XCTAssertFalse(rehearsalRecorded)
+  let restored=try MorningJournal(url:url)
+  XCTAssertEqual(restored.completedChallengeDays(inLast:7,now:now,calendar:calendar),2)
+  XCTAssertEqual(restored.completedChallengeDays(inLast:1,now:now,calendar:calendar),1)
+  XCTAssertEqual(restored.completedChallengeDays(inLast:0,now:now,calendar:calendar),0)
+  XCTAssertEqual(restored.completedChallengeDays(inLast:32,now:now,calendar:calendar),0)
+  XCTAssertEqual(restored.completedChallengeDays(inLast:7,now:date("2026-10-16T00:00:00+07:00"),calendar:calendar),1)
+ }
+ func testRecentChallengeWinsUseCalendarDatesAcrossDaylightSavingTime() throws {
+  var dst=Calendar(identifier:.gregorian);dst.timeZone=TimeZone(identifier:"America/New_York")!
+  let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+  defer {try? FileManager.default.removeItem(at:root)}
+  var journal=try MorningJournal(url:root.appendingPathComponent("mornings.json"))
+  let now=date("2026-11-07T07:00:00-05:00")
+  for timestamp in ["2026-10-31T23:59:59-04:00","2026-11-01T01:30:00-04:00","2026-11-01T01:30:00-05:00","2026-11-07T07:00:00-05:00"] {
+   try journal.record(MorningEntry(date:date(timestamp),outcome:.localCompleted),now:now,calendar:dst)
+  }
+  XCTAssertEqual(journal.completedChallengeDays(inLast:7,now:now,calendar:dst),2)
+ }
+
 }

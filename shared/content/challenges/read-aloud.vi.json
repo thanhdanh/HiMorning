@@ -1,866 +1,326 @@
 [
- {
-  "id": "ra-vi-001",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Sáng nay bạn thức dậy thật nhẹ nhàng, hít một hơi sâu và mỉm cười với ngày mới đang chờ phía trước."
- },
- {
-  "id": "ra-vi-002",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Ánh nắng đầu ngày len qua khung cửa, đặt lên bàn một vệt vàng ấm áp như lời chào dịu dàng."
- },
- {
-  "id": "ra-vi-003",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hãy uống một ngụm nước, vươn vai thật dài và để cơ thể làm quen dần với một buổi sáng bình yên."
- },
- {
-  "id": "ra-vi-004",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tiếng chim ngoài hiên nghe thật vui tai, nhắc bạn rằng mọi chuyện đều có thể bắt đầu lại bằng một bản nhạc nhỏ."
- },
- {
-  "id": "ra-vi-005",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Bạn không cần vội vàng, chỉ cần đứng dậy, bước từng bước chậm rãi và tin rằng hôm nay sẽ là một ngày tốt."
- },
- {
-  "id": "ra-vi-006",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Mùi cà phê thơm lan khắp căn bếp nhỏ, báo hiệu một buổi sáng ấm cúng đang mở ra trước mắt bạn."
- },
- {
-  "id": "ra-vi-007",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Mỗi buổi sáng là một trang giấy trắng, bạn có thể viết lên đó những điều giản dị mà làm mình vui."
- },
- {
-  "id": "ra-vi-008",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hãy mở cửa sổ, hít thở không khí trong lành và cảm ơn vì bạn lại có thêm một ngày để sống."
- },
- {
-  "id": "ra-vi-009",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Một việc nhỏ làm xong sớm sẽ khiến cả ngày nhẹ nhõm hơn, nên hôm nay hãy bắt đầu bằng việc dễ nhất."
- },
- {
-  "id": "ra-vi-010",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Bầu trời ngoài kia đang sáng dần, từng đám mây hồng trôi chậm như đang mời bạn cùng thức dậy."
- },
- {
-  "id": "ra-vi-011",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Cảm ơn chiếc giường êm đã giữ giấc ngủ cho bạn, giờ là lúc đứng lên và gặp gỡ một ngày mới."
- },
- {
-  "id": "ra-vi-012",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Bạn đã đủ giỏi để bắt đầu hôm nay, dù chỉ bằng một nụ cười nhỏ và một cốc nước mát."
- },
- {
-  "id": "ra-vi-013",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Gió sớm mang theo hương cỏ ướt sương, nhẹ nhàng chạm vào má bạn như một người bạn cũ ghé thăm."
- },
- {
-  "id": "ra-vi-014",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hôm nay hãy đi chậm lại một chút, nhìn quanh một chút và nhớ rằng những điều đẹp thường nằm rất gần."
- },
- {
-  "id": "ra-vi-015",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Buổi sáng yên tĩnh là món quà nhỏ, bạn hãy dành vài phút ngồi im lặng trước khi bước vào công việc."
- },
- {
-  "id": "ra-vi-016",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hãy nghĩ đến một người bạn quý, gửi đến họ lời chúc tốt lành và để lòng mình nhẹ đi một chút."
- },
- {
-  "id": "ra-vi-017",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Bữa sáng đơn giản với một lát bánh mì nướng và quả chuối chín cũng đủ làm ngày mới thêm ngon miệng."
- },
- {
-  "id": "ra-vi-018",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Đôi dép đang đợi ở cạnh giường, bạn hãy xỏ chân vào, đi ra ban công và đón chào mặt trời mọc."
- },
- {
-  "id": "ra-vi-019",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Dù hôm qua có mệt đến đâu, sáng nay bạn vẫn được bắt đầu lại từ đầu với một trái tim nhẹ nhàng."
- },
- {
-  "id": "ra-vi-020",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Rửa mặt bằng nước mát, lau khô bằng chiếc khăn mềm, bạn sẽ thấy mình tỉnh táo và sẵn sàng hơn."
- },
- {
-  "id": "ra-vi-021",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tách trà nóng bốc khói trên bàn gỗ nhỏ, và bạn có một khoảng lặng quý giá trước khi ngày dài bắt đầu."
- },
- {
-  "id": "ra-vi-022",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hãy đặt một mục tiêu vừa sức cho hôm nay, làm từng bước một và đừng quên khen mình khi hoàn thành."
- },
- {
-  "id": "ra-vi-023",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tiếng mưa rơi nhẹ trên mái nhà làm buổi sáng thêm dịu êm, bạn có thể thong thả bắt đầu ngày mới."
- },
- {
-  "id": "ra-vi-024",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Cây xanh ngoài cửa sổ vừa được tưới sương, lá còn long lanh, như muốn chúc bạn một ngày thật tươi."
- },
- {
-  "id": "ra-vi-025",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Bạn có quyền chọn cách mở đầu ngày mới, và hôm nay hãy chọn sự bình tĩnh cùng một lời nói dịu dàng."
- },
- {
-  "id": "ra-vi-026",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Ngồi thẳng lưng, thở chậm ba lần, và nhận ra rằng buổi sáng này chỉ thuộc về riêng bạn."
- },
- {
-  "id": "ra-vi-027",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Con đường quen thuộc trước nhà hôm nay lại có một vẻ mới, vì ánh nắng đang trải đều trên từng mái ngói."
- },
- {
-  "id": "ra-vi-028",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Cứ bước đi với niềm tin nhỏ rằng mọi việc rồi sẽ ổn, và bạn sẽ học thêm được điều mới mỗi ngày."
- },
- {
-  "id": "ra-vi-029",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Sáng nay hãy nói lời chào với người thân trong nhà, một câu hỏi thăm giản dị cũng làm không khí ấm lên."
- },
- {
-  "id": "ra-vi-030",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Chiếc đồng hồ đã gọi bạn dậy, vậy hãy cảm ơn nó, tắt tiếng chuông và đón nhận ngày mới với lòng biết ơn."
- },
- {
-  "id": "ra-vi-031",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Một bát cháo nóng hay một tô phở thơm vào buổi sớm luôn gợi nhớ những buổi sáng bình dị ở quê nhà."
- },
- {
-  "id": "ra-vi-032",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hôm nay bạn chỉ cần làm tốt phần việc của mình, từ tốn, cẩn thận và không so sánh với bất kỳ ai."
- },
- {
-  "id": "ra-vi-033",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hãy nhìn ra ngoài cửa sổ và tìm một điều đẹp, có thể là chiếc lá xanh hay một đám mây trắng."
- },
- {
-  "id": "ra-vi-034",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Khi bạn thở ra thật chậm, vai sẽ thả lỏng, đầu óc sẽ sáng ra và ngày mới sẽ nhẹ hơn một chút."
- },
- {
-  "id": "ra-vi-035",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Chợ sớm đã rộn ràng tiếng cười nói, mùi rau thơm và hoa tươi, còn bạn đang bắt đầu một ngày thong thả."
- },
- {
-  "id": "ra-vi-036",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hôm nay bạn hãy kiên nhẫn với chính mình, như cách bạn vẫn kiên nhẫn với những người mình thương yêu."
- },
- {
-  "id": "ra-vi-037",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Căn phòng còn yên ắng, tấm rèm khẽ lay, và bạn có thể ngồi dậy thật chậm để đón những tia nắng đầu tiên."
- },
- {
-  "id": "ra-vi-038",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Chỉ cần mười phút đi bộ quanh khu phố, bạn sẽ nghe được nhiều âm thanh dễ thương của một buổi sáng đang thức giấc."
- },
- {
-  "id": "ra-vi-039",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hãy viết ra ba điều bạn biết ơn, dù là rất nhỏ, rồi gấp tờ giấy lại và mang theo cả ngày."
- },
- {
-  "id": "ra-vi-040",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Chiếc áo sạch đã sẵn trên ghế, đôi giày đã đặt cạnh cửa, mọi thứ đều chờ bạn bước ra ngoài."
- },
- {
-  "id": "ra-vi-041",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Buổi sáng không cần phải hoàn hảo, chỉ cần bạn có mặt, thở đều và sẵn lòng thử lại một lần nữa."
- },
- {
-  "id": "ra-vi-042",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tiếng xe cộ xa xa vừa lên, thành phố đang thức dậy, và bạn cũng đang chầm chậm lấy lại nhịp sống của mình."
- },
- {
-  "id": "ra-vi-043",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hãy cười với chính mình trong gương, một nụ cười nhỏ thôi cũng đủ làm khuôn mặt bạn rạng rỡ hơn hẳn."
- },
- {
-  "id": "ra-vi-044",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Mỗi bước chân đầu ngày đều quan trọng, vì nó dẫn bạn đến gần hơn với những điều bạn muốn làm hôm nay."
- },
- {
-  "id": "ra-vi-045",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Ngày mới đến như một người khách tốt bụng, mang theo cơ hội mới, và bạn chỉ cần mở cửa chào đón."
- },
- {
-  "id": "ra-vi-046",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Bạn đã vượt qua một đêm dài, giờ hãy tự thưởng cho mình một buổi sáng thong thả với âm nhạc nhẹ nhàng."
- },
- {
-  "id": "ra-vi-047",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Con mèo ngoài sân đang vươn vai dưới nắng, bạn cũng hãy vươn vai thật dài rồi bước xuống giường."
- },
- {
-  "id": "ra-vi-048",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hãy nhớ uống nước, ăn sáng đầy đủ, và dành chút thời gian nhìn lại những việc quan trọng của hôm nay."
- },
- {
-  "id": "ra-vi-049",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Trời chưa nóng, đường còn vắng, và đây là lúc tuyệt vời để bạn tập vài động tác giãn người nhẹ nhàng."
- },
- {
-  "id": "ra-vi-050",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Đừng để lo lắng chiếm hết buổi sáng của bạn, hãy chọn một việc nhỏ và làm xong nó thật bình tĩnh."
- },
- {
-  "id": "ra-vi-051",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Giọt nắng đầu tiên rơi trên bậu cửa, báo cho bạn biết rằng một ngày mới tử tế vừa mới đến."
- },
- {
-  "id": "ra-vi-052",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Bạn hãy nhớ lại giấc mơ đẹp đêm qua, mang theo cảm giác dễ chịu ấy bước vào những việc đầu tiên trong ngày."
- },
- {
-  "id": "ra-vi-053",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Chiếc cốc quen thuộc, ánh đèn dịu và vài trang sách yêu thích sẽ làm buổi sáng của bạn thêm trọn vẹn."
- },
- {
-  "id": "ra-vi-054",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Mỗi lần bạn bắt đầu lại là một lần bạn dũng cảm, nên hôm nay đừng ngại thử một cách làm mới."
- },
- {
-  "id": "ra-vi-055",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hãy để điện thoại sang một bên vài phút, nhìn lên bầu trời và để đầu óc nghỉ ngơi trước khi bận rộn."
- },
- {
-  "id": "ra-vi-056",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Sáng nay bạn hãy tử tế với mọi người trên đường, một lời cảm ơn hay một cái gật đầu đều mang lại niềm vui."
- },
- {
-  "id": "ra-vi-057",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hơi nước bốc lên từ ly sữa nóng, làn hơi mỏng manh ấy cũng đủ làm bàn ăn sáng thêm ấm cúng."
- },
- {
-  "id": "ra-vi-058",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Cuộc sống không cần chạy quá nhanh, chỉ cần bạn đi đều từng ngày và vẫn nhớ nhìn xung quanh khi đang đi."
- },
- {
-  "id": "ra-vi-059",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hôm nay bạn có thể gọi cho người thân, hỏi thăm một câu giản dị, và niềm vui sẽ tự đến sau đó."
- },
- {
-  "id": "ra-vi-060",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Những khóm hoa ngoài ban công đã hé nở, mỗi cánh hoa mỏng manh đều đang đón ánh sáng như bạn vậy."
- },
- {
-  "id": "ra-vi-061",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Chỉ cần ngồi dậy, đặt hai chân xuống sàn và hít thở sâu, bạn đã làm xong phần khó nhất của buổi sáng."
- },
- {
-  "id": "ra-vi-062",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hôm nay hãy lên một danh sách ngắn gọn với ba việc chính, và bạn sẽ thấy ngày dài trở nên rõ ràng hơn."
- },
- {
-  "id": "ra-vi-063",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Trước khi ra khỏi nhà, hãy kiểm tra chìa khóa, ví và nụ cười của bạn, vì cả ba đều rất cần thiết."
- },
- {
-  "id": "ra-vi-064",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Khi nắng lên cao, bóng cây trải dài trên sân, và mọi thứ đều trông yên bình như một bức tranh quê."
- },
- {
-  "id": "ra-vi-065",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Bạn hãy lắng nghe nhịp thở của mình, chậm và đều, rồi nhẹ nhàng chuyển sự chú ý sang những việc đầu tiên."
- },
- {
-  "id": "ra-vi-066",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Một tách trà gừng nóng và một chiếc bánh nhỏ có thể biến buổi sáng bình thường thành khoảnh khắc đáng nhớ."
- },
- {
-  "id": "ra-vi-067",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hôm nay bạn đã tỉnh dậy, đó đã là một khởi đầu đáng trân trọng, và phần còn lại sẽ đi từng bước."
- },
- {
-  "id": "ra-vi-068",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Đường phố sau cơn mưa đêm thơm mùi đất ướt, và bầu không khí mát lành khiến bạn muốn bước ra ngoài."
- },
- {
-  "id": "ra-vi-069",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hãy tin rằng bạn có đủ thời gian cho những việc quan trọng, và bạn sẽ làm chúng thật bình tĩnh."
- },
- {
-  "id": "ra-vi-070",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Đôi khi một buổi sáng chậm rãi lại là điều bạn cần nhất, nên hôm nay hãy cho phép mình đi từ tốn."
- },
- {
-  "id": "ra-vi-071",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Ngoài kia người bán hàng đang dọn hàng, trẻ con đang đến trường, và bạn cũng sẵn sàng cho phần việc của mình."
- },
- {
-  "id": "ra-vi-072",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hãy xếp lại chăn gối gọn gàng, một việc rất nhỏ nhưng làm bạn thấy căn phòng và đầu óc đều sáng sủa."
- },
- {
-  "id": "ra-vi-073",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Mặt trời lên đúng giờ mỗi ngày, và bạn cũng có thể tin vào một nhịp sống đều đặn, dịu dàng và bền bỉ."
- },
- {
-  "id": "ra-vi-074",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hôm nay hãy học một điều mới dù nhỏ, như một từ lạ hay một cách nấu món ăn đơn giản."
- },
- {
-  "id": "ra-vi-075",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Nắng sớm rọi vào chiếc bàn học, những trang vở còn mới, và bạn có thể bắt đầu ngày mới thật gọn gàng."
- },
- {
-  "id": "ra-vi-076",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Sau khi uống nước, hãy đứng thẳng, hít một hơi dài và nhẹ nhàng nói với mình rằng hôm nay sẽ ổn thôi."
- },
- {
-  "id": "ra-vi-077",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hôm nay bạn không cần làm tất cả mọi thứ, chỉ cần làm những việc quan trọng nhất và làm bằng cả tấm lòng."
- },
- {
-  "id": "ra-vi-078",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Gió từ ngoài vườn mang theo mùi hoa nhài, khiến cả căn nhà thoang thoảng một buổi sáng dễ chịu."
- },
- {
-  "id": "ra-vi-079",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hãy nhìn lại những việc bạn đã làm tốt tuần qua, rồi mang cảm giác tự tin đó vào ngày hôm nay."
- },
- {
-  "id": "ra-vi-080",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Đừng quên cảm ơn những người đã giúp bạn, một tin nhắn ngắn gửi buổi sáng cũng làm họ vui cả ngày."
- },
- {
-  "id": "ra-vi-081",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Khi bạn bước ra khỏi cửa, hãy ngẩng đầu lên, nhìn bầu trời rộng và để suy nghĩ của mình nhẹ bớt đi."
- },
- {
-  "id": "ra-vi-082",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tiếng nước sôi reo trong ấm vang lên đều đều, báo cho bạn biết đã đến lúc pha một tách trà thơm."
- },
- {
-  "id": "ra-vi-083",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hôm nay hãy dọn dẹp bàn làm việc một chút, không gian gọn gàng sẽ giúp bạn làm việc nhẹ nhàng hơn."
- },
- {
-  "id": "ra-vi-084",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Buổi sáng là lúc tốt để thử điều gì đó mới, như đổi lối đi quen hay nghe một bài hát chưa nghe."
- },
- {
-  "id": "ra-vi-085",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Bạn hãy vươn hai tay lên cao, hít vào thật sâu, rồi thả tay xuống và thở ra thật chậm rãi."
- },
- {
-  "id": "ra-vi-086",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Một câu nói tử tế vào buổi sáng như hạt giống nhỏ, nó có thể nở thành niềm vui cho cả ngày."
- },
- {
-  "id": "ra-vi-087",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Mặt hồ phẳng lặng phản chiếu bầu trời hồng, và bạn cũng có thể giữ lòng mình bình yên như mặt nước ấy."
- },
- {
-  "id": "ra-vi-088",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hôm nay nếu có việc khó, hãy chia nó thành những bước nhỏ, rồi làm từng bước một thật kiên nhẫn."
- },
- {
-  "id": "ra-vi-089",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Chiếc xe đạp dựa bên tường đang chờ bạn, hãy thong thả đạp một vòng quanh phố để đón gió buổi sớm."
- },
- {
-  "id": "ra-vi-090",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hãy ăn sáng thật chậm, nhai kỹ và nhìn kỹ món ăn trước mặt, để bữa sáng trở nên trọn vẹn."
- },
- {
-  "id": "ra-vi-091",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Nụ cười buổi sáng không tốn gì cả, nhưng có thể làm ấm lòng người bán hàng, người hàng xóm và cả bạn."
- },
- {
-  "id": "ra-vi-092",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hôm nay hãy đặt một nhắc nhở nhỏ trên điện thoại, như nhớ uống nước hay nghỉ giải lao đôi chút."
- },
- {
-  "id": "ra-vi-093",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Bầu trời xanh sau cơn mưa trong như vừa được lau, và bạn có thể bước ra ngoài với tâm trạng nhẹ nhõm."
- },
- {
-  "id": "ra-vi-094",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Mỗi buổi sớm bạn đều có thể chọn lại hướng đi, dù hôm qua có thế nào thì hôm nay vẫn còn mới."
- },
- {
-  "id": "ra-vi-095",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hãy lắng nghe một bài hát nhẹ trong khi sắp xếp lại góc làm việc, và để tâm trạng dần sáng lên."
- },
- {
-  "id": "ra-vi-096",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Cánh cửa đã mở, tia nắng đã vào, và bạn chỉ cần bước thêm một bước nữa để chào đón buổi sáng."
- },
- {
-  "id": "ra-vi-097",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Sáng nay hãy cho phép mình chậm một nhịp, thưởng thức hương thơm của ly trà và nghe tiếng thành phố thức dậy."
- },
- {
-  "id": "ra-vi-098",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Điều bạn làm hôm nay có thể rất nhỏ, nhưng từng việc nhỏ cộng lại sẽ tạo nên một tuần đáng tự hào."
- },
- {
-  "id": "ra-vi-099",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hít một hơi thật sâu, giữ lại một chút, rồi thở ra thật chậm, và bạn sẽ thấy sáng nay nhẹ nhàng hơn."
- },
- {
-  "id": "ra-vi-100",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hôm nay bạn hãy chăm sóc chính mình bằng bữa ăn đủ đầy, vài phút thư giãn và một nụ cười dễ chịu."
- },
- {
-  "id": "ra-vi-101",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Khung cửa sổ mở ra một góc trời xanh, và bạn có thể ngắm nhìn nó thật lâu trước khi bắt đầu công việc."
- },
- {
-  "id": "ra-vi-102",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Bạn hãy tìm một việc khiến mình vui, dù nhỏ đến đâu, và cho nó một chỗ đứng trong lịch trình hôm nay."
- },
- {
-  "id": "ra-vi-103",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Con đường làng sớm mai thoảng mùi rơm mới, và ký ức êm đềm ấy luôn khiến lòng người thấy ấm áp."
- },
- {
-  "id": "ra-vi-104",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Khi ánh đèn trong phòng đã sáng, hãy nhẹ nhàng gấp chăn, thay áo và để một ngày mới bắt đầu đúng nhịp."
- },
- {
-  "id": "ra-vi-105",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hôm nay hãy mang theo sự bình tĩnh khi bước vào mọi cuộc trò chuyện, và đừng quên lắng nghe người đối diện."
- },
- {
-  "id": "ra-vi-106",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Những giọt sương trên mạng nhện lấp lánh như chuỗi ngọc, nhắc bạn dừng lại một chút để ngắm vẻ đẹp nhỏ bé."
- },
- {
-  "id": "ra-vi-107",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hãy nhẹ tay mở cửa, nhẹ chân bước ra sân và nhẹ lòng chào ngày mới đang đợi bạn ngoài kia."
- },
- {
-  "id": "ra-vi-108",
-  "kind": "readAloud",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Bạn đã dậy rồi, thật tuyệt, bây giờ hãy lấy một ly nước, đứng bên cửa sổ và thở thật chậm vài lần."
- }
+  {
+    "id": "voice-v2-vi-001",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Máy in thư viện cuối cùng cũng chạy. Tờ ghi chú hơi lệch, nhưng ý tưởng suýt quên của tôi vẫn nằm trên giấy.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "workAndStudy"
+  },
+  {
+    "id": "voice-v2-vi-002",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Tệp chung lại có tên bản cuối. Tôi sửa một lỗi nhỏ, lưu cẩn thận, rồi thôi không đặt thêm cái tên kịch tính nào.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "workAndStudy"
+  },
+  {
+    "id": "voice-v2-vi-003",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Bản phác thảo đầu tiên trông như bản đồ do bồ câu vẽ. Đến bản thứ hai, tôi mới nhìn ra chỗ bắt đầu.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "workAndStudy"
+  },
+  {
+    "id": "voice-v2-vi-004",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Câu hỏi viết bên lề hôm qua sáng nay bỗng rõ hơn. Hóa ra khoảng trống trên trang cũng có chỗ cho câu trả lời.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "workAndStudy"
+  },
+  {
+    "id": "voice-v2-vi-005",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Nhóm học mang đến ba cách giải thích cho cùng một bài. Mỗi người góp một chút, rồi cả nhóm tìm được lối đi riêng.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "workAndStudy"
+  },
+  {
+    "id": "voice-v2-vi-006",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Cuộc họp mở đầu bằng chiếc mic im lặng và một màn vẫy tay nhiệt tình. Khi có tiếng, mọi người đã biết ai đang chào.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "workAndStudy"
+  },
+  {
+    "id": "voice-v2-vi-007",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Quán gọi tên ngay lúc tôi mở sách. Lần này, bị ngắt quãng cũng đáng: một cốc cà phê ấm đang chờ.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "everydayLife"
+  },
+  {
+    "id": "voice-v2-vi-008",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Tôi tìm thấy chiếc tất thất lạc trong vỏ gối. Nó đã chọn một khu phố yên tĩnh hơn phần đồ giặt còn lại.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "everydayLife"
+  },
+  {
+    "id": "voice-v2-vi-009",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Cây bên cửa sổ có thêm một chiếc lá. Chẳng ai thông báo, nhưng căn phòng như vừa đón một vị khách nhỏ.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "everydayLife"
+  },
+  {
+    "id": "voice-v2-vi-010",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Danh sách mua đồ ghi bánh mì, cà chua và một thứ vui vui. Tôi mang đủ về; món cuối là một bó hoa.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "everydayLife"
+  },
+  {
+    "id": "voice-v2-vi-011",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Chiếc thìa kẹt sau ngăn kéo từ lâu. Tìm thấy nó hôm nay giống đón một nhà thám hiểm bé xíu trở về.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "everydayLife"
+  },
+  {
+    "id": "voice-v2-vi-012",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Hàng xóm để bát canh bên cửa, nhắn rằng nấu hơi nhiều. Có những rắc rối lại mang theo cách giải quyết rất ngon.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "everydayLife"
+  },
+  {
+    "id": "voice-v2-vi-013",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Nhóm chat mất hai mươi phút chọn chỗ gặp. Có người nhắc quán quen, thế là tất cả bỗng trở thành chuyên gia quyết định.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "peopleAndPlans"
+  },
+  {
+    "id": "voice-v2-vi-014",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Bạn gửi ảnh đám mây giống con thỏ. Tôi lại thấy ấm trà, và cuộc tranh luận nghệ thuật nho nhỏ bắt đầu ngay.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "peopleAndPlans"
+  },
+  {
+    "id": "voice-v2-vi-015",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Chúng tôi gọi mỗi người một món ngọt rồi chia nhau. Cả bàn thành một hội đồng vui vẻ, với mục tiêu rất rõ.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "peopleAndPlans"
+  },
+  {
+    "id": "voice-v2-vi-016",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Bạn nhớ câu chuyện tôi từng kể thoáng qua. Nghe lại, cuộc trò chuyện bình thường bỗng giống tìm thấy một tấm bưu thiếp được giữ kỹ.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "peopleAndPlans"
+  },
+  {
+    "id": "voice-v2-vi-017",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Lời mời ghi không cần mang gì, nên tôi mang một câu chuyện. May là đã có người lo đồ ăn và những câu đùa nhạt.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "peopleAndPlans"
+  },
+  {
+    "id": "voice-v2-vi-018",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Mưa đến, chúng tôi chuyển buổi picnic vào nhà. Tấm khăn vẫn trải, bánh mì vẫn ngon, chỉ thời tiết mất chỗ ngồi ở bàn.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "peopleAndPlans"
+  },
+  {
+    "id": "voice-v2-vi-019",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Tôi thử vẽ cốc mà không nhìn giấy. Bức tranh rất tự tin, có thêm vài cái quai, và chẳng mấy thiết tha làm chiếc cốc.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "creativeBreaks"
+  },
+  {
+    "id": "voice-v2-vi-020",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Danh sách nhạc bật bài đầy kịch tính giữa bữa sáng bình thường. Bỗng nhiên, phết bơ lên bánh giống cảnh mở đầu một bộ phim.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "creativeBreaks"
+  },
+  {
+    "id": "voice-v2-vi-021",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Nét vẽ lệch trong sổ thành sườn núi. Tôi định gạch bỏ, rồi lại thấy ngọn núi này cũng đáng được ở lại.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "creativeBreaks"
+  },
+  {
+    "id": "voice-v2-vi-022",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Tôi chụp góc phố hai lần: lần vì bóng đổ, lần vì màu sắc. Con phố lặng lẽ đưa ra hai câu chuyện khác nhau.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "creativeBreaks"
+  },
+  {
+    "id": "voice-v2-vi-023",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Công thức bảo rưới sốt thành vòng thật đẹp. Phần của tôi giống một hòn đảo lạ, thế là bữa tối có thêm bản đồ.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "creativeBreaks"
+  },
+  {
+    "id": "voice-v2-vi-024",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Tôi đặt tên ngớ ngẩn cho đoạn nhạc còn dang dở để dễ tìm. Giờ tôi nhớ cái tên rõ hơn cả giai điệu.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "creativeBreaks"
+  },
+  {
+    "id": "voice-v2-vi-025",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Cửa kính xe buýt đóng khung tiệm bánh tôi chưa từng để ý. Tuyến đường quen hôm nay bỗng có một điểm đến mới.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "cityAndTravel"
+  },
+  {
+    "id": "voice-v2-vi-026",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Ở ga, hai người lạ xem bản đồ rồi cười. Họ đi ngược hướng nhau, nhưng đều bắt đầu bằng việc tìm nhầm sân ga.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "cityAndTravel"
+  },
+  {
+    "id": "voice-v2-vi-027",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Trong túi có vé, sách và phần ăn được chuẩn bị đầy lạc quan. Chuyến đi thì ngắn; có vẻ chiếc bụng dự định xa hơn.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "cityAndTravel"
+  },
+  {
+    "id": "voice-v2-vi-028",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Cửa hàng nhỏ không có biển, chỉ có bưu thiếp đầy lối vào. Tôi tìm thấy nhờ ngẩng khỏi bản đồ đúng lúc.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "cityAndTravel"
+  },
+  {
+    "id": "voice-v2-vi-029",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Mưa làm mặt đường bóng lên, mỗi ánh đèn có thêm một bản sao. Con phố như sửa soạn cho một bữa tiệc chưa ai thông báo.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "cityAndTravel"
+  },
+  {
+    "id": "voice-v2-vi-030",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Thang máy sáng nay dừng ở mọi tầng. Xuống đến sảnh, những người lạ im lặng đã thành một khu phố chỉ tồn tại chốc lát.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "cityAndTravel"
+  },
+  {
+    "id": "voice-v2-vi-031",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Từ cuốn sách mượn đã lâu, một hóa đơn rơi ra. Nó từng làm dấu trang, giờ nhắc lại bữa trưa tôi chẳng nhớ.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "curiosity"
+  },
+  {
+    "id": "voice-v2-vi-032",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Xoay miếng ghép lại, tôi bỗng nhận ra bức tranh. Miếng ghép chẳng đổi, chỉ là tôi thôi khăng khăng nó phải là mái nhà.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "curiosity"
+  },
+  {
+    "id": "voice-v2-vi-033",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Lọ đựng những chiếc cúc từ quần áo chẳng ai còn nhớ. Một bảo tàng bé xíu, hiện vật thú vị mà không có nhãn nào.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "curiosity"
+  },
+  {
+    "id": "voice-v2-vi-034",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Tôi nhận ra đồng hồ trong ảnh nằm trong gương. Bí ẩn về bữa tối sớm không tưởng cuối cùng cũng có lời giải hợp lý.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "curiosity"
+  },
+  {
+    "id": "voice-v2-vi-035",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Mũi tên viết tay chỉ sang mũi tên nữa, rồi mới tới quán. Người làm biển hẳn muốn sự háo hức cũng có đường đi riêng.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "curiosity"
+  },
+  {
+    "id": "voice-v2-vi-036",
+    "kind": "readAloud",
+    "language": "vi",
+    "text": "Hộp ghi linh tinh chứa đúng thứ tôi cần. Trong một khoảnh khắc huy hoàng, chiếc kệ bừa nhất dường như có hệ thống bí mật.",
+    "source": "himorning",
+    "license": "original",
+    "theme": "curiosity"
+  }
 ]

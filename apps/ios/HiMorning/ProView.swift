@@ -9,14 +9,14 @@ struct ProView:View {
   NavigationStack {
    VStack(spacing:12) {
     VStack(alignment:.leading,spacing:12) {
-     HStack {MorningSun(size:60);Text(appText("More room for your progress.")).font(.title2.bold())}
-     Label(appText("30-day morning history"),systemImage:"calendar")
+     HStack {MorningSun(size:60);Text(appText("Find a routine worth returning to.")).font(.title2.bold()).fixedSize(horizontal:false,vertical:true)}
+     Label(appText("Your patterns over 30 days"),systemImage:"calendar")
      Label(appText("A weekly goal you choose"),systemImage:"sun.max")
-     Label(appText("More challenges and sounds"),systemImage:"bolt")
+     Label(appText("An energetic seven-morning workout path"),systemImage:"bolt")
      Text(appText("Try all features free for 30 days. No card needed. Subscribe only when you choose."))
       .font(.footnote).foregroundStyle(MorningTheme.muted)
      if preview.access == .preview,preview.hasStarted {Text(appText("%lld free days left. No automatic charge.",count:preview.remainingDays)).font(.footnote)}
-     Text(appText("Basic alarms and I’m awake stay free. History stays on this device.")).font(.footnote).foregroundStyle(MorningTheme.muted)
+     Text(appText("Starter paths, earned mornings and basic alarms stay free. Your data stays on this device.")).font(.footnote).foregroundStyle(MorningTheme.muted)
      if store.isPro {Text(appText("Pro is active")).foregroundStyle(MorningTheme.success)}
      if let message=store.message {Text(message).font(.footnote).accessibilityIdentifier("purchaseMessage")}
     }.padding(.horizontal,24)

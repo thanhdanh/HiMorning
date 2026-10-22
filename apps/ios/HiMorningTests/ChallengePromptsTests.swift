@@ -21,4 +21,12 @@ final class ChallengePromptsTests:XCTestCase {
    XCTAssertEqual(prompt.choices[prompt.correctChoiceIndex],"two")
   }
  }
+ func testAuthoredExplanationAndThemeStayWithShuffledAnswer() throws {
+  let item=ChallengeContentItem(id:"clues",kind:.riddle,language:"en",text:"The note rules out tea and juice. What remains?",choices:["Tea","Coffee","Juice"],answerIndex:1,source:"himorning",license:"original",attribution:nil,theme:"everydayLife",explanation:"The note rules out tea and juice, leaving coffee.")
+  for _ in 0..<50 {
+   let prompt=try XCTUnwrap(ChallengePrompts.fromItem(item))
+   XCTAssertEqual(prompt.choices[prompt.correctChoiceIndex],"Coffee")
+   XCTAssertEqual(prompt.theme,item.theme);XCTAssertEqual(prompt.explanation,item.explanation)
+  }
+ }
 }

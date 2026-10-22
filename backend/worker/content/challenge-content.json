@@ -1,4776 +1,1998 @@
 {
- "version": 1,
- "generatedAt": "2026-10-18T14:00:00.000Z",
+ "version": 2,
+ "generatedAt": "2026-10-23T03:00:00.000Z",
  "items": [
   {
-   "id": "adjust-the-route",
+   "id": "voice-v2-en-001",
    "kind": "readAloud",
    "language": "en",
-   "text": "If my plans change, I can adjust the route without abandoning the destination, and I may discover something useful along the way.",
+   "text": "The library printer finally woke up. My notes arrived slightly crooked, but the idea I had almost forgotten was still there on the page.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "workAndStudy"
   },
   {
-   "id": "beyond-the-clouds",
+   "id": "voice-v2-en-002",
    "kind": "readAloud",
    "language": "en",
-   "text": "Somewhere beyond the clouds, the sun is still rising, and a cloudy sky can offer its own kind of beautiful light.",
+   "text": "Someone named the shared document final again. I added my small correction, saved it carefully, and resisted giving the file another dramatic title.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "workAndStudy"
   },
   {
-   "id": "books-and-conversation",
+   "id": "voice-v2-en-003",
    "kind": "readAloud",
    "language": "en",
-   "text": "Books can carry us across oceans and centuries, but a good conversation can also reveal a world we have never considered before.",
+   "text": "My first sketch of the project looked like a map drawn by a distracted pigeon. The second one finally showed where to begin.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "workAndStudy"
   },
   {
-   "id": "breakfast-promise",
+   "id": "voice-v2-en-004",
    "kind": "readAloud",
    "language": "en",
-   "text": "Making time for breakfast is a small promise to myself that my comfort, energy, and calm deserve a place in a busy schedule.",
+   "text": "A question I wrote in the margin yesterday made sense this morning. Apparently, leaving room on the page also leaves room for an answer.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "workAndStudy"
   },
   {
-   "id": "bridge-to-action",
+   "id": "voice-v2-en-005",
    "kind": "readAloud",
    "language": "en",
-   "text": "The strongest bridge between an idea and a result is often a modest action repeated with care, even when progress feels slow.",
+   "text": "The study group brought three different explanations for the same problem. We borrowed a little from each and finally found our own way through.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "workAndStudy"
   },
   {
-   "id": "corner-bakery",
+   "id": "voice-v2-en-006",
    "kind": "readAloud",
    "language": "en",
-   "text": "At the corner bakery, warm bread and friendly conversation remind me that ordinary routines can hold small moments of joy.",
+   "text": "The meeting began with a missing microphone and a very expressive wave. By the time sound returned, everyone already knew who was saying hello.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "workAndStudy"
   },
   {
-   "id": "different-approach",
+   "id": "voice-v2-en-007",
    "kind": "readAloud",
    "language": "en",
-   "text": "An unexpected problem may invite a different approach; I can pause, gather the facts, and choose the next step with a steady mind.",
+   "text": "The café called my name just as I opened my book. For once, the interruption came with excellent timing and warm coffee.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "everydayLife"
   },
   {
-   "id": "first-few-minutes",
+   "id": "voice-v2-en-008",
    "kind": "readAloud",
    "language": "en",
-   "text": "The first few minutes of the day do not need to solve everything; they can simply help me arrive with attention and purpose.",
+   "text": "I found the missing sock inside a pillowcase. It had apparently chosen a quieter neighborhood while the rest of the laundry stayed together.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "everydayLife"
   },
   {
-   "id": "generous-listening",
+   "id": "voice-v2-en-009",
    "kind": "readAloud",
    "language": "en",
-   "text": "Listening closely is a quiet kind of generosity, because another person may need understanding before they need advice or an answer.",
+   "text": "The plant by the window has one new leaf. Nobody announced it, but the room somehow feels as though a small guest has arrived.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "everydayLife"
   },
   {
-   "id": "gentle-beginning",
+   "id": "voice-v2-en-010",
    "kind": "readAloud",
    "language": "en",
-   "text": "After a restless night, I can treat myself with patience and choose a gentle beginning instead of demanding a perfect morning.",
+   "text": "My shopping list said bread, tomatoes, and something nice. I came home with all three, though the last one was a bunch of flowers.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "everydayLife"
   },
   {
-   "id": "honest-step",
+   "id": "voice-v2-en-011",
    "kind": "readAloud",
    "language": "en",
-   "text": "Instead of measuring this morning against the achievements of others, I will notice what matters to me and take one honest step forward.",
+   "text": "A spoon slipped behind the kitchen drawer months ago. Finding it today felt less like cleaning and more like welcoming a tiny explorer home.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "everydayLife"
   },
   {
-   "id": "learning-with-patience",
+   "id": "voice-v2-en-012",
    "kind": "readAloud",
    "language": "en",
-   "text": "Learning a new skill means being willing to make awkward attempts, ask useful questions, and return tomorrow with a little more understanding.",
+   "text": "The neighbor left a bowl beside our door with a note saying too much soup. Some problems arrive with surprisingly delicious solutions.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "everydayLife"
   },
   {
-   "id": "morning-energy",
+   "id": "voice-v2-en-013",
    "kind": "readAloud",
    "language": "en",
-   "text": "Beyond the familiar path, a small discovery may be waiting, so today I will leave a little room for wonder.",
+   "text": "Our group chat spent twenty minutes choosing a place to meet. Once someone suggested the usual café, we all suddenly became excellent decision makers.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "peopleAndPlans"
   },
   {
-   "id": "patient-growth",
+   "id": "voice-v2-en-014",
    "kind": "readAloud",
    "language": "en",
-   "text": "A seed grows without announcing its progress, reminding me that patient work can create meaningful change long before the results become visible.",
+   "text": "A friend sent a photo of a cloud shaped like a rabbit. I saw a teapot, and our very small art debate began immediately.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "peopleAndPlans"
   },
   {
-   "id": "quiet-attention",
+   "id": "voice-v2-en-015",
    "kind": "readAloud",
    "language": "en",
-   "text": "Before opening another app, I will decide what deserves my attention and give that task a few quiet minutes.",
+   "text": "We ordered different desserts and agreed to share. For a few happy minutes, the table became a committee with an unusually clear purpose.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "peopleAndPlans"
   },
   {
-   "id": "quiet-ripple",
+   "id": "voice-v2-en-016",
    "kind": "readAloud",
    "language": "en",
-   "text": "Across a quiet lake, even a small ripple travels far, just as a thoughtful word can influence a day in ways we cannot see.",
+   "text": "My friend remembered a story I had told in passing. Hearing it again made an ordinary conversation feel like finding a carefully kept postcard.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "peopleAndPlans"
   },
   {
-   "id": "ra-en-001",
+   "id": "voice-v2-en-017",
    "kind": "readAloud",
    "language": "en",
-   "text": "The first light slips through the curtains and paints a soft yellow stripe across the floor, inviting me to stand up and stretch slowly.",
+   "text": "The invitation said bring nothing, so I brought a story. It turned out someone else had already covered the snacks and the terrible jokes.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "peopleAndPlans"
   },
   {
-   "id": "ra-en-002",
+   "id": "voice-v2-en-018",
    "kind": "readAloud",
    "language": "en",
-   "text": "I pour a glass of cool water, listen to the quiet street outside, and let my mind wake up at its own gentle pace.",
+   "text": "We moved our picnic indoors when the rain arrived. The blanket stayed, the sandwiches survived, and the weather lost its seat at the table.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "peopleAndPlans"
   },
   {
-   "id": "ra-en-003",
+   "id": "voice-v2-en-019",
    "kind": "readAloud",
    "language": "en",
-   "text": "A few birds are already singing on the rooftop, and their cheerful voices make the beginning of this day feel light and welcome.",
+   "text": "I tried drawing my mug without looking at the paper. The result had confidence, several extra handles, and almost no interest in being a mug.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "creativeBreaks"
   },
   {
-   "id": "ra-en-004",
+   "id": "voice-v2-en-020",
    "kind": "readAloud",
    "language": "en",
-   "text": "Today I will answer one message with kindness, finish one small chore with care, and take a few minutes to look at the sky.",
+   "text": "The playlist put a dramatic song behind my very ordinary breakfast. For three minutes, buttering toast felt like the opening scene of a film.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "creativeBreaks"
   },
   {
-   "id": "ra-en-005",
+   "id": "voice-v2-en-021",
    "kind": "readAloud",
    "language": "en",
-   "text": "The smell of toast drifts through the kitchen, and for a moment nothing else needs my attention except butter, jam, and a warm plate.",
+   "text": "A crooked line in my notebook became the edge of a mountain. I had meant to cross it out, but the mountain seemed worth keeping.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "creativeBreaks"
   },
   {
-   "id": "ra-en-006",
+   "id": "voice-v2-en-022",
    "kind": "readAloud",
    "language": "en",
-   "text": "Morning fog rests over the hills like a soft blanket, and the whole town seems to move a little more slowly because of it.",
+   "text": "I photographed the same corner twice, once for the shadows and once for the colors. The street had quietly offered me two different stories.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "creativeBreaks"
   },
   {
-   "id": "ra-en-007",
+   "id": "voice-v2-en-023",
    "kind": "readAloud",
    "language": "en",
-   "text": "I open the window, feel the fresh air on my face, and decide that this morning belongs to me before it belongs to anyone else.",
+   "text": "The recipe asked for a neat swirl of sauce. Mine looked like an unfamiliar island, so dinner came with a map instead.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "creativeBreaks"
   },
   {
-   "id": "ra-en-008",
+   "id": "voice-v2-en-024",
    "kind": "readAloud",
    "language": "en",
-   "text": "Every sunrise is a new page, and I get to choose which small, honest sentence to write on it first.",
+   "text": "I gave an unfinished tune a ridiculous name so I could find it later. Now I remember the name more easily than the melody.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "creativeBreaks"
   },
   {
-   "id": "ra-en-009",
+   "id": "voice-v2-en-025",
    "kind": "readAloud",
    "language": "en",
-   "text": "Before I check the news or the weather, I will stretch my arms above my head and take three slow, steady breaths.",
+   "text": "The bus window framed a bakery I had never noticed. Taking the same route again had somehow become a small journey somewhere new.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "cityAndTravel"
   },
   {
-   "id": "ra-en-010",
+   "id": "voice-v2-en-026",
    "kind": "readAloud",
    "language": "en",
-   "text": "A neighbor waves from across the street, and that simple greeting makes the pavement feel friendlier under my sleepy feet.",
+   "text": "At the station, two strangers compared maps and laughed. They were going in opposite directions, but both had started by finding the same wrong platform.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "cityAndTravel"
   },
   {
-   "id": "ra-en-011",
+   "id": "voice-v2-en-027",
    "kind": "readAloud",
    "language": "en",
-   "text": "The coffee machine gurgles in the corner while I fold a blanket, water a thirsty plant, and slowly remember what today is for.",
+   "text": "My bag held a ticket, a book, and a snack packed with unreasonable optimism. The journey was short; apparently, my appetite had larger plans.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "cityAndTravel"
   },
   {
-   "id": "ra-en-012",
+   "id": "voice-v2-en-028",
    "kind": "readAloud",
    "language": "en",
-   "text": "Warm sunlight reaches the table first, so I carry my breakfast there and eat without a screen, a list, or any hurry.",
+   "text": "The little shop had no sign, just a doorway full of postcards. I found it by looking up from the map at the right moment.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "cityAndTravel"
   },
   {
-   "id": "ra-en-013",
+   "id": "voice-v2-en-029",
    "kind": "readAloud",
    "language": "en",
-   "text": "If the morning feels heavy, I can lower the goal, take one easy step, and trust that the next step will feel lighter.",
+   "text": "Rain polished the pavement until every shop light had a twin. The street looked dressed for a celebration nobody had remembered to announce.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "cityAndTravel"
   },
   {
-   "id": "ra-en-014",
+   "id": "voice-v2-en-030",
    "kind": "readAloud",
    "language": "en",
-   "text": "The garden looks different at dawn, with drops of dew on every leaf, and I stand there a moment simply to notice them.",
+   "text": "The elevator stopped on every floor this morning. By the lobby, our quiet collection of strangers had become a very temporary neighborhood.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "cityAndTravel"
   },
   {
-   "id": "ra-en-015",
+   "id": "voice-v2-en-031",
    "kind": "readAloud",
    "language": "en",
-   "text": "Today I want to speak a little more softly, listen a little more closely, and leave every room slightly brighter than I found it.",
+   "text": "A bookmark fell out of a book I borrowed years ago. It was a receipt, quietly preserving the price of a lunch I no longer remembered.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "curiosity"
   },
   {
-   "id": "ra-en-016",
+   "id": "voice-v2-en-032",
    "kind": "readAloud",
    "language": "en",
-   "text": "A good morning does not need a perfect plan; a clean cup, a clear window, and a patient attitude are plenty.",
+   "text": "I turned the puzzle piece around and suddenly recognized the picture. The piece had not changed; I had simply stopped insisting it was a roof.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "curiosity"
   },
   {
-   "id": "ra-en-017",
+   "id": "voice-v2-en-033",
    "kind": "readAloud",
    "language": "en",
-   "text": "The bus is already humming at the corner, and I wave to the driver, grateful that someone else is awake and working with me.",
+   "text": "The jar held buttons from clothes nobody in the house could remember. It was a tiny museum with excellent exhibits and absolutely no labels.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "curiosity"
   },
   {
-   "id": "ra-en-018",
+   "id": "voice-v2-en-034",
    "kind": "readAloud",
    "language": "en",
-   "text": "When I wake up slowly, the day seems to wait for me, and the small tasks ahead stop looking like a mountain.",
+   "text": "I noticed that the clock in the photo was reflected in a mirror. The mystery of our impossibly early dinner finally had a reasonable explanation.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "curiosity"
   },
   {
-   "id": "ra-en-019",
+   "id": "voice-v2-en-035",
    "kind": "readAloud",
    "language": "en",
-   "text": "I tie my shoes by the door, step outside, and let the cool morning air carry away the last bits of sleepiness.",
+   "text": "A handwritten arrow pointed to a second arrow, which pointed to the café. Whoever made the signs clearly believed that anticipation deserved its own route.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "curiosity"
   },
   {
-   "id": "ra-en-020",
+   "id": "voice-v2-en-036",
    "kind": "readAloud",
    "language": "en",
-   "text": "Across the valley, a thin line of gold marks the edge of the sky, and the world quietly begins another ordinary, lovely day.",
+   "text": "The box marked miscellaneous contained exactly what I needed. For one glorious moment, my least organized shelf appeared to have a secret system.",
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "curiosity"
   },
   {
-   "id": "ra-en-021",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A bowl of oatmeal, a sliced apple, and a few minutes of silence are enough to turn a rushed start into a calm one.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-022",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The town bakery lights its ovens before sunrise, and the smell of fresh rolls reaches my street just as I open my eyes.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-023",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Today I will choose patience over speed, notice something beautiful on my way, and say thank you at least once out loud.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-024",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "My phone can wait for a few more minutes, because the sunrise outside the window will not repeat itself exactly this way again.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-025",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I fold the laundry, hum a simple tune, and realize that small, steady tasks can quietly make a morning feel like home.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-026",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The street cleaner passes with a soft sweeping sound, and I smile, thinking how many people are working to make this day pleasant.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-027",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A little rain taps against the glass, so I make a warm drink, find a comfortable chair, and let the sound keep me company.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-028",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Waking up early gives me an unhurried hour, and I intend to spend it on something small that makes me feel like myself.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-029",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The cat stretches on the windowsill, and I decide to copy her, slowly, one long yawn and one gentle reach at a time.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-030",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I write down three simple things to do today, cross out nothing yet, and feel the day become smaller and easier to handle.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-031",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "From the balcony I can see rooftops, clotheslines, and a faint pink sky, and the city looks calm enough to trust.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-032",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Some mornings begin with a burst of energy, and others begin with a whisper, and both are perfectly good ways to start.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-033",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The kettle clicks off, steam curls upward, and I pour the water slowly, enjoying the small ritual before the busy hours begin.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-034",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A cheerful song on the radio can change the mood of a whole kitchen, so I turn it up just a little bit.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-035",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I will not rush through the doorway today; instead I will pause, look around, and check that I am carrying what matters.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-036",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Fresh sheets, an open window, and a soft alarm make waking up feel less like leaving a place and more like arriving somewhere.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-037",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The mountain in the distance is hidden by clouds this morning, but I know it is there, steady and patient as ever.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-038",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "On the way to the market I count the colors of the doors, and by the third street I am wide awake.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-039",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Gratitude is easier before breakfast, when the house is quiet, so I name three small things I enjoy and then begin.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-040",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A sunny windowsill is the best place for a cup of tea, especially when there is no meeting for another hour.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-041",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The river path is empty at this hour, except for a runner, a heron, and me, walking at a friendly pace.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-042",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I smooth the bed, straighten the pillows, and enjoy how a tiny bit of order can make the rest of the day easier.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-043",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Today feels like a good day to be curious about something simple, like the shape of the clouds or the sound of rain.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-044",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The school bell hasn't rung yet, but the street is already full of backpacks, sleepy smiles, and quick, friendly greetings.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-045",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "When I step into the sunshine, my shadow stretches out long and thin, and I laugh at how tall I look.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-046",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A quiet morning is a gift, and I want to unwrap it slowly, one calm minute after another.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-047",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I can hear the soft clink of dishes from the next room, and it feels like a small song welcoming the day.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-048",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Let the alarm be loud, but let my first thought be gentle, because kindness to myself is a good way to begin.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-049",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The orange peel curls on the plate, bright and fragrant, and its sharp sweet smell chases away the last of my yawns.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-050",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "After a long night, the first sip of tea tastes like a small celebration, and I enjoy it without checking the clock.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-051",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A pair of sparrows argue cheerfully on the fence, and I decide the day cannot be too serious with such an audience.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-052",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The road ahead is wet and shiny, and every puddle holds a little piece of the bright morning sky.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-053",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I take a moment to look at the plant on my desk, a small green reminder that growth is slow and real.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-054",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Slow mornings teach me that being on time and being calm can happen together, if I start just a little earlier.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-055",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The sea breeze carries a salty freshness through the open door, and I take a deep breath before I put on my shoes.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-056",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Today I will carry a small notebook, jot down one good idea, and leave the rest of my worries on the kitchen table.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-057",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Our street smells like fresh grass this morning, and somewhere a lawnmower hums as if it were a distant, friendly bee.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-058",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The first bus of the day passes with its lights on, and I think about all the stories riding quietly inside.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-059",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I like how the quiet before breakfast feels spacious, as if the house is taking a long, slow breath with me.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-060",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A handful of berries, a spoonful of yogurt, and a little sunshine on the table are all I need this morning.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-061",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Even on a gray morning, a lamp, a blanket, and a good book can make the room feel warm and bright.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-062",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The farmer's market opens soon, and I imagine baskets of peaches, bunches of herbs, and neighbors chatting beside the stalls.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-063",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "When I put away my phone for ten minutes, the room grows bigger, and my thoughts finally have space to stretch.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-064",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A kind word at the start of the day travels farther than I expect, so I will say one before noon.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-065",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The window glass is cool under my hand, and outside a delivery truck backs up carefully while the sky turns pale blue.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-066",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I step onto the porch in my socks, hold a warm mug with both hands, and watch the garden wake.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-067",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Slowly the room fills with light, first on the ceiling, then on the wall, and finally on my sleepy face.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-068",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Today I will leave the hardest task for later and begin with something easy, because momentum is a quiet friend.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-069",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The streetlights blink off one by one, as if the neighborhood were quietly agreeing that the night is over.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-070",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "With a long stretch and a short smile, I turn off the alarm and decide that today will be gentle.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-071",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A breeze lifts the curtain, and I can hear distant children laughing and the clatter of someone's morning dishes.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-072",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Tiny snowflakes drift past the window, and I wrap myself in a scarf, grateful for warm socks and a sturdy front door.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-073",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The park bench is still damp, but the sun is climbing, and soon it will be the perfect place to sit.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-074",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I pack my bag the night before, so morning can be a slow, easy walk instead of a hurried search.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-075",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A quiet cup of coffee with a view of the trees is my favorite way to meet a Monday.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-076",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The sun is a patient visitor, arriving at the same window each day, and I try to be as steady.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-077",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Rows of bicycles wait outside the station, their metal frames shining, ready for another day of small, ordinary journeys.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-078",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I carry a reusable bottle, a clean notebook, and a calm expression, and that feels like enough to begin.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-079",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The garden hose coils beside the door, and I water the tomatoes slowly, listening to the soft sound of the drops.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-080",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "When the day feels too big, I look at one small corner of it, and then the whole thing feels manageable.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-081",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A soft knock of rain on the roof tells me I have time to enjoy one more slow breath.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-082",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Across the courtyard, someone is hanging bright towels in the sun, and the whole building looks cheerful and freshly awake.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-083",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "My plans for this morning are small and friendly: warm tea, a clear sky, and a long, unhurried walk.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-084",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "It takes courage to begin, but it takes only a minute to take the very first step toward the door.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-085",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I like the sound of keys, a closing door, and footsteps on the stairs, because they mean the day has started.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-086",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The garden gate squeaks a friendly greeting, and I step through it into a lane lined with blossoming trees.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-087",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A thin layer of frost sparkles on the grass, and my breath makes little clouds as I walk toward the corner shop.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-088",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Nothing special is planned for this morning, and that is exactly why I plan to enjoy every simple minute.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-089",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "My coat hangs by the door, my boots are ready, and the whole day waits just outside, curious and bright.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-090",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A new day has arrived without any mistakes in it yet, and I intend to treat it with care.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-091",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I stir my tea slowly, watch the leaves swirl, and let the swirling remind me that calm can be a choice.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-092",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The tall windows of the library glow gold as the sun rises, and a few early readers are already inside.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-093",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Morning is a good time to forgive small errors, including my own, and begin again with a lighter heart.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-094",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The scent of cut lemons fills the kitchen, and the bright yellow slices make even a plain glass of water cheerful.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-095",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I find a quiet corner of the train, let my thoughts wander, and watch the landscape slide softly by.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-096",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Even a five minute pause beside the window can reset the mood of a day that has barely started.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-097",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Wherever I go today, I will walk as if the pavement were glad to meet me and the air were friendly.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-098",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The paper boat on the shelf reminds me that small, simple things can carry big dreams a long way.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-099",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Light snow fell overnight, and the street is quiet, with every roof, fence, and branch wearing a soft white cap.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-100",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "In the hallway, a pair of boots, a green scarf, and a damp umbrella tell the story of yesterday's rain.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-101",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The cool tiles under my feet wake me up faster than any alarm, and I smile as I cross the kitchen.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-102",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I count my steps to the mailbox, enjoy the quiet street, and return with a smile and a single postcard.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-103",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A good plan for today fits on one small card: eat well, work calmly, speak kindly, and go to bed early.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-104",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Sunlight spills across the pages of an open book, and I read one slow paragraph before I stand up.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-105",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The jar of honey glows like amber in the morning light, and I spread a thin, sweet layer on my toast.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-106",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Somewhere a neighbor is practicing the violin, and the gentle notes float through the open window like a friendly invitation.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-107",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Breakfast tastes better when I sit down for it, so I pull out a chair and give it my full attention.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-108",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The sky is every shade of pink and orange, and I stop on the sidewalk for a moment simply to stare.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-109",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Walking to the station, I notice a small garden between two buildings, bursting with sunflowers that lean toward the east.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-110",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I wash a single cup, dry my hands, and enjoy how a tiny finished task can feel like a victory.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-111",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The streets are still wet from the night, and my reflection walks beside me, bright and slightly wobbly in every puddle.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-112",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Today I will leave a note of thanks for someone, and I will smile when I imagine them reading it.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-113",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The soft hum of the refrigerator and the ticking of the clock are the only sounds in the kitchen.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-114",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Hopping off the bus, I notice the baker unlocking his door, and we exchange a quick nod and a smile.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-115",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A bright scarf and a warm hat keep me cozy as I step out into a crisp winter morning.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-116",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "When I plan my morning the night before, I wake up lighter, with fewer decisions waiting at the door.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-117",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A handful of walnuts, a ripe pear, and a cup of tea make a simple and satisfying breakfast for a quiet morning.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-118",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The morning chorus of birds is never planned or rehearsed, yet somehow every little voice finds its place in the song.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-119",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Out on the lake, a single boat drifts quietly, leaving a long silver line behind it on the water.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-120",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I leave a little extra time for the walk today, so I can stop, look up, and notice the trees.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-121",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "My plan today is modest: a good meal, an honest hour of work, and a gentle walk before dark.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-122",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The windowsill is crowded with small pots, and each tiny green shoot seems to lean toward me and say hello.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-123",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "By the time the sun clears the rooftops, I have already made the bed and watered the herbs.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-124",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I check the sky, grab my umbrella, and step outside, ready to enjoy whatever kind of weather the morning chooses.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-125",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A long, deep breath at the open window is a small and simple way to say good morning.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-126",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "In the quiet before the day begins, I can hear the kettle, the clock, and my own steady breathing.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-127",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Fresh towels, a warm shower, and a clean shirt can make an ordinary morning feel like a small celebration.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-128",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The orchard is silent but for a few bees, and the apple blossoms are just beginning to open.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-129",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Rain or shine, I will take a short walk after breakfast, because the outdoors always has something new to show.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-130",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Wrapped in a blanket, I watch the sun climb over the chimneys and feel in no hurry at all.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-131",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Painting the fence takes patience, but on a warm morning the work feels like a pleasant, peaceful conversation with the sun.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-132",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "My grandmother always said that a tidy bed is a quiet promise to your future self, and I agree.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-133",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I hear the first tram of the day rattling by, and I imagine everyone aboard heading toward something small and good.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-134",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "After a quick stretch, I open the curtains wide and let the room fill up with clear morning light.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-135",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A sleepy yawn, a slow blink, and a warm mug are all I need to greet this new day.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-136",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The mail carrier whistles a cheerful tune, and the whole street seems to stand a little straighter in response.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-137",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "On windy mornings, I like to walk with my head up, listening to the leaves play their rustling music.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-138",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A single candle, a quiet room, and a few minutes of stillness make a strong start to the day.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-139",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Down by the harbor, fishing boats rock gently, and gulls call to each other across the shining, silver water.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-140",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The best part of a slow morning is that nobody is waiting for me, so I can wait for myself.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-141",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I put on soft music, chop some fruit, and let the kitchen slowly fill with sweetness and light.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-142",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Birds crowd the feeder outside, and I watch them for a minute, delighted by their busy, feathery good manners.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-143",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The school yard is empty and peaceful now, but in an hour it will ring with laughter and footsteps.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-144",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "If today goes sideways, I will take a breath, find the next small step, and keep walking calmly forward.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-145",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A clear sky after a stormy night feels like a gentle apology, and I accept it with a grateful smile.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-146",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The tea has cooled slightly, which means I have been thinking, and thinking is a fine way to start the day.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-147",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I wave to the sun, stretch toward the ceiling, and promise myself that today I will be a little kinder.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-148",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "All along the lane, ripe plums lie in the grass, and the air smells sweet, warm, and slightly sleepy.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-149",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "On slow mornings I like to read one page aloud, just to hear my voice wake up properly.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-150",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Under the old oak tree, the grass is still cool, and a pair of squirrels chase each other in circles.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-151",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A fresh notebook page is waiting on my desk, clean and quiet, ready for whatever I decide to write.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-152",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The whistle of the kettle is the signal that morning has officially begun, and I answer it with a stretch.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-153",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Walking barefoot across the cool kitchen floor, I feel awake, grounded, and ready for a warm, bright breakfast.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-154",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The street is quiet enough that I can hear my own footsteps, and I find that I rather like them.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-155",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Looking up, I notice that the clouds are drifting slowly, and I decide to match their calm, easy pace.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-156",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I will make my bed with care, because a small success early in the day can make everything else easier.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-157",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Warm light on the kitchen table, a clean plate, and a friendly note from a friend: this is a lovely start.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-158",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The garden path is lined with lavender, and every step releases a soft, calming scent into the morning air.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-159",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Even the busiest city has a quiet hour at dawn, and I like to walk through it slowly.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-160",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A cup of warm milk, a slice of bread, and a quick stretch complete my gentle morning routine.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-161",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The crisp sound of a page turning is one of my favorite ways to begin a peaceful day.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-162",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "At the end of the lane, the old stone bridge glows in the morning sun, and I pause to admire it.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-163",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "My to-do list can wait until I have finished my tea and looked out the window for a while.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-164",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "There is a small joy in finding my favorite mug clean and ready, waiting patiently on the shelf.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-165",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Some days the sunrise is loud and golden, and some days it is soft and gray, and I welcome both.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-166",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The aroma of baking bread has never failed to make me smile, no matter how early the hour.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-167",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I hold the door for a stranger, and we exchange a smile that lasts all the way to the corner.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-168",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Beside the bed, a glass of water and a folded sweater are waiting, ready for a chilly morning.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-169",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "This morning I will move gently, think clearly, and remember that a calm start can shape the whole day.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-170",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A single red leaf drifts past the window, and I stop to watch it settle softly on the ground.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-171",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "When I open the door, the scent of rain on warm stone greets me, and I breathe it in.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-172",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The old clock in the hallway ticks steadily, and I borrow its calm rhythm while I tie my scarf.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-173",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A warm slice of toast and a bright orange make a perfectly good breakfast when the morning is slow.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-174",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Outside the window, a gardener hums quietly and trims the hedge, and the whole lane looks neat and welcoming.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-175",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I pull open the blinds, and the room is flooded with light that feels clean, fresh, and full of possibilities.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-176",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "There is plenty of time this morning, so I will chew slowly, sip slowly, and look out at the trees.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-177",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The smell of damp earth rises from the flower beds, and I take a long breath before heading out.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-178",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Today I will ask a colleague about their weekend and then actually listen to the whole, cheerful answer.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-179",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Beyond the rooftops, a pale moon is still visible, fading politely as the sun takes over the sky.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-180",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I arrange the cushions on the sofa, open the window a crack, and feel the room slowly come alive.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-181",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A passing cyclist rings a tiny bell, and the sound sparkles down the street like a friendly hello.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-182",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Mornings are a good time to tidy one drawer, because small, finished jobs make the whole day lighter.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-183",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The market vendor stacks oranges into a bright pyramid, whistling quietly while the first customers wander between the stalls.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-184",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I whisper good morning to the empty kitchen, and somehow the kettle seems to answer with a gentle hiss.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-185",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A short stretch, a tall glass of water, and a deep breath are my three steps toward a good day.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-186",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The window box is full of tiny purple flowers, and I smile every time I lean out to water them.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-187",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "On the quiet platform, a few commuters read, sip, and wait, and the morning feels shared and gentle.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-188",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I plan to spend ten minutes in the sun today, with no phone, no list, and no hurry.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-189",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The pages of the calendar rustle in the draft, and I tear off yesterday with a small, grateful nod.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-190",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A warm towel, a bright shirt, and a clear window are my simple recipe for a pleasant start.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-191",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Outside, the first delivery van rolls by, and the smell of fresh bread follows it down the street.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-192",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "I stand by the window with my tea and watch the shadows of the trees shorten as the sun rises.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-193",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Even a short walk around the block can turn a groggy morning into a clear, bright, curious one.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-194",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The dog next door barks twice, wags her tail, and then settles down to watch the world wake up.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-195",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A quiet breakfast with a favorite song in the background is a lovely way to ease into the day.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-196",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "The ripe smell of strawberries fills the kitchen, and I slice them slowly, enjoying their deep, cheerful color.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-197",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Walking past the fountain, I notice the water catching the morning sun and scattering it into a thousand sparks.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-198",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "When the alarm rings, I remind myself that a gentle start is better than a rushed and anxious one.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-199",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Light floods the stairwell as I head down, and every step feels a little easier than yesterday's.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-en-200",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "At the bus stop, a stranger shares a joke about the weather, and we both laugh, feeling more awake.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ready-for-day",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Before the world asks for my attention, I will take a quiet breath and choose one meaningful thing to begin.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "room-for-surprises",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "A clear plan leaves room for surprises; I can prepare carefully while staying open to a better idea along the way.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "short-walk",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "On a crowded day, a short walk can create enough space to breathe, notice the weather, and return with a clearer mind.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "smaller-pieces",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "When a difficult task feels overwhelming, I will break it into smaller pieces and begin with the part I understand.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "steady-progress",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Progress rarely arrives all at once; it grows when we return with patience, curiosity, and the courage to try again.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "thoughtful-question",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Today I will ask one thoughtful question, try one unfamiliar thing, and leave enough space to appreciate what happens between my plans.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "unfamiliar-street",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "Curiosity turns an unfamiliar street into a possibility, especially when I slow down enough to notice the details around me.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "while-the-kettle-warms",
-   "kind": "readAloud",
-   "language": "en",
-   "text": "While the kettle warms, I can stretch my shoulders, drink some water, and let the day begin without rushing into every notification.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "fresh-start",
+   "id": "rc-v2-en-001",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "Today is a fresh start.",
+   "text": "You have twenty minutes before a call. Editing a draft needs twenty uninterrupted minutes; replying to messages takes five. Which plan finishes the draft before the call?",
    "choices": [
-    "Yesterday must happen again.",
-    "Today is a new beginning.",
-    "The day has already ended."
-   ],
-   "answerIndex": 1,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "listening",
-   "kind": "readAndChoose",
-   "language": "en",
-   "text": "He listened carefully before sharing his idea.",
-   "choices": [
-    "He spoke before anyone else.",
-    "He paid attention before speaking.",
-    "He forgot to share his idea."
-   ],
-   "answerIndex": 1,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "morning-window",
-   "kind": "readAndChoose",
-   "language": "en",
-   "text": "Please open the window and welcome the morning.",
-   "choices": [
-    "Open the window to greet the morning.",
-    "Close the door and go to sleep.",
-    "Make dinner before going outside."
+    "Edit the draft now",
+    "Reply first, then edit",
+    "Edit for ten minutes, reply, then finish"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "Editing now uses the full twenty-minute window. Replying first leaves fifteen minutes; interrupting the edit also breaks its uninterrupted requirement."
   },
   {
-   "id": "plant",
+   "id": "rc-v2-en-002",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "The plant grew new leaves after it received water and sunlight.",
+   "text": "The shared folder contains Draft 3 and Draft 4. A message says, “I corrected the figures in Draft 4; the conclusion is unchanged.” Which file should a reviewer use for the corrected figures?",
    "choices": [
-    "Water and sunlight helped the plant grow.",
-    "The plant lost all its leaves.",
-    "The plant grew without light or water."
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-en-001",
-   "kind": "readAndChoose",
-   "language": "en",
-   "text": "The bakery on the corner opens before sunrise.",
-   "choices": [
-    "The corner bakery starts work very early.",
-    "The bakery stays closed until the evening.",
-    "The corner shop only sells umbrellas."
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-en-002",
-   "kind": "readAndChoose",
-   "language": "en",
-   "text": "A neighbor left fresh flowers by the front door.",
-   "choices": [
-    "A neighbor took the flowers away.",
-    "Someone placed new flowers near the entrance.",
-    "The front door was painted bright red."
+    "Draft 3, because the conclusion is unchanged",
+    "Draft 4, where the figures were corrected",
+    "Either file; the figures must match"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "The message distinguishes the corrected figures from the unchanged conclusion. Only Draft 4 is identified as containing those corrections."
   },
   {
-   "id": "rc-en-003",
+   "id": "rc-v2-en-003",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "She packed her bag the night before to stay calm.",
+   "text": "A workshop has two rooms. One holds eight people with a screen; the other holds twelve without a screen. Nine people need a screen, and furniture cannot move. What does this tell the organizer?",
    "choices": [
-    "She forgot her bag at the office.",
-    "She left home without any plans.",
-    "She prepared her bag early so the morning would be calm."
+    "The twelve-seat room meets both needs",
+    "The eight-seat room meets both needs",
+    "Neither room meets both needs as arranged"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "One room lacks a seat; the other lacks a screen. More capacity alone does not satisfy both requirements."
   },
   {
-   "id": "rc-en-004",
+   "id": "rc-v2-en-004",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "The train was quiet, so he read a few pages.",
+   "text": "A portal always shows a receipt for a submitted report, and receipts stay visible. Noor sees no receipt for hers. Under these stated rules, what follows?",
    "choices": [
-    "He read a little because the train was peaceful.",
-    "The train was too loud for reading.",
-    "He slept through the whole journey."
+    "Her report is not recorded as submitted",
+    "Her report was rejected after submission",
+    "The reviewer has not opened her report"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "A submitted report would have a visible receipt. The absence establishes submission status, not a reviewer decision or reading status."
   },
   {
-   "id": "rc-en-005",
+   "id": "rc-v2-en-005",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "Soft rain tapped on the window all morning.",
+   "text": "A recipe uses two cups of rice for four servings. You need six servings, keeping the same ratio. Which amount fits?",
    "choices": [
-    "A loud storm shook the house.",
-    "A gentle rain fell against the glass.",
-    "The sun burned brightly all day."
+    "Two and a half cups",
+    "Three cups",
+    "Four cups"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "Each serving uses half a cup. Six servings therefore need three cups."
   },
   {
-   "id": "rc-en-006",
+   "id": "rc-v2-en-006",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "We ate breakfast on the balcony in the sunshine.",
+   "text": "The pickup note says, “Your parcel is in locker 12. The shop counter only handles returns.” You want to collect this parcel. Where should you go?",
    "choices": [
-    "We had dinner in the basement.",
-    "We skipped breakfast and stayed in bed.",
-    "Breakfast was outside in the sun."
+    "The counter to ask for the parcel",
+    "Either place handles collection",
+    "Locker 12"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "The note assigns collection to locker 12 and returns to the counter. They serve different purposes."
   },
   {
-   "id": "rc-en-007",
+   "id": "rc-v2-en-007",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "The kettle whistled, and she made a pot of tea.",
+   "text": "A refill sign says, “Same cup, same day, receipt required.” You have today’s receipt but brought yesterday’s cup instead of the cup on that receipt. Which condition is missing?",
    "choices": [
-    "She prepared tea when the kettle sounded.",
-    "The kettle was broken and silent.",
-    "She poured cold juice into a bowl."
+    "Using the cup from today’s purchase",
+    "Having a receipt",
+    "Returning on the same day"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "The receipt and date meet two conditions. The cup must also be the one associated with that purchase."
   },
   {
-   "id": "rc-en-008",
+   "id": "rc-v2-en-008",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "He watered the herbs on the windowsill every day.",
+   "text": "The community library accepts returns through a slot all day, but loans require a volunteer from 2 to 5. You arrive at noon with one borrowed book and want another. What can you do immediately?",
    "choices": [
-    "He never remembered the herbs.",
-    "The windowsill herbs get water daily.",
-    "The herbs grew in a distant field."
+    "Borrow a new book only",
+    "Return the borrowed book only",
+    "Both return and borrow"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "The return slot is available at noon. Borrowing must wait until the volunteer arrives at 2."
   },
   {
-   "id": "rc-en-009",
+   "id": "rc-v2-en-009",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "The library opens at nine and closes at six.",
+   "text": "Ari can meet Monday or Tuesday; Bo can meet Tuesday or Wednesday. Cam is available only Tuesday. Which day works for everyone?",
    "choices": [
-    "The library is open all night.",
-    "The library never opens on weekdays.",
-    "The library is open during the day."
+    "Monday",
+    "Wednesday",
+    "Tuesday"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Tuesday is in all three availability lists. The other days each exclude at least one person."
   },
   {
-   "id": "rc-en-010",
+   "id": "rc-v2-en-010",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "A warm scarf is useful on a chilly morning.",
+   "text": "Jo writes, “If the film starts after eight, save me a seat. Before eight, I am still on the train.” The screening starts at 8:30. What has Jo asked the group to do?",
    "choices": [
-    "A scarf helps when the morning is cold.",
-    "A scarf is needed in the hottest weather.",
-    "A scarf is only good for the summer."
+    "Save a seat for Jo",
+    "Move the screening earlier",
+    "Assume Jo cannot come"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "The screening meets Jo’s stated condition: it starts after eight. The request is to save a seat."
   },
   {
-   "id": "rc-en-011",
+   "id": "rc-v2-en-011",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "The children walked to school together, laughing along the way.",
+   "text": "Minh says, “I can bring dessert, but I cannot bring anything that needs a fridge.” The host offers ice cream that must stay frozen, or biscuits that keep at room temperature. Which fits Minh’s offer?",
    "choices": [
-    "The children traveled to school alone and silent.",
-    "The kids went to school as a happy group.",
-    "The school was closed, so everyone stayed home."
+    "Ice cream, because it is dessert",
+    "Biscuits, because they need no fridge",
+    "Both, because both are sweet"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Both are desserts, but only the biscuits also satisfy the no-fridge condition."
   },
   {
-   "id": "rc-en-012",
+   "id": "rc-v2-en-012",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "After stretching, she felt more awake and ready.",
+   "text": "A message says, “I like the café idea; I still need to check whether I’m free.” What is confirmed?",
    "choices": [
-    "Stretching made her very sleepy.",
-    "She felt tired and refused to move.",
-    "Stretching helped her feel alert."
+    "The person will attend",
+    "The meeting time is agreed",
+    "The person likes the idea, but attendance is undecided"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Enthusiasm for the idea is explicit. Availability has not yet been checked, so attendance is not confirmed."
   },
   {
-   "id": "rc-en-013",
+   "id": "rc-v2-en-013",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "The market was busy with people buying fruit.",
+   "text": "A lamp casts a sculpture’s shadow west. In this setup the shadow falls directly away from the lamp. Which side is the lamp on?",
    "choices": [
-    "Many shoppers were buying fruit at the market.",
-    "The market was empty and silent.",
-    "People were selling shoes at the market."
+    "East",
+    "West",
+    "North"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "Westward shadow means light comes from the opposite side, east."
   },
   {
-   "id": "rc-en-014",
+   "id": "rc-v2-en-014",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "He turned off the lights to save energy.",
+   "text": "A photo shows empty chairs after a concert. The caption says only, “Ten minutes after the last song.” Which statement is supported without inventing a reason?",
    "choices": [
-    "He turned on every light in the house.",
-    "He switched off the lights so less power was used.",
-    "He left the lights burning all day."
+    "The audience disliked the concert",
+    "The chairs were empty ten minutes after the last song",
+    "Nobody attended the concert"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "The image and caption establish the scene and timing. They do not reveal attendance earlier or how people felt."
   },
   {
-   "id": "rc-en-015",
+   "id": "rc-v2-en-015",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "A short pause can help you think more clearly.",
+   "text": "A poster brief says, “Keep the title above the photo, and the date below the photo.” In a draft the date sits between the title and the photo. What needs moving?",
    "choices": [
-    "You should never stop to think.",
-    "Pausing always makes the day longer.",
-    "Taking a brief break can clear your mind."
+    "Move the title below the photo",
+    "Move the photo below the date",
+    "Move the date below the photo"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "The title already belongs above the photo. Moving the date below the photo restores the required order."
   },
   {
-   "id": "rc-en-016",
+   "id": "rc-v2-en-016",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "The river was calm, and a single boat floated by.",
+   "text": "A short film needs thirty seconds of continuous music. Three clips are twenty seconds, thirty-five seconds, and forty seconds. You can trim but cannot join clips. Of the three original clips, which is the shortest that can supply the music?",
    "choices": [
-    "One boat drifted along the still river.",
-    "Many boats raced across rough water.",
-    "The river had dried up completely."
+    "35 seconds",
+    "20 seconds",
+    "40 seconds"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "Twenty seconds is too short. Both longer clips can be trimmed to thirty seconds, and thirty-five is the shorter of those."
   },
   {
-   "id": "rc-en-017",
+   "id": "rc-v2-en-017",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "She hung the laundry outside because the day was sunny.",
+   "text": "On a map, the market is directly north of the library. The café is directly east of the library. From the café, which direction leads toward the market?",
    "choices": [
-    "She hung the laundry in the snow.",
-    "Sunny weather let her dry the clothes outdoors.",
-    "She refused to wash any clothes."
+    "Southeast",
+    "Northwest",
+    "Southwest"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "From the café, the market lies north and west: northwest."
   },
   {
-   "id": "rc-en-018",
+   "id": "rc-v2-en-018",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "The old bridge connects the town to the hills.",
+   "text": "Bus A serves the museum but not the station. Bus B serves the station but not the museum. Both stop at Central. Starting at the station, which route reaches the museum?",
    "choices": [
-    "The bridge is brand new and unused.",
-    "The town has no way to the hills.",
-    "A bridge links the town with the hills."
+    "Take A from the station, then B",
+    "Stay on B all the way",
+    "Take B to Central, then A"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "Bus B can take you from the station to the shared stop. Bus A then connects that stop to the museum."
   },
   {
-   "id": "rc-en-019",
+   "id": "rc-v2-en-019",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "He read the instructions twice before starting.",
+   "text": "A gallery normally closes at six. Today’s sign says, “Open until eight for exhibition night; last entry thirty minutes before closing.” When is today’s last entry?",
    "choices": [
-    "He checked the directions two times first.",
-    "He began without looking at anything.",
-    "He threw the instructions away unread."
+    "7:30",
+    "5:30",
+    "8:00"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "Today’s special closing time is eight, so last entry is thirty minutes earlier, at seven thirty."
   },
   {
-   "id": "rc-en-020",
+   "id": "rc-v2-en-020",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "The cat slept in a patch of warm sunlight.",
+   "text": "You reach a station at 10:10. The express leaves at 10:20 and takes twenty minutes; the local leaves now and takes thirty-five. Ignoring other delays, which gets you there first?",
    "choices": [
-    "The cat ran through the cold rain.",
-    "The cat napped where the sun was warm.",
-    "The cat sat in a dark closet."
+    "The local, because it leaves now",
+    "The express, by five minutes",
+    "Both arrive together"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "The express arrives at 10:40, including its wait. The local arrives at 10:45, so the express wins by five minutes."
   },
   {
-   "id": "rc-en-021",
+   "id": "rc-v2-en-021",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "It is easier to wake up when the room is bright.",
+   "text": "A sensor records an alert only when a room is below its light threshold. An alert appears at noon. What can the alert establish?",
    "choices": [
-    "Darkness makes waking up easier.",
-    "Brightness makes everyone fall asleep.",
-    "Bright light makes waking up simpler."
+    "The room has no windows",
+    "The weather outside is cloudy",
+    "The room was below the set light threshold"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "The alert establishes the measured light level. It does not identify the cause, such as weather or windows."
   },
   {
-   "id": "rc-en-022",
+   "id": "rc-v2-en-022",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "The musician practiced a quiet tune before breakfast.",
+   "text": "A clock loses one minute every hour. It is set correctly at noon. Three real hours later, what time will it show?",
    "choices": [
-    "A musician played soft music before eating.",
-    "The musician refused to play at all.",
-    "A loud concert began after midnight."
+    "2:57",
+    "3:00",
+    "3:03"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "Three hours pass, but the clock loses three minutes. It shows three minutes before three: 2:57."
   },
   {
-   "id": "rc-en-023",
+   "id": "rc-v2-en-023",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "We planted tomato seeds, and soon small shoots appeared.",
+   "text": "A photo file was created on Monday when an old print was scanned. The print has no date. What can Monday’s file date tell you?",
    "choices": [
-    "The seeds turned to stone overnight.",
-    "Tiny plants came up soon after we planted the seeds.",
-    "We never planted anything this year."
+    "The original photo was taken Monday",
+    "The digital file was made Monday",
+    "The print was first developed Monday"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "The file date records the scanning result, not when the original scene was photographed or the print developed."
   },
   {
-   "id": "rc-en-024",
+   "id": "rc-v2-en-024",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "The bus was late, so she decided to walk.",
+   "text": "A display shows twelve objects. A sign says that every wooden object is handmade. Four objects are wooden. What is the smallest number we know are handmade?",
    "choices": [
-    "The bus arrived early, so she rode it.",
-    "She took a taxi to the moon.",
-    "Because the bus was delayed, she went on foot."
+    "Exactly twelve",
+    "None, because the others are unknown",
+    "At least four"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "The four wooden objects are guaranteed handmade. Others might be handmade too, but the sign does not establish that."
   },
   {
-   "id": "rc-en-025",
-   "kind": "readAndChoose",
-   "language": "en",
-   "text": "He saved a seat for a tired friend.",
-   "choices": [
-    "He kept a chair free for his weary friend.",
-    "He sat in every chair himself.",
-    "He told his friend to stand outside."
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-en-026",
-   "kind": "readAndChoose",
-   "language": "en",
-   "text": "The soup needs a few more minutes on the stove.",
-   "choices": [
-    "The soup is finished and cold.",
-    "The soup is not ready yet.",
-    "The stove broke before cooking started."
-   ],
-   "answerIndex": 1,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-en-027",
-   "kind": "readAndChoose",
-   "language": "en",
-   "text": "Leaves drifted down from the trees onto the path.",
-   "choices": [
-    "The path was swept perfectly clean.",
-    "The trees grew taller overnight.",
-    "Leaves fell from the trees and covered the path."
-   ],
-   "answerIndex": 2,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-en-028",
-   "kind": "readAndChoose",
-   "language": "en",
-   "text": "A good habit grows from repeating a small action.",
-   "choices": [
-    "Repeating a little action can build a good habit.",
-    "One huge effort builds every habit.",
-    "Habits form without any action at all."
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-en-029",
-   "kind": "readAndChoose",
-   "language": "en",
-   "text": "The fog lifted slowly as the sun climbed higher.",
-   "choices": [
-    "The fog became thicker at noon.",
-    "The mist cleared as the sun rose.",
-    "The sun disappeared behind the fog forever."
-   ],
-   "answerIndex": 1,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-en-030",
-   "kind": "readAndChoose",
-   "language": "en",
-   "text": "She wrote a thank you note to her teacher.",
-   "choices": [
-    "She ignored her teacher completely.",
-    "She wrote an angry letter to a stranger.",
-    "She sent her teacher a note of thanks."
-   ],
-   "answerIndex": 2,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-en-031",
-   "kind": "readAndChoose",
-   "language": "en",
-   "text": "The garden smells sweet after a morning shower.",
-   "choices": [
-    "A little rain makes the garden smell pleasant.",
-    "The garden smells terrible in the rain.",
-    "The garden is covered in sand."
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-en-032",
-   "kind": "readAndChoose",
-   "language": "en",
-   "text": "He folded the map and put it in his pocket.",
-   "choices": [
-    "He tore the map into pieces.",
-    "He tucked the folded map into his pocket.",
-    "He left the map open on a bench."
-   ],
-   "answerIndex": 1,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-en-033",
-   "kind": "readAndChoose",
-   "language": "en",
-   "text": "The street was calm until the delivery truck arrived.",
-   "choices": [
-    "The street was loud before the truck came.",
-    "The delivery truck never reached the street.",
-    "A delivery truck broke the street's calm."
-   ],
-   "answerIndex": 2,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-en-034",
-   "kind": "readAndChoose",
-   "language": "en",
-   "text": "Warm bread tastes best with a little butter.",
-   "choices": [
-    "Bread is especially nice warm with butter.",
-    "Cold stones taste best with butter.",
-    "Butter makes bread impossible to eat."
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "small-step",
-   "kind": "readAndChoose",
-   "language": "en",
-   "text": "A small step can begin a great day.",
-   "choices": [
-    "You must do everything at once.",
-    "Small actions never matter.",
-    "One little action can start a good day."
-   ],
-   "answerIndex": 2,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "tea",
-   "kind": "readAndChoose",
-   "language": "en",
-   "text": "A warm cup of tea can make a quiet morning feel special.",
-   "choices": [
-    "Tea can make a calm morning feel pleasant.",
-    "Tea makes every morning noisy.",
-    "A cup of tea is always cold."
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "umbrella",
-   "kind": "readAndChoose",
-   "language": "en",
-   "text": "Bring an umbrella because rain is expected this afternoon.",
-   "choices": [
-    "It will be sunny all afternoon.",
-    "The umbrella is broken.",
-    "Rain may come later today."
-   ],
-   "answerIndex": 2,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "walk",
-   "kind": "readAndChoose",
-   "language": "en",
-   "text": "She takes a short walk before starting work.",
-   "choices": [
-    "She walks after work is finished.",
-    "She takes a brief walk before working.",
-    "She stays home all day."
-   ],
-   "answerIndex": 1,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "clock-riddle",
+   "id": "logic-v2-en-001",
    "kind": "riddle",
    "language": "en",
-   "text": "I have hands but cannot clap, and I show you the time. What am I?",
+   "text": "Mai, Lin, and Bo each bring a different item: a cup, fruit, or bread. Mai brings neither food item, and Lin does not bring bread. What does Bo bring?",
    "choices": [
-    "A clock",
-    "A bird",
-    "A glove"
+    "Bread",
+    "A cup",
+    "Fruit"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "Mai brings the cup. Lin must bring fruit, leaving bread for Bo."
   },
   {
-   "id": "piano",
+   "id": "logic-v2-en-002",
    "kind": "riddle",
    "language": "en",
-   "text": "What has keys but cannot open a door?",
+   "text": "At 9:00, a file starts downloading for five minutes while a printer starts an eight-minute job. Both run without interruption. When are both jobs finished?",
    "choices": [
-    "A piano",
-    "A window",
-    "A shoe"
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rd-en-001",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I wake before you do, climb above the rooftops, and leave a golden trail across the walls. What am I?",
-   "choices": [
-    "The moon",
-    "The sunrise",
-    "A lamp"
+    "9:05",
+    "9:08",
+    "9:13"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "The jobs run at the same time. The download ends at 9:05; the slower printer ends at 9:08."
   },
   {
-   "id": "rd-en-002",
+   "id": "logic-v2-en-003",
    "kind": "riddle",
    "language": "en",
-   "text": "I am a dark, bitter drink made from roasted beans, and I help sleepy people wake up. What am I?",
+   "text": "Every draft with a red tag needs review. A draft needs review, but its tag is hidden. Must its tag be red?",
    "choices": [
-    "Hot chocolate",
+    "Yes, it must be red",
+    "No, it cannot be red",
+    "The rule does not tell us"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "The rule tells us what red tags require. It does not say that only red-tagged drafts need review."
+  },
+  {
+   "id": "logic-v2-en-004",
+   "kind": "riddle",
+   "language": "en",
+   "text": "You cut one straight ribbon into four separate pieces, making one cut at a time and never stacking or folding it. How many cuts are needed?",
+   "choices": [
+    "3",
+    "4",
+    "5"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "One piece becomes two after one cut. Each additional cut adds one piece, so three cuts make four."
+  },
+  {
+   "id": "logic-v2-en-005",
+   "kind": "riddle",
+   "language": "en",
+   "text": "Two closed jars contain only tea or only coffee, one of each. Their labels say tea and coffee, but both labels are wrong. What is in the jar labeled coffee?",
+   "choices": [
+    "Coffee",
     "Tea",
-    "Coffee"
+    "Not enough information"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "Both labels are wrong and each jar holds just one drink. The coffee-labeled jar must hold tea."
+  },
+  {
+   "id": "logic-v2-en-006",
+   "kind": "riddle",
+   "language": "en",
+   "text": "A small bag holds at most six kilograms. The camera weighs two, the books three, and the speaker four. Which pair fits and uses the full weight allowance?",
+   "choices": [
+    "Books and speaker",
+    "Camera and books",
+    "Camera and speaker"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "The camera and speaker weigh exactly six kilograms. The books with the speaker weigh seven; the camera with books uses only five."
   },
   {
-   "id": "rd-en-003",
+   "id": "logic-v2-en-007",
    "kind": "riddle",
    "language": "en",
-   "text": "I wear a small flame on my head, and I grow shorter as I give light. What am I?",
+   "text": "Three friends can meet only on these days: An on Friday or Saturday, Bao on Saturday or Sunday, Chi on Friday or Saturday. Which day works for all three?",
    "choices": [
-    "A candle",
-    "A light bulb",
-    "A rainbow"
+    "Saturday",
+    "Friday",
+    "Sunday"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Saturday appears in all three lists. Bao is unavailable Friday, and An and Chi are unavailable Sunday."
   },
   {
-   "id": "rd-en-004",
+   "id": "logic-v2-en-008",
    "kind": "riddle",
    "language": "en",
-   "text": "I have a handle and a spout, and I sing when I get hot on the stove. What am I?",
+   "text": "A key is in exactly one of three boxes: blue, green, or gold. Exactly one statement is true: “It is in blue” and “It is not in gold.” Where is the key?",
    "choices": [
-    "A broom",
-    "A kettle",
-    "A shoe"
+    "Blue box",
+    "Green box",
+    "Gold box"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Blue makes both statements true; gold makes both false. Green makes only “not in gold” true."
   },
   {
-   "id": "rd-en-005",
+   "id": "logic-v2-en-009",
    "kind": "riddle",
    "language": "en",
-   "text": "I am full of pages and words, I sit very still, and I can take you far away. What am I?",
+   "text": "Four friends each send one private greeting to every other friend. A greeting from An to Bao is separate from Bao to An. How many greetings are sent?",
    "choices": [
-    "A pillow",
-    "A staircase",
-    "A book"
+    "6",
+    "8",
+    "12"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Each of four people sends three greetings. Four times three is twelve; each direction counts separately."
   },
   {
-   "id": "rd-en-006",
+   "id": "logic-v2-en-010",
    "kind": "riddle",
    "language": "en",
-   "text": "I fall from the clouds without getting hurt, and I make the garden drink. What am I?",
+   "text": "A zine has three steps: print, fold, and staple. Folding must follow printing, and stapling must follow folding. Which step is immediately before stapling?",
    "choices": [
-    "Rain",
-    "A leaf",
-    "A feather"
+    "Fold",
+    "Print",
+    "Either print or fold"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "The required order is print, fold, staple. Folding is the step directly before stapling."
   },
   {
-   "id": "rd-en-007",
+   "id": "logic-v2-en-011",
    "kind": "riddle",
    "language": "en",
-   "text": "I have a handle and soft bristles, and I clean your teeth. What am I?",
+   "text": "A rhythm repeats clap, tap, tap, rest, starting at beat one. What happens on beat seven?",
    "choices": [
-    "A paintbrush",
-    "A toothbrush",
-    "A fork"
+    "Clap",
+    "Tap",
+    "Rest"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "Beats five through eight repeat clap, tap, tap, rest. Beat seven is the second tap in that group."
   },
   {
-   "id": "rd-en-008",
+   "id": "logic-v2-en-012",
    "kind": "riddle",
    "language": "en",
-   "text": "I come in pairs, I live by the door, and I am tied with laces. What am I?",
+   "text": "A photo is twelve units wide and eight tall. You crop only its width to make a square, keeping the full height. How many width units must you remove in total?",
    "choices": [
-    "Gloves",
-    "Scarves",
-    "Shoes"
+    "2",
+    "8",
+    "4"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "The square must be eight units wide to match its height. Twelve minus eight leaves four units to remove in total."
   },
   {
-   "id": "rd-en-009",
+   "id": "logic-v2-en-013",
    "kind": "riddle",
    "language": "en",
-   "text": "I am white and cold, I fall in winter, and children roll me into figures. What am I?",
+   "text": "The café is reached by either of two routes: a direct twelve-minute bus ride, or a four-minute metro ride plus a five-minute transfer and a two-minute walk. Which is quicker?",
    "choices": [
-    "Snow",
-    "Hail",
-    "Sand"
+    "Metro route by one minute",
+    "Bus route by one minute",
+    "They take the same time"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "The metro route takes four plus five plus two, or eleven minutes. That is one minute less than twelve."
   },
   {
-   "id": "rd-en-010",
+   "id": "logic-v2-en-014",
    "kind": "riddle",
    "language": "en",
-   "text": "I have four legs and a flat top, and people gather around me to share a meal. What am I?",
+   "text": "A train leaves at 8:50 and arrives at 9:15 the same morning. How long is the trip?",
    "choices": [
-    "A horse",
-    "A table",
-    "A tent"
+    "35 minutes",
+    "25 minutes",
+    "65 minutes"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "Ten minutes takes us to 9:00; fifteen more takes us to 9:15. The trip lasts twenty-five minutes."
   },
   {
-   "id": "rd-en-011",
+   "id": "logic-v2-en-015",
    "kind": "riddle",
    "language": "en",
-   "text": "I have two wheels and two pedals, and I only move when your legs push me. What am I?",
+   "text": "A shuttle travels A, B, C, D, E in that order. You board at B and get off at E. Counting arrival at E but not boarding at B, how many stops do you reach?",
    "choices": [
-    "A wagon",
-    "A boat",
-    "A bicycle"
+    "2",
+    "4",
+    "3"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "After boarding at B, you reach C, D, and E: three stops."
   },
   {
-   "id": "rd-en-012",
+   "id": "logic-v2-en-016",
    "kind": "riddle",
    "language": "en",
-   "text": "I light the night, and over a few weeks I change from a thin curve to a full circle. What am I?",
+   "text": "A sequence alternates two steps: add three, then multiply by two. Starting at two gives 2, 5, 10, 13, 26. What comes next?",
    "choices": [
-    "The moon",
-    "A streetlight",
-    "A comet"
+    "29",
+    "52",
+    "30"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "The step after multiplying is adding three. Twenty-six plus three is twenty-nine."
   },
   {
-   "id": "rd-en-013",
+   "id": "logic-v2-en-017",
    "kind": "riddle",
    "language": "en",
-   "text": "I have two straps and many pockets, and I carry books to school on your back. What am I?",
+   "text": "A jar has exactly three blue beads and two white beads. Without looking and without putting any back, how many must you take to guarantee two of the same color?",
    "choices": [
-    "A bucket",
-    "A backpack",
-    "A blanket"
+    "2",
+    "3",
+    "4"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "Two draws could give one of each color. The third bead must match one of the two colors already drawn."
   },
   {
-   "id": "rd-en-014",
+   "id": "logic-v2-en-018",
    "kind": "riddle",
    "language": "en",
-   "text": "I have a hard shell, a yellow center, and I am often cooked for breakfast. What am I?",
+   "text": "In this card set, every triangle is striped. A card has no stripes. Which shape is ruled out by that rule?",
    "choices": [
-    "A walnut",
-    "A pebble",
-    "An egg"
+    "A circle",
+    "A square",
+    "A triangle"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "A triangle must have stripes. Without stripes, this card cannot be a triangle; the rule says nothing about circles or squares."
   },
   {
-   "id": "rd-en-015",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I am orange, I grow underground, and rabbits love to crunch me. What am I?",
+   "id": "voice-v2-vi-001",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Máy in thư viện cuối cùng cũng chạy. Tờ ghi chú hơi lệch, nhưng ý tưởng suýt quên của tôi vẫn nằm trên giấy.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy"
+  },
+  {
+   "id": "voice-v2-vi-002",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Tệp chung lại có tên bản cuối. Tôi sửa một lỗi nhỏ, lưu cẩn thận, rồi thôi không đặt thêm cái tên kịch tính nào.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy"
+  },
+  {
+   "id": "voice-v2-vi-003",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Bản phác thảo đầu tiên trông như bản đồ do bồ câu vẽ. Đến bản thứ hai, tôi mới nhìn ra chỗ bắt đầu.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy"
+  },
+  {
+   "id": "voice-v2-vi-004",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Câu hỏi viết bên lề hôm qua sáng nay bỗng rõ hơn. Hóa ra khoảng trống trên trang cũng có chỗ cho câu trả lời.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy"
+  },
+  {
+   "id": "voice-v2-vi-005",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Nhóm học mang đến ba cách giải thích cho cùng một bài. Mỗi người góp một chút, rồi cả nhóm tìm được lối đi riêng.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy"
+  },
+  {
+   "id": "voice-v2-vi-006",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Cuộc họp mở đầu bằng chiếc mic im lặng và một màn vẫy tay nhiệt tình. Khi có tiếng, mọi người đã biết ai đang chào.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy"
+  },
+  {
+   "id": "voice-v2-vi-007",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Quán gọi tên ngay lúc tôi mở sách. Lần này, bị ngắt quãng cũng đáng: một cốc cà phê ấm đang chờ.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife"
+  },
+  {
+   "id": "voice-v2-vi-008",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Tôi tìm thấy chiếc tất thất lạc trong vỏ gối. Nó đã chọn một khu phố yên tĩnh hơn phần đồ giặt còn lại.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife"
+  },
+  {
+   "id": "voice-v2-vi-009",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Cây bên cửa sổ có thêm một chiếc lá. Chẳng ai thông báo, nhưng căn phòng như vừa đón một vị khách nhỏ.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife"
+  },
+  {
+   "id": "voice-v2-vi-010",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Danh sách mua đồ ghi bánh mì, cà chua và một thứ vui vui. Tôi mang đủ về; món cuối là một bó hoa.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife"
+  },
+  {
+   "id": "voice-v2-vi-011",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Chiếc thìa kẹt sau ngăn kéo từ lâu. Tìm thấy nó hôm nay giống đón một nhà thám hiểm bé xíu trở về.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife"
+  },
+  {
+   "id": "voice-v2-vi-012",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Hàng xóm để bát canh bên cửa, nhắn rằng nấu hơi nhiều. Có những rắc rối lại mang theo cách giải quyết rất ngon.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife"
+  },
+  {
+   "id": "voice-v2-vi-013",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Nhóm chat mất hai mươi phút chọn chỗ gặp. Có người nhắc quán quen, thế là tất cả bỗng trở thành chuyên gia quyết định.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans"
+  },
+  {
+   "id": "voice-v2-vi-014",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Bạn gửi ảnh đám mây giống con thỏ. Tôi lại thấy ấm trà, và cuộc tranh luận nghệ thuật nho nhỏ bắt đầu ngay.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans"
+  },
+  {
+   "id": "voice-v2-vi-015",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Chúng tôi gọi mỗi người một món ngọt rồi chia nhau. Cả bàn thành một hội đồng vui vẻ, với mục tiêu rất rõ.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans"
+  },
+  {
+   "id": "voice-v2-vi-016",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Bạn nhớ câu chuyện tôi từng kể thoáng qua. Nghe lại, cuộc trò chuyện bình thường bỗng giống tìm thấy một tấm bưu thiếp được giữ kỹ.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans"
+  },
+  {
+   "id": "voice-v2-vi-017",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Lời mời ghi không cần mang gì, nên tôi mang một câu chuyện. May là đã có người lo đồ ăn và những câu đùa nhạt.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans"
+  },
+  {
+   "id": "voice-v2-vi-018",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Mưa đến, chúng tôi chuyển buổi picnic vào nhà. Tấm khăn vẫn trải, bánh mì vẫn ngon, chỉ thời tiết mất chỗ ngồi ở bàn.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans"
+  },
+  {
+   "id": "voice-v2-vi-019",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Tôi thử vẽ cốc mà không nhìn giấy. Bức tranh rất tự tin, có thêm vài cái quai, và chẳng mấy thiết tha làm chiếc cốc.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks"
+  },
+  {
+   "id": "voice-v2-vi-020",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Danh sách nhạc bật bài đầy kịch tính giữa bữa sáng bình thường. Bỗng nhiên, phết bơ lên bánh giống cảnh mở đầu một bộ phim.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks"
+  },
+  {
+   "id": "voice-v2-vi-021",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Nét vẽ lệch trong sổ thành sườn núi. Tôi định gạch bỏ, rồi lại thấy ngọn núi này cũng đáng được ở lại.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks"
+  },
+  {
+   "id": "voice-v2-vi-022",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Tôi chụp góc phố hai lần: lần vì bóng đổ, lần vì màu sắc. Con phố lặng lẽ đưa ra hai câu chuyện khác nhau.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks"
+  },
+  {
+   "id": "voice-v2-vi-023",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Công thức bảo rưới sốt thành vòng thật đẹp. Phần của tôi giống một hòn đảo lạ, thế là bữa tối có thêm bản đồ.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks"
+  },
+  {
+   "id": "voice-v2-vi-024",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Tôi đặt tên ngớ ngẩn cho đoạn nhạc còn dang dở để dễ tìm. Giờ tôi nhớ cái tên rõ hơn cả giai điệu.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks"
+  },
+  {
+   "id": "voice-v2-vi-025",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Cửa kính xe buýt đóng khung tiệm bánh tôi chưa từng để ý. Tuyến đường quen hôm nay bỗng có một điểm đến mới.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel"
+  },
+  {
+   "id": "voice-v2-vi-026",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Ở ga, hai người lạ xem bản đồ rồi cười. Họ đi ngược hướng nhau, nhưng đều bắt đầu bằng việc tìm nhầm sân ga.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel"
+  },
+  {
+   "id": "voice-v2-vi-027",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Trong túi có vé, sách và phần ăn được chuẩn bị đầy lạc quan. Chuyến đi thì ngắn; có vẻ chiếc bụng dự định xa hơn.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel"
+  },
+  {
+   "id": "voice-v2-vi-028",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Cửa hàng nhỏ không có biển, chỉ có bưu thiếp đầy lối vào. Tôi tìm thấy nhờ ngẩng khỏi bản đồ đúng lúc.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel"
+  },
+  {
+   "id": "voice-v2-vi-029",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Mưa làm mặt đường bóng lên, mỗi ánh đèn có thêm một bản sao. Con phố như sửa soạn cho một bữa tiệc chưa ai thông báo.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel"
+  },
+  {
+   "id": "voice-v2-vi-030",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Thang máy sáng nay dừng ở mọi tầng. Xuống đến sảnh, những người lạ im lặng đã thành một khu phố chỉ tồn tại chốc lát.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel"
+  },
+  {
+   "id": "voice-v2-vi-031",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Từ cuốn sách mượn đã lâu, một hóa đơn rơi ra. Nó từng làm dấu trang, giờ nhắc lại bữa trưa tôi chẳng nhớ.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity"
+  },
+  {
+   "id": "voice-v2-vi-032",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Xoay miếng ghép lại, tôi bỗng nhận ra bức tranh. Miếng ghép chẳng đổi, chỉ là tôi thôi khăng khăng nó phải là mái nhà.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity"
+  },
+  {
+   "id": "voice-v2-vi-033",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Lọ đựng những chiếc cúc từ quần áo chẳng ai còn nhớ. Một bảo tàng bé xíu, hiện vật thú vị mà không có nhãn nào.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity"
+  },
+  {
+   "id": "voice-v2-vi-034",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Tôi nhận ra đồng hồ trong ảnh nằm trong gương. Bí ẩn về bữa tối sớm không tưởng cuối cùng cũng có lời giải hợp lý.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity"
+  },
+  {
+   "id": "voice-v2-vi-035",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Mũi tên viết tay chỉ sang mũi tên nữa, rồi mới tới quán. Người làm biển hẳn muốn sự háo hức cũng có đường đi riêng.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity"
+  },
+  {
+   "id": "voice-v2-vi-036",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Hộp ghi linh tinh chứa đúng thứ tôi cần. Trong một khoảnh khắc huy hoàng, chiếc kệ bừa nhất dường như có hệ thống bí mật.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity"
+  },
+  {
+   "id": "rc-v2-vi-001",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Bạn có 20 phút trước cuộc gọi. Chỉnh bản nháp cần 20 phút liền; trả lời tin nhắn mất 5 phút. Kế hoạch nào hoàn tất bản nháp trước cuộc gọi?",
    "choices": [
-    "A carrot",
-    "A pumpkin",
-    "A pear"
+    "Chỉnh bản nháp ngay",
+    "Trả lời tin nhắn rồi chỉnh",
+    "Chỉnh 10 phút, trả lời rồi chỉnh tiếp"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "Chỉnh ngay tận dụng đủ 20 phút liền. Trả lời trước chỉ còn 15 phút; chen tin nhắn vào giữa cũng làm gián đoạn việc chỉnh."
   },
   {
-   "id": "rd-en-016",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I have roots, branches, and leaves, and I give shade without ever moving. What am I?",
+   "id": "rc-v2-vi-002",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Thư mục chung có Bản nháp 3 và Bản nháp 4. Tin nhắn ghi: “Mình sửa số liệu trong Bản 4, kết luận giữ nguyên.” Muốn xem số liệu đã sửa, nên mở bản nào?",
    "choices": [
-    "A rock",
-    "A tree",
-    "A tent"
+    "Bản 3 vì kết luận không đổi",
+    "Bản 4, nơi số liệu đã sửa",
+    "Bản nào cũng được vì số liệu chắc giống nhau"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "Tin nhắn phân biệt số liệu đã sửa với kết luận không đổi. Chỉ Bản 4 được xác nhận có phần số liệu mới."
   },
   {
-   "id": "rd-en-017",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I arrive after the lightning and rumble across the sky. What am I?",
+   "id": "rc-v2-vi-003",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Buổi chia sẻ có hai phòng: một phòng 8 chỗ có màn hình, một phòng 12 chỗ không có màn hình. Có 9 người cần xem màn hình, đồ đạc không thể chuyển. Người tổ chức biết gì?",
    "choices": [
-    "Lightning",
-    "A rainbow",
-    "Thunder"
+    "Phòng 12 chỗ đáp ứng cả hai điều kiện",
+    "Phòng 8 chỗ đáp ứng cả hai điều kiện",
+    "Cách bố trí hiện tại chưa phòng nào đáp ứng đủ"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "Một phòng thiếu chỗ ngồi, phòng kia thiếu màn hình. Chỉ nhiều chỗ hơn vẫn chưa đáp ứng cả hai điều kiện."
   },
   {
-   "id": "rd-en-018",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I am a curved bridge of colors that appears when sunshine meets rain. What am I?",
+   "id": "rc-v2-vi-004",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Cổng nộp bài luôn hiện biên nhận cho bài đã nộp, và biên nhận luôn được giữ lại. Nhi không thấy biên nhận bài của mình. Theo quy tắc đã nêu, điều gì đúng?",
    "choices": [
-    "A rainbow",
-    "A flag",
-    "A ribbon"
+    "Bài chưa được ghi nhận là đã nộp",
+    "Bài đã nộp nhưng bị từ chối",
+    "Người chấm chưa mở bài của cô ấy"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "Bài đã nộp phải có biên nhận hiện rõ. Không có biên nhận cho biết trạng thái nộp, chứ không cho biết quyết định hay việc đọc của người chấm."
   },
   {
-   "id": "rd-en-019",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I am the largest animal that walks on land, with a long trunk and big ears. What am I?",
+   "id": "rc-v2-vi-005",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Công thức dùng 2 cốc gạo cho 4 phần ăn. Bạn cần 6 phần, giữ nguyên tỷ lệ. Lượng nào phù hợp?",
    "choices": [
-    "A horse",
-    "An elephant",
-    "A bear"
+    "Hai cốc rưỡi",
+    "Ba cốc",
+    "Bốn cốc"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "Mỗi phần dùng nửa cốc. Sáu phần vì thế cần ba cốc."
   },
   {
-   "id": "rd-en-020",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I live in a hive, I visit flowers, and I help make honey. What am I?",
+   "id": "rc-v2-vi-006",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Giấy báo ghi: “Kiện hàng ở ngăn tủ 12. Quầy cửa hàng chỉ nhận hàng trả lại.” Bạn muốn lấy kiện này. Nên đến đâu?",
    "choices": [
-    "A butterfly",
-    "A beetle",
-    "A bee"
+    "Quầy để nhận kiện hàng",
+    "Chỗ nào cũng nhận hàng được",
+    "Ngăn tủ 12"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "Giấy báo chỉ rõ lấy hàng ở ngăn 12, trả hàng ở quầy. Hai nơi có vai trò khác nhau."
   },
   {
-   "id": "rd-en-021",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I sit on your nose, I have two lenses, and I help you see more clearly. What am I?",
+   "id": "rc-v2-vi-007",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Biển châm thêm đồ uống ghi: “Cùng cốc, cùng ngày, cần hóa đơn.” Bạn có hóa đơn hôm nay nhưng mang cốc hôm qua, không phải cốc trên hóa đơn. Còn thiếu điều kiện nào?",
    "choices": [
-    "Glasses",
-    "Earrings",
-    "A necklace"
+    "Dùng đúng cốc của lần mua hôm nay",
+    "Có hóa đơn",
+    "Quay lại trong cùng ngày"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "Hóa đơn và ngày đã đáp ứng hai điều kiện. Cốc còn phải đúng chiếc đi cùng lần mua đó."
   },
   {
-   "id": "rd-en-022",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I hum in the kitchen and keep your milk cold and your vegetables fresh. What am I?",
+   "id": "rc-v2-vi-008",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Tủ sách cộng đồng nhận trả sách qua khe cả ngày; mượn sách cần tình nguyện viên từ 2 đến 5 giờ. Bạn tới lúc trưa, muốn trả một cuốn và mượn cuốn khác. Việc nào làm ngay được?",
    "choices": [
-    "A kettle",
-    "A refrigerator",
-    "A broom"
+    "Chỉ mượn cuốn mới",
+    "Chỉ trả cuốn đã mượn",
+    "Cả trả lẫn mượn"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "Khe trả sách dùng được lúc trưa. Muốn mượn phải đợi tình nguyện viên tới lúc 2 giờ."
   },
   {
-   "id": "rd-en-023",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I spray warm water from above while you stand beneath me. What am I?",
+   "id": "rc-v2-vi-009",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "An gặp được thứ Hai hoặc thứ Ba; Bảo rảnh thứ Ba hoặc thứ Tư. Chi chỉ rảnh thứ Ba. Ngày nào cả nhóm gặp được?",
    "choices": [
-    "A sink",
-    "A mirror",
-    "A shower"
+    "Thứ Hai",
+    "Thứ Tư",
+    "Thứ Ba"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Thứ Ba có trong cả ba lịch rảnh. Mỗi ngày còn lại đều có ít nhất một người không tham gia được."
   },
   {
-   "id": "rd-en-024",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I show your face but never speak, and I only repeat what you do. What am I?",
+   "id": "rc-v2-vi-010",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Trang nhắn: “Phim bắt đầu sau 8 giờ thì giữ chỗ cho mình. Trước 8 giờ mình còn trên tàu.” Suất chiếu bắt đầu 8 giờ rưỡi. Trang đã nhờ nhóm làm gì?",
    "choices": [
-    "A mirror",
-    "A photograph",
-    "A painting"
+    "Giữ chỗ cho Trang",
+    "Chuyển suất chiếu sớm hơn",
+    "Cho rằng Trang không đến được"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Suất chiếu đáp ứng điều kiện Trang nêu: bắt đầu sau 8 giờ. Lời nhờ là giữ một chỗ."
   },
   {
-   "id": "rd-en-025",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I am soft, I wear a case, and I hold your head while you sleep. What am I?",
+   "id": "rc-v2-vi-011",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Minh nói: “Mình mang món ngọt được, nhưng không mang thứ cần tủ lạnh.” Chủ nhà gợi ý kem phải giữ đông hoặc bánh quy để được ở nhiệt độ phòng. Món nào hợp lời Minh?",
    "choices": [
-    "A plate",
-    "A pillow",
-    "A ladder"
+    "Kem vì đó là món ngọt",
+    "Bánh quy vì không cần tủ lạnh",
+    "Cả hai vì đều ngọt"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Cả hai là món ngọt, nhưng chỉ bánh quy đáp ứng thêm điều kiện không cần tủ lạnh."
   },
   {
-   "id": "rd-en-026",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I am long and thin, I write with graphite, and I have an eraser on one end. What am I?",
+   "id": "rc-v2-vi-012",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Tin nhắn ghi: “Mình thích ý tưởng ra quán đó, nhưng còn phải xem hôm ấy có rảnh không.” Điều gì đã được xác nhận?",
    "choices": [
-    "A spoon",
-    "A broom",
-    "A pencil"
+    "Người đó chắc chắn tham gia",
+    "Giờ gặp đã được chốt",
+    "Người đó thích ý tưởng, nhưng chưa chốt tham gia"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Sự hào hứng với ý tưởng đã rõ. Lịch rảnh chưa được kiểm tra, nên việc tham gia vẫn chưa chốt."
   },
   {
-   "id": "rd-en-027",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I am filled with air, I float on a string, and I pop with a bang. What am I?",
+   "id": "rc-v2-vi-013",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Đèn chiếu bóng tượng về phía tây. Trong bố trí này, bóng đổ thẳng về hướng ngược với đèn. Đèn nằm phía nào của tượng?",
    "choices": [
-    "A balloon",
-    "A kite",
-    "A bubble"
+    "Phía đông",
+    "Phía tây",
+    "Phía bắc"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "Bóng hướng tây nghĩa là ánh sáng đến từ phía đối diện, tức phía đông."
   },
   {
-   "id": "rd-en-028",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I am made of paper, I carry words across the country, and I need a stamp. What am I?",
+   "id": "rc-v2-vi-014",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Ảnh chụp những chiếc ghế trống sau buổi nhạc. Chú thích chỉ ghi: “Mười phút sau bài cuối.” Câu nào có căn cứ mà không tự đoán nguyên nhân?",
    "choices": [
-    "A napkin",
-    "A letter",
-    "A ticket"
+    "Khán giả không thích buổi nhạc",
+    "Ghế trống mười phút sau bài cuối",
+    "Buổi nhạc không có người xem"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "Ảnh và chú thích cho biết cảnh lúc chụp cùng thời điểm. Chúng không cho biết lượng người xem trước đó hay cảm nhận của họ."
   },
   {
-   "id": "rd-en-029",
-   "kind": "riddle",
-   "language": "en",
-   "text": "You peel me, I am yellow and curved, and I make a quick snack. What am I?",
+   "id": "rc-v2-vi-015",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Yêu cầu áp phích ghi: “Tên sự kiện trên ảnh, ngày tổ chức dưới ảnh.” Bản nháp đặt ngày giữa tên và ảnh. Cần chuyển gì?",
    "choices": [
-    "A lemon",
-    "A corn cob",
-    "A banana"
+    "Đưa tên xuống dưới ảnh",
+    "Đưa ảnh xuống dưới ngày",
+    "Đưa ngày xuống dưới ảnh"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "Tên vốn cần nằm trên ảnh. Chuyển ngày xuống dưới ảnh sẽ khôi phục đúng thứ tự yêu cầu."
   },
   {
-   "id": "rd-en-030",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I open above your head when rain falls and close when the sky clears. What am I?",
+   "id": "rc-v2-vi-016",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Phim ngắn cần 30 giây nhạc liền mạch. Ba đoạn dài 20, 35 và 40 giây. Được cắt bớt, không được nối đoạn. Trong ba đoạn gốc, đoạn ngắn nhất đủ dùng dài bao lâu?",
    "choices": [
-    "An umbrella",
-    "A roof",
-    "A hat"
+    "35 giây",
+    "20 giây",
+    "40 giây"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "Đoạn 20 giây quá ngắn. Hai đoạn dài hơn đều cắt còn 30 giây được; 35 giây là đoạn ngắn hơn trong hai đoạn ấy."
   },
   {
-   "id": "rd-en-031",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I have a lid and two handles, I sit on the stove, and soup bubbles inside me. What am I?",
+   "id": "rc-v2-vi-017",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Trên bản đồ, chợ ở thẳng phía bắc thư viện. Quán cà phê ở thẳng phía đông thư viện. Từ quán nhìn về chợ là hướng nào?",
    "choices": [
-    "A bowl",
-    "A pot",
-    "A cup"
+    "Đông nam",
+    "Tây bắc",
+    "Tây nam"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "Từ quán, chợ nằm về phía bắc và phía tây, tức tây bắc."
   },
   {
-   "id": "rd-en-032",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I have a long handle and dry bristles, and I sweep the floor. What am I?",
+   "id": "rc-v2-vi-018",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Xe A qua bảo tàng, không qua ga. Xe B qua ga, không qua bảo tàng. Cả hai dừng ở Trung tâm. Từ ga, đi thế nào để tới bảo tàng?",
    "choices": [
-    "A rake",
-    "A mop",
-    "A broom"
+    "Đi A từ ga rồi đổi B",
+    "Ngồi B suốt chuyến",
+    "Đi B đến Trung tâm rồi đổi A"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "Xe B đưa bạn từ ga tới điểm chung. Từ đó xe A mới đi tiếp tới bảo tàng."
   },
   {
-   "id": "rd-en-033",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I am the season when leaves turn red and gold and drift to the ground. What am I?",
+   "id": "rc-v2-vi-019",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Phòng tranh thường đóng lúc 6 giờ. Biển hôm nay ghi: “Đêm triển lãm mở đến 8 giờ; ngừng nhận khách trước khi đóng 30 phút.” Hôm nay nhận khách muộn nhất lúc nào?",
    "choices": [
-    "Autumn",
-    "Summer",
-    "Spring"
+    "7 giờ rưỡi",
+    "5 giờ rưỡi",
+    "8 giờ"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "Hôm nay đóng muộn lúc 8 giờ, nên giờ nhận khách cuối cùng sớm hơn 30 phút, tức 7 giờ rưỡi."
   },
   {
-   "id": "rd-en-034",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I carry my house on my back and leave a silver trail as I creep along. What am I?",
+   "id": "rc-v2-vi-020",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Bạn tới ga lúc 10 giờ 10. Tàu nhanh rời lúc 10 giờ 20, đi 20 phút; tàu thường rời ngay, đi 35 phút. Không có chậm trễ khác, tàu nào đến trước?",
    "choices": [
-    "A turtle",
-    "A snail",
-    "A crab"
+    "Tàu thường vì rời ngay",
+    "Tàu nhanh, sớm hơn 5 phút",
+    "Hai tàu đến cùng lúc"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "Tính cả lúc chờ, tàu nhanh tới lúc 10 giờ 40. Tàu thường tới 10 giờ 45, muộn hơn 5 phút."
   },
   {
-   "id": "rd-en-035",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I am a tiny wooden house that hangs in a tree and keeps small singers dry. What am I?",
+   "id": "rc-v2-vi-021",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Cảm biến chỉ ghi cảnh báo khi ánh sáng trong phòng dưới ngưỡng đặt sẵn. Một cảnh báo xuất hiện lúc trưa. Cảnh báo cho biết được điều gì?",
    "choices": [
-    "A nest",
-    "A doghouse",
-    "A birdhouse"
+    "Phòng không có cửa sổ",
+    "Ngoài trời đang nhiều mây",
+    "Ánh sáng trong phòng dưới ngưỡng đặt sẵn"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "Cảnh báo xác nhận mức sáng đo được, không xác định nguyên nhân như thời tiết hay cửa sổ."
   },
   {
-   "id": "rd-en-036",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I am a cold, sweet treat that melts in the sun and sits on a cone. What am I?",
+   "id": "rc-v2-vi-022",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Đồng hồ chạy chậm 1 phút mỗi giờ. Nó được chỉnh đúng lúc 12 giờ trưa. Sau 3 giờ thực tế, nó chỉ mấy giờ?",
    "choices": [
-    "Ice cream",
-    "A cupcake",
-    "A pancake"
+    "2 giờ 57",
+    "3 giờ",
+    "3 giờ 03"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "Lúc thời gian thật là 3 giờ, đồng hồ còn chậm 3 phút, nên chỉ 2 giờ 57."
   },
   {
-   "id": "rd-en-037",
-   "kind": "riddle",
-   "language": "en",
-   "text": "You climb me one step at a time, and I sit inside the house between two floors. What am I?",
+   "id": "rc-v2-vi-023",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Tệp ảnh được tạo thứ Hai khi quét một tấm ảnh giấy cũ. Ảnh giấy không ghi ngày. Ngày tạo tệp thứ Hai cho biết điều gì?",
    "choices": [
-    "A hallway",
-    "A staircase",
-    "A chimney"
+    "Ảnh gốc được chụp thứ Hai",
+    "Tệp kỹ thuật số được tạo thứ Hai",
+    "Ảnh giấy được rửa lần đầu thứ Hai"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "Ngày tệp ghi nhận kết quả quét, không cho biết lúc chụp cảnh gốc hay lúc rửa ảnh giấy."
   },
   {
-   "id": "rd-en-038",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I have a magnetic needle that always swings to point north. What am I?",
+   "id": "rc-v2-vi-024",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Kệ trưng bày có 12 món. Biển ghi mọi món bằng gỗ đều làm thủ công. Có 4 món bằng gỗ. Ta biết chắc ít nhất mấy món làm thủ công?",
    "choices": [
-    "A ruler",
-    "A thermometer",
-    "A compass"
+    "Đúng 12 món",
+    "Không món nào vì chưa rõ các món khác",
+    "Ít nhất 4 món"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "Bốn món gỗ chắc chắn làm thủ công. Các món khác có thể cũng vậy, nhưng biển không xác nhận điều đó."
   },
   {
-   "id": "rd-en-039",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I measure how warm or cold the air is. What am I?",
-   "choices": [
-    "A thermometer",
-    "A barometer",
-    "A calendar"
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rd-en-040",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I stand tall on a pole and light the street after dark. What am I?",
-   "choices": [
-    "A tree",
-    "A streetlight",
-    "A flag"
-   ],
-   "answerIndex": 1,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "shadow",
-   "kind": "riddle",
-   "language": "en",
-   "text": "I follow you in sunlight but disappear in darkness. What am I?",
-   "choices": [
-    "A shadow",
-    "A cloud",
-    "An echo"
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-001",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Sáng nay bạn thức dậy thật nhẹ nhàng, hít một hơi sâu và mỉm cười với ngày mới đang chờ phía trước.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-002",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Ánh nắng đầu ngày len qua khung cửa, đặt lên bàn một vệt vàng ấm áp như lời chào dịu dàng.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-003",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hãy uống một ngụm nước, vươn vai thật dài và để cơ thể làm quen dần với một buổi sáng bình yên.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-004",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Tiếng chim ngoài hiên nghe thật vui tai, nhắc bạn rằng mọi chuyện đều có thể bắt đầu lại bằng một bản nhạc nhỏ.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-005",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Bạn không cần vội vàng, chỉ cần đứng dậy, bước từng bước chậm rãi và tin rằng hôm nay sẽ là một ngày tốt.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-006",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Mùi cà phê thơm lan khắp căn bếp nhỏ, báo hiệu một buổi sáng ấm cúng đang mở ra trước mắt bạn.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-007",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Mỗi buổi sáng là một trang giấy trắng, bạn có thể viết lên đó những điều giản dị mà làm mình vui.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-008",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hãy mở cửa sổ, hít thở không khí trong lành và cảm ơn vì bạn lại có thêm một ngày để sống.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-009",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Một việc nhỏ làm xong sớm sẽ khiến cả ngày nhẹ nhõm hơn, nên hôm nay hãy bắt đầu bằng việc dễ nhất.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-010",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Bầu trời ngoài kia đang sáng dần, từng đám mây hồng trôi chậm như đang mời bạn cùng thức dậy.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-011",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Cảm ơn chiếc giường êm đã giữ giấc ngủ cho bạn, giờ là lúc đứng lên và gặp gỡ một ngày mới.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-012",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Bạn đã đủ giỏi để bắt đầu hôm nay, dù chỉ bằng một nụ cười nhỏ và một cốc nước mát.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-013",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Gió sớm mang theo hương cỏ ướt sương, nhẹ nhàng chạm vào má bạn như một người bạn cũ ghé thăm.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-014",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hôm nay hãy đi chậm lại một chút, nhìn quanh một chút và nhớ rằng những điều đẹp thường nằm rất gần.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-015",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Buổi sáng yên tĩnh là món quà nhỏ, bạn hãy dành vài phút ngồi im lặng trước khi bước vào công việc.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-016",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hãy nghĩ đến một người bạn quý, gửi đến họ lời chúc tốt lành và để lòng mình nhẹ đi một chút.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-017",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Bữa sáng đơn giản với một lát bánh mì nướng và quả chuối chín cũng đủ làm ngày mới thêm ngon miệng.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-018",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Đôi dép đang đợi ở cạnh giường, bạn hãy xỏ chân vào, đi ra ban công và đón chào mặt trời mọc.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-019",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Dù hôm qua có mệt đến đâu, sáng nay bạn vẫn được bắt đầu lại từ đầu với một trái tim nhẹ nhàng.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-020",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Rửa mặt bằng nước mát, lau khô bằng chiếc khăn mềm, bạn sẽ thấy mình tỉnh táo và sẵn sàng hơn.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-021",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Tách trà nóng bốc khói trên bàn gỗ nhỏ, và bạn có một khoảng lặng quý giá trước khi ngày dài bắt đầu.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-022",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hãy đặt một mục tiêu vừa sức cho hôm nay, làm từng bước một và đừng quên khen mình khi hoàn thành.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-023",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Tiếng mưa rơi nhẹ trên mái nhà làm buổi sáng thêm dịu êm, bạn có thể thong thả bắt đầu ngày mới.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-024",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Cây xanh ngoài cửa sổ vừa được tưới sương, lá còn long lanh, như muốn chúc bạn một ngày thật tươi.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-025",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Bạn có quyền chọn cách mở đầu ngày mới, và hôm nay hãy chọn sự bình tĩnh cùng một lời nói dịu dàng.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-026",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Ngồi thẳng lưng, thở chậm ba lần, và nhận ra rằng buổi sáng này chỉ thuộc về riêng bạn.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-027",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Con đường quen thuộc trước nhà hôm nay lại có một vẻ mới, vì ánh nắng đang trải đều trên từng mái ngói.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-028",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Cứ bước đi với niềm tin nhỏ rằng mọi việc rồi sẽ ổn, và bạn sẽ học thêm được điều mới mỗi ngày.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-029",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Sáng nay hãy nói lời chào với người thân trong nhà, một câu hỏi thăm giản dị cũng làm không khí ấm lên.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-030",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Chiếc đồng hồ đã gọi bạn dậy, vậy hãy cảm ơn nó, tắt tiếng chuông và đón nhận ngày mới với lòng biết ơn.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-031",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Một bát cháo nóng hay một tô phở thơm vào buổi sớm luôn gợi nhớ những buổi sáng bình dị ở quê nhà.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-032",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hôm nay bạn chỉ cần làm tốt phần việc của mình, từ tốn, cẩn thận và không so sánh với bất kỳ ai.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-033",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hãy nhìn ra ngoài cửa sổ và tìm một điều đẹp, có thể là chiếc lá xanh hay một đám mây trắng.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-034",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Khi bạn thở ra thật chậm, vai sẽ thả lỏng, đầu óc sẽ sáng ra và ngày mới sẽ nhẹ hơn một chút.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-035",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Chợ sớm đã rộn ràng tiếng cười nói, mùi rau thơm và hoa tươi, còn bạn đang bắt đầu một ngày thong thả.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-036",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hôm nay bạn hãy kiên nhẫn với chính mình, như cách bạn vẫn kiên nhẫn với những người mình thương yêu.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-037",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Căn phòng còn yên ắng, tấm rèm khẽ lay, và bạn có thể ngồi dậy thật chậm để đón những tia nắng đầu tiên.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-038",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Chỉ cần mười phút đi bộ quanh khu phố, bạn sẽ nghe được nhiều âm thanh dễ thương của một buổi sáng đang thức giấc.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-039",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hãy viết ra ba điều bạn biết ơn, dù là rất nhỏ, rồi gấp tờ giấy lại và mang theo cả ngày.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-040",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Chiếc áo sạch đã sẵn trên ghế, đôi giày đã đặt cạnh cửa, mọi thứ đều chờ bạn bước ra ngoài.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-041",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Buổi sáng không cần phải hoàn hảo, chỉ cần bạn có mặt, thở đều và sẵn lòng thử lại một lần nữa.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-042",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Tiếng xe cộ xa xa vừa lên, thành phố đang thức dậy, và bạn cũng đang chầm chậm lấy lại nhịp sống của mình.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-043",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hãy cười với chính mình trong gương, một nụ cười nhỏ thôi cũng đủ làm khuôn mặt bạn rạng rỡ hơn hẳn.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-044",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Mỗi bước chân đầu ngày đều quan trọng, vì nó dẫn bạn đến gần hơn với những điều bạn muốn làm hôm nay.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-045",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Ngày mới đến như một người khách tốt bụng, mang theo cơ hội mới, và bạn chỉ cần mở cửa chào đón.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-046",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Bạn đã vượt qua một đêm dài, giờ hãy tự thưởng cho mình một buổi sáng thong thả với âm nhạc nhẹ nhàng.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-047",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Con mèo ngoài sân đang vươn vai dưới nắng, bạn cũng hãy vươn vai thật dài rồi bước xuống giường.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-048",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hãy nhớ uống nước, ăn sáng đầy đủ, và dành chút thời gian nhìn lại những việc quan trọng của hôm nay.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-049",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Trời chưa nóng, đường còn vắng, và đây là lúc tuyệt vời để bạn tập vài động tác giãn người nhẹ nhàng.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-050",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Đừng để lo lắng chiếm hết buổi sáng của bạn, hãy chọn một việc nhỏ và làm xong nó thật bình tĩnh.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-051",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Giọt nắng đầu tiên rơi trên bậu cửa, báo cho bạn biết rằng một ngày mới tử tế vừa mới đến.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-052",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Bạn hãy nhớ lại giấc mơ đẹp đêm qua, mang theo cảm giác dễ chịu ấy bước vào những việc đầu tiên trong ngày.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-053",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Chiếc cốc quen thuộc, ánh đèn dịu và vài trang sách yêu thích sẽ làm buổi sáng của bạn thêm trọn vẹn.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-054",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Mỗi lần bạn bắt đầu lại là một lần bạn dũng cảm, nên hôm nay đừng ngại thử một cách làm mới.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-055",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hãy để điện thoại sang một bên vài phút, nhìn lên bầu trời và để đầu óc nghỉ ngơi trước khi bận rộn.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-056",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Sáng nay bạn hãy tử tế với mọi người trên đường, một lời cảm ơn hay một cái gật đầu đều mang lại niềm vui.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-057",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hơi nước bốc lên từ ly sữa nóng, làn hơi mỏng manh ấy cũng đủ làm bàn ăn sáng thêm ấm cúng.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-058",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Cuộc sống không cần chạy quá nhanh, chỉ cần bạn đi đều từng ngày và vẫn nhớ nhìn xung quanh khi đang đi.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-059",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hôm nay bạn có thể gọi cho người thân, hỏi thăm một câu giản dị, và niềm vui sẽ tự đến sau đó.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-060",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Những khóm hoa ngoài ban công đã hé nở, mỗi cánh hoa mỏng manh đều đang đón ánh sáng như bạn vậy.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-061",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Chỉ cần ngồi dậy, đặt hai chân xuống sàn và hít thở sâu, bạn đã làm xong phần khó nhất của buổi sáng.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-062",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hôm nay hãy lên một danh sách ngắn gọn với ba việc chính, và bạn sẽ thấy ngày dài trở nên rõ ràng hơn.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-063",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Trước khi ra khỏi nhà, hãy kiểm tra chìa khóa, ví và nụ cười của bạn, vì cả ba đều rất cần thiết.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-064",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Khi nắng lên cao, bóng cây trải dài trên sân, và mọi thứ đều trông yên bình như một bức tranh quê.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-065",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Bạn hãy lắng nghe nhịp thở của mình, chậm và đều, rồi nhẹ nhàng chuyển sự chú ý sang những việc đầu tiên.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-066",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Một tách trà gừng nóng và một chiếc bánh nhỏ có thể biến buổi sáng bình thường thành khoảnh khắc đáng nhớ.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-067",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hôm nay bạn đã tỉnh dậy, đó đã là một khởi đầu đáng trân trọng, và phần còn lại sẽ đi từng bước.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-068",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Đường phố sau cơn mưa đêm thơm mùi đất ướt, và bầu không khí mát lành khiến bạn muốn bước ra ngoài.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-069",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hãy tin rằng bạn có đủ thời gian cho những việc quan trọng, và bạn sẽ làm chúng thật bình tĩnh.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-070",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Đôi khi một buổi sáng chậm rãi lại là điều bạn cần nhất, nên hôm nay hãy cho phép mình đi từ tốn.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-071",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Ngoài kia người bán hàng đang dọn hàng, trẻ con đang đến trường, và bạn cũng sẵn sàng cho phần việc của mình.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-072",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hãy xếp lại chăn gối gọn gàng, một việc rất nhỏ nhưng làm bạn thấy căn phòng và đầu óc đều sáng sủa.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-073",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Mặt trời lên đúng giờ mỗi ngày, và bạn cũng có thể tin vào một nhịp sống đều đặn, dịu dàng và bền bỉ.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-074",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hôm nay hãy học một điều mới dù nhỏ, như một từ lạ hay một cách nấu món ăn đơn giản.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-075",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Nắng sớm rọi vào chiếc bàn học, những trang vở còn mới, và bạn có thể bắt đầu ngày mới thật gọn gàng.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-076",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Sau khi uống nước, hãy đứng thẳng, hít một hơi dài và nhẹ nhàng nói với mình rằng hôm nay sẽ ổn thôi.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-077",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hôm nay bạn không cần làm tất cả mọi thứ, chỉ cần làm những việc quan trọng nhất và làm bằng cả tấm lòng.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-078",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Gió từ ngoài vườn mang theo mùi hoa nhài, khiến cả căn nhà thoang thoảng một buổi sáng dễ chịu.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-079",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hãy nhìn lại những việc bạn đã làm tốt tuần qua, rồi mang cảm giác tự tin đó vào ngày hôm nay.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-080",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Đừng quên cảm ơn những người đã giúp bạn, một tin nhắn ngắn gửi buổi sáng cũng làm họ vui cả ngày.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-081",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Khi bạn bước ra khỏi cửa, hãy ngẩng đầu lên, nhìn bầu trời rộng và để suy nghĩ của mình nhẹ bớt đi.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-082",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Tiếng nước sôi reo trong ấm vang lên đều đều, báo cho bạn biết đã đến lúc pha một tách trà thơm.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-083",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hôm nay hãy dọn dẹp bàn làm việc một chút, không gian gọn gàng sẽ giúp bạn làm việc nhẹ nhàng hơn.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-084",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Buổi sáng là lúc tốt để thử điều gì đó mới, như đổi lối đi quen hay nghe một bài hát chưa nghe.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-085",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Bạn hãy vươn hai tay lên cao, hít vào thật sâu, rồi thả tay xuống và thở ra thật chậm rãi.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-086",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Một câu nói tử tế vào buổi sáng như hạt giống nhỏ, nó có thể nở thành niềm vui cho cả ngày.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-087",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Mặt hồ phẳng lặng phản chiếu bầu trời hồng, và bạn cũng có thể giữ lòng mình bình yên như mặt nước ấy.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-088",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hôm nay nếu có việc khó, hãy chia nó thành những bước nhỏ, rồi làm từng bước một thật kiên nhẫn.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-089",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Chiếc xe đạp dựa bên tường đang chờ bạn, hãy thong thả đạp một vòng quanh phố để đón gió buổi sớm.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-090",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hãy ăn sáng thật chậm, nhai kỹ và nhìn kỹ món ăn trước mặt, để bữa sáng trở nên trọn vẹn.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-091",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Nụ cười buổi sáng không tốn gì cả, nhưng có thể làm ấm lòng người bán hàng, người hàng xóm và cả bạn.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-092",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hôm nay hãy đặt một nhắc nhở nhỏ trên điện thoại, như nhớ uống nước hay nghỉ giải lao đôi chút.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-093",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Bầu trời xanh sau cơn mưa trong như vừa được lau, và bạn có thể bước ra ngoài với tâm trạng nhẹ nhõm.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-094",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Mỗi buổi sớm bạn đều có thể chọn lại hướng đi, dù hôm qua có thế nào thì hôm nay vẫn còn mới.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-095",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hãy lắng nghe một bài hát nhẹ trong khi sắp xếp lại góc làm việc, và để tâm trạng dần sáng lên.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-096",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Cánh cửa đã mở, tia nắng đã vào, và bạn chỉ cần bước thêm một bước nữa để chào đón buổi sáng.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-097",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Sáng nay hãy cho phép mình chậm một nhịp, thưởng thức hương thơm của ly trà và nghe tiếng thành phố thức dậy.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-098",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Điều bạn làm hôm nay có thể rất nhỏ, nhưng từng việc nhỏ cộng lại sẽ tạo nên một tuần đáng tự hào.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-099",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hít một hơi thật sâu, giữ lại một chút, rồi thở ra thật chậm, và bạn sẽ thấy sáng nay nhẹ nhàng hơn.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-100",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hôm nay bạn hãy chăm sóc chính mình bằng bữa ăn đủ đầy, vài phút thư giãn và một nụ cười dễ chịu.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-101",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Khung cửa sổ mở ra một góc trời xanh, và bạn có thể ngắm nhìn nó thật lâu trước khi bắt đầu công việc.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-102",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Bạn hãy tìm một việc khiến mình vui, dù nhỏ đến đâu, và cho nó một chỗ đứng trong lịch trình hôm nay.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-103",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Con đường làng sớm mai thoảng mùi rơm mới, và ký ức êm đềm ấy luôn khiến lòng người thấy ấm áp.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-104",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Khi ánh đèn trong phòng đã sáng, hãy nhẹ nhàng gấp chăn, thay áo và để một ngày mới bắt đầu đúng nhịp.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-105",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hôm nay hãy mang theo sự bình tĩnh khi bước vào mọi cuộc trò chuyện, và đừng quên lắng nghe người đối diện.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-106",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Những giọt sương trên mạng nhện lấp lánh như chuỗi ngọc, nhắc bạn dừng lại một chút để ngắm vẻ đẹp nhỏ bé.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-107",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Hãy nhẹ tay mở cửa, nhẹ chân bước ra sân và nhẹ lòng chào ngày mới đang đợi bạn ngoài kia.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "ra-vi-108",
-   "kind": "readAloud",
-   "language": "vi",
-   "text": "Bạn đã dậy rồi, thật tuyệt, bây giờ hãy lấy một ly nước, đứng bên cửa sổ và thở thật chậm vài lần.",
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-001",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Hôm nay trời nắng đẹp, bạn hãy mở cửa sổ cho phòng thoáng khí.",
-   "choices": [
-    "Trời đẹp nên mở cửa sổ để phòng thoáng.",
-    "Trời nắng nên kéo rèm để phòng tối hơn.",
-    "Trời đẹp nên đóng cửa để phòng ấm hơn."
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-002",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Pha một tách trà nóng rồi uống thật từ từ.",
-   "choices": [
-    "Hãy pha trà lạnh và uống thật nhanh.",
-    "Hãy pha trà nóng và thưởng thức chậm rãi.",
-    "Hãy pha trà nóng và để nguội cả buổi."
-   ],
-   "answerIndex": 1,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-003",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Sáng sớm bầu trời hồng nhạt và rất yên tĩnh.",
-   "choices": [
-    "Lúc chiều muộn, bầu trời đỏ rực và náo nhiệt.",
-    "Lúc giữa trưa, trời xanh ngắt và rất oi ả.",
-    "Lúc trời mới sáng, cảnh vật hồng nhạt và lặng lẽ."
-   ],
-   "answerIndex": 2,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-004",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Bạn nên ăn sáng thong thả trước khi ra khỏi nhà.",
-   "choices": [
-    "Hãy ăn bữa sáng chậm rãi rồi mới đi.",
-    "Hãy mang bữa sáng theo và ăn trên đường.",
-    "Hãy ăn bữa tối sớm rồi mới ra khỏi nhà."
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-005",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Con mèo nằm cuộn tròn bên cửa sổ đón nắng.",
-   "choices": [
-    "Chú mèo chạy quanh sân giữa trời mưa.",
-    "Chú mèo co mình cạnh cửa sổ sưởi nắng.",
-    "Chú mèo trốn dưới gầm giường cả sáng."
-   ],
-   "answerIndex": 1,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-006",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Hôm nay bạn có ba việc cần làm và sẽ làm từng việc một.",
-   "choices": [
-    "Bạn có ba việc và làm cả ba cùng lúc.",
-    "Bạn có hai việc và làm xong thật nhanh.",
-    "Bạn có ba việc và làm lần lượt từng việc."
-   ],
-   "answerIndex": 2,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-007",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Đừng vội, cứ hít thở sâu rồi bắt đầu từ việc dễ nhất.",
-   "choices": [
-    "Bình tĩnh hít thở rồi làm việc dễ nhất trước.",
-    "Bình tĩnh hít thở rồi làm việc khó nhất trước.",
-    "Cứ làm thật nhanh rồi mới hít thở sau."
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-008",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Gió sớm mát lành thổi nhẹ qua hàng cây ngoài ngõ.",
-   "choices": [
-    "Làn gió chiều oi bức lướt qua hàng cây ngoài đồng.",
-    "Làn gió sớm mát lành lướt qua hàng cây trong ngõ.",
-    "Cơn gió lạnh lùa qua hàng cây ngoài phố."
-   ],
-   "answerIndex": 1,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-009",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Bạn đã dậy đúng giờ, thật đáng khen.",
-   "choices": [
-    "Bạn dậy hơi trễ nhưng vẫn kịp giờ.",
-    "Bạn ngủ thêm chút nữa rồi mới dậy.",
-    "Bạn dậy đúng giờ nên đáng khen."
-   ],
-   "answerIndex": 2,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-010",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Hãy gấp chăn gọn gàng trước khi rời khỏi phòng ngủ.",
-   "choices": [
-    "Nhớ xếp chăn ngăn nắp rồi mới ra ngoài.",
-    "Nhớ quét phòng ngủ rồi mới ra khỏi nhà.",
-    "Nhớ phơi chăn ngoài sân rồi mới đi ngủ."
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-011",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Mưa nhẹ rơi suốt sáng nên bạn nhớ mang theo ô.",
-   "choices": [
-    "Trời nắng gắt cả sáng nên nhớ đội nón.",
-    "Trời mưa nhỏ cả sáng nên đừng quên ô.",
-    "Trời lạnh cả sáng nên nhớ mặc áo ấm."
-   ],
-   "answerIndex": 1,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-012",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Quán cơm đầu ngõ mở cửa từ sáng sớm.",
-   "choices": [
-    "Tiệm cơm đầu ngõ chỉ mở vào buổi tối.",
-    "Tiệm cơm cuối ngõ vừa mới đổi chủ.",
-    "Tiệm cơm đầu ngõ bán hàng từ rất sớm."
-   ],
-   "answerIndex": 2,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-013",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Hôm nay bạn nên mang theo một chai nước trong túi.",
-   "choices": [
-    "Hãy bỏ chai nước vào túi khi ra ngoài.",
-    "Hãy bỏ chiếc ô vào túi khi ra ngoài.",
-    "Hãy để chai nước ở nhà khi ra ngoài."
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-014",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Đèn giao thông chuyển xanh, mọi người bắt đầu qua đường.",
-   "choices": [
-    "Khi đèn đỏ bật lên, mọi người dừng bên lề.",
-    "Khi đèn xanh bật lên, mọi người bước qua đường.",
-    "Khi đèn vàng nhấp nháy, xe chạy chậm lại."
-   ],
-   "answerIndex": 1,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-015",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Em bé cười thật tươi khi thấy ánh nắng.",
-   "choices": [
-    "Đứa bé ngạc nhiên khi thấy mưa.",
-    "Đứa bé thích thú khi nghe tiếng chim.",
-    "Đứa bé tươi cười khi thấy nắng."
-   ],
-   "answerIndex": 2,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-016",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Bạn nên chuẩn bị đồ đạc từ tối hôm trước.",
-   "choices": [
-    "Hãy soạn sẵn đồ đạc vào tối hôm trước.",
-    "Hãy soạn đồ đạc ngay trước khi ra cửa.",
-    "Hãy soạn sẵn đồ ăn vào tối hôm trước."
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-017",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Cà phê thơm khiến cả bếp ngập mùi dễ chịu.",
-   "choices": [
-    "Mùi khói bếp làm căn bếp hơi ngột ngạt.",
-    "Mùi cà phê làm căn bếp thơm dễ chịu.",
-    "Mùi nước hoa làm căn phòng thơm nồng."
-   ],
-   "answerIndex": 1,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-018",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Cánh đồng xanh mướt trải dài sau cơn mưa.",
-   "choices": [
-    "Sau mưa, con đường làng lầy lội khó đi.",
-    "Sau mưa, cánh đồng ngập nước trắng xóa.",
-    "Sau mưa, cánh đồng xanh tươi trải rộng."
-   ],
-   "answerIndex": 2,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-019",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Hãy gọi cho bà để hỏi xem bà ngủ có ngon không.",
-   "choices": [
-    "Bạn gọi hỏi bà đêm qua ngủ có ngon không.",
-    "Bạn gọi hỏi bà trưa nay ăn món gì.",
-    "Bạn nhắn bà nhớ mang áo khi ra ngoài."
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-020",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Cô giáo đến lớp sớm để chuẩn bị bài giảng.",
-   "choices": [
-    "Cô giáo có mặt sớm ở lớp để chấm bài.",
-    "Cô giáo có mặt sớm ở lớp để soạn bài.",
-    "Cô giáo đến lớp đúng giờ để thu bài."
-   ],
-   "answerIndex": 1,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-021",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Mùa này hoa nở rất nhiều dọc con đường nhỏ.",
-   "choices": [
-    "Dọc con đường nhỏ có nhiều lá đang rụng.",
-    "Dọc con đường lớn có nhiều xe đang đỗ.",
-    "Dọc con đường nhỏ có nhiều hoa đang nở."
-   ],
-   "answerIndex": 2,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-022",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Hãy tắt chuông báo thức rồi ngồi dậy thật nhẹ nhàng.",
-   "choices": [
-    "Tắt chuông xong thì ngồi dậy từ từ.",
-    "Tắt chuông xong thì nằm thêm một lúc.",
-    "Hẹn chuông thêm lần nữa rồi ngủ tiếp."
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-023",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Chiều nay bạn sẽ đi dạo cùng một người bạn thân.",
-   "choices": [
-    "Buổi chiều bạn sẽ ở nhà đọc sách một mình.",
-    "Buổi chiều bạn sẽ đi dạo với bạn thân.",
-    "Buổi sáng bạn sẽ đi dạo với đồng nghiệp."
-   ],
-   "answerIndex": 1,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-024",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Chợ sớm bán rau tươi, trái cây và hoa.",
-   "choices": [
-    "Chợ buổi chiều có cá tươi, thịt và bánh.",
-    "Chợ buổi sáng chỉ bán quần áo và giày dép.",
-    "Chợ buổi sáng có rau tươi, trái cây và hoa."
-   ],
-   "answerIndex": 2,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-025",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Bạn nên đọc vài trang sách trước khi bắt đầu việc chính.",
-   "choices": [
-    "Hãy đọc ít trang sách rồi mới làm việc chính.",
-    "Hãy làm việc chính rồi mới đọc vài trang sách.",
-    "Hãy xem một đoạn phim rồi mới làm việc chính."
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-026",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Ngoài sân, lá vàng rơi nhẹ trên nền gạch.",
-   "choices": [
-    "Lá xanh nhẹ nhàng rơi xuống mặt hồ.",
-    "Lá vàng nhẹ nhàng rơi xuống sân gạch.",
-    "Hoa trắng nhẹ nhàng rơi xuống mái nhà."
-   ],
-   "answerIndex": 1,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-027",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Hôm nay bạn muốn nấu một món đơn giản cho cả nhà.",
-   "choices": [
-    "Bạn định mua đồ ăn sẵn về cho mọi người.",
-    "Bạn định nấu món khó để mời khách xa.",
-    "Bạn định nấu món dễ làm cho mọi người."
-   ],
-   "answerIndex": 2,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-028",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Trong công viên, mấy cụ ông ngồi chơi cờ rất vui.",
-   "choices": [
-    "Ở công viên có những cụ ông chơi cờ vui vẻ.",
-    "Ở công viên có những em nhỏ thả diều vui vẻ.",
-    "Ở công viên có những cô bác tập nhảy vui vẻ."
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-029",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Chuông xe đạp kêu leng keng ngoài ngõ nhỏ.",
-   "choices": [
-    "Tiếng còi xe máy vang inh ỏi ngoài ngõ.",
-    "Tiếng chuông xe đạp vang leng keng trong ngõ.",
-    "Tiếng rao hàng vang đều đều trong ngõ."
-   ],
-   "answerIndex": 1,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-030",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Hãy nói lời cảm ơn với người đã giúp bạn hôm qua.",
-   "choices": [
-    "Bạn nên nhắn hỏi thăm bạn mình hôm qua.",
-    "Bạn nên tặng quà người từng giúp mình tuần trước.",
-    "Bạn nên cảm ơn người từng giúp mình hôm qua."
-   ],
-   "answerIndex": 2,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-031",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Hôm nay bạn đi bộ đến chỗ làm cho thoải mái.",
-   "choices": [
-    "Bạn chọn đi bộ tới chỗ làm cho dễ chịu.",
-    "Bạn chọn đi xe buýt tới chỗ làm cho kịp giờ.",
-    "Bạn chọn đạp xe tới chỗ làm cho nhanh."
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rc-vi-032",
-   "kind": "readAndChoose",
-   "language": "vi",
-   "text": "Nhà bên đang tưới cây, nước rơi lấp lánh dưới nắng.",
-   "choices": [
-    "Hàng xóm quét sân và bụi bay trong nắng.",
-    "Hàng xóm tưới cây và nước lấp lánh trong nắng.",
-    "Hàng xóm cắt cỏ và lá rơi đầy trong vườn."
-   ],
-   "answerIndex": 1,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rd-vi-001",
+   "id": "logic-v2-vi-001",
    "kind": "riddle",
    "language": "vi",
-   "text": "Tôi có hai kim nhưng chẳng biết khâu, có mặt tròn mà chẳng biết cười, đến giờ hẹn là reo gọi bạn dậy. Tôi là gì?",
-   "choices": [
-    "Đồng hồ báo thức",
-    "Cái la bàn",
-    "Cái cân"
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rd-vi-002",
-   "kind": "riddle",
-   "language": "vi",
-   "text": "Mỗi sáng tôi trèo lên từ phía đông, rải nắng vàng khắp mái nhà, chiều xuống thì lặn sau núi. Tôi là gì?",
-   "choices": [
-    "Mặt trăng",
-    "Mặt trời",
-    "Ngọn đèn"
-   ],
-   "answerIndex": 1,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rd-vi-003",
-   "kind": "riddle",
-   "language": "vi",
-   "text": "Tôi nằm trong ấm, bốc khói mỏng, lá của tôi nở ra khi gặp nước sôi. Tôi là gì?",
-   "choices": [
-    "Cà phê",
-    "Sữa đậu",
-    "Trà"
-   ],
-   "answerIndex": 2,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rd-vi-004",
-   "kind": "riddle",
-   "language": "vi",
-   "text": "Tôi có lông nhưng không phải thú, mỗi sáng chạy khắp hàm răng của bạn. Tôi là gì?",
-   "choices": [
-    "Bàn chải đánh răng",
-    "Cái lược",
-    "Cây chổi"
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rd-vi-005",
-   "kind": "riddle",
-   "language": "vi",
-   "text": "Bạn cười tôi cười, bạn nhăn tôi nhăn, nhưng tôi chẳng nói lấy một lời. Tôi là gì?",
-   "choices": [
-    "Bức tranh",
-    "Cái gương",
-    "Cái cửa sổ"
-   ],
-   "answerIndex": 1,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rd-vi-006",
-   "kind": "riddle",
-   "language": "vi",
-   "text": "Tôi càng dùng càng nhỏ đi, nhưng lúc nào cũng tạo ra bọt trắng thơm. Tôi là gì?",
-   "choices": [
-    "Cục đá",
-    "Cây nến",
-    "Cục xà phòng"
-   ],
-   "answerIndex": 2,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rd-vi-007",
-   "kind": "riddle",
-   "language": "vi",
-   "text": "Trời mưa tôi xòe ra như đóa hoa, hết mưa tôi khép lại nằm yên một góc. Tôi là gì?",
-   "choices": [
-    "Cái ô",
-    "Cái quạt",
-    "Cái nón"
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rd-vi-008",
-   "kind": "riddle",
-   "language": "vi",
-   "text": "Tôi mềm và êm, đêm nào đầu bạn cũng tựa vào tôi, sáng ra bạn rời đi để tôi nằm lại. Tôi là gì?",
-   "choices": [
-    "Cái bàn",
-    "Cái gối",
-    "Cái mũ"
-   ],
-   "answerIndex": 1,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rd-vi-009",
-   "kind": "riddle",
-   "language": "vi",
-   "text": "Tôi có nắp tròn, bên trong chứa gạo, khi tôi kêu một tiếng tách là cơm đã chín. Tôi là gì?",
-   "choices": [
-    "Nồi chiên không dầu",
-    "Lò vi sóng",
-    "Nồi cơm điện"
-   ],
-   "answerIndex": 2,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rd-vi-010",
-   "kind": "riddle",
-   "language": "vi",
-   "text": "Vỏ tôi giòn, ruột tôi xốp, người ta xẻ tôi ra rồi kẹp nhân thơm vào trong. Tôi là gì?",
+   "text": "Mai, Linh và Bảo mỗi người mang một món khác nhau: cốc, trái cây hoặc bánh mì. Mai không mang đồ ăn; Linh không mang bánh mì. Bảo mang gì?",
    "choices": [
     "Bánh mì",
-    "Bánh bao",
-    "Bánh quy"
+    "Cốc",
+    "Trái cây"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "Mai mang cốc. Linh phải mang trái cây, nên bánh mì là của Bảo."
   },
   {
-   "id": "rd-vi-011",
+   "id": "logic-v2-vi-002",
    "kind": "riddle",
    "language": "vi",
-   "text": "Tôi khoác áo vàng bên ngoài, ruột trắng mềm bên trong, bóc áo ra mới ăn được. Tôi là gì?",
+   "text": "Lúc 9 giờ, một tệp bắt đầu tải trong 5 phút, đồng thời máy in bắt đầu việc mất 8 phút. Cả hai chạy liên tục. Khi nào cả hai xong?",
    "choices": [
-    "Củ khoai",
-    "Quả chuối",
-    "Quả ổi"
+    "9 giờ 05",
+    "9 giờ 08",
+    "9 giờ 13"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "Hai việc chạy cùng lúc. Tệp tải xong lúc 9 giờ 05; máy in chậm hơn, xong lúc 9 giờ 08."
   },
   {
-   "id": "rd-vi-012",
+   "id": "logic-v2-vi-003",
    "kind": "riddle",
    "language": "vi",
-   "text": "Cả ngày tôi quay mặt theo mặt trời, cánh vàng rực rỡ, hạt đen nằm ngay giữa. Tôi là gì?",
+   "text": "Mọi bản nháp gắn nhãn đỏ đều cần xem lại. Một bản nháp cần xem lại, nhưng nhãn bị che. Nhãn đó có chắc là màu đỏ không?",
    "choices": [
-    "Hoa sen",
-    "Hoa mai",
-    "Hoa hướng dương"
+    "Chắc chắn màu đỏ",
+    "Chắc chắn không đỏ",
+    "Quy tắc chưa đủ để biết"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "Quy tắc nói bản gắn nhãn đỏ cần xem lại, chứ không nói chỉ bản nhãn đỏ mới cần xem lại."
   },
   {
-   "id": "rd-vi-013",
+   "id": "logic-v2-vi-004",
    "kind": "riddle",
    "language": "vi",
-   "text": "Chưa cần đồng hồ, tôi đã cất tiếng gáy đánh thức cả xóm. Tôi là gì?",
+   "text": "Bạn cắt một dải ruy băng thẳng thành 4 đoạn rời, mỗi lần chỉ cắt một chỗ, không gấp hay chồng lên nhau. Cần mấy lần cắt?",
    "choices": [
-    "Gà trống",
-    "Con vịt",
-    "Con mèo"
+    "3",
+    "4",
+    "5"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "Từ một đoạn, mỗi lần cắt thêm được một đoạn. Vì vậy 3 lần cắt tạo ra 4 đoạn."
   },
   {
-   "id": "rd-vi-014",
+   "id": "logic-v2-vi-005",
    "kind": "riddle",
    "language": "vi",
-   "text": "Tôi bé xíu, bay từ bông này sang bông khác, mang mật ngọt về tổ. Tôi là gì?",
+   "text": "Hai hũ kín chứa trà hoặc cà phê, mỗi loại một hũ. Hai nhãn ghi trà và cà phê đều dán sai. Hũ ghi cà phê chứa gì?",
    "choices": [
-    "Con kiến",
-    "Con ong",
-    "Con muỗi"
+    "Cà phê",
+    "Trà",
+    "Không đủ thông tin"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "Cả hai nhãn đều sai và mỗi hũ chỉ có một loại. Hũ ghi cà phê vì thế phải chứa trà."
   },
   {
-   "id": "rd-vi-015",
+   "id": "logic-v2-vi-006",
    "kind": "riddle",
    "language": "vi",
-   "text": "Tôi đọng trên lá lúc tinh mơ, long lanh như hạt ngọc, nắng lên là biến mất. Tôi là gì?",
+   "text": "Túi nhỏ đựng tối đa 6 ký. Máy ảnh nặng 2 ký, sách 3 ký, loa 4 ký. Cặp nào vừa túi mà tận dụng hết mức cân?",
    "choices": [
-    "Hạt cát",
-    "Viên sỏi",
-    "Giọt sương"
+    "Sách và loa",
+    "Máy ảnh và sách",
+    "Máy ảnh và loa"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "Máy ảnh và loa đúng 6 ký. Sách với loa nặng 7 ký; máy ảnh với sách mới dùng 5 ký."
   },
   {
-   "id": "rd-vi-016",
+   "id": "logic-v2-vi-007",
    "kind": "riddle",
    "language": "vi",
-   "text": "Sau cơn mưa tôi cong như chiếc cầu, bảy màu sáng rực nhưng chẳng ai đi qua được. Tôi là gì?",
+   "text": "Ba người bạn chỉ rảnh những ngày sau: An thứ Sáu hoặc thứ Bảy, Bảo thứ Bảy hoặc Chủ nhật, Chi thứ Sáu hoặc thứ Bảy. Ngày nào cả ba đều rảnh?",
    "choices": [
-    "Cầu vồng",
-    "Cây cầu",
-    "Cái cổng"
+    "Thứ Bảy",
+    "Thứ Sáu",
+    "Chủ nhật"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Thứ Bảy có trong cả ba danh sách. Bảo không rảnh thứ Sáu; An và Chi không rảnh Chủ nhật."
   },
   {
-   "id": "rd-vi-017",
+   "id": "logic-v2-vi-008",
    "kind": "riddle",
    "language": "vi",
-   "text": "Tôi từ trên mây rơi xuống, gõ nhịp lộp độp trên mái nhà, cây cối thấy tôi thì vui. Tôi là gì?",
+   "text": "Chìa khóa nằm trong đúng một hộp: xanh dương, xanh lá hoặc vàng. Trong hai câu “Ở hộp xanh dương” và “Không ở hộp vàng”, đúng một câu đúng. Khóa ở đâu?",
    "choices": [
-    "Cơn gió",
-    "Cơn mưa",
-    "Tia nắng"
+    "Hộp xanh dương",
+    "Hộp xanh lá",
+    "Hộp vàng"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Hộp xanh dương khiến cả hai câu đúng; hộp vàng khiến cả hai sai. Hộp xanh lá chỉ khiến câu “không ở hộp vàng” đúng."
   },
   {
-   "id": "rd-vi-018",
+   "id": "logic-v2-vi-009",
    "kind": "riddle",
    "language": "vi",
-   "text": "Chẳng ai thấy hình dáng tôi, nhưng lá lay, cờ bay là biết tôi vừa ghé qua. Tôi là gì?",
+   "text": "Bốn người bạn mỗi người gửi một lời chào riêng cho từng người còn lại. An gửi Bảo khác với Bảo gửi An. Có tất cả bao nhiêu lời chào?",
    "choices": [
-    "Dòng sông",
-    "Tiếng chuông",
-    "Cơn gió"
+    "6",
+    "8",
+    "12"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Mỗi người gửi 3 lời chào. Có 4 người nên tổng là 12; mỗi chiều gửi được tính riêng."
   },
   {
-   "id": "rd-vi-019",
+   "id": "logic-v2-vi-010",
    "kind": "riddle",
    "language": "vi",
-   "text": "Tôi có cán, có lòng trũng, mỗi bữa đưa cháo đưa canh vào miệng bạn. Tôi là gì?",
+   "text": "Làm một cuốn tạp chí nhỏ có ba bước: in, gấp, bấm ghim. Phải in trước khi gấp, gấp trước khi bấm ghim. Bước ngay trước bấm ghim là gì?",
    "choices": [
-    "Cái muỗng",
-    "Cái dao",
-    "Đôi đũa"
+    "Gấp",
+    "In",
+    "In hoặc gấp đều được"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "Thứ tự bắt buộc là in, gấp, bấm ghim. Gấp là bước ngay trước bấm ghim."
   },
   {
-   "id": "rd-vi-020",
+   "id": "logic-v2-vi-011",
    "kind": "riddle",
    "language": "vi",
-   "text": "Hai anh em luôn đi cùng nhau, cùng gắp cơm gắp thức ăn, thiếu một người là chẳng làm được gì. Chúng tôi là gì?",
+   "text": "Một nhịp lặp lại theo thứ tự: vỗ tay, gõ, gõ, nghỉ, bắt đầu từ nhịp 1. Đến nhịp 7 là gì?",
    "choices": [
-    "Đôi giày",
-    "Đôi đũa",
-    "Cái kéo"
+    "Vỗ tay",
+    "Gõ",
+    "Nghỉ"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "Nhịp 5 đến 8 lặp lại vỗ tay, gõ, gõ, nghỉ. Nhịp 7 là lần gõ thứ hai trong nhóm này."
   },
   {
-   "id": "rd-vi-021",
+   "id": "logic-v2-vi-012",
    "kind": "riddle",
    "language": "vi",
-   "text": "Tôi nhỏ bé nhưng nắm trong mình quyền mở cánh cửa nhà bạn. Tôi là gì?",
+   "text": "Ảnh rộng 12 đơn vị, cao 8 đơn vị. Bạn chỉ cắt bớt chiều rộng để thành hình vuông, giữ nguyên chiều cao. Tổng cộng phải bỏ bao nhiêu đơn vị chiều rộng?",
    "choices": [
-    "Đồng xu",
-    "Cái kẹp giấy",
-    "Chìa khóa"
+    "2",
+    "8",
+    "4"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "Hình vuông phải rộng 8 đơn vị để bằng chiều cao. Từ 12 xuống 8, tổng cộng cần bỏ 4 đơn vị."
   },
   {
-   "id": "rd-vi-022",
+   "id": "logic-v2-vi-013",
    "kind": "riddle",
    "language": "vi",
-   "text": "Ruột tôi đen, càng viết càng ngắn, gọt nhiều thì chỉ còn lại cái đầu. Tôi là gì?",
+   "text": "Có hai đường tới quán: xe buýt đi thẳng mất 12 phút; hoặc tàu điện 4 phút, chuyển tuyến 5 phút rồi đi bộ thêm 2 phút. Đường nào nhanh hơn?",
    "choices": [
-    "Cây bút chì",
-    "Cây thước",
-    "Cái hộp bút"
+    "Đường tàu điện nhanh hơn 1 phút",
+    "Đường xe buýt nhanh hơn 1 phút",
+    "Hai đường bằng nhau"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "Đường tàu điện mất 4 cộng 5 cộng 2, tổng 11 phút, ít hơn đường xe buýt 1 phút."
   },
   {
-   "id": "rd-vi-023",
+   "id": "logic-v2-vi-014",
    "kind": "riddle",
    "language": "vi",
-   "text": "Tôi chẳng có miệng mà vẫn kể chuyện hay, bạn lật từng trang là gặp những người bạn mới. Tôi là gì?",
+   "text": "Tàu khởi hành lúc 8 giờ 50 và đến lúc 9 giờ 15 trong cùng buổi sáng. Chuyến đi kéo dài bao lâu?",
    "choices": [
-    "Cái chén",
-    "Quyển sách",
-    "Hòn đá"
+    "35 phút",
+    "25 phút",
+    "65 phút"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "Từ 8 giờ 50 đến 9 giờ là 10 phút, rồi thêm 15 phút nữa. Tổng cộng là 25 phút."
   },
   {
-   "id": "rd-vi-024",
+   "id": "logic-v2-vi-015",
    "kind": "riddle",
    "language": "vi",
-   "text": "Tôi có nhiều bậc mà chẳng phải ngôi nhà, bạn bước từng bước để lên chỗ cao. Tôi là gì?",
+   "text": "Xe đi qua A, B, C, D, E theo thứ tự. Bạn lên ở B, xuống ở E. Tính cả điểm đến E nhưng không tính điểm lên B, bạn tới mấy điểm dừng?",
    "choices": [
-    "Cái ghế",
-    "Cái mâm",
-    "Cái thang"
+    "2",
+    "4",
+    "3"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "Sau khi lên ở B, bạn tới C, D rồi E: tổng cộng 3 điểm dừng."
   },
   {
-   "id": "rd-vi-025",
+   "id": "logic-v2-vi-016",
    "kind": "riddle",
    "language": "vi",
-   "text": "Tôi có hai tròng nhưng chẳng phải con mắt, đặt trên mũi để bạn nhìn rõ hơn. Tôi là gì?",
+   "text": "Dãy số lặp hai bước: cộng 3, rồi nhân 2. Bắt đầu từ 2 được 2, 5, 10, 13, 26. Số tiếp theo là gì?",
    "choices": [
-    "Mắt kính",
-    "Cái mũ",
-    "Cái nơ"
+    "29",
+    "52",
+    "30"
    ],
    "answerIndex": 0,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "Sau bước nhân 2 đến bước cộng 3. Vì vậy 26 cộng 3 bằng 29."
   },
   {
-   "id": "rd-vi-026",
+   "id": "logic-v2-vi-017",
    "kind": "riddle",
    "language": "vi",
-   "text": "Đêm nào tôi cũng đổi hình, lúc tròn như đĩa, lúc cong như lưỡi liềm. Tôi là gì?",
+   "text": "Lọ có đúng 3 hạt xanh và 2 hạt trắng. Không nhìn và không bỏ lại hạt nào, bạn cần lấy ít nhất mấy hạt để chắc chắn có hai hạt cùng màu?",
    "choices": [
-    "Mặt trời",
-    "Mặt trăng",
-    "Ngọn đèn đường"
+    "2",
+    "3",
+    "4"
    ],
    "answerIndex": 1,
    "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "Hai lần lấy có thể được mỗi màu một hạt. Hạt thứ ba chắc chắn trùng một trong hai màu đã lấy."
   },
   {
-   "id": "rd-vi-027",
+   "id": "logic-v2-vi-018",
    "kind": "riddle",
    "language": "vi",
-   "text": "Tôi có ba cánh mà chẳng biết bay, quay tít cả ngày để mang gió đến cho bạn. Tôi là gì?",
+   "text": "Trong bộ thẻ này, mọi hình tam giác đều có sọc. Một thẻ không có sọc. Theo quy tắc đó, hình nào bị loại trừ?",
    "choices": [
-    "Con chim",
-    "Chiếc diều",
-    "Quạt máy"
+    "Hình tròn",
+    "Hình vuông",
+    "Hình tam giác"
    ],
    "answerIndex": 2,
    "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rd-vi-028",
-   "kind": "riddle",
-   "language": "vi",
-   "text": "Tôi bước đi nhẹ như không, thích nằm sưởi nắng bên cửa sổ, đôi mắt tinh nhanh để rình bắt chuột. Tôi là gì?",
-   "choices": [
-    "Con mèo",
-    "Con chó",
-    "Con thỏ"
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rd-vi-029",
-   "kind": "riddle",
-   "language": "vi",
-   "text": "Tôi nhiều răng mà chẳng cắn ai, bạn đưa tôi qua mái tóc mỗi sáng. Tôi là gì?",
-   "choices": [
-    "Cái cưa",
-    "Cái lược",
-    "Cái kẹp tóc"
-   ],
-   "answerIndex": 1,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rd-vi-030",
-   "kind": "riddle",
-   "language": "vi",
-   "text": "Tôi cõng nhà đi khắp vườn, chậm rãi để lại sau lưng một vệt bóng loáng. Tôi là gì?",
-   "choices": [
-    "Con chim",
-    "Con ếch",
-    "Ốc sên"
-   ],
-   "answerIndex": 2,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rd-vi-031",
-   "kind": "riddle",
-   "language": "vi",
-   "text": "Tôi nằm trên bếp, đến lúc nóng thì huýt sáo, hơi nước phun ra từ chiếc mũi nhỏ. Tôi là gì?",
-   "choices": [
-    "Ấm nước",
-    "Nồi canh",
-    "Cái chảo"
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rd-vi-032",
-   "kind": "riddle",
-   "language": "vi",
-   "text": "Tôi treo trên trần nhà, bạn bật công tắc là tôi sáng, đêm nào cũng giữ ánh sáng cho cả phòng. Tôi là gì?",
-   "choices": [
-    "Quạt trần",
-    "Bóng đèn",
-    "Cái đèn ngủ"
-   ],
-   "answerIndex": 1,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rd-vi-033",
-   "kind": "riddle",
-   "language": "vi",
-   "text": "Nhỏ xíu mà làm việc chăm chỉ, xếp thành hàng dài mang thức ăn về tổ. Chúng tôi là gì?",
-   "choices": [
-    "Đàn ong",
-    "Đàn gián",
-    "Đàn kiến"
-   ],
-   "answerIndex": 2,
-   "source": "himorning",
-   "license": "original"
-  },
-  {
-   "id": "rd-vi-034",
-   "kind": "riddle",
-   "language": "vi",
-   "text": "Hình tôi như chóp núi nhỏ, che nắng che mưa, bạn đội tôi trên đầu mỗi khi ra đồng. Tôi là gì?",
-   "choices": [
-    "Cái nón lá",
-    "Mũ lưỡi trai",
-    "Cái mũ len"
-   ],
-   "answerIndex": 0,
-   "source": "himorning",
-   "license": "original"
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "Hình tam giác bắt buộc có sọc. Thẻ không sọc không thể là tam giác; quy tắc không nói gì về hình tròn hay vuông."
   }
  ]
 }

@@ -38,7 +38,7 @@ struct AlarmEditor:View {
  let editing:Bool
  @State private var scope:AlarmEditorScope
  let save:(SavedAlarm) async throws ->Void
- init(alarm:SavedAlarm?=nil,scope:AlarmEditorScope = .all,store:SubscriptionStore,preview:PreviewStore,practiceModel:PilotModel,save:@escaping (SavedAlarm) async throws ->Void) {
+ init(alarm:SavedAlarm?=nil,scope:AlarmEditorScope = .all,suggestedChallenge:ChallengeSelection?=nil,store:SubscriptionStore,preview:PreviewStore,practiceModel:PilotModel,save:@escaping (SavedAlarm) async throws ->Void) {
   _scope=State(initialValue:scope);self.store=store;self.preview=preview;self.practiceModel=practiceModel;self.save=save;_alarmID=State(initialValue:alarm?.id ?? UUID());editing=alarm != nil
   if let alarm {
    _time=State(initialValue:Calendar.current.date(from:DateComponents(hour:alarm.time.hour,minute:alarm.time.minute)) ?? Date())
@@ -47,6 +47,13 @@ struct AlarmEditor:View {
    _label=State(initialValue:alarm.label)
    _pushUpTarget=State(initialValue:alarm.challenge.repetitions ?? 5)
    _rhythmVariant=State(initialValue:alarm.challenge.rhythmVariant ?? .standing)
+   _choseChallenge=State(initialValue:true)
+  }
+  if let suggestedChallenge {
+   _challenge=State(initialValue:suggestedChallenge)
+   _mode=State(initialValue:suggestedChallenge.kind.preferredMode)
+   _pushUpTarget=State(initialValue:suggestedChallenge.repetitions ?? 5)
+   _rhythmVariant=State(initialValue:suggestedChallenge.rhythmVariant ?? .seated)
    _choseChallenge=State(initialValue:true)
   }
  }

@@ -1,604 +1,290 @@
 [
- {
-  "id": "piano",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "What has keys but cannot open a door?",
-  "choices": [
-   "A piano",
-   "A window",
-   "A shoe"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "clock-riddle",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I have hands but cannot clap, and I show you the time. What am I?",
-  "choices": [
-   "A clock",
-   "A bird",
-   "A glove"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "shadow",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I follow you in sunlight but disappear in darkness. What am I?",
-  "choices": [
-   "A shadow",
-   "A cloud",
-   "An echo"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rd-en-001",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I wake before you do, climb above the rooftops, and leave a golden trail across the walls. What am I?",
-  "choices": [
-   "The moon",
-   "The sunrise",
-   "A lamp"
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rd-en-002",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I am a dark, bitter drink made from roasted beans, and I help sleepy people wake up. What am I?",
-  "choices": [
-   "Hot chocolate",
-   "Tea",
-   "Coffee"
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rd-en-003",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I wear a small flame on my head, and I grow shorter as I give light. What am I?",
-  "choices": [
-   "A candle",
-   "A light bulb",
-   "A rainbow"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rd-en-004",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I have a handle and a spout, and I sing when I get hot on the stove. What am I?",
-  "choices": [
-   "A broom",
-   "A kettle",
-   "A shoe"
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rd-en-005",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I am full of pages and words, I sit very still, and I can take you far away. What am I?",
-  "choices": [
-   "A pillow",
-   "A staircase",
-   "A book"
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rd-en-006",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I fall from the clouds without getting hurt, and I make the garden drink. What am I?",
-  "choices": [
-   "Rain",
-   "A leaf",
-   "A feather"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rd-en-007",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I have a handle and soft bristles, and I clean your teeth. What am I?",
-  "choices": [
-   "A paintbrush",
-   "A toothbrush",
-   "A fork"
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rd-en-008",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I come in pairs, I live by the door, and I am tied with laces. What am I?",
-  "choices": [
-   "Gloves",
-   "Scarves",
-   "Shoes"
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rd-en-009",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I am white and cold, I fall in winter, and children roll me into figures. What am I?",
-  "choices": [
-   "Snow",
-   "Hail",
-   "Sand"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rd-en-010",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I have four legs and a flat top, and people gather around me to share a meal. What am I?",
-  "choices": [
-   "A horse",
-   "A table",
-   "A tent"
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rd-en-011",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I have two wheels and two pedals, and I only move when your legs push me. What am I?",
-  "choices": [
-   "A wagon",
-   "A boat",
-   "A bicycle"
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rd-en-012",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I light the night, and over a few weeks I change from a thin curve to a full circle. What am I?",
-  "choices": [
-   "The moon",
-   "A streetlight",
-   "A comet"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rd-en-013",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I have two straps and many pockets, and I carry books to school on your back. What am I?",
-  "choices": [
-   "A bucket",
-   "A backpack",
-   "A blanket"
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rd-en-014",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I have a hard shell, a yellow center, and I am often cooked for breakfast. What am I?",
-  "choices": [
-   "A walnut",
-   "A pebble",
-   "An egg"
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rd-en-015",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I am orange, I grow underground, and rabbits love to crunch me. What am I?",
-  "choices": [
-   "A carrot",
-   "A pumpkin",
-   "A pear"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rd-en-016",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I have roots, branches, and leaves, and I give shade without ever moving. What am I?",
-  "choices": [
-   "A rock",
-   "A tree",
-   "A tent"
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rd-en-017",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I arrive after the lightning and rumble across the sky. What am I?",
-  "choices": [
-   "Lightning",
-   "A rainbow",
-   "Thunder"
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rd-en-018",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I am a curved bridge of colors that appears when sunshine meets rain. What am I?",
-  "choices": [
-   "A rainbow",
-   "A flag",
-   "A ribbon"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rd-en-019",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I am the largest animal that walks on land, with a long trunk and big ears. What am I?",
-  "choices": [
-   "A horse",
-   "An elephant",
-   "A bear"
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rd-en-020",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I live in a hive, I visit flowers, and I help make honey. What am I?",
-  "choices": [
-   "A butterfly",
-   "A beetle",
-   "A bee"
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rd-en-021",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I sit on your nose, I have two lenses, and I help you see more clearly. What am I?",
-  "choices": [
-   "Glasses",
-   "Earrings",
-   "A necklace"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rd-en-022",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I hum in the kitchen and keep your milk cold and your vegetables fresh. What am I?",
-  "choices": [
-   "A kettle",
-   "A refrigerator",
-   "A broom"
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rd-en-023",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I spray warm water from above while you stand beneath me. What am I?",
-  "choices": [
-   "A sink",
-   "A mirror",
-   "A shower"
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rd-en-024",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I show your face but never speak, and I only repeat what you do. What am I?",
-  "choices": [
-   "A mirror",
-   "A photograph",
-   "A painting"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rd-en-025",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I am soft, I wear a case, and I hold your head while you sleep. What am I?",
-  "choices": [
-   "A plate",
-   "A pillow",
-   "A ladder"
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rd-en-026",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I am long and thin, I write with graphite, and I have an eraser on one end. What am I?",
-  "choices": [
-   "A spoon",
-   "A broom",
-   "A pencil"
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rd-en-027",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I am filled with air, I float on a string, and I pop with a bang. What am I?",
-  "choices": [
-   "A balloon",
-   "A kite",
-   "A bubble"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rd-en-028",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I am made of paper, I carry words across the country, and I need a stamp. What am I?",
-  "choices": [
-   "A napkin",
-   "A letter",
-   "A ticket"
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rd-en-029",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "You peel me, I am yellow and curved, and I make a quick snack. What am I?",
-  "choices": [
-   "A lemon",
-   "A corn cob",
-   "A banana"
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rd-en-030",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I open above your head when rain falls and close when the sky clears. What am I?",
-  "choices": [
-   "An umbrella",
-   "A roof",
-   "A hat"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rd-en-031",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I have a lid and two handles, I sit on the stove, and soup bubbles inside me. What am I?",
-  "choices": [
-   "A bowl",
-   "A pot",
-   "A cup"
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rd-en-032",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I have a long handle and dry bristles, and I sweep the floor. What am I?",
-  "choices": [
-   "A rake",
-   "A mop",
-   "A broom"
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rd-en-033",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I am the season when leaves turn red and gold and drift to the ground. What am I?",
-  "choices": [
-   "Autumn",
-   "Summer",
-   "Spring"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rd-en-034",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I carry my house on my back and leave a silver trail as I creep along. What am I?",
-  "choices": [
-   "A turtle",
-   "A snail",
-   "A crab"
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rd-en-035",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I am a tiny wooden house that hangs in a tree and keeps small singers dry. What am I?",
-  "choices": [
-   "A nest",
-   "A doghouse",
-   "A birdhouse"
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rd-en-036",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I am a cold, sweet treat that melts in the sun and sits on a cone. What am I?",
-  "choices": [
-   "Ice cream",
-   "A cupcake",
-   "A pancake"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rd-en-037",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "You climb me one step at a time, and I sit inside the house between two floors. What am I?",
-  "choices": [
-   "A hallway",
-   "A staircase",
-   "A chimney"
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rd-en-038",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I have a magnetic needle that always swings to point north. What am I?",
-  "choices": [
-   "A ruler",
-   "A thermometer",
-   "A compass"
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rd-en-039",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I measure how warm or cold the air is. What am I?",
-  "choices": [
-   "A thermometer",
-   "A barometer",
-   "A calendar"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rd-en-040",
-  "kind": "riddle",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "I stand tall on a pole and light the street after dark. What am I?",
-  "choices": [
-   "A tree",
-   "A streetlight",
-   "A flag"
-  ],
-  "answerIndex": 1
- }
+  {
+    "id": "logic-v2-en-001",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "workAndStudy",
+    "text": "Mai, Lin, and Bo each bring a different item: a cup, fruit, or bread. Mai brings neither food item, and Lin does not bring bread. What does Bo bring?",
+    "choices": [
+      "Bread",
+      "A cup",
+      "Fruit"
+    ],
+    "answerIndex": 0,
+    "explanation": "Mai brings the cup. Lin must bring fruit, leaving bread for Bo.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-en-002",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "workAndStudy",
+    "text": "At 9:00, a file starts downloading for five minutes while a printer starts an eight-minute job. Both run without interruption. When are both jobs finished?",
+    "choices": [
+      "9:05",
+      "9:08",
+      "9:13"
+    ],
+    "answerIndex": 1,
+    "explanation": "The jobs run at the same time. The download ends at 9:05; the slower printer ends at 9:08.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-en-003",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "workAndStudy",
+    "text": "Every draft with a red tag needs review. A draft needs review, but its tag is hidden. Must its tag be red?",
+    "choices": [
+      "Yes, it must be red",
+      "No, it cannot be red",
+      "The rule does not tell us"
+    ],
+    "answerIndex": 2,
+    "explanation": "The rule tells us what red tags require. It does not say that only red-tagged drafts need review.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-en-004",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "everydayLife",
+    "text": "You cut one straight ribbon into four separate pieces, making one cut at a time and never stacking or folding it. How many cuts are needed?",
+    "choices": [
+      "3",
+      "4",
+      "5"
+    ],
+    "answerIndex": 0,
+    "explanation": "One piece becomes two after one cut. Each additional cut adds one piece, so three cuts make four.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-en-005",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "everydayLife",
+    "text": "Two closed jars contain only tea or only coffee, one of each. Their labels say tea and coffee, but both labels are wrong. What is in the jar labeled coffee?",
+    "choices": [
+      "Coffee",
+      "Tea",
+      "Not enough information"
+    ],
+    "answerIndex": 1,
+    "explanation": "Both labels are wrong and each jar holds just one drink. The coffee-labeled jar must hold tea.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-en-006",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "everydayLife",
+    "text": "A small bag holds at most six kilograms. The camera weighs two, the books three, and the speaker four. Which pair fits and uses the full weight allowance?",
+    "choices": [
+      "Books and speaker",
+      "Camera and books",
+      "Camera and speaker"
+    ],
+    "answerIndex": 2,
+    "explanation": "The camera and speaker weigh exactly six kilograms. The books with the speaker weigh seven; the camera with books uses only five.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-en-007",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "peopleAndPlans",
+    "text": "Three friends can meet only on these days: An on Friday or Saturday, Bao on Saturday or Sunday, Chi on Friday or Saturday. Which day works for all three?",
+    "choices": [
+      "Saturday",
+      "Friday",
+      "Sunday"
+    ],
+    "answerIndex": 0,
+    "explanation": "Saturday appears in all three lists. Bao is unavailable Friday, and An and Chi are unavailable Sunday.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-en-008",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "peopleAndPlans",
+    "text": "A key is in exactly one of three boxes: blue, green, or gold. Exactly one statement is true: “It is in blue” and “It is not in gold.” Where is the key?",
+    "choices": [
+      "Blue box",
+      "Green box",
+      "Gold box"
+    ],
+    "answerIndex": 1,
+    "explanation": "Blue makes both statements true; gold makes both false. Green makes only “not in gold” true.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-en-009",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "peopleAndPlans",
+    "text": "Four friends each send one private greeting to every other friend. A greeting from An to Bao is separate from Bao to An. How many greetings are sent?",
+    "choices": [
+      "6",
+      "8",
+      "12"
+    ],
+    "answerIndex": 2,
+    "explanation": "Each of four people sends three greetings. Four times three is twelve; each direction counts separately.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-en-010",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "creativeBreaks",
+    "text": "A zine has three steps: print, fold, and staple. Folding must follow printing, and stapling must follow folding. Which step is immediately before stapling?",
+    "choices": [
+      "Fold",
+      "Print",
+      "Either print or fold"
+    ],
+    "answerIndex": 0,
+    "explanation": "The required order is print, fold, staple. Folding is the step directly before stapling.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-en-011",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "creativeBreaks",
+    "text": "A rhythm repeats clap, tap, tap, rest, starting at beat one. What happens on beat seven?",
+    "choices": [
+      "Clap",
+      "Tap",
+      "Rest"
+    ],
+    "answerIndex": 1,
+    "explanation": "Beats five through eight repeat clap, tap, tap, rest. Beat seven is the second tap in that group.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-en-012",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "creativeBreaks",
+    "text": "A photo is twelve units wide and eight tall. You crop only its width to make a square, keeping the full height. How many width units must you remove in total?",
+    "choices": [
+      "2",
+      "8",
+      "4"
+    ],
+    "answerIndex": 2,
+    "explanation": "The square must be eight units wide to match its height. Twelve minus eight leaves four units to remove in total.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-en-013",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "cityAndTravel",
+    "text": "The café is reached by either of two routes: a direct twelve-minute bus ride, or a four-minute metro ride plus a five-minute transfer and a two-minute walk. Which is quicker?",
+    "choices": [
+      "Metro route by one minute",
+      "Bus route by one minute",
+      "They take the same time"
+    ],
+    "answerIndex": 0,
+    "explanation": "The metro route takes four plus five plus two, or eleven minutes. That is one minute less than twelve.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-en-014",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "cityAndTravel",
+    "text": "A train leaves at 8:50 and arrives at 9:15 the same morning. How long is the trip?",
+    "choices": [
+      "35 minutes",
+      "25 minutes",
+      "65 minutes"
+    ],
+    "answerIndex": 1,
+    "explanation": "Ten minutes takes us to 9:00; fifteen more takes us to 9:15. The trip lasts twenty-five minutes.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-en-015",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "cityAndTravel",
+    "text": "A shuttle travels A, B, C, D, E in that order. You board at B and get off at E. Counting arrival at E but not boarding at B, how many stops do you reach?",
+    "choices": [
+      "2",
+      "4",
+      "3"
+    ],
+    "answerIndex": 2,
+    "explanation": "After boarding at B, you reach C, D, and E: three stops.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-en-016",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "curiosity",
+    "text": "A sequence alternates two steps: add three, then multiply by two. Starting at two gives 2, 5, 10, 13, 26. What comes next?",
+    "choices": [
+      "29",
+      "52",
+      "30"
+    ],
+    "answerIndex": 0,
+    "explanation": "The step after multiplying is adding three. Twenty-six plus three is twenty-nine.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-en-017",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "curiosity",
+    "text": "A jar has exactly three blue beads and two white beads. Without looking and without putting any back, how many must you take to guarantee two of the same color?",
+    "choices": [
+      "2",
+      "3",
+      "4"
+    ],
+    "answerIndex": 1,
+    "explanation": "Two draws could give one of each color. The third bead must match one of the two colors already drawn.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-en-018",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "curiosity",
+    "text": "In this card set, every triangle is striped. A card has no stripes. Which shape is ruled out by that rule?",
+    "choices": [
+      "A circle",
+      "A square",
+      "A triangle"
+    ],
+    "answerIndex": 2,
+    "explanation": "A triangle must have stripes. Without stripes, this card cannot be a triangle; the rule says nothing about circles or squares.",
+    "source": "himorning",
+    "license": "original"
+  }
 ]
