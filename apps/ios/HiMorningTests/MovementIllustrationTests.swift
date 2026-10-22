@@ -29,4 +29,24 @@ final class MovementIllustrationTests:XCTestCase {
   }
   XCTAssertFalse(MovementFigure(selection:.guidedRhythm(variant:.standing),phase:0.25).path(in:rect).cgPath == MovementFigure(selection:.guidedRhythm(variant:.seated),phase:0.25).path(in:rect).cgPath)
  }
+
+ func testMovementCadenceMatchesTheEffortOfEachChallengeAndRemainsContinuous() {
+  let quick=MovementIllustration.loopDuration(for:.init(kind:.waveHand))
+  let jumping=MovementIllustration.loopDuration(for:.init(kind:.jumpingJacks))
+  let controlled=MovementIllustration.loopDuration(for:.pushUps(repetitions:10))
+  let rhythm=MovementIllustration.loopDuration(for:.guidedRhythm(variant:.standing))
+  XCTAssertLessThan(quick,controlled)
+  XCTAssertLessThan(jumping,controlled)
+  XCTAssertLessThanOrEqual(controlled,3,"Push-ups should not look like slow motion")
+  XCTAssertLessThanOrEqual(rhythm,3,"Guided movement should have a natural cadence")
+
+  let rect=CGRect(x:0,y:0,width:120,height:100)
+  for selection in selections {
+   let before=MovementFigure(selection:selection,phase:0.999).path(in:rect).boundingRect
+   let after=MovementFigure(selection:selection,phase:0.001).path(in:rect).boundingRect
+   XCTAssertLessThan(abs(before.minX-after.minX),1.0,"Horizontal loop jump for \(selection.kind)")
+   XCTAssertLessThan(abs(before.minY-after.minY),1.0,"Vertical loop jump for \(selection.kind)")
+   XCTAssertLessThan(abs(before.width-after.width),1.0,"Scale loop jump for \(selection.kind)")
+  }
+ }
 }

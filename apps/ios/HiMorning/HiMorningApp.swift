@@ -303,8 +303,9 @@ extension ScheduleState {
  var title:String {switch self {case .pending:return appText("Checking…");case .confirmed:return appText("Alarm is set");case .off:return appText("Off");case .needsReview:return appText("Check system alarms")}}
 }
 struct HomeView:View {
+ @Environment(\.colorScheme) private var colorScheme
  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
- private struct AlarmDraft:Identifiable {let id=UUID();let alarm:SavedAlarm?}
+ private struct AlarmDraft:Identifiable {let id=UUID();let alarm:SavedAlarm?;var scope:AlarmEditorScope = .all}
  @ObservedObject var model:PilotModel
  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
  @Environment(\.scenePhase) private var phase
@@ -396,7 +397,7 @@ struct HomeView:View {
    }.background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink).tint(MorningTheme.accent)
    .navigationTitle("HiMorning").toolbar(.hidden,for:.navigationBar)
    .preferredColorScheme(testingColorScheme)
-   .sheet(item:$editor) {draft in AlarmEditor(alarm:draft.alarm,store:model.subscriptions,preview:model.preview,practiceModel:model,save:model.save)}
+   .sheet(item:$editor) {draft in AlarmEditor(alarm:draft.alarm,scope:draft.scope,store:model.subscriptions,preview:model.preview,practiceModel:model,save:model.save)}
    .sheet(isPresented:$progress) {MorningProgressView(model:model,store:model.subscriptions)}
    .sheet(isPresented:$pro) {ProView(store:model.subscriptions,preview:model.preview)}
    .fullScreenCover(item:$model.selected,onDismiss:{Task {await model.refresh()}}) {alarm in ChallengeView(alarm:alarm,model:model)}
@@ -469,7 +470,8 @@ struct HomeView:View {
    Text(alarmRepeatSummary(alarm,now:now)).font(.caption.weight(.medium))
     .fixedSize(horizontal:false,vertical:true).accessibilityIdentifier("alarmRepeat-"+alarm.id.uuidString)
   }.foregroundStyle(MorningTheme.onYellow.opacity(0.8))
-  let clockBlock=VStack(alignment:.leading,spacing:6) {
+  let clockBlock=Button {openAlarm(alarm,scope:.schedule)} label: {
+   VStack(alignment:.leading,spacing:6) {
    if !alarm.label.isEmpty {
     Text(alarm.label).font(.subheadline.weight(.medium)).lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
      .fixedSize(horizontal:false,vertical:true).accessibilityIdentifier("alarmLabel-"+alarm.id.uuidString)
@@ -477,55 +479,56 @@ struct HomeView:View {
    clock
    if alarm.enabled {repeatDays}
    else {Text(appText("Off")).font(.caption.weight(.medium))}
-  }
+   }.frame(maxWidth:.infinity,minHeight:80,alignment:.leading).contentShape(Rectangle())
+  }.buttonStyle(.plain).accessibilityIdentifier("editAlarmSchedule-"+alarm.id.uuidString)
   let mainLayout=dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment:.leading,spacing:16)) : AnyLayout(HStackLayout(alignment:.top,spacing:16))
   let footerLayout=dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment:.leading,spacing:8)) : AnyLayout(HStackLayout(alignment:.center,spacing:8))
   return VStack(alignment:.leading,spacing:12) {
-   if alarm.enabled,alarm.challenge.kind != .none {
-    mainLayout {
-     clockBlock.frame(maxWidth:.infinity,alignment:.leading)
-     alarmChallengeSummary(alarm)
-    }
-    Rectangle().fill(MorningTheme.onYellow.opacity(0.12)).frame(height:0.5).accessibilityHidden(true)
-    footerLayout {
-     alarmStatus(alarm,now:now,completed:completed).frame(maxWidth:.infinity,alignment:.leading)
-     HStack(spacing:8) {tryAlarmButton(alarm);toggle}
-    }
-   } else {
-    HStack(alignment:.top,spacing:16) {
-     VStack(alignment:.leading,spacing:6) {
-      clockBlock
-      alarmStatus(alarm,now:now,completed:completed)
-     }.frame(maxWidth:.infinity,alignment:.leading)
-     toggle
-    }
+   mainLayout {
+    clockBlock.frame(maxWidth:.infinity,alignment:.leading)
+    Button {openAlarm(alarm,scope:.challenge)} label: {
+     alarmChallengeSummary(alarm).contentShape(Rectangle())
+    }.buttonStyle(.plain).accessibilityIdentifier("editAlarmChallenge-"+alarm.id.uuidString)
+   }
+   Label {
+    Text(alarm.sound.title)
+     .fixedSize(horizontal:false,vertical:true)
+   } icon: {Image(systemName:"speaker.wave.2").accessibilityHidden(true)}
+    .font(.caption.weight(.medium)).accessibilityIdentifier("alarmSound-"+alarm.id.uuidString)
+   Rectangle().fill(MorningTheme.onYellow.opacity(0.12)).frame(height:0.5).accessibilityHidden(true)
+   footerLayout {
+    alarmStatus(alarm,now:now,completed:completed).frame(maxWidth:.infinity,alignment:.leading)
+    HStack(spacing:8) {tryAlarmButton(alarm);toggle}
    }
   }.padding(18).foregroundStyle(alarm.enabled ? MorningTheme.onYellow : MorningTheme.muted)
    .background {alarmCardBackground(alarm)}
    .overlay {RoundedRectangle(cornerRadius:26).strokeBorder(alarm.enabled ? MorningTheme.onYellow.opacity(0.08) : MorningTheme.line,lineWidth:1)}
    .contentShape(RoundedRectangle(cornerRadius:26))
    .accessibilityElement(children:.contain).accessibilityIdentifier("alarmCard-"+alarm.id.uuidString)
-   .onTapGesture {if revealedAlarmID == alarm.id {revealedAlarmID=nil} else {revealedAlarmID=nil;editor=AlarmDraft(alarm:alarm)}}
-   .accessibilityAction(.default) {editor=AlarmDraft(alarm:alarm)}
+   .onTapGesture {openAlarm(alarm,scope:.all)}
+   .accessibilityAction(.default) {openAlarm(alarm,scope:.all)}
+ }
+ private func openAlarm(_ alarm:SavedAlarm,scope:AlarmEditorScope) {
+  if revealedAlarmID == alarm.id {revealedAlarmID=nil;return}
+  revealedAlarmID=nil;editor=AlarmDraft(alarm:alarm,scope:scope)
  }
  private func alarmCardBackground(_ alarm:SavedAlarm)->some View {
-  ZStack(alignment:.topTrailing) {
-   alarm.enabled ? MorningTheme.alarmCard : MorningTheme.soft
-   if alarm.enabled,alarm.challenge.kind != .none,!reduceTransparency {
-    let tint:Color=switch alarm.mode {
-    case .gentle:Color(red:0.20,green:0.60,blue:0.44)
-    case .balanced:Color(red:0.58,green:0.42,blue:0.76)
-    case .focused:Color(red:0.91,green:0.31,blue:0.16)
-    }
-    Canvas {context,size in
-     let center=CGPoint(x:size.width,y:0)
-     for (index,radius) in [160.0,120,80,40].enumerated() {
-      let circle=Path(ellipseIn:CGRect(x:center.x-radius,y:center.y-radius,width:radius*2,height:radius*2))
-      context.fill(circle,with:.color(tint.opacity(0.04+Double(index)*0.01)))
-     }
-    }.blur(radius:1.5)
+  (alarm.enabled ? MorningTheme.alarmCard : MorningTheme.soft)
+   .clipShape(RoundedRectangle(cornerRadius:26)).accessibilityHidden(true)
+ }
+ private func modeTint(_ mode:WakeMode,enabled:Bool)->Color {
+  if !enabled && colorScheme == .dark {
+   switch mode {
+   case .gentle:return Color(red:0.48,green:0.83,blue:0.64)
+   case .balanced:return Color(red:0.78,green:0.66,blue:0.94)
+   case .focused:return Color(red:1,green:0.65,blue:0.42)
    }
-  }.clipShape(RoundedRectangle(cornerRadius:26)).accessibilityHidden(true)
+  }
+  return switch mode {
+  case .gentle:Color(red:0.12,green:0.34,blue:0.22)
+  case .balanced:Color(red:0.36,green:0.22,blue:0.48)
+  case .focused:Color(red:0.52,green:0.20,blue:0.10)
+  }
  }
  @ViewBuilder private func alarmChallengeSummary(_ alarm:SavedAlarm)->some View {
   let accessible=dynamicTypeSize.isAccessibilitySize
@@ -534,6 +537,7 @@ struct HomeView:View {
    Group {
     if alarm.challenge.kind.hasMovementIllustration {
      MovementIllustration(selection:alarm.challenge)
+      .background {if !alarm.enabled && colorScheme == .dark {Circle().fill(.white.opacity(0.85)).padding(2)}}
     } else {
      Image(systemName:alarm.challenge.kind.icon).font(.system(size:21,weight:.medium))
       .frame(maxWidth:.infinity,maxHeight:.infinity)
@@ -543,7 +547,8 @@ struct HomeView:View {
    VStack(alignment:accessible ? .leading : .trailing,spacing:3) {
     Text(alarm.challenge.displayTitle).font(.subheadline.weight(.semibold)).fixedSize(horizontal:false,vertical:true)
      .accessibilityIdentifier("alarmChallenge-"+alarm.id.uuidString)
-    Text(alarm.mode.title).font(.caption).foregroundStyle(MorningTheme.onYellow.opacity(0.7)).fixedSize(horizontal:false,vertical:true)
+    Label(alarm.mode.title,systemImage:alarm.mode == .gentle ? "leaf.fill" : alarm.mode == .balanced ? "sun.max.fill" : "bolt.fill")
+     .font(.caption.weight(.semibold)).foregroundStyle(modeTint(alarm.mode,enabled:alarm.enabled)).fixedSize(horizontal:false,vertical:true)
      .accessibilityLabel(String(format:appText("Challenge level: %@"),locale:appLocale(),alarm.mode.title))
      .accessibilityIdentifier("alarmMode-"+alarm.id.uuidString)
    }.multilineTextAlignment(accessible ? .leading : .trailing)

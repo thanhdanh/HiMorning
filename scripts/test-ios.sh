@@ -8,6 +8,9 @@ case "${2:-push}" in
       -only-testing:HiMorningUITests/PilotUITests/testVietnameseGentleDefaultAndCancelWithoutPermissions \
       -only-testing:HiMorningUITests/PilotUITests/testReadingPracticeCompletesOfflineInBothLanguages \
       -only-testing:HiMorningUITests/DeviceFixesUITests/testSaveWaitsAndRetainsEditorOnFailure \
+      -only-testing:HiMorningUITests/DeviceFixesUITests/testAlarmCardRoutesKeepQuickEditsScopedAndPreserveOtherSettings \
+      -only-testing:HiMorningUITests/DeviceFixesUITests/testQuickScheduleSaveFailureKeepsOnlyItsFieldsAndDraft \
+      -only-testing:HiMorningUITests/DeviceFixesUITests/testQuickEditorCanRecoverExpiredSettingsWithoutLosingItsDraft \
       -only-testing:HiMorningUITests/DeviceFixesUITests/testEnabledAlarmChallengeEditClosesAndKeepsTheNewChoiceInBothLanguages \
       -only-testing:HiMorningUITests/DeviceFixesUITests/testDisabledAlarmIsCompactAndCanBeEditedAndDeletedInBothLanguages \
       -only-testing:HiMorningUITests/DeviceFixesUITests/testAlarmCardShowsTimeRepeatAndDirectPractice \

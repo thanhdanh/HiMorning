@@ -64,12 +64,23 @@ struct MovementIllustration:View {
   #endif
  }
  private var running:Bool {animated && visible && !paused && !motionReduced && scene == .active}
+ static func loopDuration(for selection:ChallengeSelection)->TimeInterval {
+  switch selection.kind {
+  case .waveHand:return 1.1
+  case .jumpingJacks:return 1.4
+  case .pushUps:return 2.6
+  case .neckRotation:return 3.6
+  case .stretching:return 2.8
+  case .guidedRhythm:return selection.rhythmVariant == .seated ? 2.6 : 2.8
+  default:return 2.4
+  }
+ }
  var body:some View {
   GeometryReader { geometry in
    let diameter=min(geometry.size.width,geometry.size.height)*0.9
-   TimelineView(.animation(minimumInterval:1.0/24,paused:!running)) { context in
+   TimelineView(.animation(minimumInterval:1.0/30,paused:!running)) { context in
     let seconds=elapsed+(running ? max(0,context.date.timeIntervalSince(resumedAt)) : 0)
-    MovementFigure(selection:selection,phase:animated && !motionReduced ? seconds/3.6 : 0.22)
+    MovementFigure(selection:selection,phase:animated && !motionReduced ? seconds / Self.loopDuration(for:selection) : 0.22)
      .fill(.black).padding(diameter*0.05)
    }
    .frame(width:diameter,height:diameter)
@@ -95,7 +106,9 @@ struct MovementFigure:Shape {
  let phase:Double
  func path(in rect:CGRect)->Path {
   let cycle=phase.truncatingRemainder(dividingBy:1)
-  let amount=(1-cos(cycle*2 * .pi))/2
+  let outward=selection.kind == .pushUps || selection.kind == .guidedRhythm ? 0.56 : 0.5
+  let progress=cycle<outward ? cycle/outward : (1-cycle)/(1-outward)
+  let amount=progress*progress*(3-2*progress)
   var figure=Path()
   func p(_ x:Double,_ y:Double)->CGPoint {CGPoint(x:x,y:y)}
   func line(_ points:[CGPoint],_ width:CGFloat) {

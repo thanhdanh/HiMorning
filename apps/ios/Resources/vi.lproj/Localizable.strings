@@ -423,3 +423,38 @@
 "Arms down, up, then down." = "Hạ tay, giơ lên, rồi hạ xuống.";
 
 "Bend your knees, then stand up." = "Khuỵu gối, rồi đứng lên.";
+
+"Wait for the countdown to finish" = "Chờ đếm ngược kết thúc";
+"Place your phone to the side so your whole body is visible" = "Đặt điện thoại sang bên để thấy toàn thân bạn";
+"Lower yourself, then push up %lld times" = "Hạ người xuống rồi đẩy lên %lld lần";
+"Read the sentence" = "Đọc câu văn";
+"Choose the closest meaning" = "Chọn ý nghĩa gần nhất";
+"Solve the riddle" = "Giải câu đố";
+"Choose your answer" = "Chọn câu trả lời";
+"Keep your hand and wrist in view" = "Để bàn tay và cổ tay trong khung hình";
+"Wave side to side %lld times" = "Vẫy tay qua lại %lld lần";
+"Keep your face in view" = "Để khuôn mặt trong khung hình";
+"Turn left and right %lld times" = "Quay đầu sang trái và phải %lld lần";
+"Keep your whole body in view" = "Để toàn thân trong khung hình";
+"Open your arms and legs, then close them %lld times" = "Dang tay chân rồi khép lại %lld lần";
+"Keep both shoulders and elbows in view" = "Để cả hai vai và khuỷu tay trong khung hình";
+"Raise both arms, lower them, and repeat %lld times" = "Giơ cả hai tay lên rồi hạ xuống, lặp lại %lld lần";
+"Stay seated" = "Ngồi yên";
+"Lower your arms, raise them, then lower them for 3 cycles" = "Hạ tay xuống, giơ lên rồi hạ xuống, thực hiện 3 chu kỳ";
+"Stand sideways in view" = "Đứng nghiêng trong khung hình";
+"Bend your knees gently, then stand again for 3 cycles" = "Khuỵu gối nhẹ rồi đứng thẳng, thực hiện 3 chu kỳ";
+
+"Edit time and label" = "Sửa giờ và nhãn";
+
+"Change challenge" = "Đổi thử thách";
+
+
+"Camera" = "Camera";
+
+"Read the sentence aloud" = "Đọc to cả câu";
+
+"Match at least 80% of the words" = "Đọc khớp ít nhất 80% số từ";
+
+"Edit all settings" = "Sửa tất cả cài đặt";
+
+"Some settings are no longer available. Open all settings to update them." = "Một số cài đặt không còn khả dụng. Mở tất cả cài đặt để cập nhật.";

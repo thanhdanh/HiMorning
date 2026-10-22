@@ -114,10 +114,14 @@ struct ChallengeView: View {
      if !finished,challenge.kind.hasMovementIllustration,camera != nil || movementCamera != nil || rhythmCamera != nil {
       MovementGuide(selection:challenge,compact:true)
      }
+     if !finished && message == challengeInstructions {
+      ChallengeRequirementsView(selection:challenge)
+     } else {
      Text(result ?? message)
       .font(distanceLayout ? .system(size: 34, weight: .semibold) : .title3.weight(.medium))
       .minimumScaleFactor(distanceLayout ? 0.6 : 1)
       .multilineTextAlignment(.center).accessibilityIdentifier("challengeMessage")
+     }
      if !finished && (busy || stopping || speechFinishing || preparingExample) {
       ProgressView().accessibilityLabel(message)
      }
@@ -139,12 +143,6 @@ struct ChallengeView: View {
         Label(appText(spokenExample.isSpeaking ? "Stop example" : "Hear sentence"), systemImage: spokenExample.isSpeaking ? "stop.fill" : "speaker.wave.2.fill")
        }.buttonStyle(MorningButtonStyle(primary: false)).disabled(busy || stopping || preparingExample || speech != nil).accessibilityIdentifier("hearSentence")
       }
-     }
-     if challenge.kind == .pushUps && camera == nil && !finished {
-      Text(appText("The camera counts push-ups on this iPhone. Video is not saved or uploaded.")).font(.footnote).foregroundStyle(MorningTheme.muted)
-     }
-     if challenge.kind.usesLocalMovement && movementCamera == nil && !finished {
-      Text(appText("Camera video stays on this device.")).font(.footnote).foregroundStyle(MorningTheme.muted)
      }
     }.padding(24).frame(maxWidth: .infinity).id("challengeTop")
    }
@@ -364,18 +362,7 @@ struct ChallengeView: View {
  }
 
  private var challengeInstructions: String {
-  switch challenge.kind {
-  case .none: return appText("You can confirm you’re awake when the countdown ends.")
-  case .pushUps: return appText("Place your phone to the side so your whole body is visible. Start the camera, then do your push-ups. Each full down-and-up movement counts once.")
-  case .readAndChoose: return appText("Read the sentence, then choose the closest meaning. You can try again.")
-  case .riddle: return appText("Solve the riddle, then choose your answer. You can try again.")
-  case .waveHand: return appText("Place your hand in view and wave it side to side. Video stays on this device.")
-  case .neckRotation: return appText("Keep your face visible and turn your head left and right. Video stays on this device.")
-  case .jumpingJacks: return appText("Keep your whole body visible and complete 10 gentle jumping jacks. Video stays on this device.")
-  case .stretching: return appText("Keep both shoulders and elbows in view. Raise both arms to count one. Lower them before raising them again.")
-  case .guidedRhythm: return challenge.rhythmVariant == .seated ? appText("Stay seated. Lower your arms, raise them, then lower them. Complete 3 cycles. Video stays on this device.") : appText("Stand sideways in view, bend your knees gently, then stand again.")
-  case .readAloud: return appText("Tap Start reading, then read the sentence aloud. Match at least 80% of the words.")
-  }
+  ChallengeRequirements.forSelection(challenge).joined(separator:"\n")
  }
 
  private func chooseMeaning(_ index: Int, prompt: ChallengePrompt) {

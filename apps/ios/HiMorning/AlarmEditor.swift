@@ -2,6 +2,8 @@ import SwiftUI
 import AVFoundation
 import UIKit
 import HiMorningCore
+enum AlarmEditorScope {case all,schedule,challenge}
+
 struct AlarmEditor:View {
  @Environment(\.dismiss) private var dismiss
  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
@@ -28,14 +30,16 @@ struct AlarmEditor:View {
  @State private var saving=false
  @State private var saveError:String?
  @State private var alarmAccessDenied=false
+ @State private var offeringAllSettings=false
  @ObservedObject var store:SubscriptionStore
  @ObservedObject var preview:PreviewStore
  @State private var alarmID:UUID
  let practiceModel:PilotModel
  let editing:Bool
+ @State private var scope:AlarmEditorScope
  let save:(SavedAlarm) async throws ->Void
- init(alarm:SavedAlarm?=nil,store:SubscriptionStore,preview:PreviewStore,practiceModel:PilotModel,save:@escaping (SavedAlarm) async throws ->Void) {
-  self.store=store;self.preview=preview;self.practiceModel=practiceModel;self.save=save;_alarmID=State(initialValue:alarm?.id ?? UUID());editing=alarm != nil
+ init(alarm:SavedAlarm?=nil,scope:AlarmEditorScope = .all,store:SubscriptionStore,preview:PreviewStore,practiceModel:PilotModel,save:@escaping (SavedAlarm) async throws ->Void) {
+  _scope=State(initialValue:scope);self.store=store;self.preview=preview;self.practiceModel=practiceModel;self.save=save;_alarmID=State(initialValue:alarm?.id ?? UUID());editing=alarm != nil
   if let alarm {
    _time=State(initialValue:Calendar.current.date(from:DateComponents(hour:alarm.time.hour,minute:alarm.time.minute)) ?? Date())
    _mode=State(initialValue:alarm.mode);_sound=State(initialValue:alarm.sound)
@@ -77,6 +81,7 @@ struct AlarmEditor:View {
     ScrollView {
      VStack(alignment:.leading,spacing:24) {
       challengeHero
+      if scope != .schedule {
       VStack(alignment:.leading,spacing:12) {
        Text(appText("Challenge level")).font(.headline)
        GlassEffectContainer(spacing:8) {
@@ -95,17 +100,20 @@ struct AlarmEditor:View {
        }
        if challenge.kind == .pushUps || challenge.kind == .guidedRhythm {challengeSettings}
       }
+      }
+      if scope != .challenge {
       VStack(alignment:.leading,spacing:12) {
        Text(appText("The little details")).font(.headline)
        settingsGroup
        Text(days.isEmpty ? appText("Rings once") : appText("Uses your phone’s local time"))
         .font(.footnote).foregroundStyle(MorningTheme.muted).padding(.horizontal,4)
       }
+      }
      }.padding(.horizontal,20).padding(.top,12).padding(.bottom,24)
     }.scrollDismissesKeyboard(.interactively)
    }.foregroundStyle(MorningTheme.ink)
     .safeAreaInset(edge:.bottom,spacing:0) {saveBar}
-    .navigationTitle(appText(editing ? "Edit alarm" : "New alarm")).navigationBarTitleDisplayMode(.inline)
+    .navigationTitle(appText(scope == .schedule ? "Edit time and label" : scope == .challenge ? "Change challenge" : editing ? "Edit alarm" : "New alarm")).navigationBarTitleDisplayMode(.inline)
     .toolbarBackground(.hidden,for:.navigationBar)
     .toolbar {
      ToolbarItem(placement:.cancellationAction) {Button(appText("Cancel")) {soundPreview.stop();dismiss()}.disabled(saving)}
@@ -150,6 +158,7 @@ struct AlarmEditor:View {
  }
  private var challengeHero:some View {
   VStack(alignment:.leading,spacing:18) {
+   if scope != .challenge {
    HStack {
     Label(appText("Wake-up time"),systemImage:"sunrise.fill").font(.subheadline.weight(.semibold))
     Spacer(minLength:8)
@@ -161,21 +170,23 @@ struct AlarmEditor:View {
     .frame(maxWidth:.infinity)
     .accessibilityIdentifier("alarmTimePicker")
     .accessibilityValue(DateFormatter.localizedString(from:time,dateStyle:.none,timeStyle:.short))
-   Divider().overlay(challengeColor.opacity(0.16))
+   }
+   if scope == .all {Divider().overlay(challengeColor.opacity(0.16))}
+   if scope != .schedule {
    HStack(alignment:.center,spacing:12) {
     VStack(alignment:.leading,spacing:8) {
      Text(appText("Your morning")).font(.caption.weight(.semibold)).foregroundStyle(MorningTheme.muted)
      Text(challenge.kind == .none ? appText("A gentle start") : challenge.displayTitle)
       .font(.system(.title2,design:.rounded,weight:.bold)).fixedSize(horizontal:false,vertical:true)
       .accessibilityIdentifier("composerChallengeTitle")
-     Text(challenge.kind == .pushUps ? appText("Try %lld push-ups",count:pushUpTarget) : challenge.kind == .none ? appText("Wake up at your own pace") : challenge.kind.summary)
-      .font(.footnote).foregroundStyle(MorningTheme.muted).fixedSize(horizontal:false,vertical:true)
+     ChallengeRequirementsView(selection:challenge)
       .accessibilityIdentifier("modeExplanation")
     }.frame(maxWidth:.infinity,alignment:.leading)
     if !dynamicTypeSize.isAccessibilitySize {
      AlarmComposerEmblem(symbol:AlarmComposerPalette.symbol(for:challenge.kind),tint:challengeColor)
       .scaleEffect(0.75).frame(width:80,height:90).accessibilityHidden(true)
     }
+   }
    }
   }.padding(24).frame(maxWidth:.infinity,alignment:.leading)
    .composerGlass(tint:challengeColor.opacity(0.12),cornerRadius:32)
@@ -200,10 +211,12 @@ struct AlarmEditor:View {
  }
  private var settingsGroup:some View {
   VStack(spacing:0) {
+   if scope == .all {
    Button {labelFocused=false;soundPreview.stop();choosingSound=true} label: {
     settingsRow(title:appText("Sound"),summary:sound.title)
    }.buttonStyle(.plain).accessibilityIdentifier("chooseSound")
    settingsDivider
+   }
    VStack(alignment:.leading,spacing:14) {
     HStack(alignment:.firstTextBaseline) {
      Text(appText("Repeat")).accessibilityIdentifier("alarmRepeat")
@@ -260,6 +273,11 @@ struct AlarmEditor:View {
  private var saveBar:some View {
     VStack(spacing:8) {
      if let saveError {Text(saveError).font(.footnote).foregroundStyle(MorningTheme.ink).accessibilityIdentifier("alarmSaveError")}
+     if offeringAllSettings {
+      Button(appText("Edit all settings")) {scope = .all;saveError=nil;offeringAllSettings=false}
+       .buttonStyle(.plain).font(.subheadline.weight(.semibold)).frame(minHeight:44)
+       .accessibilityIdentifier("editAllAlarmSettings")
+     }
      if alarmAccessDenied {
       Button {
        if let url=URL(string:UIApplication.openSettingsURLString) {openURL(url)}
@@ -268,7 +286,7 @@ struct AlarmEditor:View {
      }
      Button {
       guard !saving else {return}
-      labelFocused=false;saving=true;saveError=nil;alarmAccessDenied=false;soundPreview.stop()
+      labelFocused=false;saving=true;saveError=nil;alarmAccessDenied=false;offeringAllSettings=false;soundPreview.stop()
       Task { @MainActor in
        do {
         let c=Calendar.current.dateComponents([.hour,.minute],from:time)
@@ -279,9 +297,9 @@ struct AlarmEditor:View {
         saveError=appText("Alarm access is off. Allow alarms for HiMorning in Settings, then try again.")
         alarmAccessDenied=true;saving=false
        } catch AlarmSaveError.soundUnavailable {
-        saveError=appText("This sound is no longer available. Choose System sound or unlock Pro.");saving=false
+        saveError=appText(scope == .all ? "This sound is no longer available. Choose System sound or unlock Pro." : "Some settings are no longer available. Open all settings to update them.");offeringAllSettings=scope != .all;saving=false
        } catch AlarmSaveError.challengeUnavailable {
-        saveError=appText("These challenge settings require Pro. Choose another challenge or unlock Pro.");saving=false
+        saveError=appText(scope == .all ? "These challenge settings require Pro. Choose another challenge or unlock Pro." : "Some settings are no longer available. Open all settings to update them.");offeringAllSettings=scope != .all;saving=false
        } catch {
         saveError=appText("This alarm could not be confirmed. Please check your system alarms before relying on it.")
         #if DEBUG
@@ -298,7 +316,7 @@ struct AlarmEditor:View {
        if saving {ProgressView()} else {Image(systemName:"checkmark")}
        Text(appText(saving ? "Saving…" : "Save"))
        Spacer(minLength:12)
-       Text(time,style:.time).monospacedDigit()
+       if scope != .challenge {Text(time,style:.time).monospacedDigit()}
       }.font(.headline).padding(.horizontal,18).frame(maxWidth:.infinity,minHeight:56)
      }.buttonStyle(.glassProminent).tint(MorningTheme.yellow).foregroundStyle(MorningTheme.onYellow)
       .disabled(saving).accessibilityIdentifier("saveAlarm")
@@ -326,7 +344,7 @@ struct AlarmEditor:View {
      if kind == .pushUps || kind == .guidedRhythm || kind.usesLocalMovement {
       HStack(alignment:.top,spacing:5) {
        Image(systemName:"camera.fill").accessibilityHidden(true)
-       Text(appText("On-device camera")).fixedSize(horizontal:false,vertical:true)
+       Text(appText("Camera")).fixedSize(horizontal:false,vertical:true)
       }.font(.caption2).foregroundStyle(MorningTheme.muted)
      }
     }.padding(16).frame(minWidth:0,maxWidth:.infinity,minHeight:142,alignment:.topLeading)
@@ -358,7 +376,6 @@ struct AlarmEditor:View {
   let kind=challenge.kind
   return VStack(alignment:.leading,spacing:12) {
 
-     Text(kind.summary).font(.footnote).foregroundStyle(MorningTheme.muted).accessibilityIdentifier("challenge-summary-"+kind.editorIdentifier)
      if kind == .pushUps {
       HStack {
        Text(appText("%lld push-ups",count:pushUpTarget)).font(.headline).monospacedDigit().accessibilityIdentifier("pushUpTarget")
