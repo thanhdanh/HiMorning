@@ -3,6 +3,7 @@ import { build } from 'esbuild';
 import { Miniflare,Response as MFResponse,convertV4MiniflareOptions,type Request as MFRequest } from 'miniflare';
 import { generateKeyPair,exportJWK,SignJWT } from 'jose';
 import { fileURLToPath } from 'node:url';
+import contentPack from '../content/challenge-content.json';
 import fixture from '../../../shared/contracts/v1/free-demo-frames.json';
 import { env,actor,create,submit,completion } from './helpers.js';
 let runtime:Miniflare|undefined,headers:Record<string,string>,otherHeaders:Record<string,string>,inferences=0;
@@ -60,7 +61,6 @@ it('runs the callable protocol through real workerd, signed Firebase tokens and 
 it('serves the bundled challenge content pack without auth',async()=>{
  const response=await runtime!.dispatchFetch('https://demo.workers.dev/content/v1/challenge-content.json');
  expect(response.status).toBe(200);
- expect(response.headers.get('ETag')).toBe('"v1"');
- const pack=await response.json() as {items:unknown[]};
- expect(pack.items.length).toBeGreaterThanOrEqual(440);
+ expect(response.headers.get('ETag')).toBe(`"v${contentPack.version}"`);
+ expect(await response.json()).toEqual(contentPack);
 });
