@@ -10,7 +10,9 @@ case "${2:-push}" in
       -only-testing:HiMorningUITests/DeviceFixesUITests/testSaveWaitsAndRetainsEditorOnFailure \
       -only-testing:HiMorningUITests/DeviceFixesUITests/testEnabledAlarmChallengeEditClosesAndKeepsTheNewChoiceInBothLanguages \
       -only-testing:HiMorningUITests/DeviceFixesUITests/testDisabledAlarmIsCompactAndCanBeEditedAndDeletedInBothLanguages \
-      -only-testing:HiMorningUITests/DeviceFixesUITests/testActiveAlarmShowsChallengeModeAndKeepsDeleteInTheFooter \
+      -only-testing:HiMorningUITests/DeviceFixesUITests/testAlarmCardShowsTimeRepeatAndDirectPractice \
+      -only-testing:HiMorningUITests/DeviceFixesUITests/testSwipeDeleteRequiresConfirmationAndCancelPreservesTheAlarm \
+      -only-testing:HiMorningUITests/DeviceFixesUITests/testDraftChallengePracticeReturnsToTheUnsavedForm \
       -only-testing:HiMorningUITests/PilotUITests/testProgressDayModesAndChallengeDetailsInBothLanguages \
       -only-testing:HiMorningUITests/ChallengeCelebrationUITests/testRealAlarmCompletionReturnsHomeAndMarksOnlyThatAlarmInBothLanguages \
       -only-testing:HiMorningUITests/ChallengeCelebrationUITests/testReadingSuccessCelebratesAndReturnsHomeInBothLanguages \

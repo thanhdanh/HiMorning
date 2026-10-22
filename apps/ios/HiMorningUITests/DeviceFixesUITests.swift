@@ -192,7 +192,7 @@ final class DeviceFixesUITests:XCTestCase {
   XCTAssertFalse(app.navigationBars["Edit alarm"].exists)
   app.terminate()
  }
- func testAlarmCardPrioritizesTimeAndChallengeWithoutInlineActions() {
+ func testAlarmCardShowsTimeRepeatAndDirectPractice() {
   let id="00000000-0000-0000-0000-000000000001"
   for vietnamese in [false,true] {
    let app=launch(["--ui-home-alarms","--ui-completed-alarm"],vietnamese:vietnamese)
