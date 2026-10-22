@@ -23,8 +23,8 @@ prototypes; no-go for a claim that HiMorning is better than Erly until tested.
 | Main outcome | People keep using it because mornings feel easier and more pleasant, with fewer unwanted returns to bed |
 
 The last outcome is a hypothesis. Finishing a task does not prove wakefulness,
-learning, exercise safety or a health benefit. Keep ordinary alarms and voluntary
-self-confirmation useful for people who do not want a challenge.
+learning, exercise safety or a health benefit. Keep ordinary alarms and "I'm awake"
+(unlocks 5 minutes after the first ring) useful for people who do not want a challenge.
 
 ## What the comparison actually shows
 
@@ -116,7 +116,7 @@ These are proposed advantages to validate, not exclusive features or proven wins
 | A small useful win | A brief rhythm activity or one useful English thought, then leave the phone | Repeated voluntary choice and usefulness ratings after novelty fades |
 | Fit different living situations | Quiet task, seated motion, camera-free choice and editable weekday schedules | Try shared rooms, small spaces, different abilities and shift schedules without assuming every Vietnamese user has the same needs |
 | Fair feedback | Clear progress, one helpful cue, another way to finish; optional form advice after completion | Unnecessary rejection, recovery time and frustration reports |
-| Trust on a difficult morning | Local alarm and exit; no login or server round trip required to stop | Physical-device tests for offline use, interruption, permissions, time zones and sound |
+| Trust on a difficult morning | Local alarm, backup rings and "I'm awake"; no login or server round trip required | Physical-device tests for offline use, interruption, permissions, time zones and sound |
 | Calm sensory design | Existing cream/yellow theme, warm sun, reviewed short cues, deliberate sounds | Native speaker tests, shared-room feedback, large text, VoiceOver and reduced motion |
 | Control and privacy | Preview before enabling; no automatic bedroom recordings or public uploads; explicit processor disclosure | Verify data handling and consent, not just reassuring copy |
 | Progress without shame | Optional weekly wins and gentle return after a missed day | Whether it helps people return; no unmeasured streak-pressure claim |
@@ -135,7 +135,7 @@ name or a longer mission list is easy for another app to copy.
 1. **Before bed:** Set time and sound; choose one activity and try it. Show only its
    relevant goal. Keep Gentle/Balanced/Focused as effort suggestions, not identities.
 2. **When the alarm rings:** Show the chosen familiar task and clear progress. Keep
-   another way to finish and Stop visible. Do not open a catalog or add new setup.
+   "I'm awake" as another way to finish; it unlocks 5 minutes after the first ring. Do not open a catalog or add new setup.
 3. **If checking fails:** Explain the uncertainty briefly and offer a local choice.
    Do not add questions, moves or retries as punishment.
 4. **After finishing:** Show a small win and let the person leave. An optional single

@@ -7,6 +7,7 @@ struct RhythmUpdate:Sendable {
  let completed:Bool
  let ended:Bool
  let message:String
+ let hint:FramingHint
 }
 
 /// Converts camera frames into local pose labels. It never creates image data or uploads frames.
@@ -22,7 +23,7 @@ final class GuidedRhythmCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDel
  private var stopped=false
  private var active=false
  private var started:TimeInterval=0
- private var lastSample:TimeInterval=0
+ private let request=VNDetectHumanBodyPoseRequest()
  private var observers:[NSObjectProtocol]=[]
 
  init(variant:GuidedRhythmVariant,targetCycles:Int=3,onUpdate:@escaping @Sendable(RhythmUpdate)->Void) {
@@ -70,14 +71,13 @@ final class GuidedRhythmCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDel
    guard isCurrent(token) else {return}
    rhythm=GuidedRhythmSession(variant:variant)
    started=ProcessInfo.processInfo.systemUptime
-   lastSample=0
    active=true
    for name in [AVCaptureSession.wasInterruptedNotification,AVCaptureSession.runtimeErrorNotification] {
     observers.append(NotificationCenter.default.addObserver(forName:name,object:session,queue:nil) { [weak self] _ in
      self?.queue.async { [weak self] in
       guard let self,self.active else {return}
       self.stopCamera()
-      self.publish(completed:false,ended:true,message:appText("The challenge is paused. You can choose another way."))
+      self.publish(completed:false,ended:true,message:appText("The challenge is paused. Start it again, or tap I’m awake when it unlocks."))
      }
     })
    }
@@ -85,30 +85,29 @@ final class GuidedRhythmCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDel
    publish(completed:false,ended:false,message:instruction)
   } catch {
    stopCamera()
-   publish(completed:false,ended:true,message:appText("The camera could not open. Choose another challenge."))
+   publish(completed:false,ended:true,message:appText("The camera could not open. You can tap I’m awake when it unlocks."))
   }
  }
 
  func captureOutput(_ output:AVCaptureOutput,didOutput sampleBuffer:CMSampleBuffer,from connection:AVCaptureConnection) {
   let uptime=ProcessInfo.processInfo.systemUptime
-  guard active,rhythm.completedCycles<targetCycles,uptime-lastSample>=0.12,let buffer=CMSampleBufferGetImageBuffer(sampleBuffer) else {return}
-  lastSample=uptime
+  guard active,rhythm.completedCycles<targetCycles,let buffer=CMSampleBufferGetImageBuffer(sampleBuffer) else {return}
   let timestamp=Int((uptime-started)*1_000)
   do {
-   let request=VNDetectHumanBodyPoseRequest()
    try VNImageRequestHandler(cvPixelBuffer:buffer,orientation:.leftMirrored).perform([request])
-   guard let body=request.results?.first else {handleOcclusion(timestamp:timestamp);return}
+   guard let body=request.results?.first else {handleOcclusion(timestamp:timestamp,hint:.noPerson);return}
    let points=try body.recognizedPoints(.all)
+   let hint=BodyFraming.hint(PoseGeometry.jointSamples(points),needsFeet:variant == .standing)
    let orientedSize=CGSize(width:CVPixelBufferGetHeight(buffer),height:CVPixelBufferGetWidth(buffer))
    switch classify(points,imageSize:orientedSize) {
    case .occluded:
-    handleOcclusion(timestamp:timestamp)
+    handleOcclusion(timestamp:timestamp,hint:hint)
    case .transition:
-    publish(completed:false,ended:false,message:appText("Move smoothly and follow the rhythm."))
+    publish(completed:false,ended:false,message:appText("Move smoothly and follow the rhythm."),hint:hint)
    case .pose(let pose):
     let completedCycle=rhythm.observe(pose,timestampMs:timestamp,visible:true)
     let completed=rhythm.completedCycles>=targetCycles
-    publish(completed:completed,ended:completed,message:completed ? appText("Rhythm complete. Good morning!") : instruction)
+    publish(completed:completed,ended:completed,message:completed ? appText("Rhythm complete. Good morning!") : instruction,hint:hint)
     if completedCycle && completed {
      stopCamera()
     }
@@ -150,10 +149,10 @@ final class GuidedRhythmCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDel
   return .transition
  }
 
- private func handleOcclusion(timestamp:Int) {
+ private func handleOcclusion(timestamp:Int,hint:FramingHint) {
   let placeholder:GuidedRhythmPose=variant == .standing ? .standing : .armsDown
   _=rhythm.observe(placeholder,timestampMs:timestamp,visible:false)
-  publish(completed:false,ended:false,message:appText(variant == .standing ? "Keep your whole body in view." : "Keep your upper body and both wrists in view."))
+  publish(completed:false,ended:false,message:appText(variant == .standing ? "Keep your whole body in view." : "Keep your upper body and both wrists in view."),hint:hint)
  }
 
  private var instruction:String {
@@ -168,8 +167,9 @@ final class GuidedRhythmCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDel
   observers.removeAll()
  }
 
- private func publish(completed:Bool,ended:Bool,message:String) {
-  onUpdate(.init(cycles:rhythm.completedCycles,completed:completed,ended:ended,message:message))
+ private func publish(completed:Bool,ended:Bool,message:String,hint framing:FramingHint = .ok) {
+  let hint:FramingHint=completed || ended ? .ok : framing
+  onUpdate(.init(cycles:rhythm.completedCycles,completed:completed,ended:ended,message:hint.message ?? message,hint:hint))
  }
 
  private func beginStartup() -> Int? {

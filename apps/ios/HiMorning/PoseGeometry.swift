@@ -1,5 +1,6 @@
 import CoreGraphics
 import Vision
+import HiMorningCore
 
 /// Reusable joint-geometry helpers shared by the camera capture pipelines,
 /// so visibility bounds and angle math live in one place and do not drift
@@ -24,5 +25,34 @@ enum PoseGeometry {
   guard denominator > 0 else { return 0 }
   let cosine = Double(max(-1, min(1, (first.dx * second.dx + first.dy * second.dy) / denominator)))
   return acos(cosine) * 180 / Double.pi
+ }
+}
+
+extension PoseGeometry {
+ private static let bodyJoints:[VNHumanBodyPoseObservation.JointName:BodyJoint]=[
+  .nose:.nose,.leftShoulder:.leftShoulder,.rightShoulder:.rightShoulder,.leftElbow:.leftElbow,.rightElbow:.rightElbow,
+  .leftWrist:.leftWrist,.rightWrist:.rightWrist,.leftHip:.leftHip,.rightHip:.rightHip,.leftKnee:.leftKnee,.rightKnee:.rightKnee,
+  .leftAnkle:.leftAnkle,.rightAnkle:.rightAnkle
+ ]
+
+ static func jointSamples(_ points:[VNHumanBodyPoseObservation.JointName:VNRecognizedPoint])->[BodyJoint:JointSample] {
+  var samples:[BodyJoint:JointSample]=[:]
+  for (name,joint) in bodyJoints {
+   guard let point=points[name] else {continue}
+   samples[joint]=JointSample(x:Double(point.location.x),y:Double(point.location.y),confidence:Double(point.confidence))
+  }
+  return samples
+ }
+}
+
+extension FramingHint {
+ var message:String? {
+  switch self {
+  case .ok:return nil
+  case .stepBack:return appText("Step back so your whole body fits.")
+  case .showFeet:return appText("Show your feet in the camera.")
+  case .comeCloser:return appText("Come a little closer.")
+  case .noPerson:return appText("Stand where the camera can see you.")
+  }
  }
 }

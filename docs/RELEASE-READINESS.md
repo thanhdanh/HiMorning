@@ -23,7 +23,7 @@ inspected for this review.
 
 | Area | Current evidence | Work before release |
 |---|---|---|
-| Native alarms | AlarmKit scheduling, persistence and Stop are implemented; core and simulator checks pass | Record physical-device delivery, dismissal, permission and interruption results |
+| Native alarms | AlarmKit scheduling, persistence and backup rings are implemented; core and simulator checks pass | Record physical-device delivery, system Stop, backup rings, permission and interruption results |
 | AI challenge | Push-up capture and an async Qwen/Modal adapter exist; cloud AI is off by default | For an AI launch, deploy staging, verify the pinned GPU runtime and validate real movement clips end to end |
 | Local Qwen | Ordered-image API smoke checks passed on synthetic fixtures | Connect it through the backend; provide an authenticated, reachable service and measure real challenge accuracy and latency |
 | Distribution | Simulator Release build passes; native tests use ad-hoc simulator signing | Add device/distribution signing, app icon and versioning; validate an archive and upload a TestFlight build |
@@ -40,8 +40,9 @@ UI and store description accurately describe the features that work.
    The first successful save starts thirty elapsed days of full access with no
    card or subscription signup. Failed saves do not consume the preview.
 2. The alarm rings through AlarmKit without needing a purchase or network request.
-3. Start a supported challenge, confirm being awake or stop. Keep those recovery
-   choices available if the camera, AI service or subscription check fails.
+3. Start a supported challenge or confirm being awake. "I'm awake" unlocks 5
+   minutes after the first ring and stays available if the camera, AI service or
+   subscription check fails.
 4. Offer Pro voluntarily from a calm screen, with nonblocking discovery after
    three completed mornings. The preview ends without a charge; Free retains
    scheduling, a basic challenge and recovery.
@@ -63,7 +64,7 @@ offer to this model. Apple explains that customers can
 hold one subscription in a group at a time. The first subscription submission
 must accompany a new app version. See [Apple's subscription setup guide](https://developer.apple.com/help/app-store-connect/manage-subscriptions/offer-auto-renewable-subscriptions/).
 
-Keep basic alarm scheduling, Stop and recovery free. Pro should offer ongoing
+Keep basic alarm scheduling, backup rings and "I'm awake" free. Pro should offer ongoing
 value, such as regularly maintained activity content or a bounded AI service.
 Only sell benefits that are implemented: Focused mode, extra sounds and richer
 local progress in this pilot. Actual storefront prices require App Store setup.
@@ -152,6 +153,13 @@ Release build checks also confirm debug-only UI fixture flags are absent.
 Expiry decisions are tested against verified signed periods with an injected
 clock; simulator expiry-event propagation still needs manual validation.
 Missing release evidence is an open gate, not a claim that a runtime test failed.
+
+## Device acceptance checklist
+
+- [ ] Tap system Stop on the lock screen; the app opens (a reported iOS 26.2 bug can skip this) and a backup ring sounds 2 min later; finishing the challenge silences all remaining rings. With 16 alarms scheduled for one enabled alarm, scheduling does not hit the device alarm limit.
+- [ ] Each camera challenge counts 3 reps correctly for a person about 2 m from the phone; wave at normal speed; neck right-first. If counts are wrong on device, the Apple Vision pose input is the suspect before the counting logic, and ARKit neck yaw is the fallback.
+- [ ] Vietnamese read-aloud recognizes a vi-VN sentence on device. On an iPhone without a vi-VN recognizer, a real wake shows a read-and-choose question with the bilingual note instead.
+- [ ] Content refresh fetches from the deployed Worker after `pnpm deploy:free`.
 
 ## Next steps
 

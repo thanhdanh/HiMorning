@@ -19,7 +19,7 @@ public enum MorningAccess:Equatable,Sendable {
   return .pushUps(repetitions:min(saved.repetitions ?? 5,WakeMode.balanced.policy.reps))
  }
  public func effectiveAlarm(_ saved:SavedAlarm)->SavedAlarm {
-  var effective=SavedAlarm(id:saved.id,time:saved.time,mode:effectiveMode(saved.mode),sound:effectiveSound(saved.sound),challenge:effectiveChallenge(saved.challenge))
+  var effective=SavedAlarm(id:saved.id,time:saved.time,mode:effectiveMode(saved.mode),sound:effectiveSound(saved.sound),challenge:effectiveChallenge(saved.challenge),label:saved.label,scheduledOccurrence:saved.scheduledOccurrence)
   effective.enabled=saved.enabled;effective.state=saved.state
   return effective
  }

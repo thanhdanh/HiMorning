@@ -138,7 +138,7 @@ development tokens and any paid OpenAI usage. Host operating cost was not measur
    cold starts and morning concurrency. Do not infer this from shape recognition.
 5. **Rehearse the native path.** Add the development emulator connection, then test
    capture, permissions, cancellation, offline exit and sound on iPhone. Keep local
-   alarms/Stop independent of inference. A safe available exit is a release gate.
+   alarms, backup rings and "I'm awake" independent of inference. A safe available exit is a release gate.
 
 Read & Choose and guided rhythm remain separate product experiments. This vision
 server does not add speech recognition or precise beat scoring to the app.

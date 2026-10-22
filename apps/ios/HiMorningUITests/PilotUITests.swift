@@ -58,6 +58,22 @@ final class PilotUITests:XCTestCase {
   app.buttons["Hủy"].tap()
   XCTAssertTrue(app.buttons["addAlarm"].waitForExistence(timeout:5))
  }
+ func testNewAlarmStartsAtCurrentTimeWithNoRepeatDays() {
+  let app=launch(language:"en")
+  let before=Date()
+  app.buttons["addAlarm"].tap()
+  XCTAssertTrue(app.navigationBars["New alarm"].waitForExistence(timeout:5))
+  let picker=app.datePickers["alarmTimePicker"]
+  XCTAssertTrue(picker.exists)
+  let pickerValue=picker.value as? String ?? ""
+  let after=Date()
+  let formatter=DateFormatter();formatter.locale=Locale(identifier:"en_US");formatter.dateStyle = .none;formatter.timeStyle = .short
+  let currentTimes=[before,after].map {formatter.string(from:$0)}
+  XCTAssertTrue(currentTimes.contains(pickerValue),"The draft should start at the current local time: \(pickerValue)")
+  for day in 1...7 {XCTAssertFalse(app.buttons["alarmRepeatDay-\(day)"].isSelected)}
+  XCTAssertTrue(app.staticTexts["Rings once"].exists)
+  app.buttons["Cancel"].tap()
+ }
  private func assertBrandColors(_ app:XCUIApplication) {
   let image=app.screenshot().image.cgImage!
   let scale=CGFloat(image.width)/app.frame.width
@@ -88,11 +104,11 @@ final class PilotUITests:XCTestCase {
   app.buttons["startChallenge"].tap()
   XCTAssertTrue(app.buttons[vi ? "Mở camera" : "Open camera"].waitForExistence(timeout:5))
   capture(app,name:"consent-"+language)
-  app.buttons[vi ? "Chọn cách khác" : "Choose another way"].tap()
+  app.buttons[vi ? "Để sau" : "Not now"].tap()
   XCTAssertTrue(app.buttons["backToHome"].exists)
   app.buttons["startChallenge"].tap()
   app.buttons[vi ? "Mở camera" : "Open camera"].tap()
-  let unavailable=vi ? "Chưa có quyền camera. Bạn vẫn có thể dừng." : "Camera access is off. You can still stop."
+  let unavailable=vi ? "Chưa có quyền camera. Bạn có thể nhấn “Tôi đã thức dậy” khi nút mở khóa." : "Camera access is off. You can tap I’m awake when it unlocks."
   XCTAssertTrue(app.staticTexts[unavailable].waitForExistence(timeout:5))
   XCTAssertFalse(app.staticTexts[vi ? "Hoan hô!" : "Hooray!"].exists)
   capture(app,name:"camera-denied-"+language)
@@ -180,8 +196,8 @@ final class PilotUITests:XCTestCase {
    for _ in 0..<4 where !mixed.isHittable {app.swipeUp()}
    mixed.tap()
    XCTAssertTrue(mixed.isSelected)
-   XCTAssertTrue(details.staticTexts[vi ? "Đọc và chọn" : "Read & Choose"].exists)
-   XCTAssertTrue(details.staticTexts[vi ? "Tỉnh táo" : "Awake"].exists)
+   XCTAssertTrue(details.staticTexts[vi ? "Đọc và Chọn" : "Read & Choose"].exists)
+   XCTAssertTrue(details.staticTexts[vi ? "Đã thức dậy" : "Awake"].exists)
    XCTAssertTrue(details.staticTexts[vi ? "Nhẹ nhàng" : "Gentle"].exists)
    XCTAssertTrue(details.staticTexts[vi ? "Đã dừng" : "Stopped"].exists)
    XCTAssertTrue(details.staticTexts[vi ? "Chưa lưu chi tiết thử thách" : "Challenge details not recorded"].exists)
@@ -324,7 +340,7 @@ final class PilotUITests:XCTestCase {
  }
  func testAlarmEditorOffersDiverseChallengeChoices() {
   let app=launch(language:"en",editorFixture:true)
-  app.buttons["editAlarm-00000000-0000-0000-0000-000000000001"].tap()
+  app.staticTexts["alarmTime-00000000-0000-0000-0000-000000000001"].tap()
   XCTAssertTrue(app.navigationBars["Edit alarm"].waitForExistence(timeout:5))
   XCTAssertTrue(app.buttons["challenge-guidedRhythm"].exists,"The historical saved choice remains available")
   func selectMode(_ mode:String) {
@@ -360,7 +376,7 @@ final class PilotUITests:XCTestCase {
     if option.exists {option.tap()}
     if app.buttons["retryChallenge"].waitForExistence(timeout:1) {break}
    }
-   XCTAssertTrue(app.staticTexts[vi ? "Chính xác. Đã hoàn thành thử thách!" : "Correct. Challenge completed!"].waitForExistence(timeout:5))
+   XCTAssertTrue(app.staticTexts[vi ? "Đúng rồi. Thử thách hoàn thành!" : "Correct. Challenge completed!"].waitForExistence(timeout:5))
    capture(app,name:"read-choose-complete-"+language)
    app.buttons["backToHome"].tap()
    XCTAssertTrue(app.buttons["practiceChallenges"].waitForExistence(timeout:5))

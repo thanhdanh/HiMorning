@@ -32,15 +32,9 @@ struct OpenMorningIntent: LiveActivityIntent {
     }
 }
 
-actor NativeAlarmScheduler: AlarmScheduler {
+actor NativeAlarmScheduler: AlarmScheduler, BackupRingScheduler {
 
     func schedule(_ alarm: SavedAlarm) async throws {
-        let manager = AlarmManager.shared
-
-        guard try await manager.requestAuthorization() == .authorized else {
-            throw NativeAlarmError.denied
-        }
-
         // MARK: - Schedule
 
         let days: [Locale.Weekday] = [
@@ -68,17 +62,48 @@ actor NativeAlarmScheduler: AlarmScheduler {
             repeats: recurrence
         )
 
-        // MARK: - Alarm Presentation
-
-        // AlarmKit requires a Stop button.
-        let stopButton = AlarmButton(
-            text: LocalizedStringResource(
-                stringLiteral: appText("Stop")
-            ),
-            textColor: .white,
-            systemImageName: "stop.fill"
+        _ = try await AlarmManager.shared.schedule(
+            id: alarm.id,
+            configuration: try await configuration(
+                for: alarm,
+                schedule: alarm.time.weekdays.isEmpty ? alarm.scheduledOccurrence.map { .fixed($0) } ?? .relative(relative) : .relative(relative)
+            )
         )
+    }
 
+    func scheduleBackup(
+        _ ring: BackupRing,
+        for alarm: SavedAlarm
+    ) async throws {
+        _ = try await AlarmManager.shared.schedule(
+            id: ring.id,
+            configuration: try await configuration(
+                for: alarm,
+                schedule: .fixed(ring.fireDate)
+            )
+        )
+    }
+
+    private func configuration(
+        for alarm: SavedAlarm,
+        schedule: Alarm.Schedule
+    ) async throws -> AlarmManager.AlarmConfiguration<MorningMetadata> {
+        guard try await AlarmManager.shared.requestAuthorization() == .authorized else {
+            throw NativeAlarmError.denied
+        }
+
+        return .alarm(
+            schedule: schedule,
+            attributes: attributes(for: alarm),
+            stopIntent: OpenMorningIntent(id: alarm.id),
+            secondaryIntent: OpenMorningIntent(id: alarm.id),
+            sound: sound(for: alarm)
+        )
+    }
+
+    private func attributes(
+        for alarm: SavedAlarm
+    ) -> AlarmAttributes<MorningMetadata> {
         let openButton = AlarmButton(
             text: LocalizedStringResource(
                 stringLiteral: appText("Open HiMorning")
@@ -87,51 +112,49 @@ actor NativeAlarmScheduler: AlarmScheduler {
             systemImageName: "sun.max"
         )
 
-        let alert = AlarmPresentation.Alert(
-            title: LocalizedStringResource(
-                stringLiteral: appText("Good morning ☀️")
-            ),
-            stopButton: stopButton,
-            secondaryButton: openButton,
-            secondaryButtonBehavior: .custom
+        let title = LocalizedStringResource(
+            stringLiteral: appText("Good morning ☀️")
         )
 
-        // MARK: - Alarm Attributes
-
-        let attributes: AlarmAttributes<MorningMetadata> =
-            AlarmAttributes<MorningMetadata>(
-                presentation: AlarmPresentation(
-                    alert: alert
-                ),
-                metadata: MorningMetadata(
-                    alarmID: alarm.id.uuidString
-                ),
-                tintColor: .yellow
+        let alert: AlarmPresentation.Alert
+        if #available(iOS 26.1, *) {
+            alert = AlarmPresentation.Alert(
+                title: title,
+                secondaryButton: openButton,
+                secondaryButtonBehavior: .custom
             )
+        } else {
+            alert = AlarmPresentation.Alert(
+                title: title,
+                stopButton: AlarmButton(
+                    text: LocalizedStringResource(
+                        stringLiteral: appText("Stop")
+                    ),
+                    textColor: .white,
+                    systemImageName: "stop.fill"
+                ),
+                secondaryButton: openButton,
+                secondaryButtonBehavior: .custom
+            )
+        }
 
-        // MARK: - Sound
+        return AlarmAttributes<MorningMetadata>(
+            presentation: AlarmPresentation(
+                alert: alert
+            ),
+            metadata: MorningMetadata(
+                alarmID: alarm.id.uuidString
+            ),
+            tintColor: .yellow
+        )
+    }
 
-        let sound: AlertConfiguration.AlertSound =
-            alarm.sound == .system
+    private func sound(
+        for alarm: SavedAlarm
+    ) -> AlertConfiguration.AlertSound {
+        alarm.sound == .system
             ? .default
             : .named(alarm.sound.rawValue + ".wav")
-
-        // MARK: - Configuration
-
-        let configuration: AlarmManager.AlarmConfiguration<MorningMetadata> =
-            .alarm(
-                schedule: .relative(relative),
-                attributes: attributes,
-                secondaryIntent: OpenMorningIntent(id: alarm.id),
-                sound: sound
-            )
-
-        // MARK: - Schedule Alarm
-
-        _ = try await manager.schedule(
-            id: alarm.id,
-            configuration: configuration
-        )
     }
 
     // MARK: - Cancel

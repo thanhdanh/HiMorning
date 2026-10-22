@@ -57,3 +57,10 @@ it('runs the callable protocol through real workerd, signed Firebase tokens and 
  const malformed=await runtime!.dispatchFetch('https://demo.workers.dev/createVerificationSession',{method:'POST',headers,body:'{"data":{},"uid":"forged"}'});expect(malformed.status).toBe(400);
  expect((await runtime!.dispatchFetch('https://demo.workers.dev/createVerificationSession',{method:'POST',headers,body:'x'.repeat(18*1024*1024+1)})).status).toBe(400);
 });
+it('serves the bundled challenge content pack without auth',async()=>{
+ const response=await runtime!.dispatchFetch('https://demo.workers.dev/content/v1/challenge-content.json');
+ expect(response.status).toBe(200);
+ expect(response.headers.get('ETag')).toBe('"v1"');
+ const pack=await response.json() as {items:unknown[]};
+ expect(pack.items.length).toBeGreaterThanOrEqual(440);
+});

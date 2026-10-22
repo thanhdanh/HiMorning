@@ -27,8 +27,8 @@ requires ordered phases, monotonic timestamps and bounded gaps/duration. Standin
 arm bends, lost landmarks and incomplete cycles cannot complete a repetition.
 
 `ChallengeCoordinator.completePushUps` accepts a completed counter for the exact
-selected target. It stops the native alarm before recording success. Duplicate
-completion, a late result after Stop and a failed native stop cannot apply success.
+selected target. It stops the native alarm and cancels the backup rings before recording success. Duplicate
+completion, a late result after the user leaves and a failed native stop cannot apply success.
 Practice and retry never stop a real alarm or add progress entries.
 
 ## Key choices
@@ -54,7 +54,7 @@ xcodegen generate --spec apps/ios/project.yml
 ## What we checked
 
 `PushUpTests` covers ordered cycles, wrong posture, occlusion, stale/fast samples,
-exact targets, duplicates, practice, native stop failure and the Stop race.
+exact targets, duplicates, practice, native stop failure and the stop race.
 `ChallengeCaptureTests` covers permission denial and cancellation during permission
 startup. Bilingual UI journeys check plain-language labels and denial recovery.
 These tests do not establish real-world recognition accuracy.

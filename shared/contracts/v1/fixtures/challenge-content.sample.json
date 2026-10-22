@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "generatedAt": "2026-10-18T00:00:00Z",
+  "items": [
+    {"id": "en-ra-quiet-breath", "kind": "readAloud", "language": "en", "text": "Before the world asks for my attention, I will take a quiet breath, drink some water, and choose one kind thing to begin.", "source": "himorning", "license": "original"},
+    {"id": "en-ra-slow-sunrise", "kind": "readAloud", "language": "en", "text": "The sun does not hurry to rise, and neither must I; a calm morning can still become a good and gentle day.", "source": "himorning", "license": "original"},
+    {"id": "en-rc-window", "kind": "readAndChoose", "language": "en", "text": "Please open the window and welcome the morning.", "choices": ["Open the window to greet the morning.", "Close the door and go to sleep.", "Make dinner before going outside."], "answerIndex": 0, "source": "himorning", "license": "original"},
+    {"id": "en-rc-small-step", "kind": "readAndChoose", "language": "en", "text": "A small step can begin a great day.", "choices": ["You must do everything at once.", "Small actions never matter.", "One little action can start a good day."], "answerIndex": 2, "source": "himorning", "license": "original"},
+    {"id": "en-rd-piano", "kind": "riddle", "language": "en", "text": "What has keys but cannot open a door?", "choices": ["A piano", "A window", "A shoe"], "answerIndex": 0, "source": "himorning", "license": "original"},
+    {"id": "en-rd-shadow", "kind": "riddle", "language": "en", "text": "I follow you in sunlight but disappear in darkness. What am I?", "choices": ["A cloud", "A shadow", "A sound"], "answerIndex": 1, "source": "himorning", "license": "original"},
+    {"id": "vi-ra-hit-tho", "kind": "readAloud", "language": "vi", "text": "Trước khi thế giới đòi hỏi sự chú ý của mình, tôi sẽ hít một hơi thở chậm, uống ly nước và chọn một việc nhỏ để bắt đầu.", "source": "himorning", "license": "original"},
+    {"id": "vi-ra-binh-minh", "kind": "readAloud", "language": "vi", "text": "Mặt trời không vội vàng mọc lên, nên tôi cũng không cần vội; một buổi sáng bình yên vẫn có thể trở thành một ngày thật dịu dàng.", "source": "himorning", "license": "original"},
+    {"id": "vi-rc-cua-so", "kind": "readAndChoose", "language": "vi", "text": "Hãy mở cửa sổ và chào đón buổi sáng.", "choices": ["Mở cửa sổ để chào buổi sáng.", "Đóng cửa lại và đi ngủ tiếp.", "Nấu bữa tối trước khi ra ngoài."], "answerIndex": 0, "source": "himorning", "license": "original"},
+    {"id": "vi-rc-buoc-nho", "kind": "readAndChoose", "language": "vi", "text": "Một bước nhỏ có thể bắt đầu một ngày tuyệt vời.", "choices": ["Bạn phải làm mọi việc cùng một lúc.", "Việc nhỏ chẳng bao giờ quan trọng.", "Một hành động nhỏ có thể mở ra một ngày tốt đẹp."], "answerIndex": 2, "source": "himorning", "license": "original"},
+    {"id": "vi-rd-dan-piano", "kind": "riddle", "language": "vi", "text": "Cái gì có phím nhưng không thể mở cửa?", "choices": ["Đàn piano", "Cửa sổ", "Đôi giày"], "answerIndex": 0, "source": "himorning", "license": "original"},
+    {"id": "vi-rd-cai-bong", "kind": "riddle", "language": "vi", "text": "Tôi theo bạn dưới ánh nắng nhưng biến mất trong bóng tối. Tôi là gì?", "choices": ["Đám mây", "Cái bóng", "Tiếng động"], "answerIndex": 1, "source": "himorning", "license": "original"}
+  ]
+}

@@ -36,6 +36,31 @@ final class PushUpTests:XCTestCase {
   }
   XCTAssertFalse(counter.ready)
  }
+ private func feed(_ counter:inout PushUpCounter,_ samples:[(Int,Double,Bool)]) {
+  for (time,angle,visible) in samples {
+   counter.observe(elbowAngle:angle,bodyAngle:175,incline:10,visible:visible,timestampMs:time)
+  }
+ }
+ func testFastDescentWithoutMiddleBandSamplesCounts() {
+  var counter=PushUpCounter(target:1)
+  feed(&counter,[(0,165,true),(400,80,true),(900,165,true)])
+  XCTAssertEqual(counter.completedReps,1)
+ }
+ func testBriefOcclusionKeepsTheRep() {
+  var counter=PushUpCounter(target:1)
+  feed(&counter,[(0,165,true),(300,80,true),(500,0,false),(900,165,true)])
+  XCTAssertEqual(counter.completedReps,1)
+ }
+ func testLongOcclusionResets() {
+  var counter=PushUpCounter(target:1)
+  feed(&counter,[(0,165,true),(300,80,true),(400,0,false),(1100,0,false),(1200,165,true)])
+  XCTAssertEqual(counter.completedReps,0)
+ }
+ func testResumeAfterLongOcclusionWithoutHiddenSamplesResets() {
+  var counter=PushUpCounter(target:1)
+  feed(&counter,[(0,165,true),(300,80,true),(400,0,false),(1100,165,true)])
+  XCTAssertEqual(counter.completedReps,0)
+ }
  @MainActor func testLocalCameraCompletionNeedsTheTargetAndNeverCallsCloud() async throws {
   let scheduler=PushUpScheduler()
   let alarm=SavedAlarm(time:try AlarmTime(hour:7,minute:0,weekdays:[]),challenge:.pushUps(repetitions:2))

@@ -1,0 +1,590 @@
+[
+ {
+  "id": "morning-window",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "Please open the window and welcome the morning.",
+  "choices": [
+   "Open the window to greet the morning.",
+   "Close the door and go to sleep.",
+   "Make dinner before going outside."
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "fresh-start",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "Today is a fresh start.",
+  "choices": [
+   "Yesterday must happen again.",
+   "Today is a new beginning.",
+   "The day has already ended."
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "small-step",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "A small step can begin a great day.",
+  "choices": [
+   "You must do everything at once.",
+   "Small actions never matter.",
+   "One little action can start a good day."
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "tea",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "A warm cup of tea can make a quiet morning feel special.",
+  "choices": [
+   "Tea can make a calm morning feel pleasant.",
+   "Tea makes every morning noisy.",
+   "A cup of tea is always cold."
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "walk",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "She takes a short walk before starting work.",
+  "choices": [
+   "She walks after work is finished.",
+   "She takes a brief walk before working.",
+   "She stays home all day."
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "umbrella",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "Bring an umbrella because rain is expected this afternoon.",
+  "choices": [
+   "It will be sunny all afternoon.",
+   "The umbrella is broken.",
+   "Rain may come later today."
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "plant",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "The plant grew new leaves after it received water and sunlight.",
+  "choices": [
+   "Water and sunlight helped the plant grow.",
+   "The plant lost all its leaves.",
+   "The plant grew without light or water."
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "listening",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "He listened carefully before sharing his idea.",
+  "choices": [
+   "He spoke before anyone else.",
+   "He paid attention before speaking.",
+   "He forgot to share his idea."
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rc-en-001",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "The bakery on the corner opens before sunrise.",
+  "choices": [
+   "The corner bakery starts work very early.",
+   "The bakery stays closed until the evening.",
+   "The corner shop only sells umbrellas."
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rc-en-002",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "A neighbor left fresh flowers by the front door.",
+  "choices": [
+   "A neighbor took the flowers away.",
+   "Someone placed new flowers near the entrance.",
+   "The front door was painted bright red."
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rc-en-003",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "She packed her bag the night before to stay calm.",
+  "choices": [
+   "She forgot her bag at the office.",
+   "She left home without any plans.",
+   "She prepared her bag early so the morning would be calm."
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rc-en-004",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "The train was quiet, so he read a few pages.",
+  "choices": [
+   "He read a little because the train was peaceful.",
+   "The train was too loud for reading.",
+   "He slept through the whole journey."
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rc-en-005",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "Soft rain tapped on the window all morning.",
+  "choices": [
+   "A loud storm shook the house.",
+   "A gentle rain fell against the glass.",
+   "The sun burned brightly all day."
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rc-en-006",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "We ate breakfast on the balcony in the sunshine.",
+  "choices": [
+   "We had dinner in the basement.",
+   "We skipped breakfast and stayed in bed.",
+   "Breakfast was outside in the sun."
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rc-en-007",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "The kettle whistled, and she made a pot of tea.",
+  "choices": [
+   "She prepared tea when the kettle sounded.",
+   "The kettle was broken and silent.",
+   "She poured cold juice into a bowl."
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rc-en-008",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "He watered the herbs on the windowsill every day.",
+  "choices": [
+   "He never remembered the herbs.",
+   "The windowsill herbs get water daily.",
+   "The herbs grew in a distant field."
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rc-en-009",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "The library opens at nine and closes at six.",
+  "choices": [
+   "The library is open all night.",
+   "The library never opens on weekdays.",
+   "The library is open during the day."
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rc-en-010",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "A warm scarf is useful on a chilly morning.",
+  "choices": [
+   "A scarf helps when the morning is cold.",
+   "A scarf is needed in the hottest weather.",
+   "A scarf is only good for the summer."
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rc-en-011",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "The children walked to school together, laughing along the way.",
+  "choices": [
+   "The children traveled to school alone and silent.",
+   "The kids went to school as a happy group.",
+   "The school was closed, so everyone stayed home."
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rc-en-012",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "After stretching, she felt more awake and ready.",
+  "choices": [
+   "Stretching made her very sleepy.",
+   "She felt tired and refused to move.",
+   "Stretching helped her feel alert."
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rc-en-013",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "The market was busy with people buying fruit.",
+  "choices": [
+   "Many shoppers were buying fruit at the market.",
+   "The market was empty and silent.",
+   "People were selling shoes at the market."
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rc-en-014",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "He turned off the lights to save energy.",
+  "choices": [
+   "He turned on every light in the house.",
+   "He switched off the lights so less power was used.",
+   "He left the lights burning all day."
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rc-en-015",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "A short pause can help you think more clearly.",
+  "choices": [
+   "You should never stop to think.",
+   "Pausing always makes the day longer.",
+   "Taking a brief break can clear your mind."
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rc-en-016",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "The river was calm, and a single boat floated by.",
+  "choices": [
+   "One boat drifted along the still river.",
+   "Many boats raced across rough water.",
+   "The river had dried up completely."
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rc-en-017",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "She hung the laundry outside because the day was sunny.",
+  "choices": [
+   "She hung the laundry in the snow.",
+   "Sunny weather let her dry the clothes outdoors.",
+   "She refused to wash any clothes."
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rc-en-018",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "The old bridge connects the town to the hills.",
+  "choices": [
+   "The bridge is brand new and unused.",
+   "The town has no way to the hills.",
+   "A bridge links the town with the hills."
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rc-en-019",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "He read the instructions twice before starting.",
+  "choices": [
+   "He checked the directions two times first.",
+   "He began without looking at anything.",
+   "He threw the instructions away unread."
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rc-en-020",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "The cat slept in a patch of warm sunlight.",
+  "choices": [
+   "The cat ran through the cold rain.",
+   "The cat napped where the sun was warm.",
+   "The cat sat in a dark closet."
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rc-en-021",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "It is easier to wake up when the room is bright.",
+  "choices": [
+   "Darkness makes waking up easier.",
+   "Brightness makes everyone fall asleep.",
+   "Bright light makes waking up simpler."
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rc-en-022",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "The musician practiced a quiet tune before breakfast.",
+  "choices": [
+   "A musician played soft music before eating.",
+   "The musician refused to play at all.",
+   "A loud concert began after midnight."
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rc-en-023",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "We planted tomato seeds, and soon small shoots appeared.",
+  "choices": [
+   "The seeds turned to stone overnight.",
+   "Tiny plants came up soon after we planted the seeds.",
+   "We never planted anything this year."
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rc-en-024",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "The bus was late, so she decided to walk.",
+  "choices": [
+   "The bus arrived early, so she rode it.",
+   "She took a taxi to the moon.",
+   "Because the bus was delayed, she went on foot."
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rc-en-025",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "He saved a seat for a tired friend.",
+  "choices": [
+   "He kept a chair free for his weary friend.",
+   "He sat in every chair himself.",
+   "He told his friend to stand outside."
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rc-en-026",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "The soup needs a few more minutes on the stove.",
+  "choices": [
+   "The soup is finished and cold.",
+   "The soup is not ready yet.",
+   "The stove broke before cooking started."
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rc-en-027",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "Leaves drifted down from the trees onto the path.",
+  "choices": [
+   "The path was swept perfectly clean.",
+   "The trees grew taller overnight.",
+   "Leaves fell from the trees and covered the path."
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rc-en-028",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "A good habit grows from repeating a small action.",
+  "choices": [
+   "Repeating a little action can build a good habit.",
+   "One huge effort builds every habit.",
+   "Habits form without any action at all."
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rc-en-029",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "The fog lifted slowly as the sun climbed higher.",
+  "choices": [
+   "The fog became thicker at noon.",
+   "The mist cleared as the sun rose.",
+   "The sun disappeared behind the fog forever."
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rc-en-030",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "She wrote a thank you note to her teacher.",
+  "choices": [
+   "She ignored her teacher completely.",
+   "She wrote an angry letter to a stranger.",
+   "She sent her teacher a note of thanks."
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rc-en-031",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "The garden smells sweet after a morning shower.",
+  "choices": [
+   "A little rain makes the garden smell pleasant.",
+   "The garden smells terrible in the rain.",
+   "The garden is covered in sand."
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rc-en-032",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "He folded the map and put it in his pocket.",
+  "choices": [
+   "He tore the map into pieces.",
+   "He tucked the folded map into his pocket.",
+   "He left the map open on a bench."
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rc-en-033",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "The street was calm until the delivery truck arrived.",
+  "choices": [
+   "The street was loud before the truck came.",
+   "The delivery truck never reached the street.",
+   "A delivery truck broke the street's calm."
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rc-en-034",
+  "kind": "readAndChoose",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "Warm bread tastes best with a little butter.",
+  "choices": [
+   "Bread is especially nice warm with butter.",
+   "Cold stones taste best with butter.",
+   "Butter makes bread impossible to eat."
+  ],
+  "answerIndex": 0
+ }
+]

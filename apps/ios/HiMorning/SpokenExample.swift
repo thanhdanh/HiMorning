@@ -4,18 +4,18 @@ import Combine
 @MainActor final class SpokenExample:NSObject,ObservableObject,AVSpeechSynthesizerDelegate {
  @Published private(set) var isSpeaking=false
  private let synthesizer:AVSpeechSynthesizer
- private let voice:()->AVSpeechSynthesisVoice?
+ private let voiceOverride:(()->AVSpeechSynthesisVoice?)?
  private var currentUtterance:ObjectIdentifier?
 
- init(synthesizer:AVSpeechSynthesizer=AVSpeechSynthesizer(),voice:@escaping ()->AVSpeechSynthesisVoice? = {SpokenExample.preferredVoice()}) {
-  self.synthesizer=synthesizer;self.voice=voice
+ init(synthesizer:AVSpeechSynthesizer=AVSpeechSynthesizer(),voice:(()->AVSpeechSynthesisVoice?)?=nil) {
+  self.synthesizer=synthesizer;self.voiceOverride=voice
   super.init()
   synthesizer.usesApplicationAudioSession=false
   synthesizer.delegate=self
  }
 
- @discardableResult func play(_ text:String)->Bool {
-  guard !isSpeaking,!text.isEmpty,let voice=voice() else {return false}
+ @discardableResult func play(_ text:String,language:String="en")->Bool {
+  guard !isSpeaking,!text.isEmpty,let voice=voiceOverride.map({$0()}) ?? Self.preferredVoice(language:language) else {return false}
   let utterance=AVSpeechUtterance(string:text)
   utterance.voice=voice
   utterance.rate=AVSpeechUtteranceDefaultSpeechRate*0.9
@@ -25,13 +25,14 @@ import Combine
   return true
  }
 
- nonisolated static func preferredVoice()->AVSpeechSynthesisVoice? {
-  AVSpeechSynthesisVoice.speechVoices().filter {$0.language.hasPrefix("en-")}
+ nonisolated static func preferredVoice(language:String="en")->AVSpeechSynthesisVoice? {
+  let home=language == "vi" ? "vi-VN" : "en-US"
+  return AVSpeechSynthesisVoice.speechVoices().filter {$0.language.hasPrefix(language+"-")}
    .sorted {left,right in
     if left.quality != right.quality {return left.quality.rawValue>right.quality.rawValue}
-    return left.language == "en-US" && right.language != "en-US"
+    return left.language == home && right.language != home
    }.first
-   ?? AVSpeechSynthesisVoice(language:"en-US")
+   ?? AVSpeechSynthesisVoice(language:home)
  }
 
  func stop() {

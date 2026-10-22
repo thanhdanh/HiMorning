@@ -1,0 +1,478 @@
+[
+ {
+  "id": "rd-vi-001",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Tôi có hai kim nhưng chẳng biết khâu, có mặt tròn mà chẳng biết cười, đến giờ hẹn là reo gọi bạn dậy. Tôi là gì?",
+  "choices": [
+   "Đồng hồ báo thức",
+   "Cái la bàn",
+   "Cái cân"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rd-vi-002",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Mỗi sáng tôi trèo lên từ phía đông, rải nắng vàng khắp mái nhà, chiều xuống thì lặn sau núi. Tôi là gì?",
+  "choices": [
+   "Mặt trăng",
+   "Mặt trời",
+   "Ngọn đèn"
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rd-vi-003",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Tôi nằm trong ấm, bốc khói mỏng, lá của tôi nở ra khi gặp nước sôi. Tôi là gì?",
+  "choices": [
+   "Cà phê",
+   "Sữa đậu",
+   "Trà"
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rd-vi-004",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Tôi có lông nhưng không phải thú, mỗi sáng chạy khắp hàm răng của bạn. Tôi là gì?",
+  "choices": [
+   "Bàn chải đánh răng",
+   "Cái lược",
+   "Cây chổi"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rd-vi-005",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Bạn cười tôi cười, bạn nhăn tôi nhăn, nhưng tôi chẳng nói lấy một lời. Tôi là gì?",
+  "choices": [
+   "Bức tranh",
+   "Cái gương",
+   "Cái cửa sổ"
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rd-vi-006",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Tôi càng dùng càng nhỏ đi, nhưng lúc nào cũng tạo ra bọt trắng thơm. Tôi là gì?",
+  "choices": [
+   "Cục đá",
+   "Cây nến",
+   "Cục xà phòng"
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rd-vi-007",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Trời mưa tôi xòe ra như đóa hoa, hết mưa tôi khép lại nằm yên một góc. Tôi là gì?",
+  "choices": [
+   "Cái ô",
+   "Cái quạt",
+   "Cái nón"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rd-vi-008",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Tôi mềm và êm, đêm nào đầu bạn cũng tựa vào tôi, sáng ra bạn rời đi để tôi nằm lại. Tôi là gì?",
+  "choices": [
+   "Cái bàn",
+   "Cái gối",
+   "Cái mũ"
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rd-vi-009",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Tôi có nắp tròn, bên trong chứa gạo, khi tôi kêu một tiếng tách là cơm đã chín. Tôi là gì?",
+  "choices": [
+   "Nồi chiên không dầu",
+   "Lò vi sóng",
+   "Nồi cơm điện"
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rd-vi-010",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Vỏ tôi giòn, ruột tôi xốp, người ta xẻ tôi ra rồi kẹp nhân thơm vào trong. Tôi là gì?",
+  "choices": [
+   "Bánh mì",
+   "Bánh bao",
+   "Bánh quy"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rd-vi-011",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Tôi khoác áo vàng bên ngoài, ruột trắng mềm bên trong, bóc áo ra mới ăn được. Tôi là gì?",
+  "choices": [
+   "Củ khoai",
+   "Quả chuối",
+   "Quả ổi"
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rd-vi-012",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Cả ngày tôi quay mặt theo mặt trời, cánh vàng rực rỡ, hạt đen nằm ngay giữa. Tôi là gì?",
+  "choices": [
+   "Hoa sen",
+   "Hoa mai",
+   "Hoa hướng dương"
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rd-vi-013",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Chưa cần đồng hồ, tôi đã cất tiếng gáy đánh thức cả xóm. Tôi là gì?",
+  "choices": [
+   "Gà trống",
+   "Con vịt",
+   "Con mèo"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rd-vi-014",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Tôi bé xíu, bay từ bông này sang bông khác, mang mật ngọt về tổ. Tôi là gì?",
+  "choices": [
+   "Con kiến",
+   "Con ong",
+   "Con muỗi"
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rd-vi-015",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Tôi đọng trên lá lúc tinh mơ, long lanh như hạt ngọc, nắng lên là biến mất. Tôi là gì?",
+  "choices": [
+   "Hạt cát",
+   "Viên sỏi",
+   "Giọt sương"
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rd-vi-016",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Sau cơn mưa tôi cong như chiếc cầu, bảy màu sáng rực nhưng chẳng ai đi qua được. Tôi là gì?",
+  "choices": [
+   "Cầu vồng",
+   "Cây cầu",
+   "Cái cổng"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rd-vi-017",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Tôi từ trên mây rơi xuống, gõ nhịp lộp độp trên mái nhà, cây cối thấy tôi thì vui. Tôi là gì?",
+  "choices": [
+   "Cơn gió",
+   "Cơn mưa",
+   "Tia nắng"
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rd-vi-018",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Chẳng ai thấy hình dáng tôi, nhưng lá lay, cờ bay là biết tôi vừa ghé qua. Tôi là gì?",
+  "choices": [
+   "Dòng sông",
+   "Tiếng chuông",
+   "Cơn gió"
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rd-vi-019",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Tôi có cán, có lòng trũng, mỗi bữa đưa cháo đưa canh vào miệng bạn. Tôi là gì?",
+  "choices": [
+   "Cái muỗng",
+   "Cái dao",
+   "Đôi đũa"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rd-vi-020",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Hai anh em luôn đi cùng nhau, cùng gắp cơm gắp thức ăn, thiếu một người là chẳng làm được gì. Chúng tôi là gì?",
+  "choices": [
+   "Đôi giày",
+   "Đôi đũa",
+   "Cái kéo"
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rd-vi-021",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Tôi nhỏ bé nhưng nắm trong mình quyền mở cánh cửa nhà bạn. Tôi là gì?",
+  "choices": [
+   "Đồng xu",
+   "Cái kẹp giấy",
+   "Chìa khóa"
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rd-vi-022",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Ruột tôi đen, càng viết càng ngắn, gọt nhiều thì chỉ còn lại cái đầu. Tôi là gì?",
+  "choices": [
+   "Cây bút chì",
+   "Cây thước",
+   "Cái hộp bút"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rd-vi-023",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Tôi chẳng có miệng mà vẫn kể chuyện hay, bạn lật từng trang là gặp những người bạn mới. Tôi là gì?",
+  "choices": [
+   "Cái chén",
+   "Quyển sách",
+   "Hòn đá"
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rd-vi-024",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Tôi có nhiều bậc mà chẳng phải ngôi nhà, bạn bước từng bước để lên chỗ cao. Tôi là gì?",
+  "choices": [
+   "Cái ghế",
+   "Cái mâm",
+   "Cái thang"
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rd-vi-025",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Tôi có hai tròng nhưng chẳng phải con mắt, đặt trên mũi để bạn nhìn rõ hơn. Tôi là gì?",
+  "choices": [
+   "Mắt kính",
+   "Cái mũ",
+   "Cái nơ"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rd-vi-026",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Đêm nào tôi cũng đổi hình, lúc tròn như đĩa, lúc cong như lưỡi liềm. Tôi là gì?",
+  "choices": [
+   "Mặt trời",
+   "Mặt trăng",
+   "Ngọn đèn đường"
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rd-vi-027",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Tôi có ba cánh mà chẳng biết bay, quay tít cả ngày để mang gió đến cho bạn. Tôi là gì?",
+  "choices": [
+   "Con chim",
+   "Chiếc diều",
+   "Quạt máy"
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rd-vi-028",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Tôi bước đi nhẹ như không, thích nằm sưởi nắng bên cửa sổ, đôi mắt tinh nhanh để rình bắt chuột. Tôi là gì?",
+  "choices": [
+   "Con mèo",
+   "Con chó",
+   "Con thỏ"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rd-vi-029",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Tôi nhiều răng mà chẳng cắn ai, bạn đưa tôi qua mái tóc mỗi sáng. Tôi là gì?",
+  "choices": [
+   "Cái cưa",
+   "Cái lược",
+   "Cái kẹp tóc"
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rd-vi-030",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Tôi cõng nhà đi khắp vườn, chậm rãi để lại sau lưng một vệt bóng loáng. Tôi là gì?",
+  "choices": [
+   "Con chim",
+   "Con ếch",
+   "Ốc sên"
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rd-vi-031",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Tôi nằm trên bếp, đến lúc nóng thì huýt sáo, hơi nước phun ra từ chiếc mũi nhỏ. Tôi là gì?",
+  "choices": [
+   "Ấm nước",
+   "Nồi canh",
+   "Cái chảo"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rd-vi-032",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Tôi treo trên trần nhà, bạn bật công tắc là tôi sáng, đêm nào cũng giữ ánh sáng cho cả phòng. Tôi là gì?",
+  "choices": [
+   "Quạt trần",
+   "Bóng đèn",
+   "Cái đèn ngủ"
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rd-vi-033",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Nhỏ xíu mà làm việc chăm chỉ, xếp thành hàng dài mang thức ăn về tổ. Chúng tôi là gì?",
+  "choices": [
+   "Đàn ong",
+   "Đàn gián",
+   "Đàn kiến"
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rd-vi-034",
+  "kind": "riddle",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Hình tôi như chóp núi nhỏ, che nắng che mưa, bạn đội tôi trên đầu mỗi khi ra đồng. Tôi là gì?",
+  "choices": [
+   "Cái nón lá",
+   "Mũ lưỡi trai",
+   "Cái mũ len"
+  ],
+  "answerIndex": 0
+ }
+]

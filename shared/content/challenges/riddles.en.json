@@ -1,0 +1,604 @@
+[
+ {
+  "id": "piano",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "What has keys but cannot open a door?",
+  "choices": [
+   "A piano",
+   "A window",
+   "A shoe"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "clock-riddle",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I have hands but cannot clap, and I show you the time. What am I?",
+  "choices": [
+   "A clock",
+   "A bird",
+   "A glove"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "shadow",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I follow you in sunlight but disappear in darkness. What am I?",
+  "choices": [
+   "A shadow",
+   "A cloud",
+   "An echo"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rd-en-001",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I wake before you do, climb above the rooftops, and leave a golden trail across the walls. What am I?",
+  "choices": [
+   "The moon",
+   "The sunrise",
+   "A lamp"
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rd-en-002",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I am a dark, bitter drink made from roasted beans, and I help sleepy people wake up. What am I?",
+  "choices": [
+   "Hot chocolate",
+   "Tea",
+   "Coffee"
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rd-en-003",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I wear a small flame on my head, and I grow shorter as I give light. What am I?",
+  "choices": [
+   "A candle",
+   "A light bulb",
+   "A rainbow"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rd-en-004",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I have a handle and a spout, and I sing when I get hot on the stove. What am I?",
+  "choices": [
+   "A broom",
+   "A kettle",
+   "A shoe"
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rd-en-005",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I am full of pages and words, I sit very still, and I can take you far away. What am I?",
+  "choices": [
+   "A pillow",
+   "A staircase",
+   "A book"
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rd-en-006",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I fall from the clouds without getting hurt, and I make the garden drink. What am I?",
+  "choices": [
+   "Rain",
+   "A leaf",
+   "A feather"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rd-en-007",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I have a handle and soft bristles, and I clean your teeth. What am I?",
+  "choices": [
+   "A paintbrush",
+   "A toothbrush",
+   "A fork"
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rd-en-008",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I come in pairs, I live by the door, and I am tied with laces. What am I?",
+  "choices": [
+   "Gloves",
+   "Scarves",
+   "Shoes"
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rd-en-009",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I am white and cold, I fall in winter, and children roll me into figures. What am I?",
+  "choices": [
+   "Snow",
+   "Hail",
+   "Sand"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rd-en-010",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I have four legs and a flat top, and people gather around me to share a meal. What am I?",
+  "choices": [
+   "A horse",
+   "A table",
+   "A tent"
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rd-en-011",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I have two wheels and two pedals, and I only move when your legs push me. What am I?",
+  "choices": [
+   "A wagon",
+   "A boat",
+   "A bicycle"
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rd-en-012",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I light the night, and over a few weeks I change from a thin curve to a full circle. What am I?",
+  "choices": [
+   "The moon",
+   "A streetlight",
+   "A comet"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rd-en-013",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I have two straps and many pockets, and I carry books to school on your back. What am I?",
+  "choices": [
+   "A bucket",
+   "A backpack",
+   "A blanket"
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rd-en-014",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I have a hard shell, a yellow center, and I am often cooked for breakfast. What am I?",
+  "choices": [
+   "A walnut",
+   "A pebble",
+   "An egg"
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rd-en-015",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I am orange, I grow underground, and rabbits love to crunch me. What am I?",
+  "choices": [
+   "A carrot",
+   "A pumpkin",
+   "A pear"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rd-en-016",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I have roots, branches, and leaves, and I give shade without ever moving. What am I?",
+  "choices": [
+   "A rock",
+   "A tree",
+   "A tent"
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rd-en-017",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I arrive after the lightning and rumble across the sky. What am I?",
+  "choices": [
+   "Lightning",
+   "A rainbow",
+   "Thunder"
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rd-en-018",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I am a curved bridge of colors that appears when sunshine meets rain. What am I?",
+  "choices": [
+   "A rainbow",
+   "A flag",
+   "A ribbon"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rd-en-019",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I am the largest animal that walks on land, with a long trunk and big ears. What am I?",
+  "choices": [
+   "A horse",
+   "An elephant",
+   "A bear"
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rd-en-020",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I live in a hive, I visit flowers, and I help make honey. What am I?",
+  "choices": [
+   "A butterfly",
+   "A beetle",
+   "A bee"
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rd-en-021",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I sit on your nose, I have two lenses, and I help you see more clearly. What am I?",
+  "choices": [
+   "Glasses",
+   "Earrings",
+   "A necklace"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rd-en-022",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I hum in the kitchen and keep your milk cold and your vegetables fresh. What am I?",
+  "choices": [
+   "A kettle",
+   "A refrigerator",
+   "A broom"
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rd-en-023",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I spray warm water from above while you stand beneath me. What am I?",
+  "choices": [
+   "A sink",
+   "A mirror",
+   "A shower"
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rd-en-024",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I show your face but never speak, and I only repeat what you do. What am I?",
+  "choices": [
+   "A mirror",
+   "A photograph",
+   "A painting"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rd-en-025",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I am soft, I wear a case, and I hold your head while you sleep. What am I?",
+  "choices": [
+   "A plate",
+   "A pillow",
+   "A ladder"
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rd-en-026",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I am long and thin, I write with graphite, and I have an eraser on one end. What am I?",
+  "choices": [
+   "A spoon",
+   "A broom",
+   "A pencil"
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rd-en-027",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I am filled with air, I float on a string, and I pop with a bang. What am I?",
+  "choices": [
+   "A balloon",
+   "A kite",
+   "A bubble"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rd-en-028",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I am made of paper, I carry words across the country, and I need a stamp. What am I?",
+  "choices": [
+   "A napkin",
+   "A letter",
+   "A ticket"
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rd-en-029",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "You peel me, I am yellow and curved, and I make a quick snack. What am I?",
+  "choices": [
+   "A lemon",
+   "A corn cob",
+   "A banana"
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rd-en-030",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I open above your head when rain falls and close when the sky clears. What am I?",
+  "choices": [
+   "An umbrella",
+   "A roof",
+   "A hat"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rd-en-031",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I have a lid and two handles, I sit on the stove, and soup bubbles inside me. What am I?",
+  "choices": [
+   "A bowl",
+   "A pot",
+   "A cup"
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rd-en-032",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I have a long handle and dry bristles, and I sweep the floor. What am I?",
+  "choices": [
+   "A rake",
+   "A mop",
+   "A broom"
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rd-en-033",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I am the season when leaves turn red and gold and drift to the ground. What am I?",
+  "choices": [
+   "Autumn",
+   "Summer",
+   "Spring"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rd-en-034",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I carry my house on my back and leave a silver trail as I creep along. What am I?",
+  "choices": [
+   "A turtle",
+   "A snail",
+   "A crab"
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rd-en-035",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I am a tiny wooden house that hangs in a tree and keeps small singers dry. What am I?",
+  "choices": [
+   "A nest",
+   "A doghouse",
+   "A birdhouse"
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rd-en-036",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I am a cold, sweet treat that melts in the sun and sits on a cone. What am I?",
+  "choices": [
+   "Ice cream",
+   "A cupcake",
+   "A pancake"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rd-en-037",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "You climb me one step at a time, and I sit inside the house between two floors. What am I?",
+  "choices": [
+   "A hallway",
+   "A staircase",
+   "A chimney"
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rd-en-038",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I have a magnetic needle that always swings to point north. What am I?",
+  "choices": [
+   "A ruler",
+   "A thermometer",
+   "A compass"
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rd-en-039",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I measure how warm or cold the air is. What am I?",
+  "choices": [
+   "A thermometer",
+   "A barometer",
+   "A calendar"
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rd-en-040",
+  "kind": "riddle",
+  "language": "en",
+  "source": "himorning",
+  "license": "original",
+  "text": "I stand tall on a pole and light the street after dark. What am I?",
+  "choices": [
+   "A tree",
+   "A streetlight",
+   "A flag"
+  ],
+  "answerIndex": 1
+ }
+]

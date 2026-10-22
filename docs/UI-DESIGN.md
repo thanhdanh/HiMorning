@@ -67,7 +67,7 @@ incomplete implementation of the visual direction, not a new approved design.
 | Rounded yellow actions and warm surfaces | 16pt action corners, 24pt alarm cards, adaptive light/dark surface colors |
 | Days and modes easy to scan | Monday-first day buttons and three visible mode choices |
 | A dedicated sound screen | Three actual native sounds, selection, preview and preview-volume control |
-| Friendly sun and a clear way out | Sun illustration, consent, self-confirm and persistent stop/end-trial actions |
+| Friendly sun and a clear way out | Sun illustration, consent, a delayed "I'm awake" (5 min after the first ring) and an end-trial action. No in-app Stop alarm |
 
 The native time picker keeps the platform wheel. System confirmation dialogs keep
 iOS styling. Alarm labels, editable targets, QR, native snooze and the
@@ -76,11 +76,11 @@ not been added to the native navigation.
 
 ## Design at a glance
 
-- One clear next action on each screen, with a visible way to stop.
+- One clear next action on each screen, with "I'm awake" visible once it unlocks.
 - Gentle defaults; stronger modes are a choice, not a personality label.
 - Short, calm copy in both languages. See the [language guide](LOCALIZATION.md).
 - Dark text on yellow buttons, clear focus and large touch areas.
-- No ads, paywall or forced exercise in the morning stop path.
+- No ads, paywall or forced exercise in the morning wake path.
 
 ## Different mornings, one simple app
 
@@ -149,7 +149,7 @@ Ask for camera/cloud consent only when a person chooses the challenge. Show one
 short cue at a time. Poor visibility means insufficient evidence, not a wrong pose.
 Local counts remain provisional until the backend checks the evidence.
 
-Keep self-confirm and Stop available during capture, checking and errors. Do not
+Keep "I'm awake" available after its 5 minute delay during capture, checking and errors. Do not
 punish an unclear rep by adding more reps or extending the alarm. Deeper form advice
 is optional future work with separate validation; see the [feedback plan](POSE-FEEDBACK-PLAN.md).
 

@@ -28,20 +28,61 @@ final class DeviceFixesUITests:XCTestCase {
   guard settings.isHittable,app.buttons["saveAlarm"].isEnabled else {return}
   throw XCTSkip("Real AlarmKit scheduling is blocked by denied system alarm access; same-ID rescheduling is unverified.")
  }
+ func testAlarmLabelPersistsAndOpensDisabledCardInBothLanguages() {
+  let id="00000000-0000-0000-0000-000000000001"
+  for vietnamese in [false,true] {
+   let app=launch(["--ui-disabled-alarm"],vietnamese:vietnamese)
+   let card=app.descendants(matching:.any)["alarmCard-"+id]
+   card.coordinate(withNormalizedOffset:CGVector(dx:0.04,dy:0.5)).tap()
+   let navigation=app.navigationBars[vietnamese ? "Sửa báo thức" : "Edit alarm"]
+   XCTAssertTrue(navigation.waitForExistence(timeout:5))
+   let label=app.textFields["alarmLabel"]
+   XCTAssertTrue(label.exists);label.tap();label.typeText("  School  ")
+   app.buttons["saveAlarm"].tap()
+   let saved=app.staticTexts["alarmLabel-"+id]
+   XCTAssertTrue(saved.waitForExistence(timeout:5));XCTAssertEqual(saved.label,"School")
+   XCTAssertFalse(navigation.exists)
+   saved.tap()
+   XCTAssertTrue(navigation.waitForExistence(timeout:5))
+   XCTAssertEqual(label.value as? String,"School")
+   app.buttons[vietnamese ? "Hủy" : "Cancel"].tap()
+   app.terminate()
+  }
+ }
+ func testActiveCardBackgroundOpensConfigAndControlsRemainIndependent() {
+  let id="00000000-0000-0000-0000-000000000001"
+  let app=launch(["--ui-home-alarms"])
+  let card=app.descendants(matching:.any)["alarmCard-"+id]
+  card.coordinate(withNormalizedOffset:CGVector(dx:0.04,dy:0.5)).tap()
+  XCTAssertTrue(app.navigationBars["Edit alarm"].waitForExistence(timeout:5))
+  app.buttons["Cancel"].tap()
+  app.buttons["Try this challenge"].firstMatch.tap()
+  XCTAssertTrue(app.buttons["backToHome"].waitForExistence(timeout:5))
+  XCTAssertFalse(app.navigationBars["Edit alarm"].exists)
+  app.buttons["backToHome"].tap()
+  XCTAssertTrue(app.buttons["addAlarm"].waitForExistence(timeout:5))
+  app.switches["toggleAlarm-"+id].tap()
+  XCTAssertTrue(app.staticTexts["Off"].waitForExistence(timeout:5))
+  XCTAssertFalse(app.navigationBars["Edit alarm"].exists)
+  app.buttons["deleteAlarm-"+id].tap()
+  XCTAssertFalse(app.staticTexts["alarmTime-"+id].waitForExistence(timeout:1))
+  XCTAssertFalse(app.navigationBars["Edit alarm"].exists)
+  app.terminate()
+ }
  func testActiveAlarmShowsChallengeModeAndKeepsDeleteInTheFooter() {
   let id="00000000-0000-0000-0000-000000000001"
   for vietnamese in [false,true] {
    let app=launch(["--ui-home-alarms","--ui-completed-alarm"],vietnamese:vietnamese)
-   let time=app.staticTexts["alarmTime-"+id],edit=app.buttons["editAlarm-"+id],delete=app.buttons["deleteAlarm-"+id]
+   let time=app.staticTexts["alarmTime-"+id],delete=app.buttons["deleteAlarm-"+id]
    XCTAssertTrue(time.exists)
    XCTAssertEqual(time.label,"07:15 AM")
    XCTAssertEqual(app.staticTexts["alarmTime-00000000-0000-0000-0000-000000000002"].label,"08:30 PM")
-   XCTAssertTrue(app.buttons["editAlarm-00000000-0000-0000-0000-000000000003"].label.contains("09:00 AM"))
-   XCTAssertEqual(app.staticTexts["alarmChallenge-"+id].label,vietnamese ? "Đọc và chọn" : "Read & Choose")
-   XCTAssertTrue(app.staticTexts["alarmMode-"+id].label.contains(vietnamese ? "Tỉnh táo" : "Awake"))
+   XCTAssertTrue(app.staticTexts["alarmTime-00000000-0000-0000-0000-000000000003"].label.contains("09:00 AM"))
+   XCTAssertEqual(app.staticTexts["alarmChallenge-"+id].label,vietnamese ? "Đọc và Chọn" : "Read & Choose")
+   XCTAssertTrue(app.staticTexts["alarmMode-"+id].label.contains(vietnamese ? "Đã thức dậy" : "Awake"))
    XCTAssertGreaterThan(delete.frame.minY,time.frame.maxY,"Destructive actions belong below the alarm information")
-   XCTAssertEqual(delete.frame.midY,edit.frame.midY,accuracy:2,"Restore the original action row")
-   XCTAssertGreaterThan(delete.frame.minX,edit.frame.maxX)
+   XCTAssertTrue(app.descendants(matching:.any)["alarmCard-"+id].exists)
+   XCTAssertEqual(app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@","editAlarm-")).count,0)
    let attachment=XCTAttachment(screenshot:app.screenshot())
    attachment.name="alarm-design-\(vietnamese ? "vi" : "en")";attachment.lifetime = .keepAlways;add(attachment)
    print("DESIGN_VIEWPORT \(app.windows.firstMatch.frame.width)x\(app.windows.firstMatch.frame.height)")
@@ -65,19 +106,19 @@ final class DeviceFixesUITests:XCTestCase {
   let id="00000000-0000-0000-0000-000000000001"
   for vietnamese in [false,true] {
    let app=launch(["--ui-disabled-alarm"],vietnamese:vietnamese)
-   let edit=app.buttons["editAlarm-"+id]
+   let edit=app.staticTexts["alarmTime-"+id]
    XCTAssertTrue(edit.isHittable)
    XCTAssertTrue(edit.label.contains("07:15"))
    XCTAssertTrue(app.staticTexts[vietnamese ? "Đã tắt" : "Off"].exists)
-   XCTAssertFalse(app.staticTexts[vietnamese ? "Vận động theo nhịp · Ngồi" : "Guided Rhythm · Seated"].exists)
-   XCTAssertFalse(app.staticTexts.containing(NSPredicate(format:"label CONTAINS %@",vietnamese ? "Tỉnh táo" : "Awake")).firstMatch.exists)
-   XCTAssertFalse(app.buttons[vietnamese ? "Thử nhiệm vụ này" : "Try this challenge"].exists)
+   XCTAssertFalse(app.staticTexts[vietnamese ? "Nhịp điệu hướng dẫn · Ngồi" : "Guided Rhythm · Seated"].exists)
+   XCTAssertFalse(app.staticTexts.containing(NSPredicate(format:"label CONTAINS %@",vietnamese ? "Đã thức dậy" : "Awake")).firstMatch.exists)
+   XCTAssertFalse(app.buttons[vietnamese ? "Thử thử thách này" : "Try this challenge"].exists)
    XCTAssertTrue(app.switches["toggleAlarm-"+id].isHittable)
    let delete=app.buttons["deleteAlarm-"+id]
    XCTAssertTrue(delete.isHittable)
    XCTAssertGreaterThanOrEqual(delete.frame.width.rounded(),44)
    XCTAssertGreaterThanOrEqual(delete.frame.height.rounded(),44)
-   edit.tap()
+   app.staticTexts[vietnamese ? "Đã tắt" : "Off"].tap()
    XCTAssertTrue(app.navigationBars[vietnamese ? "Sửa báo thức" : "Edit alarm"].waitForExistence(timeout:5))
    app.buttons[vietnamese ? "Hủy" : "Cancel"].tap()
    delete.tap()
@@ -90,8 +131,8 @@ final class DeviceFixesUITests:XCTestCase {
  func testEnabledAlarmChallengeEditClosesAndKeepsTheNewChoiceInBothLanguages() {
   for vietnamese in [false,true] {
    let app=launch(["--ui-enabled-alarm"],vietnamese:vietnamese)
-   let edit=app.buttons["editAlarm-00000000-0000-0000-0000-000000000001"]
-   reveal(edit,in:app);edit.tap()
+   let edit=app.staticTexts["alarmTime-00000000-0000-0000-0000-000000000001"]
+   reveal(edit,in:app);app.staticTexts["alarmChallenge-00000000-0000-0000-0000-000000000001"].tap()
    let navigation=app.navigationBars[vietnamese ? "Sửa báo thức" : "Edit alarm"]
    XCTAssertTrue(navigation.waitForExistence(timeout:5))
    let reading=app.buttons["challenge-readAloud"]
@@ -103,8 +144,8 @@ final class DeviceFixesUITests:XCTestCase {
     app.terminate();return
    }
    XCTAssertTrue(edit.waitForExistence(timeout:5))
-   XCTAssertEqual(app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@","editAlarm-")).count,1)
-   XCTAssertTrue(app.staticTexts[vietnamese ? "Đọc thành tiếng" : "Read Aloud"].exists)
+   XCTAssertEqual(app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@","editAlarm-")).count,0)
+   XCTAssertTrue(app.staticTexts[vietnamese ? "Đọc to" : "Read Aloud"].exists)
    XCTAssertEqual(app.alerts.count,0)
    edit.tap();reveal(reading,in:app);XCTAssertTrue(reading.isSelected)
    app.buttons["saveAlarm"].tap()
@@ -116,7 +157,7 @@ final class DeviceFixesUITests:XCTestCase {
  func testSaveButtonRespondsAcrossItsVisibleWidth() {
   for (vietnamese,x) in [(false,0.1),(false,0.9),(true,0.5)] {
    let app=launch(["--ui-disabled-alarm"],vietnamese:vietnamese)
-   let edit=app.buttons["editAlarm-00000000-0000-0000-0000-000000000001"]
+   let edit=app.staticTexts["alarmTime-00000000-0000-0000-0000-000000000001"]
    reveal(edit,in:app);edit.tap()
    let navigation=app.navigationBars[vietnamese ? "Sửa báo thức" : "Edit alarm"]
    XCTAssertTrue(navigation.waitForExistence(timeout:5))
@@ -185,7 +226,7 @@ final class DeviceFixesUITests:XCTestCase {
  func testExistingAlarmSoundCanBeEditedWithoutEnablingItInBothLanguages() {
   for vietnamese in [false,true] {
    let app=launch(["--ui-disabled-alarm"],vietnamese:vietnamese)
-   let edit=app.buttons["editAlarm-00000000-0000-0000-0000-000000000001"]
+   let edit=app.staticTexts["alarmTime-00000000-0000-0000-0000-000000000001"]
    reveal(edit,in:app);edit.tap()
    XCTAssertTrue(app.navigationBars[vietnamese ? "Sửa báo thức" : "Edit alarm"].waitForExistence(timeout:5))
    XCTAssertTrue(app.buttons["chooseSound"].isHittable,"Sound must be visible when the editor opens")
@@ -206,7 +247,7 @@ final class DeviceFixesUITests:XCTestCase {
    soundPanel.tap()
    app.buttons["saveAlarm"].tap()
    XCTAssertTrue(edit.waitForExistence(timeout:5))
-   XCTAssertEqual(app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@","editAlarm-")).count,1)
+   XCTAssertEqual(app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@","editAlarm-")).count,0)
    XCTAssertTrue(app.staticTexts[vietnamese ? "Đã tắt" : "Off"].exists)
    XCTAssertEqual(app.staticTexts.matching(NSPredicate(format:"identifier BEGINSWITH %@","nextAlarm-")).count,0)
    XCTAssertFalse(app.staticTexts.containing(NSPredicate(format:"label CONTAINS %@",vietnamese ? "Chuông dịu" : "Soft chime")).firstMatch.exists)
@@ -218,7 +259,7 @@ final class DeviceFixesUITests:XCTestCase {
  }
  func testSoundAccessExpiringAtSavePreservesDraftAndOffersRecovery() {
   let app=launch(["--ui-disabled-alarm","--ui-sound-access-expires"])
-  let edit=app.buttons["editAlarm-00000000-0000-0000-0000-000000000001"]
+  let edit=app.staticTexts["alarmTime-00000000-0000-0000-0000-000000000001"]
   edit.tap();app.buttons["chooseSound"].tap();app.buttons["sound-softChime"].tap()
   app.buttons["saveAlarm"].tap()
   XCTAssertTrue(app.staticTexts["This sound is no longer available. Choose System sound or unlock Pro."].waitForExistence(timeout:5))
@@ -264,7 +305,7 @@ final class DeviceFixesUITests:XCTestCase {
  }
  func testEnabledAlarmSoundEditReschedulesTheSameNativeAlarm() throws {
   let app=launch()
-  let edits=app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@","editAlarm-"))
+  let edits=app.staticTexts.matching(NSPredicate(format:"identifier BEGINSWITH %@","alarmTime-"))
   let before=Set(edits.allElementsBoundByIndex.map(\.identifier))
   addTeardownBlock {
    if app.buttons["Cancel"].isHittable {app.buttons["Cancel"].tap()}
@@ -273,7 +314,7 @@ final class DeviceFixesUITests:XCTestCase {
     XCTAssertTrue(created.isEmpty,"Only this test’s one disposable alarm may be removed")
     return
    }
-   let edit=app.buttons[identifier],delete=app.buttons["deleteAlarm-"+identifier.dropFirst("editAlarm-".count)]
+   let alarmID=String(identifier.dropFirst("alarmTime-".count)),edit=app.staticTexts[identifier],delete=app.buttons["deleteAlarm-"+alarmID]
    self.reveal(delete,in:app);delete.tap()
    let removed=XCTNSPredicateExpectation(predicate:NSPredicate(format:"exists == false"),object:edit)
    self.wait(for:[removed],timeout:10)
@@ -297,7 +338,7 @@ final class DeviceFixesUITests:XCTestCase {
   }
   let created=Set(edits.allElementsBoundByIndex.map(\.identifier)).subtracting(before)
   guard created.count == 1,let identifier=created.first else {XCTFail("Expected exactly one new alarm");return}
-  let alarmID=String(identifier.dropFirst("editAlarm-".count)),edit=app.buttons[identifier]
+  let alarmID=String(identifier.dropFirst("alarmTime-".count)),edit=app.staticTexts[identifier]
   reveal(edit,in:app)
   XCTAssertFalse(app.staticTexts["Alarm is set"].exists)
   XCTAssertTrue(app.staticTexts["nextAlarm-"+alarmID].exists)

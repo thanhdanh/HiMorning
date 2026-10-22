@@ -39,13 +39,12 @@ native app. Its labels and simulated features are not evidence of native behavio
 ## Write like a helpful person
 
 Use short sentences, familiar verbs and one next step. Explain what happened
-without blaming the user. Keep Stop easy to find. Avoid pressure, jokes about being
+without blaming the user. Keep "I'm awake" easy to find once it unlocks. Avoid pressure, jokes about being
 lazy, and claims that AI knows whether someone is truly awake.
 
 | Purpose | English | Vietnamese |
 |---|---|---|
 | Self-confirm | I'm awake | Tôi đã thức dậy |
-| Stop | Stop alarm | Dừng báo thức |
 | Camera framing | The view is unclear. Try moving your phone. | Chưa nhìn rõ. Bạn có thể đổi góc máy. |
 | Gentle mode | Wake up at your own pace | Thức dậy theo nhịp của bạn |
 

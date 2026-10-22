@@ -174,7 +174,8 @@ final class ChallengeCelebrationUITests:XCTestCase {
   let awake=app.buttons["confirmAwake"]
   XCTAssertTrue(awake.waitForExistence(timeout:5))
   XCTAssertFalse(awake.isEnabled)
-  XCTAssertTrue(awake.label.contains("Available in 1:") || awake.label.contains("Available in 2:00"))
+  XCTAssertTrue(awake.label.contains("Available in 4:") || awake.label.contains("Available in 5:00"))
+  XCTAssertFalse(app.buttons["stopAlarm"].exists)
   XCTAssertTrue(app.buttons["backToHome"].isEnabled)
   app.terminate()
   let nearEnd=launch(["--ui-awake-countdown-near-end"],vietnamese:true)

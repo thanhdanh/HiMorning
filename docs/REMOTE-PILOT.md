@@ -47,8 +47,8 @@ original ordered frame IDs before recording a final decision. Firestore stores
 only IDs, hashes, deadlines, model/policy and results, never JPEGs. Rapid duplicate
 status requests are throttled before reaching Modal. Status reads cannot create jobs.
 
-Stop, self-confirm and backgrounding cancel polling and the cloud session. Native
-Stop happens before network cleanup. Best-effort Modal cancellation does not undo
+"I'm awake" and backgrounding cancel polling and the cloud session. The native
+stop and backup-ring cancel happen before network cleanup. Best-effort Modal cancellation does not undo
 the local exit; late results cannot mark it verified. Deadline expiry, malformed
 output, missing jobs and exhausted credits remain non-success.
 
@@ -173,8 +173,8 @@ Turn off the Mac and disable Wi-Fi on the iPhone. Use a consented cloud challeng
 through cellular data. Check one cold start, a subsequent warm call and cancellation.
 The app must show a waiting state, submit photos once, and return a validated
 terminal result within 180 seconds. Synthetic non-movement evidence must not verify.
-With a wrong proxy token, unavailable GPU, exhausted quota, or airplane mode, Stop
-and self-confirm must still work. Record actual latency and provider/Firebase cost.
+With a wrong proxy token, unavailable GPU, exhausted quota, or airplane mode, the system
+Stop, backup rings and "I'm awake" must still work. Record actual latency and provider/Firebase cost.
 
 For rollback, set `AI_VERIFICATION_ENABLED=false` and redeploy staging. Stop the
 Modal app if necessary to terminate leftover work. Preserve existing local history;

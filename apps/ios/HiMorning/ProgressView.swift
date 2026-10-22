@@ -222,7 +222,7 @@ struct MorningProgressView:View {
    DisclosureGroup(appText("How ratings work")) {
     VStack(alignment:.leading,spacing:10) {
      Text(appText("100 for completing a challenge, 0 for skipping. Multiple attempts in a morning are averaged. — means no record."))
-     Text(appText("Only completed challenges count. Confirming you are awake or stopping the alarm earns no points."))
+     Text(appText("Only completed challenges count. Confirming you are awake earns no points."))
      Text(appText("Based on recorded mornings this month. Days without a record are not scored."))
      Text(appText("Excellent: 90–100 · Consistent: 75–89 · Building: 50–74 · Getting started: 0–49. Your monthly score is the percentage of recorded challenges completed."))
     }.font(.footnote).foregroundStyle(MorningTheme.muted).padding(.top,8)

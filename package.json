@@ -9,6 +9,7 @@
     "build": "pnpm --filter @himorning/functions run build",
     "typecheck": "tsc --noEmit && pnpm --filter @himorning/worker run typecheck",
     "check": "pnpm run typecheck && pnpm test && pnpm run build",
+    "content:build": "node scripts/build-challenge-content.mjs",
     "metrics:ai": "node scripts/collect-ai-usage.mjs",
     "contracts:generate": "pnpm run build && node scripts/export-contracts.mjs",
     "prepare:firebase": "pnpm run build && node scripts/prepare-firebase.mjs",

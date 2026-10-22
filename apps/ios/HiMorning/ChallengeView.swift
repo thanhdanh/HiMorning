@@ -12,7 +12,7 @@ struct CameraPreview: UIViewRepresentable {
   let view = Preview()
   let layer = view.layer as! AVCaptureVideoPreviewLayer
   layer.session = session
-  layer.videoGravity = .resizeAspectFill
+  layer.videoGravity = .resizeAspect
   return view
  }
  func updateUIView(_ uiView: Preview, context: Context) {}
@@ -22,7 +22,14 @@ struct ChallengeView: View {
  let alarm: SavedAlarm
  @State private var sessionAlarm: SavedAlarm?
  private var effectiveAlarm: SavedAlarm { sessionAlarm ?? model.access.effectiveAlarm(alarm) }
- private var challenge: ChallengeSelection { effectiveAlarm.challenge }
+ @State private var readAloudFallback = false
+ private var challenge: ChallengeSelection { readAloudFallback ? .readAndChoose : effectiveAlarm.challenge }
+ private var performedAlarm: SavedAlarm {
+  guard readAloudFallback else { return effectiveAlarm }
+  var fallback = SavedAlarm(id: effectiveAlarm.id, time: effectiveAlarm.time, mode: effectiveAlarm.mode, sound: effectiveAlarm.sound, challenge: .readAndChoose, label: effectiveAlarm.label, scheduledOccurrence: effectiveAlarm.scheduledOccurrence)
+  fallback.enabled = effectiveAlarm.enabled; fallback.state = effectiveAlarm.state
+  return fallback
+ }
  @ObservedObject var model: PilotModel
  @Environment(\.dismiss) private var dismiss
  @Environment(\.scenePhase) private var scene
@@ -35,17 +42,16 @@ struct ChallengeView: View {
  @State private var preparingExample = false
  @State private var captureGeneration = UUID()
  @State private var rhythmCycles = 0
+ @State private var voice: VoiceCoach?
  @State private var transcript = ""
  @State private var speechEnded = false
  @State private var speechFinishing = false
  @State private var speechListening = false
- @State private var awakeAvailableAt = Date().addingTimeInterval(120)
+ @State private var awakeAvailableAt = Date().addingTimeInterval(WakeEnforcementPolicy.selfConfirmDelay)
  @Environment(\.accessibilityReduceMotion) private var reduceMotion
- @State private var readPrompt = ChallengePrompts.readAndChoose()!
- @State private var riddlePrompt = ChallengePrompts.riddle()!
- @State private var lastReadPromptID: String?
- @State private var lastRiddlePromptID: String?
- @State private var readAloudPrompt = EnglishChallengeContent.readAloud[0]
+ @State private var readPrompt: ChallengePrompt?
+ @State private var riddlePrompt: ChallengePrompt?
+ @State private var readAloudItem: ChallengeContentItem?
  @State private var message = appText("Good morning. Choose what feels right today.")
  @State private var reps = 0
  @State private var consent = false
@@ -60,10 +66,6 @@ struct ChallengeView: View {
  @State private var stopping = false
  @State private var result: String?
 
- // State variables for behavior detection
- @State private var behaviorDetectionActive = false
- @State private var behaviorDetectionResult = ""
-
  var body: some View {
   ScrollViewReader { scroll in
    ScrollView {
@@ -74,14 +76,11 @@ struct ChallengeView: View {
       Text(practicing ? appText("Try a challenge") : appText("Good morning ☀️")).font(.headline)
       if practicing { Text(appText("Practice only. Your alarms stay as they are.")).font(.footnote).foregroundStyle(MorningTheme.muted) }
       if let camera {
-       CameraPreview(session: camera.session).frame(height: 280).clipShape(RoundedRectangle(cornerRadius: 24))
-        .overlay(alignment: .bottom) { Text("\(reps) / \(challenge.repetitions ?? 0)").font(.largeTitle.bold()).padding(12).background(.regularMaterial, in: Capsule()).padding() }
+       cameraBlock(camera.session, counter: "\(reps) / \(challenge.repetitions ?? 0)")
       } else if let movementCamera {
-       CameraPreview(session: movementCamera.session).frame(height: 280).clipShape(RoundedRectangle(cornerRadius: 24))
-        .overlay(alignment: .bottom) { Text("\(reps) / \(challenge.kind.localMovementTarget ?? 0)").font(.largeTitle.bold()).padding(12).background(.regularMaterial, in: Capsule()).padding() }
+       cameraBlock(movementCamera.session, counter: "\(reps) / \(challenge.kind.localMovementTarget ?? 0)")
       } else if let rhythmCamera {
-       CameraPreview(session: rhythmCamera.session).frame(height: 280).clipShape(RoundedRectangle(cornerRadius: 24))
-        .overlay(alignment: .bottom) { Text("\(rhythmCycles) / 3").font(.largeTitle.bold()).padding(12).background(.regularMaterial, in: Capsule()).padding() }
+       cameraBlock(rhythmCamera.session, counter: "\(rhythmCycles) / 3")
       } else {
        HStack(spacing: 16) {
         MorningSun(size: 64)
@@ -90,28 +89,30 @@ struct ChallengeView: View {
       }
      }
      Text(challenge.displayTitle).font(.subheadline.weight(.medium)).padding(.horizontal, 14).padding(.vertical, 8).background(MorningTheme.soft, in: Capsule())
-     if effectiveAlarm.mode != alarm.mode || challenge != alarm.challenge {
+     if effectiveAlarm.mode != alarm.mode || effectiveAlarm.challenge != alarm.challenge {
       Text(appText("Your preview has ended. This morning uses the basic challenge. Your saved choice stays the same.")).font(.footnote).foregroundStyle(MorningTheme.muted)
      }
-     Text(result ?? (behaviorDetectionResult.isEmpty ? message : behaviorDetectionResult)).font(.title3.weight(.medium)).multilineTextAlignment(.center).accessibilityIdentifier("challengeMessage")
-     if !finished && (busy || stopping || speechFinishing || preparingExample || behaviorDetectionActive) {
+     Text(result ?? message)
+      .font(distanceLayout ? .system(size: 34, weight: .semibold) : .title3.weight(.medium))
+      .minimumScaleFactor(distanceLayout ? 0.6 : 1)
+      .multilineTextAlignment(.center).accessibilityIdentifier("challengeMessage")
+     if !finished && (busy || stopping || speechFinishing || preparingExample) {
       ProgressView().accessibilityLabel(message)
      }
-     if (challenge.kind == .readAndChoose || challenge.kind == .riddle) && !finished {
-      let prompt = challenge.kind == .riddle ? riddlePrompt : readPrompt
-      Text(appText(prompt.text)).font(.title2.weight(.semibold)).multilineTextAlignment(.center)
-      ForEach(Array(prompt.choices.enumerated()), id: \.offset) { index, key in
-       Button(appText(key)) { chooseMeaning(index, prompt: prompt) }.buttonStyle(MorningButtonStyle(primary: false)).accessibilityIdentifier("readChoice-\(index)")
+     if (challenge.kind == .readAndChoose || challenge.kind == .riddle) && !finished, let prompt = challenge.kind == .riddle ? riddlePrompt : readPrompt {
+      Text(prompt.text).font(.title2.weight(.semibold)).multilineTextAlignment(.center)
+      ForEach(Array(prompt.choices.enumerated()), id: \.offset) { index, choice in
+       Button(choice) { chooseMeaning(index, prompt: prompt) }.buttonStyle(MorningButtonStyle(primary: false)).accessibilityIdentifier("readChoice-\(index)")
       }
      }
-     if challenge.kind == .readAloud {
+     if challenge.kind == .readAloud, let item = readAloudItem {
       if speechListening {
        Label(appText("Listening…"), systemImage: "mic.fill").font(.headline)
         .symbolEffect(.pulse, isActive: !reduceMotion).accessibilityIdentifier("listeningIndicator")
       }
-      ReadingFeedbackView(target: appText(readAloudPrompt.text), transcript: transcript, ended: speechEnded)
+      ReadingFeedbackView(target: item.text, language: item.language, transcript: transcript, ended: speechEnded)
       if !finished {
-       Text(String(format: appText("You have about %d seconds. Read at your own pace."), Int(ReadAloudAttempt(target: readAloudPrompt.text).listeningDuration))).font(.footnote).foregroundStyle(MorningTheme.muted)
+       Text(String(format: appText("You have about %d seconds. Read at your own pace."), Int(ReadAloudAttempt(target: item.text, language: item.language).listeningDuration))).font(.footnote).foregroundStyle(MorningTheme.muted)
        Button { Task { await playExample() } } label: {
         Label(appText(spokenExample.isSpeaking ? "Stop example" : "Hear sentence"), systemImage: spokenExample.isSpeaking ? "stop.fill" : "speaker.wave.2.fill")
        }.buttonStyle(MorningButtonStyle(primary: false)).disabled(busy || stopping || preparingExample || speech != nil).accessibilityIdentifier("hearSentence")
@@ -133,6 +134,8 @@ struct ChallengeView: View {
    .background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink)
    .onChange(of: finished) { _, _ in scroll.scrollTo("challengeTop", anchor: .top) }
    .sensoryFeedback(.success, trigger: celebrates) { _, value in value }
+   .sensoryFeedback(.increase, trigger: reps)
+   .sensoryFeedback(.increase, trigger: rhythmCycles)
    .safeAreaInset(edge: .bottom) {
     VStack(spacing: 12) {
      if finished {
@@ -161,19 +164,6 @@ struct ChallengeView: View {
       if practicing {
        Button(appText("Back to home")) { dismiss() }
         .buttonStyle(.plain).font(.subheadline).underline().foregroundStyle(MorningTheme.muted).frame(maxWidth: .infinity, minHeight: 44).accessibilityIdentifier("backToHome")
-      } else {
-       Button(appText("Stop alarm"), role: .destructive) { finish(.dismissed) }
-        .buttonStyle(.plain).font(.subheadline).underline().foregroundStyle(MorningTheme.muted).frame(maxWidth: .infinity, minHeight: 44).accessibilityIdentifier("stopAlarm")
-      }
-
-      // Behavior detection for persistent verification (if enabled)
-      if challenge.kind == .pushUps && !finished {
-       Button(appText("Verify with AI")) {
-        startBehaviorDetection()
-       }
-       .buttonStyle(MorningButtonStyle())
-       .disabled(busy || stopping || behaviorDetectionActive)
-       .accessibilityIdentifier("verifyWithAI")
       }
      }
     }.padding(.horizontal, 24).padding(.vertical, 12).background(MorningTheme.canvas)
@@ -181,18 +171,18 @@ struct ChallengeView: View {
    .tint(MorningTheme.accent)
    .confirmationDialog(appText("Allow the camera to check your push-ups on this iPhone. Video and sound are not saved or uploaded. You can stop at any time."), isPresented: $consentDialog, titleVisibility: .visible) {
     Button(appText("Open camera")) { Task { await startCamera() } }
-    Button(appText("Choose another way")) { consentDialog = false }
+    Button(appText("Not now")) { consentDialog = false }
    }
    .task {
     guard coordinator == nil else { return }
     model.preview.refresh()
     sessionAlarm = model.access.effectiveAlarm(alarm)
+    if let wake = model.activeWake, wake.alarmID == alarm.id, !model.rehearsal { awakeAvailableAt = wake.selfConfirmAvailableAt }
     coordinator = ChallengeCoordinator(alarm: effectiveAlarm, cloud: model.cloud, scheduler: model.scheduler, rehearsal: practicing)
-    preparePrompt(newReadingPrompt: true, newReadAloudPrompt: true)
+    preparePrompt()
     #if DEBUG
     let arguments = ProcessInfo.processInfo.arguments
-    if arguments.contains("--ui-testing"), arguments.contains("--ui-reading-correct-first") {
-     let prompt = readPrompt
+    if arguments.contains("--ui-testing"), arguments.contains("--ui-reading-correct-first"), let prompt = readPrompt {
      let correct = prompt.choices[prompt.correctChoiceIndex]
      let choices = [correct] + prompt.choices.enumerated().filter { $0.offset != prompt.correctChoiceIndex }.map(\.element)
      readPrompt = ChallengePrompt(id: prompt.id, text: prompt.text, choices: choices, correctChoiceIndex: 0)
@@ -202,7 +192,7 @@ struct ChallengeView: View {
      else if arguments.contains("--ui-awake-countdown-near-end") { awakeAvailableAt = Date().addingTimeInterval(5) }
     }
     if arguments.contains("--ui-testing"), let index = arguments.firstIndex(of: "--ui-reading-transcript"), arguments.indices.contains(index + 1) {
-     readAloudPrompt = ReadAloudPrompt(id: "ui-reading", text: "Small steps create steady progress.")
+     readAloudItem = ChallengeContentItem(id: "ui-reading", kind: .readAloud, language: appLocale().identifier, text: appText("Small steps create steady progress."), choices: nil, answerIndex: nil, source: "ui-test", license: "original", attribution: nil)
      transcript = arguments[index + 1]; speechEnded = arguments.contains("--ui-reading-finished")
     }
     if arguments.contains("--ui-testing"), model.rehearsal, arguments.contains("--ui-reading-listening") {
@@ -213,7 +203,7 @@ struct ChallengeView: View {
      case .pushUps: complete(.localCompleted, success: appText("Push-ups complete. Have a good morning!"))
      case .guidedRhythm: complete(.localCompleted, success: appText("Guided rhythm completed. Have a good morning!"))
      case .readAloud:
-      if transcript.isEmpty { transcript = appText(readAloudPrompt.text) }
+      if transcript.isEmpty, let item = readAloudItem { transcript = item.text }
       speechEnded = true
       complete(.localCompleted, success: appText("Great reading. Have a good morning!"))
      case .readAndChoose, .riddle: complete(.localCompleted, success: appText("Correct. Challenge completed!"))
@@ -231,6 +221,30 @@ struct ChallengeView: View {
   .overlay {
    if practicing, celebrates, !reduceMotion { ChallengeConfetti().ignoresSafeArea() }
   }
+  .interactiveDismissDisabled(!practicing)
+ }
+
+ private var distanceLayout: Bool {
+  guard movementCamera != nil || rhythmCamera != nil else { return false }
+  return challenge.kind == .jumpingJacks || (challenge.kind == .guidedRhythm && (challenge.rhythmVariant ?? .standing) == .standing)
+ }
+
+ @ViewBuilder private func cameraBlock(_ session: AVCaptureSession, counter: String) -> some View {
+  let preview = CameraPreview(session: session)
+  if distanceLayout {
+   preview.aspectRatio(3.0 / 4.0, contentMode: .fit).frame(maxHeight: 360).clipShape(RoundedRectangle(cornerRadius: 24))
+    .overlay(alignment: .bottom) { Text(counter).font(.system(size: 96, weight: .bold, design: .rounded)).lineLimit(1).minimumScaleFactor(0.5).padding(12).background(.regularMaterial, in: Capsule()).padding() }
+  } else {
+   preview.frame(height: 280).clipShape(RoundedRectangle(cornerRadius: 24))
+    .overlay(alignment: .bottom) { Text(counter).font(.largeTitle.bold()).padding(12).background(.regularMaterial, in: Capsule()).padding() }
+  }
+ }
+
+ private func beginCoaching() {
+  voice?.stop()
+  let coach = VoiceCoach()
+  voice = coach
+  coach.speak(challengeInstructions)
  }
 
  @MainActor private func startCamera() async {
@@ -240,11 +254,13 @@ struct ChallengeView: View {
   defer { busy = false }
   let capture = CameraCapture(target: target) { update in Task { @MainActor in
    guard captureGeneration == generation, consent, !finished, !stopping else { return }
+   if update.reps > reps { voice?.rep(update.reps, spoken: !update.ready) }
+   if update.message != message { voice?.hint(update.message) }
    reps = update.reps; message = update.message
    if update.ready { await completePushUps(update.counter) }
    else if update.ended { camera?.stop(); camera = nil; consent = false; await coordinator.suspend() }
   }}
-  camera = capture; await capture.start()
+  beginCoaching(); camera = capture; await capture.start()
  }
 
  @MainActor private func completePushUps(_ counter: PushUpCounter) async {
@@ -255,7 +271,7 @@ struct ChallengeView: View {
    let applied = try await coordinator.completePushUps(counter)
    guard captureGeneration == generation, !stopping, scene == .active else { return }
    if applied { complete(.localCompleted, success: appText("Push-ups complete. Have a good morning!")) }
-  } catch { message = appText("The alarm could not be stopped here. Please use the system Stop button.") }
+  } catch { message = appText("The alarm could not be stopped just now. Please try again.") }
  }
 
  private func finish(_ outcome: WakeOutcome, success: String? = nil) {
@@ -266,21 +282,22 @@ struct ChallengeView: View {
   Task { @MainActor in
    defer { stopping = false }
    do { try await coordinator.finish(outcome); complete(coordinator.session.outcome ?? outcome, success: success) }
-   catch { message = appText("The alarm could not be stopped here. Please use the system Stop button.") }
+   catch { message = appText("The alarm could not be stopped just now. Please try again.") }
   }
  }
 
  private func complete(_ outcome: WakeOutcome, success: String? = nil) {
   guard !finished else { return }
   pauseResources(); completion = outcome
-  model.recordMorning(id: historyID, alarm: effectiveAlarm, outcome: outcome, rehearsal: practicing)
+  model.recordMorning(id: historyID, alarm: performedAlarm, outcome: outcome, rehearsal: practicing)
   if !practicing, celebrates { model.celebrationID = reduceMotion ? nil : UUID(); dismiss(); return }
   switch outcome {
   case .localCompleted: result = success ?? appText("Local challenge completed. Have a good morning!")
   case .openaiVerified, .aiVerified: result = appText("Movement checked. Have a good morning!")
   case .selfConfirmed: result = appText("You confirmed you are awake. Have a good morning!")
-  case .dismissed: result = appText("Alarm stopped. Take care today.")
+  case .dismissed: break
   }
+  if let result { voice?.speak(result) }
  }
 
  private func retryChallenge() {
@@ -289,18 +306,17 @@ struct ChallengeView: View {
   retrying = true
   coordinator = ChallengeCoordinator(alarm: effectiveAlarm, cloud: model.cloud, scheduler: model.scheduler, rehearsal: true)
   transcript = ""; speechEnded = false; reps = 0; rhythmCycles = 0; consentDialog = false
-  preparePrompt(newReadingPrompt: true)
+  preparePrompt(repickReadAloud: false)
   result = nil; completion = nil; message = challengeInstructions
  }
 
- private func preparePrompt(newReadingPrompt: Bool = false, newReadAloudPrompt: Bool = false) {
-  if newReadingPrompt {
-   readPrompt = ChallengePrompts.readAndChoose(previousID: lastReadPromptID) ?? readPrompt
-   lastReadPromptID = readPrompt.id
-   riddlePrompt = ChallengePrompts.riddle(previousID: lastRiddlePromptID) ?? riddlePrompt
-   lastRiddlePromptID = riddlePrompt.id
+ private func preparePrompt(repickReadAloud: Bool = true) {
+  switch challenge.kind {
+  case .readAndChoose: readPrompt = model.nextPrompt(.readAndChoose).flatMap(\.readAndChoosePrompt).map(ChallengePrompts.readAndChoose) ?? readPrompt
+  case .riddle: riddlePrompt = model.nextPrompt(.riddle).flatMap(\.readAndChoosePrompt).map(ChallengePrompts.readAndChoose) ?? riddlePrompt
+  case .readAloud: if repickReadAloud || readAloudItem == nil { readAloudItem = model.nextPrompt(.readAloud) ?? readAloudItem }
+  default: break
   }
-  if newReadAloudPrompt { readAloudPrompt = EnglishChallengeContent.readAloud.randomElement() ?? readAloudPrompt }
   message = challengeInstructions
  }
 
@@ -315,7 +331,7 @@ struct ChallengeView: View {
   case .jumpingJacks: return appText("Keep your whole body visible and complete 10 gentle jumping jacks. Video stays on this device.")
   case .stretching: return appText("Raise both hands above your shoulders, then lower them. Video stays on this device.")
   case .guidedRhythm: return challenge.rhythmVariant == .seated ? appText("Stay seated. Lower your arms, raise them, then lower them. Complete 3 cycles. Video stays on this device.") : appText("Stand, bend your knees gently, then stand again. Complete 3 cycles. Video stays on this device.")
-  case .readAloud: return appText("Tap Start reading, then read the English sentence aloud. Match at least 80% of the words.")
+  case .readAloud: return appText("Tap Start reading, then read the sentence aloud. Match at least 80% of the words.")
   }
  }
 
@@ -329,11 +345,13 @@ struct ChallengeView: View {
   let generation = UUID(); captureGeneration = generation
   let capture = GuidedRhythmCapture(variant: challenge.rhythmVariant ?? .standing, targetCycles: 3) { update in Task { @MainActor in
    guard captureGeneration == generation, !finished, !stopping else { return }
+   if update.cycles > rhythmCycles { voice?.rep(update.cycles, spoken: !update.completed) }
+   if update.message != message { voice?.hint(update.message) }
    rhythmCycles = update.cycles; message = update.message
    if update.completed { finish(.localCompleted, success: appText("Guided rhythm completed. Have a good morning!")) }
    else if update.ended { rhythmCamera?.stop(); rhythmCamera = nil }
   }}
-  rhythmCamera = capture; await capture.start(); busy = false
+  beginCoaching(); rhythmCamera = capture; await capture.start(); busy = false
  }
 
  @MainActor private func startMovement() async {
@@ -342,24 +360,35 @@ struct ChallengeView: View {
   let generation = UUID(); captureGeneration = generation
   let capture = MovementChallengeCapture(kind: challenge.kind) { update in Task { @MainActor in
    guard captureGeneration == generation, !finished, !stopping else { return }
+   if update.reps > reps { voice?.rep(update.reps, spoken: !update.ready) }
+   if update.message != message { voice?.hint(update.message) }
    reps = update.reps; message = update.message
    if update.ready { finish(.localCompleted, success: appText("Local challenge completed. Have a good morning!")) }
    else if update.ended { movementCamera?.stop(); movementCamera = nil }
   }}
-  movementCamera = capture; await capture.start(); busy = false
+  beginCoaching(); movementCamera = capture; await capture.start(); busy = false
  }
 
  @MainActor private func startSpeech() async {
-  guard speech == nil, !busy, !finished, !stopping, !preparingExample, !spokenExample.isSpeaking, scene == .active else { return }; busy = true
+  guard speech == nil, !busy, !finished, !stopping, !preparingExample, !spokenExample.isSpeaking, scene == .active, let item = readAloudItem else { return }; busy = true
   transcript = ""; speechEnded = false; speechFinishing = false; speechListening = false
   let generation = UUID(); captureGeneration = generation
-  let capture = SpeechChallengeCapture(target: appText(readAloudPrompt.text)) { update in Task { @MainActor in
+  let capture = SpeechChallengeCapture(target: item.text, language: item.language) { update in Task { @MainActor in
    guard captureGeneration == generation, !finished, !stopping else { return }
+   if update.unsupported, !practicing { fallBackToReading(); return }
    transcript = update.transcript; speechEnded = update.ended; speechFinishing = update.finishing && !update.ended; speechListening = update.listening; message = update.message
    if update.completed { finish(.localCompleted, success: appText("Great reading. Have a good morning!")) }
    else if update.ended { speech?.stop(); speech = nil }
   }}
   speech = capture; await capture.start(); busy = false
+ }
+
+ private func fallBackToReading() {
+  pauseResources()
+  readAloudFallback = true; readAloudItem = nil
+  transcript = ""; speechEnded = false
+  preparePrompt()
+  message = ["en", "vi"].map { appText("Reading aloud isn't available on this iPhone, so here is a reading question instead.", language: $0) }.joined(separator: "\n")
  }
 
  @MainActor private func playExample() async {
@@ -372,11 +401,13 @@ struct ChallengeView: View {
   await previous?.stopAndWait()
   guard captureGeneration == generation, !finished, !stopping, scene == .active else { return }
   transcript = ""; speechEnded = false; speechFinishing = false
-  message = spokenExample.play(appText(readAloudPrompt.text)) ? appText("Listen to the example, then tap Start reading.") : appText("The English voice is not available. You can still read the sentence.")
+  guard let item = readAloudItem else { return }
+  message = spokenExample.play(item.text, language: item.language) ? appText("Listen to the example, then tap Start reading.") : appText("This voice is not available. You can still read the sentence.")
  }
 
  private func pauseResources() {
   captureGeneration = UUID(); consent = false; speechListening = false; speechFinishing = false
+  voice?.stop()
   camera?.stop(); camera = nil
   movementCamera?.stop(); movementCamera = nil
   rhythmCamera?.stop(); rhythmCamera = nil
@@ -389,7 +420,7 @@ struct ChallengeView: View {
    if phase != .active { spokenExample.stop() }
    guard phase == .background, !finished else { return }
    pauseResources()
-   message = appText("The challenge is paused. You can choose another way.")
+   message = appText("The challenge is paused. Start it again, or tap I’m awake when it unlocks.")
    Task { @MainActor in await coordinator?.suspend() }
   }
 
@@ -407,13 +438,6 @@ struct ChallengeView: View {
   @MainActor private func handleAudioRouteChange(_ notification: Notification) {
    guard let raw = notification.userInfo?[AVAudioSessionRouteChangeReasonKey] as? UInt else { return }
    if AVAudioSession.RouteChangeReason(rawValue: raw) == .oldDeviceUnavailable { spokenExample.stop() }
-  }
-
-  // MARK: - Behavior Detection
-  @MainActor private func startBehaviorDetection() {
-   guard !finished, !stopping else { return }
-   behaviorDetectionActive = false
-   behaviorDetectionResult = appText("AI verification is not available yet. Use the camera challenge to verify your movement.")
   }
 }
 
@@ -433,9 +457,10 @@ private struct ChallengeStartLabel: View {
 
 struct ReadingFeedbackView: View {
  let target: String
+ var language = "en"
  let transcript: String
  let ended: Bool
- private var feedback: RecognizedWordMatch.Feedback { RecognizedWordMatch.feedback(target: target, recognized: transcript, finished: ended) }
+ private var feedback: RecognizedWordMatch.Feedback { RecognizedWordMatch.feedback(target: target, recognized: transcript, finished: ended, language: language) }
  var body: some View {
   let feedback = feedback
   VStack(spacing: 12) {
@@ -475,7 +500,7 @@ struct ReadingFeedbackView: View {
   for (position, part) in target.split(whereSeparator: \.isWhitespace).enumerated() {
    if position > 0 { result += AttributedString(" ") }
    var word = AttributedString(String(part))
-   let count = RecognizedWordMatch.tokens(in: String(part)).count
+   let count = RecognizedWordMatch.tokens(in: String(part), language: language).count
    let statuses = feedback.words.dropFirst(index).prefix(count).map(\.status)
    if statuses.contains(.incorrect) { word.foregroundColor = .red; word.underlineStyle = .single }
    else if !statuses.isEmpty, statuses.allSatisfy({ $0 == .correct }) { word.foregroundColor = MorningTheme.correctWord; word.inlinePresentationIntent = .stronglyEmphasized }

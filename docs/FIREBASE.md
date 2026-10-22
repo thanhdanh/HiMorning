@@ -40,7 +40,7 @@ truncated, malformed, expired or missing results remain non-success.
 
 Cancel marks the session first, then best-effort cancels the remote job. A verdict
 arriving after cancellation, deadline or expiry cannot overwrite the terminal state.
-The iOS native Stop happens before cloud cleanup and remains available offline.
+The iOS native stop and backup-ring cancel happen before cloud cleanup and work offline. The system Stop still exists, but backup rings follow it.
 
 ## Key choices
 

@@ -31,8 +31,8 @@ separate paid path and its evaluation boundaries.
 
 The app submits evidence once. Firebase reserves quota and dispatches a queued
 GPU job; the app receives `pending` and polls the result without uploading again.
-Firebase remains the authority on observed cycles. Local alarm delivery, Stop,
-self-confirm, reading, rhythm and speech do not depend on inference.
+Firebase remains the authority on observed cycles. Local alarm delivery, backup rings,
+"I'm awake", reading, rhythm and speech do not depend on inference.
 
 ## Key choices
 

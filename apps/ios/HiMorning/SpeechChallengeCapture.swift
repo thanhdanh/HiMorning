@@ -10,6 +10,7 @@ struct SpeechUpdate:Sendable {
  let finishing:Bool
  let listening:Bool
  let message:String
+ var unsupported=false
 }
 
 private actor SpeechAudioSession {
@@ -32,6 +33,7 @@ private actor SpeechAudioSession {
 /// Streams microphone buffers to Apple's on-device analyzer. No audio is saved.
 @MainActor final class SpeechChallengeCapture {
  private var reading:ReadAloudAttempt
+ private let language:String
  private let onUpdate:@Sendable(SpeechUpdate)->Void
  private let audioEngine=AVAudioEngine()
  private let audioSessionID=UUID()
@@ -54,8 +56,9 @@ private actor SpeechAudioSession {
  private var finishing=false
  private var generation=0
 
- init(target:String,onUpdate:@escaping @Sendable(SpeechUpdate)->Void) {
-  reading=ReadAloudAttempt(target:target)
+ init(target:String,language:String="en",onUpdate:@escaping @Sendable(SpeechUpdate)->Void) {
+  reading=ReadAloudAttempt(target:target,language:language)
+  self.language=language
   self.onUpdate=onUpdate
  }
 
@@ -102,14 +105,14 @@ private actor SpeechAudioSession {
   timeoutTask?.cancel();idleTask?.cancel()
   finalizationTimeoutTask=Task {[weak self] in
    do {try await Task.sleep(for:.seconds(6))} catch {return}
-   self?.end(token:token,message:"Recognition is taking too long. Try again or choose another challenge.")
+   self?.end(token:token,message:"Recognition is taking too long. Try again, or tap I’m awake when it unlocks.")
   }
   finishTask=Task {[weak self] in
    do {
     try await analyzer.finalizeAndFinishThroughEndOfInput()
     await self?.resultsTask?.value
    } catch {
-    self?.end(token:token,message:"Speech recognition stopped. Try again or choose another challenge.")
+    self?.end(token:token,message:"Speech recognition stopped. Try again, or tap I’m awake when it unlocks.")
     return
    }
    self?.completeReading(token:token)
@@ -127,7 +130,7 @@ private actor SpeechAudioSession {
   guard isCurrent(token) else {return}
   var openingMicrophone=false
   do {
-   let locale=Locale(identifier:"en-US")
+   let locale=Locale(identifier:language == "vi" ? "vi-VN" : "en-US")
    let module:any SpeechModule
    let observeResults:()->Void
    if SpeechTranscriber.isAvailable,let supported=await SpeechTranscriber.supportedLocale(equivalentTo:locale) {
@@ -141,7 +144,7 @@ private actor SpeechAudioSession {
     module=transcriber
     observeResults={self.observe(transcriber.results,text:{String($0.text.characters)},token:token)}
    } else {
-    end(token:token,message:"On-device speech recognition is not available. Choose another challenge.")
+    end(token:token,message:"Reading aloud is not available in this language on this iPhone. Please choose another challenge.",unsupported:true)
     return
    }
    guard isCurrent(token) else {return}
@@ -156,7 +159,7 @@ private actor SpeechAudioSession {
    }
    guard isCurrent(token) else {return}
    guard let format=await SpeechAnalyzer.bestAvailableAudioFormat(compatibleWith:[module]) else {
-    end(token:token,message:"On-device speech recognition is not available. Choose another challenge.")
+    end(token:token,message:"On-device speech recognition is not available. Choose another challenge.",unsupported:true)
     return
    }
    guard isCurrent(token) else {return}
@@ -177,7 +180,7 @@ private actor SpeechAudioSession {
   } catch {
    guard isCurrent(token) else {return}
    end(token:token,message:openingMicrophone
-    ? "The microphone could not start. Choose another challenge."
+    ? "The microphone could not start. You can tap I’m awake when it unlocks."
     : "Speech support could not be prepared. Check your connection and try again.")
   }
  }
@@ -197,7 +200,7 @@ private actor SpeechAudioSession {
    do {
     if let output=try converter.convert(buffer) {continuation.yield(AnalyzerInput(buffer:output))}
    } catch {
-    Task {@MainActor in self?.end(token:token,message:"Speech recognition stopped. Try again or choose another challenge.")}
+    Task {@MainActor in self?.end(token:token,message:"Speech recognition stopped. Try again, or tap I’m awake when it unlocks.")}
    }
   }
   tapInstalled=true
@@ -208,7 +211,7 @@ private actor SpeechAudioSession {
    observers.append(NotificationCenter.default.addObserver(forName:name,object:object,queue:nil) {[weak self] _ in
     Task {@MainActor in
      guard let self,!self.finishing else {return}
-     self.end(token:token,message:"Speech recognition stopped. Try again or choose another challenge.")
+     self.end(token:token,message:"Speech recognition stopped. Try again, or tap I’m awake when it unlocks.")
     }
    })
   }
@@ -243,7 +246,7 @@ private actor SpeechAudioSession {
     self?.completeReading(token:token)
    } catch {
     guard let self,self.isCurrent(token) else {return}
-    self.end(token:token,message:"Speech recognition stopped. Try again or choose another challenge.")
+    self.end(token:token,message:"Speech recognition stopped. Try again, or tap I’m awake when it unlocks.")
    }
   }
  }
@@ -251,21 +254,21 @@ private actor SpeechAudioSession {
  private func completeReading(token:Int) {
   guard isCurrent(token) else {return}
   let completed=reading.finish()
-  let message=completed ? "Great reading. Challenge complete." : RecognizedWordMatch.tokens(in:reading.transcript).isEmpty
+  let message=completed ? "Great reading. Challenge complete." : RecognizedWordMatch.tokens(in:reading.transcript,language:language).isEmpty
    ? "No speech was recognized. Try again and speak near the microphone."
    : "Your word match score is below 80. Review the highlighted words and try again."
   end(token:token,message:message,completed:completed)
  }
 
- private func end(token:Int,message:String,completed:Bool=false) {
+ private func end(token:Int,message:String,completed:Bool=false,unsupported:Bool=false) {
   guard isCurrent(token) else {return}
-  publish(token:token,message:message,completed:completed,ended:true)
+  publish(token:token,message:message,completed:completed,ended:true,unsupported:unsupported)
   stop()
  }
 
- private func publish(token:Int,message:String,completed:Bool=false,ended:Bool=false) {
+ private func publish(token:Int,message:String,completed:Bool=false,ended:Bool=false,unsupported:Bool=false) {
   guard isCurrent(token) else {return}
-  onUpdate(.init(transcript:transcript.text,progress:reading.progress,completed:completed,ended:ended,finishing:finishing,listening:audioEngine.isRunning && !finishing && !ended,message:appText(message)))
+  onUpdate(.init(transcript:transcript.text,progress:reading.progress,completed:completed,ended:ended,finishing:finishing,listening:audioEngine.isRunning && !finishing && !ended,message:appText(message),unsupported:unsupported))
  }
 
  private func isCurrent(_ token:Int) -> Bool {!stopped && generation == token && !Task.isCancelled}

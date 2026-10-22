@@ -5,6 +5,7 @@ import { authorize } from '../src/auth.js';
 import { workerConfig } from '../src/config.js';
 import { DurableStore,cleanup } from '../src/store.js';
 import { prepareDemoEvidence } from '../src/evidence.js';
+import { contentResponse } from '../src/content.js';
 import { boundedJSON,GeminiVerifier,parseVerdict } from '../src/gemini.js';
 import { failureResponse,invoke,decodeCallable } from '../src/api.js';
 import { VerificationService } from '../../functions/src/service.js';
@@ -141,4 +142,28 @@ describe('Firebase tokens on a custom backend',()=>{
   const wrong=await generateKeyPair('RS256'),invalid=await new SignJWT(authPayload).setProtectedHeader({alg:'RS256',kid:'test-key'}).sign(wrong.privateKey);
   await expect(authorize(new Request('https://test.workers.dev',{headers:{Authorization:`Bearer ${invalid}`}}),env,{auth:keys,app:keys})).rejects.toMatchObject({code:'unauthenticated'});
  });
+});
+describe('challenge content endpoint',()=>{
+ const url='https://demo.workers.dev/content/v1/challenge-content.json',pack={version:7,items:[]};
+ it('serves the content pack with an ETag and caching headers',async()=>{
+  const response=contentResponse(new Request(url),pack);
+  expect(response.status).toBe(200);
+  expect(response.headers.get('ETag')).toBe('"v7"');
+  expect(response.headers.get('Cache-Control')).toBe('public, max-age=3600');
+  expect(response.headers.get('Content-Type')).toContain('application/json');
+  expect(await response.json()).toEqual(pack);
+ });
+ it('returns 304 for a matching If-None-Match',async()=>{
+  const response=contentResponse(new Request(url,{headers:{'If-None-Match':'"v7"'}}),pack);
+  expect(response.status).toBe(304);
+  expect(await response.text()).toBe('');
+  expect(response.headers.get('ETag')).toBe('"v7"');
+ });
+ it('answers HEAD with headers and an empty body',async()=>{
+  const response=contentResponse(new Request(url,{method:'HEAD'}),pack);
+  expect(response.status).toBe(200);
+  expect(response.headers.get('ETag')).toBe('"v7"');
+  expect(await response.text()).toBe('');
+ });
+ it('rejects POST with 405',()=>{expect(contentResponse(new Request(url,{method:'POST',body:'{}'}),pack).status).toBe(405);});
 });

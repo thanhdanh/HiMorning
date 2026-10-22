@@ -9,11 +9,19 @@ import HiMorningCore
  var body:some Scene {WindowGroup {HomeView(model:model).environment(\.locale,Locale(identifier:(AppLanguage(rawValue:language) ?? .system).resolved(preferredLanguages:Locale.preferredLanguages)))}}
 }
 enum AlarmSaveError:Error {case soundUnavailable,challengeUnavailable}
+#if DEBUG
+struct NoopBackupScheduler:BackupRingScheduler {
+ func scheduleBackup(_ ring:BackupRing,for alarm:SavedAlarm) async throws {}
+ func cancel(id:UUID) async throws {}
+}
+#endif
 @MainActor final class PilotModel:ObservableObject {
  @Published var alarms:[SavedAlarm]=[]
  @Published var error:String?
  @Published var selected:SavedAlarm?
  @Published var rehearsal=false
+ @Published var backupWarning=false
+ @Published var activeWake:UnresolvedWake?
  let subscriptions=SubscriptionStore()
  lazy var preview=PreviewStore(subscriptions:subscriptions)
  private var accessObserver:AnyCancellable?
@@ -24,14 +32,28 @@ enum AlarmSaveError:Error {case soundUnavailable,challengeUnavailable}
  let scheduler=NativeAlarmScheduler()
  let cloud:(any CloudVerification)?
  private let library:AlarmLibrary?
+ let enforcer:WakeEnforcer?
+ private var resolvedWakes:[MorningEntry]=[]
+ private var plannedRings:[BackupRing]=[]
+ @Published var content:ChallengeContentStore
+ private(set) var contentHistory:ContentHistory
+ private let bundledContent:ChallengeContentPack
+ private let refresher:ChallengeContentRefresher
  init() {
+  let workerEndpoint:WorkerEndpoint?
+  if let configURL=Bundle.main.url(forResource:"HiMorningCloud-Info",withExtension:"plist"),let data=try? Data(contentsOf:configURL),let values=try? PropertyListDecoder().decode([String:String].self,from:data),let origin=values["WorkerURL"] {workerEndpoint=try? WorkerEndpoint(origin)}
+  else {workerEndpoint=nil}
   if Bundle.main.url(forResource:"GoogleService-Info",withExtension:"plist") != nil {
    AppCheck.setAppCheckProviderFactory(AttestationFactory());FirebaseApp.configure()
-   if let configURL=Bundle.main.url(forResource:"HiMorningCloud-Info",withExtension:"plist") {
-    if let data=try? Data(contentsOf:configURL),let values=try? PropertyListDecoder().decode([String:String].self,from:data),let origin=values["WorkerURL"],let endpoint=try? WorkerEndpoint(origin) {cloud=FirebaseCloud(endpoint:endpoint)}
-    else {cloud=nil}
-   } else {cloud=nil}
+   cloud=workerEndpoint.map {FirebaseCloud(endpoint:$0)}
   } else {cloud=nil}
+  let support=(try? FileManager.default.url(for:.applicationSupportDirectory,in:.userDomainMask,appropriateFor:nil,create:true)) ?? FileManager.default.temporaryDirectory
+  let refresher=ChallengeContentRefresher(origin:workerEndpoint?.url,directory:support)
+  self.refresher=refresher
+  let bundled=Bundle.main.url(forResource:"challenge-content",withExtension:"json").flatMap {try? Data(contentsOf:$0)}.flatMap {try? JSONDecoder().decode(ChallengeContentPack.self,from:$0)} ?? ChallengeContentPack(version:0,generatedAt:"",items:[])
+  bundledContent=bundled
+  content=ChallengeContentStore(bundled:bundled,cached:refresher.cachedPack())
+  contentHistory=UserDefaults.standard.data(forKey:"contentHistory").flatMap {try? JSONDecoder().decode(ContentHistory.self,from:$0)} ?? ContentHistory()
   do {
    var url=try FileManager.default.url(for:.applicationSupportDirectory,in:.userDomainMask,appropriateFor:nil,create:true).appendingPathComponent("HiMorning/alarms.json")
    #if DEBUG
@@ -52,6 +74,17 @@ enum AlarmSaveError:Error {case soundUnavailable,challengeUnavailable}
    #endif
    library=try AlarmLibrary(persistence:FileAlarmPersistence(url:url),scheduler:scheduler)
   } catch {library=nil;self.error=appText("Your saved alarms could not be read. Changes are paused.")}
+  do {
+   var url=try FileManager.default.url(for:.applicationSupportDirectory,in:.userDomainMask,appropriateFor:nil,create:true).appendingPathComponent("HiMorning/backup-rings.json")
+   #if DEBUG
+   if ProcessInfo.processInfo.arguments.contains("--ui-testing") {url=FileManager.default.temporaryDirectory.appendingPathComponent("himorning-ui-backup-rings-\(UUID().uuidString).json")}
+   #endif
+   var backupScheduler:any BackupRingScheduler=scheduler
+   #if DEBUG
+   if ProcessInfo.processInfo.arguments.contains("--ui-testing") {backupScheduler=NoopBackupScheduler()}
+   #endif
+   enforcer=try WakeEnforcer(persistence:FileBackupRingPersistence(url:url),scheduler:backupScheduler)
+  } catch {enforcer=nil;self.error=appText("Backup rings are unavailable right now. Your main alarms still work.")}
   do {
    var url=try FileManager.default.url(for:.applicationSupportDirectory,in:.userDomainMask,appropriateFor:nil,create:true).appendingPathComponent("HiMorning/mornings.json")
    #if DEBUG
@@ -95,10 +128,34 @@ enum AlarmSaveError:Error {case soundUnavailable,challengeUnavailable}
   #endif
   accessObserver=preview.objectWillChange.sink { [weak self] in self?.objectWillChange.send() }
  }
+ func nextPrompt(_ kind:ContentKind)->ChallengeContentItem? {
+  let item=content.next(kind:kind,language:appLocale().identifier,history:&contentHistory)
+  if let data=try? JSONEncoder().encode(contentHistory) {UserDefaults.standard.set(data,forKey:"contentHistory")}
+  return item
+ }
+ func refreshContent() async {
+  guard selected == nil,let fresh=await refresher.refreshIfDue() else {return}
+  content=ChallengeContentStore(bundled:bundledContent,cached:fresh)
+ }
  func recordMorning(id:UUID,alarm:SavedAlarm,outcome:WakeOutcome,rehearsal:Bool) {
+  if !rehearsal,WakePlanner.resolves(outcome) {
+   resolvedWakes.append(MorningEntry(alarmID:alarm.id,outcome:outcome))
+   activeWake=nil
+   Task {await enforcer?.resolve(alarmID:alarm.id);await replanBackups()}
+  }
   guard journal != nil else {return}
   do {try journal?.record(MorningEntry(id:id,alarmID:alarm.id,mode:alarm.mode,challenge:alarm.challenge,outcome:outcome),rehearsal:rehearsal)}
   catch {progressError=appText("Your progress could not be saved. Your alarm is already stopped.")}
+ }
+ private func wakeEntries(now:Date=Date())->[MorningEntry] {
+  resolvedWakes.removeAll{now.timeIntervalSince($0.date)>2*86_400}
+  return (journal?.recent(days:2,now:now) ?? [])+resolvedWakes
+ }
+ func replanBackups() async {
+  guard let enforcer else {return}
+  let result=await enforcer.plan(alarms:alarms,entries:wakeEntries(),now:Date(),calendar:.current)
+  backupWarning=result.limited
+  plannedRings=await enforcer.rings()
  }
  func setGoal(_ goal:Int) {
   guard access.hasFullAccess,journal != nil else {return}
@@ -118,7 +175,14 @@ enum AlarmSaveError:Error {case soundUnavailable,challengeUnavailable}
   catch {self.error=appText("Your alarms could not be checked. Please check alarm access.")}
   alarms=await library.all()
   if alarms.contains(where:{$0.state == .confirmed}) {preview.start()} else {preview.refresh()}
+  await replanBackups()
   openPending()
+  #if DEBUG
+  if ProcessInfo.processInfo.arguments.contains("--ui-testing") {return}
+  #endif
+  if selected == nil,let wake=WakePlanner.unresolvedWake(alarms:alarms,entries:wakeEntries(),now:Date(),calendar:.current,rings:plannedRings),let alarm=alarms.first(where:{$0.id==wake.alarmID}) {
+   activeWake=wake;rehearsal=false;selected=alarm
+  }
  }
  func save(_ alarm:SavedAlarm) async throws {
   #if DEBUG
@@ -143,21 +207,26 @@ enum AlarmSaveError:Error {case soundUnavailable,challengeUnavailable}
    else {try await library.add(effective)}
    alarms=await library.all()
    if alarms.contains(where:{$0.state == .confirmed}) {preview.start()}
+   await replanBackups()
   } catch {alarms=await library.all();throw error}
  }
  func toggle(_ alarm:SavedAlarm) async {
   guard let library else {return}
   do {if alarm.enabled {try await library.disable(id:alarm.id)} else {try await library.enable(id:alarm.id)}} catch {self.error=appText("This change could not be confirmed. Please check your system alarms.")}
   alarms=await library.all()
+  await replanBackups()
  }
  func remove(_ alarm:SavedAlarm) async {
   guard let library else {return}
   do {try await library.remove(id:alarm.id)} catch {self.error=appText("This alarm could not be removed. It may still be set in the system.")}
   alarms=await library.all()
+  await replanBackups()
  }
  func openPending() {
   guard let raw=UserDefaults.standard.string(forKey:"pendingAlarmID"),let id=UUID(uuidString:raw),let alarm=alarms.first(where:{$0.id==id}) else {return}
-  UserDefaults.standard.removeObject(forKey:"pendingAlarmID");rehearsal=false;selected=alarm
+  UserDefaults.standard.removeObject(forKey:"pendingAlarmID");rehearsal=false
+  activeWake=WakePlanner.liveOccurrence(of:alarm,entries:wakeEntries(),now:Date(),calendar:.current,rings:plannedRings).map {UnresolvedWake(alarmID:alarm.id,occurrence:$0)}
+  selected=alarm
  }
 }
 extension WakeMode {
@@ -197,7 +266,7 @@ extension ChallengeKind {
   case .pushUps:return appText("Complete a short camera-checked movement challenge.")
   case .readAndChoose:return appText("Read one short sentence and choose its meaning.")
   case .guidedRhythm:return appText("Follow a simple standing or seated rhythm on camera.")
-  case .readAloud:return appText("Read the English sentence aloud. See your score and matching words as you read.")
+  case .readAloud:return appText("Read the sentence aloud. See your score and matching words as you read.")
   case .waveHand:return appText("Wave your hand side to side while your camera checks locally.")
   case .neckRotation:return appText("Turn your head left and right while your camera checks locally.")
   case .riddle:return appText("Solve a short riddle in your language.")
@@ -276,6 +345,7 @@ struct HomeView:View {
      TimelineView(.everyMinute) {_ in
       ForEach(model.alarms) {alarm in alarmCard(alarm,now:Date())}
      }
+     if model.backupWarning {Text(appText("Some backup rings could not be updated. Please check your system alarms.")).font(.footnote).foregroundStyle(MorningTheme.muted)}
      Button {editor=AlarmDraft(alarm:nil)} label:{Label(appText("Add alarm"),systemImage:"plus")}
       .buttonStyle(MorningButtonStyle()).accessibilityIdentifier("addAlarm")
       Menu {
@@ -304,6 +374,9 @@ struct HomeView:View {
    .sheet(isPresented:$progress) {MorningProgressView(model:model,store:model.subscriptions)}
    .sheet(isPresented:$pro) {ProView(store:model.subscriptions,preview:model.preview)}
    .fullScreenCover(item:$model.selected,onDismiss:{Task {await model.refresh()}}) {alarm in ChallengeView(alarm:alarm,model:model)}
+   .onChange(of:model.selected) {_,value in
+    if value != nil,!model.rehearsal {editor=nil;progress=false;pro=false}
+   }
    .overlay {
     if model.selected == nil,let id=model.celebrationID,!reduceMotion {
      ChallengeConfetti().id(id).ignoresSafeArea()
@@ -318,9 +391,10 @@ struct HomeView:View {
     DispatchQueue.main.async {if model.error==shown {model.error=nil}}
    })) {Button(appText("Got it")) {model.error=nil}} message:{Text(model.error ?? "")}
    .task {await model.refresh()}
+   .task {await model.refreshContent()}
    .task {model.subscriptions.start();await model.subscriptions.refresh()}
    .onReceive(NotificationCenter.default.publisher(for:UserDefaults.didChangeNotification).receive(on:RunLoop.main)) {_ in model.openPending()}
-   .onChange(of:phase) {_,value in if value == .active {Task {await model.refresh();await model.subscriptions.refresh()}}}
+   .onChange(of:phase) {_,value in if value == .active {Task {await model.refresh();await model.subscriptions.refresh()};Task {await model.refreshContent()}}}
    .onChange(of:reduceMotion) {_,value in if value {model.celebrationID=nil}}
   }
  }
@@ -332,19 +406,10 @@ struct HomeView:View {
    HStack(spacing:12) {
     VStack(alignment:.leading,spacing:4) {
      HStack(spacing:8) {
-      if alarm.enabled {
-       HStack(alignment:.firstTextBaseline,spacing:6) {
+      HStack(alignment:.firstTextBaseline,spacing:6) {
         Text(time).font(.system(size:clockSize,weight:.medium,design:.rounded)).monospacedDigit().lineLimit(1).minimumScaleFactor(0.7)
          .accessibilityLabel(time+" "+period).accessibilityIdentifier("alarmTime-"+alarm.id.uuidString)
         Text(verbatim:period).font(.caption.weight(.semibold)).accessibilityHidden(true)
-       }
-      } else {
-       Button {editor=AlarmDraft(alarm:alarm)} label: {
-       HStack(alignment:.firstTextBaseline,spacing:6) {
-        Text(time).font(.system(size:clockSize*0.7,weight:.regular,design:.rounded)).monospacedDigit().lineLimit(1).minimumScaleFactor(0.7)
-        Text(verbatim:period).font(.caption.weight(.medium))
-       }.frame(minHeight:44).contentShape(Rectangle())
-      }.buttonStyle(.plain).accessibilityLabel(appText("Edit")+" "+time+" "+period).accessibilityIdentifier("editAlarm-"+alarm.id.uuidString)
       }
       if completed,!alarm.enabled {
        Image(systemName:"checkmark.circle.fill").foregroundStyle(MorningTheme.success).accessibilityLabel(appText("Completed today")).accessibilityIdentifier("alarmCompleted-"+alarm.id.uuidString)
@@ -364,6 +429,9 @@ struct HomeView:View {
      .buttonStyle(.plain).accessibilityLabel(appText("Delete")).accessibilityIdentifier("deleteAlarm-"+alarm.id.uuidString)
     }
    }
+   if !alarm.label.isEmpty {
+    Text(alarm.label).font(.subheadline.weight(.semibold)).accessibilityIdentifier("alarmLabel-"+alarm.id.uuidString)
+   }
    if alarm.enabled {
     Label(alarm.challenge.displayTitle,systemImage:alarm.challenge.kind.icon).font(.subheadline.weight(.semibold)).accessibilityIdentifier("alarmChallenge-"+alarm.id.uuidString)
     HStack(alignment:.top,spacing:12) {
@@ -382,8 +450,6 @@ struct HomeView:View {
    if alarm.enabled {
     Divider().overlay(MorningTheme.onYellow.opacity(0.15))
     HStack {
-     Button {editor=AlarmDraft(alarm:alarm)} label:{Text(appText("Edit")).frame(minWidth:44,minHeight:44).contentShape(Rectangle())}
-      .accessibilityIdentifier("editAlarm-"+alarm.id.uuidString)
      Spacer(minLength:8)
      Button {model.rehearsal=true;model.selected=alarm} label:{Text(appText("Try")).frame(minWidth:44,minHeight:44).contentShape(Rectangle())}
       .accessibilityLabel(appText("Try this challenge"))
@@ -395,5 +461,9 @@ struct HomeView:View {
   }.padding(alarm.enabled ? 18 : 16).foregroundStyle(alarm.enabled ? MorningTheme.onYellow : MorningTheme.muted)
    .background(alarm.enabled ? MorningTheme.hero : MorningTheme.soft,in:RoundedRectangle(cornerRadius:22))
    .overlay {RoundedRectangle(cornerRadius:22).strokeBorder(alarm.enabled ? (completed ? MorningTheme.successOnYellow.opacity(0.35) : MorningTheme.onYellow.opacity(0.12)) : MorningTheme.line,lineWidth:1)}
+   .contentShape(RoundedRectangle(cornerRadius:22))
+   .accessibilityElement(children:.contain).accessibilityIdentifier("alarmCard-"+alarm.id.uuidString)
+   .onTapGesture {editor=AlarmDraft(alarm:alarm)}
+   .accessibilityAction(.default) {editor=AlarmDraft(alarm:alarm)}
  }
 }

@@ -96,9 +96,14 @@ JSON journal behind a persistence interface. Firestore does not sync or ring ala
 3. **Recover on launch.** Compare the local journal with the OS inventory. A failed
    write or schedule must not look like a confirmed alarm.
 4. **Open the morning flow.** A custom alarm action opens HiMorning. The system's
-   own Stop action stays available.
-5. **Choose a way to finish.** Self-confirm, stop, or opt into the AI challenge.
-   Cloud work is never required for ordinary scheduling or an explicit local stop.
+   own Stop button cannot be hidden. Tapping it ends that ring, and up to 15
+   backup rings follow every 2 minutes for up to 30 minutes.
+5. **Choose a way to finish.** Only a finished challenge or "I'm awake" cancels the
+   backups. "I'm awake" unlocks 5 minutes after the first ring. It is logged as
+   self-confirmed and not counted as completed. The in-app "Stop alarm" button is
+   removed, and an unresolved wake reopens the challenge on launch. If not all
+   backups can be set, Home says "Some backup rings could not be set." Cloud work
+   is never required for scheduling or for "I'm awake".
 
 A local file write and an OS alarm registration are separate operations. The journal
 and reconciliation handle that gap; there is no shared transaction between them.
@@ -133,14 +138,11 @@ stateDiagram-v2
   Capturing --> Paused: background / interruption
   Checking --> Paused: background
   Ready --> SelfConfirmed: user confirms
-  Ready --> Dismissed: user stops
-  Capturing --> Dismissed: user stops
-  Checking --> Dismissed: user stops
   Recovery --> SelfConfirmed: user confirms
-  Recovery --> Dismissed: user stops
 ```
 
-`self_confirmed`, `ai_verified` and `dismissed` (plus historical `openai_verified`) are different outcomes. QR is
+`self_confirmed`, `ai_verified` and `dismissed` (plus historical `openai_verified`) are different outcomes.
+`dismissed` is historical: new builds no longer offer an in-app stop. QR is
 planned and must have its own outcome. Stopping an OS alarm does not prove a task
 was completed or that someone stayed awake.
 

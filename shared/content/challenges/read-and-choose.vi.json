@@ -1,0 +1,450 @@
+[
+ {
+  "id": "rc-vi-001",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Hôm nay trời nắng đẹp, bạn hãy mở cửa sổ cho phòng thoáng khí.",
+  "choices": [
+   "Trời đẹp nên mở cửa sổ để phòng thoáng.",
+   "Trời nắng nên kéo rèm để phòng tối hơn.",
+   "Trời đẹp nên đóng cửa để phòng ấm hơn."
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rc-vi-002",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Pha một tách trà nóng rồi uống thật từ từ.",
+  "choices": [
+   "Hãy pha trà lạnh và uống thật nhanh.",
+   "Hãy pha trà nóng và thưởng thức chậm rãi.",
+   "Hãy pha trà nóng và để nguội cả buổi."
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rc-vi-003",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Sáng sớm bầu trời hồng nhạt và rất yên tĩnh.",
+  "choices": [
+   "Lúc chiều muộn, bầu trời đỏ rực và náo nhiệt.",
+   "Lúc giữa trưa, trời xanh ngắt và rất oi ả.",
+   "Lúc trời mới sáng, cảnh vật hồng nhạt và lặng lẽ."
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rc-vi-004",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Bạn nên ăn sáng thong thả trước khi ra khỏi nhà.",
+  "choices": [
+   "Hãy ăn bữa sáng chậm rãi rồi mới đi.",
+   "Hãy mang bữa sáng theo và ăn trên đường.",
+   "Hãy ăn bữa tối sớm rồi mới ra khỏi nhà."
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rc-vi-005",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Con mèo nằm cuộn tròn bên cửa sổ đón nắng.",
+  "choices": [
+   "Chú mèo chạy quanh sân giữa trời mưa.",
+   "Chú mèo co mình cạnh cửa sổ sưởi nắng.",
+   "Chú mèo trốn dưới gầm giường cả sáng."
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rc-vi-006",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Hôm nay bạn có ba việc cần làm và sẽ làm từng việc một.",
+  "choices": [
+   "Bạn có ba việc và làm cả ba cùng lúc.",
+   "Bạn có hai việc và làm xong thật nhanh.",
+   "Bạn có ba việc và làm lần lượt từng việc."
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rc-vi-007",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Đừng vội, cứ hít thở sâu rồi bắt đầu từ việc dễ nhất.",
+  "choices": [
+   "Bình tĩnh hít thở rồi làm việc dễ nhất trước.",
+   "Bình tĩnh hít thở rồi làm việc khó nhất trước.",
+   "Cứ làm thật nhanh rồi mới hít thở sau."
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rc-vi-008",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Gió sớm mát lành thổi nhẹ qua hàng cây ngoài ngõ.",
+  "choices": [
+   "Làn gió chiều oi bức lướt qua hàng cây ngoài đồng.",
+   "Làn gió sớm mát lành lướt qua hàng cây trong ngõ.",
+   "Cơn gió lạnh lùa qua hàng cây ngoài phố."
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rc-vi-009",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Bạn đã dậy đúng giờ, thật đáng khen.",
+  "choices": [
+   "Bạn dậy hơi trễ nhưng vẫn kịp giờ.",
+   "Bạn ngủ thêm chút nữa rồi mới dậy.",
+   "Bạn dậy đúng giờ nên đáng khen."
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rc-vi-010",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Hãy gấp chăn gọn gàng trước khi rời khỏi phòng ngủ.",
+  "choices": [
+   "Nhớ xếp chăn ngăn nắp rồi mới ra ngoài.",
+   "Nhớ quét phòng ngủ rồi mới ra khỏi nhà.",
+   "Nhớ phơi chăn ngoài sân rồi mới đi ngủ."
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rc-vi-011",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Mưa nhẹ rơi suốt sáng nên bạn nhớ mang theo ô.",
+  "choices": [
+   "Trời nắng gắt cả sáng nên nhớ đội nón.",
+   "Trời mưa nhỏ cả sáng nên đừng quên ô.",
+   "Trời lạnh cả sáng nên nhớ mặc áo ấm."
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rc-vi-012",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Quán cơm đầu ngõ mở cửa từ sáng sớm.",
+  "choices": [
+   "Tiệm cơm đầu ngõ chỉ mở vào buổi tối.",
+   "Tiệm cơm cuối ngõ vừa mới đổi chủ.",
+   "Tiệm cơm đầu ngõ bán hàng từ rất sớm."
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rc-vi-013",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Hôm nay bạn nên mang theo một chai nước trong túi.",
+  "choices": [
+   "Hãy bỏ chai nước vào túi khi ra ngoài.",
+   "Hãy bỏ chiếc ô vào túi khi ra ngoài.",
+   "Hãy để chai nước ở nhà khi ra ngoài."
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rc-vi-014",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Đèn giao thông chuyển xanh, mọi người bắt đầu qua đường.",
+  "choices": [
+   "Khi đèn đỏ bật lên, mọi người dừng bên lề.",
+   "Khi đèn xanh bật lên, mọi người bước qua đường.",
+   "Khi đèn vàng nhấp nháy, xe chạy chậm lại."
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rc-vi-015",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Em bé cười thật tươi khi thấy ánh nắng.",
+  "choices": [
+   "Đứa bé ngạc nhiên khi thấy mưa.",
+   "Đứa bé thích thú khi nghe tiếng chim.",
+   "Đứa bé tươi cười khi thấy nắng."
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rc-vi-016",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Bạn nên chuẩn bị đồ đạc từ tối hôm trước.",
+  "choices": [
+   "Hãy soạn sẵn đồ đạc vào tối hôm trước.",
+   "Hãy soạn đồ đạc ngay trước khi ra cửa.",
+   "Hãy soạn sẵn đồ ăn vào tối hôm trước."
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rc-vi-017",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Cà phê thơm khiến cả bếp ngập mùi dễ chịu.",
+  "choices": [
+   "Mùi khói bếp làm căn bếp hơi ngột ngạt.",
+   "Mùi cà phê làm căn bếp thơm dễ chịu.",
+   "Mùi nước hoa làm căn phòng thơm nồng."
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rc-vi-018",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Cánh đồng xanh mướt trải dài sau cơn mưa.",
+  "choices": [
+   "Sau mưa, con đường làng lầy lội khó đi.",
+   "Sau mưa, cánh đồng ngập nước trắng xóa.",
+   "Sau mưa, cánh đồng xanh tươi trải rộng."
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rc-vi-019",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Hãy gọi cho bà để hỏi xem bà ngủ có ngon không.",
+  "choices": [
+   "Bạn gọi hỏi bà đêm qua ngủ có ngon không.",
+   "Bạn gọi hỏi bà trưa nay ăn món gì.",
+   "Bạn nhắn bà nhớ mang áo khi ra ngoài."
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rc-vi-020",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Cô giáo đến lớp sớm để chuẩn bị bài giảng.",
+  "choices": [
+   "Cô giáo có mặt sớm ở lớp để chấm bài.",
+   "Cô giáo có mặt sớm ở lớp để soạn bài.",
+   "Cô giáo đến lớp đúng giờ để thu bài."
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rc-vi-021",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Mùa này hoa nở rất nhiều dọc con đường nhỏ.",
+  "choices": [
+   "Dọc con đường nhỏ có nhiều lá đang rụng.",
+   "Dọc con đường lớn có nhiều xe đang đỗ.",
+   "Dọc con đường nhỏ có nhiều hoa đang nở."
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rc-vi-022",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Hãy tắt chuông báo thức rồi ngồi dậy thật nhẹ nhàng.",
+  "choices": [
+   "Tắt chuông xong thì ngồi dậy từ từ.",
+   "Tắt chuông xong thì nằm thêm một lúc.",
+   "Hẹn chuông thêm lần nữa rồi ngủ tiếp."
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rc-vi-023",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Chiều nay bạn sẽ đi dạo cùng một người bạn thân.",
+  "choices": [
+   "Buổi chiều bạn sẽ ở nhà đọc sách một mình.",
+   "Buổi chiều bạn sẽ đi dạo với bạn thân.",
+   "Buổi sáng bạn sẽ đi dạo với đồng nghiệp."
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rc-vi-024",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Chợ sớm bán rau tươi, trái cây và hoa.",
+  "choices": [
+   "Chợ buổi chiều có cá tươi, thịt và bánh.",
+   "Chợ buổi sáng chỉ bán quần áo và giày dép.",
+   "Chợ buổi sáng có rau tươi, trái cây và hoa."
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rc-vi-025",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Bạn nên đọc vài trang sách trước khi bắt đầu việc chính.",
+  "choices": [
+   "Hãy đọc ít trang sách rồi mới làm việc chính.",
+   "Hãy làm việc chính rồi mới đọc vài trang sách.",
+   "Hãy xem một đoạn phim rồi mới làm việc chính."
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rc-vi-026",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Ngoài sân, lá vàng rơi nhẹ trên nền gạch.",
+  "choices": [
+   "Lá xanh nhẹ nhàng rơi xuống mặt hồ.",
+   "Lá vàng nhẹ nhàng rơi xuống sân gạch.",
+   "Hoa trắng nhẹ nhàng rơi xuống mái nhà."
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rc-vi-027",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Hôm nay bạn muốn nấu một món đơn giản cho cả nhà.",
+  "choices": [
+   "Bạn định mua đồ ăn sẵn về cho mọi người.",
+   "Bạn định nấu món khó để mời khách xa.",
+   "Bạn định nấu món dễ làm cho mọi người."
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rc-vi-028",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Trong công viên, mấy cụ ông ngồi chơi cờ rất vui.",
+  "choices": [
+   "Ở công viên có những cụ ông chơi cờ vui vẻ.",
+   "Ở công viên có những em nhỏ thả diều vui vẻ.",
+   "Ở công viên có những cô bác tập nhảy vui vẻ."
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rc-vi-029",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Chuông xe đạp kêu leng keng ngoài ngõ nhỏ.",
+  "choices": [
+   "Tiếng còi xe máy vang inh ỏi ngoài ngõ.",
+   "Tiếng chuông xe đạp vang leng keng trong ngõ.",
+   "Tiếng rao hàng vang đều đều trong ngõ."
+  ],
+  "answerIndex": 1
+ },
+ {
+  "id": "rc-vi-030",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Hãy nói lời cảm ơn với người đã giúp bạn hôm qua.",
+  "choices": [
+   "Bạn nên nhắn hỏi thăm bạn mình hôm qua.",
+   "Bạn nên tặng quà người từng giúp mình tuần trước.",
+   "Bạn nên cảm ơn người từng giúp mình hôm qua."
+  ],
+  "answerIndex": 2
+ },
+ {
+  "id": "rc-vi-031",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Hôm nay bạn đi bộ đến chỗ làm cho thoải mái.",
+  "choices": [
+   "Bạn chọn đi bộ tới chỗ làm cho dễ chịu.",
+   "Bạn chọn đi xe buýt tới chỗ làm cho kịp giờ.",
+   "Bạn chọn đạp xe tới chỗ làm cho nhanh."
+  ],
+  "answerIndex": 0
+ },
+ {
+  "id": "rc-vi-032",
+  "kind": "readAndChoose",
+  "language": "vi",
+  "source": "himorning",
+  "license": "original",
+  "text": "Nhà bên đang tưới cây, nước rơi lấp lánh dưới nắng.",
+  "choices": [
+   "Hàng xóm quét sân và bụi bay trong nắng.",
+   "Hàng xóm tưới cây và nước lấp lánh trong nắng.",
+   "Hàng xóm cắt cỏ và lá rơi đầy trong vườn."
+  ],
+  "answerIndex": 1
+ }
+]

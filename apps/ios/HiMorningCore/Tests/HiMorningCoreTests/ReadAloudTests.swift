@@ -5,19 +5,6 @@ import XCTest
 #endif
 
 final class ReadAloudTests:XCTestCase {
- func testPromptsHaveEnoughContentForARealReading() {
-  let prompts=EnglishChallengeContent.readAloud
-  XCTAssertGreaterThan(prompts.count,23)
-  XCTAssertEqual(Set(prompts.map(\.id)).count,prompts.count)
-  XCTAssertEqual(Set(prompts.map {RecognizedWordMatch.tokens(in:$0.text).joined(separator:" ")}).count,prompts.count)
-  for prompt in prompts {
-   let count=RecognizedWordMatch.tokens(in:prompt.text).count
-   XCTAssertTrue((18...30).contains(count))
-  }
-  let durations=prompts.map {ReadAloudAttempt(target:$0.text).listeningDuration}
-  XCTAssertGreaterThan(durations.max() ?? 0,durations.min() ?? 0)
- }
-
  func testFinishingRequiresMatchingWordsInsteadOfOnlySpeechLength() {
   var reading=ReadAloudAttempt(target:"The quiet morning brings a chance to begin again today.")
   reading.observe("A peaceful start gives me time for something new today.")
@@ -54,7 +41,7 @@ final class ReadAloudTests:XCTestCase {
 
  func testLongerSentencesAllowAnUnhurriedReading() {
   let short=ReadAloudAttempt(target:"A fresh start.")
-  let longer=ReadAloudAttempt(target:EnglishChallengeContent.readAloud[0].text)
+  let longer=ReadAloudAttempt(target:"Before the world asks for my attention, I will take a quiet breath, drink some water, and choose one kind thing to begin.")
   XCTAssertGreaterThan(short.listeningDuration,20)
   XCTAssertGreaterThan(longer.listeningDuration,short.listeningDuration)
  }

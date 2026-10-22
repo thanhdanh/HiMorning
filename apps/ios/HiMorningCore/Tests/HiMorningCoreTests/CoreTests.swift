@@ -149,11 +149,6 @@ final class CoreTests: XCTestCase {
   for (pose,time) in [(true,1_200),(true,1_500),(false,1_800),(false,2_100)] {_ = partial.observe(.jumpingJack(open:pose),timestampMs:time)}
   XCTAssertEqual(partial.completed,1)
 
-  var head=MovementChallengeProgress(kind:.neckRotation,target:1)
-  for (observation,time) in [ (MovementObservation.headYaw(0),0),(.headYaw(0),300),(.transition,450),(.headYaw(-0.5),600),(.headYaw(-0.5),900),(.headYaw(0),1_200),(.headYaw(0),1_500),(.transition,1_650),(.headYaw(0.5),1_800),(.headYaw(0.5),2_100),(.headYaw(0),2_400),(.headYaw(0),2_700)] {
-   _ = head.observe(observation,timestampMs:time)
-  }
-  XCTAssertTrue(head.ready)
 
   var stretch=MovementChallengeProgress(kind:.stretching,target:1)
   for (pose,time) in [(false,0),(false,300),(true,600),(true,1_000),(true,1_300),(false,1_600),(false,1_900)] {
@@ -176,47 +171,6 @@ final class CoreTests: XCTestCase {
   for (open,time) in [(false,2_000),(false,2_300)] {_ = sustained.observe(.jumpingJack(open:open),timestampMs:time)}
   XCTAssertEqual(sustained.completed,0)
 
-  var neck=MovementChallengeProgress(kind:.neckRotation,target:1)
-  for (obs,time) in [(MovementObservation.headYaw(0),0),(.headYaw(0),300)] {_ = neck.observe(obs,timestampMs:time)}
-  _ = neck.observe(.unavailable,timestampMs:400)
-  for (obs,time) in [(MovementObservation.headYaw(-0.5),600),(.headYaw(-0.5),900),(.headYaw(0),1_200),(.headYaw(0),1_500),(.headYaw(0.5),1_800),(.headYaw(0.5),2_100),(.headYaw(0),2_400),(.headYaw(0),2_700)] {_ = neck.observe(obs,timestampMs:time)}
-  XCTAssertTrue(neck.ready)
- }
- func testWaveHandAccumulatesSparseCameraMotionAndCountsReversals() {
-  var motion=WaveHandMotion(),progress=MovementChallengeProgress(kind:.waveHand,target:1)
-  for (index,x) in [0.50,0.52,0.55,0.59,0.63,0.60,0.56,0.52,0.48,0.52,0.56,0.60].enumerated() {
-   _ = progress.observe(motion.observe(x:x),timestampMs:index*250)
-  }
-  XCTAssertTrue(progress.ready)
-
-  var still=WaveHandMotion(),noWave=MovementChallengeProgress(kind:.waveHand,target:1)
-  for (index,x) in [0.50,0.51,0.49,0.52,0.50,0.51].enumerated() {
-   _ = noWave.observe(still.observe(x:x),timestampMs:index*250)
-  }
-  XCTAssertEqual(noWave.completed,0)
- }
- func testExpMovingAverageAdaptsToFrameRateAndResetsOnNonFinite() {
-  var first=ExpMovingAverage(halfLifeMs:100)
-  XCTAssertEqual(first.smooth(0.5,timestampMs:0),0.5,accuracy:0.0001)
-  var step=ExpMovingAverage(halfLifeMs:100)
-  _ = step.smooth(0,timestampMs:0)
-  XCTAssertEqual(step.smooth(1,timestampMs:100),0.5,accuracy:0.0001)
-  XCTAssertEqual(step.smooth(1,timestampMs:200),0.75,accuracy:0.0001)
-  var coarse=ExpMovingAverage(halfLifeMs:100)
-  _ = coarse.smooth(0,timestampMs:0)
-  let coarseAt100=coarse.smooth(1,timestampMs:100)
-  var fine=ExpMovingAverage(halfLifeMs:100)
-  _ = fine.smooth(0,timestampMs:0)
-  var fineAt100=0.0
-  for t in stride(from:25,through:100,by:25) {fineAt100=fine.smooth(1,timestampMs:t)}
-  XCTAssertEqual(coarseAt100,fineAt100,accuracy:0.0001)
-  var gap=ExpMovingAverage(halfLifeMs:100)
-  _ = gap.smooth(0,timestampMs:0)
-  XCTAssertEqual(gap.smooth(1,timestampMs:10_000),1,accuracy:0.01)
-  var nanReset=ExpMovingAverage(halfLifeMs:100)
-  _ = nanReset.smooth(0.9,timestampMs:0)
-  XCTAssertTrue(nanReset.smooth(Double.nan,timestampMs:100).isNaN)
-  XCTAssertEqual(nanReset.smooth(0.2,timestampMs:200),0.2,accuracy:0.0001)
  }
  func testCaptureStoresFiftyCompleteCyclesWithinEvidenceBounds() {
   var capture=CycleCapture(target:50)
@@ -251,45 +205,81 @@ final class CoreTests: XCTestCase {
   XCTAssertFalse(RecognizedWordMatch.passes(target:"",recognized:""))
  }
 
- func testCuratedEnglishChallengesAreValidAndStable() {
-  XCTAssertFalse(EnglishChallengeContent.readAndChoose.isEmpty)
-  XCTAssertFalse(EnglishChallengeContent.readAloud.isEmpty)
-  for item in EnglishChallengeContent.readAndChoose {
-   XCTAssertFalse(item.sentence.isEmpty)
-   XCTAssertTrue(item.choices.indices.contains(item.correctChoiceIndex))
-  }
-  XCTAssertEqual(Set(EnglishChallengeContent.readAloud.map(\.id)).count,EnglishChallengeContent.readAloud.count)
- }
-
  func testGuidedRhythmSupportsStandingAndSeatedWithoutImageEvidence() {
   var standing=GuidedRhythmSession(variant:.standing,maxSequenceDurationMs:3_000)
-  XCTAssertFalse(standing.observe(.standing,timestampMs:0,visible:true))
-  XCTAssertFalse(standing.observe(.standing,timestampMs:250,visible:true))
-  XCTAssertFalse(standing.observe(.lowered,timestampMs:500,visible:true))
+  for time in [0,200,400,600,800] {
+   XCTAssertFalse(standing.observe(time < 400 ? .standing : time < 800 ? .lowered : .standing,timestampMs:time,visible:true))
+  }
   XCTAssertTrue(standing.observe(.standing,timestampMs:1_000,visible:true))
   XCTAssertEqual(standing.completedCycles,1)
 
   var seated=GuidedRhythmSession(variant:.seated,maxSequenceDurationMs:3_000)
-  XCTAssertFalse(seated.observe(.armsDown,timestampMs:0,visible:true))
-  XCTAssertFalse(seated.observe(.armsDown,timestampMs:250,visible:true))
-  XCTAssertFalse(seated.observe(.armsUp,timestampMs:500,visible:true))
+  for time in [0,200,400,600,800] {
+   XCTAssertFalse(seated.observe(time < 400 ? .armsDown : time < 800 ? .armsUp : .armsDown,timestampMs:time,visible:true))
+  }
   XCTAssertTrue(seated.observe(.armsDown,timestampMs:1_000,visible:true))
   XCTAssertEqual(seated.completedCycles,1)
  }
 
- func testGuidedRhythmResetsOnOcclusionOutOfOrderAndExpiredWindow() {
+ func testGuidedRhythmKeepsProgressThroughBriefOcclusion() {
+  var rhythm=GuidedRhythmSession(variant:.standing,maxSequenceDurationMs:3_000)
+  for (pose,time) in [(GuidedRhythmPose.standing,0),(.standing,200),(.lowered,400),(.lowered,600)] {
+   XCTAssertFalse(rhythm.observe(pose,timestampMs:time,visible:true))
+  }
+  XCTAssertFalse(rhythm.observe(.lowered,timestampMs:700,visible:false))
+  XCTAssertFalse(rhythm.observe(.standing,timestampMs:1_000,visible:true))
+  XCTAssertTrue(rhythm.observe(.standing,timestampMs:1_200,visible:true))
+  XCTAssertEqual(rhythm.completedCycles,1)
+ }
+
+ func testGuidedRhythmResetsAfterSustainedOcclusion() {
+  var rhythm=GuidedRhythmSession(variant:.standing,maxSequenceDurationMs:3_000)
+  for (pose,time) in [(GuidedRhythmPose.standing,0),(.standing,200),(.lowered,400),(.lowered,600)] {
+   XCTAssertFalse(rhythm.observe(pose,timestampMs:time,visible:true))
+  }
+  XCTAssertFalse(rhythm.observe(.lowered,timestampMs:700,visible:false))
+  XCTAssertFalse(rhythm.observe(.standing,timestampMs:1_400,visible:true))
+  XCTAssertFalse(rhythm.observe(.standing,timestampMs:1_600,visible:true))
+  XCTAssertEqual(rhythm.completedCycles,0)
+
+  var longHidden=GuidedRhythmSession(variant:.standing,maxSequenceDurationMs:3_000)
+  for (pose,time) in [(GuidedRhythmPose.standing,0),(.standing,200),(.lowered,400),(.lowered,600)] {
+   XCTAssertFalse(longHidden.observe(pose,timestampMs:time,visible:true))
+  }
+  XCTAssertFalse(longHidden.observe(.lowered,timestampMs:700,visible:false))
+  XCTAssertFalse(longHidden.observe(.lowered,timestampMs:1_301,visible:false))
+  XCTAssertFalse(longHidden.observe(.standing,timestampMs:1_400,visible:true))
+  XCTAssertFalse(longHidden.observe(.standing,timestampMs:1_600,visible:true))
+  XCTAssertEqual(longHidden.completedCycles,0)
+ }
+
+ func testGuidedRhythmSingleFramePoseIsIgnored() {
+  var rhythm=GuidedRhythmSession(variant:.standing,maxSequenceDurationMs:3_000)
+  XCTAssertFalse(rhythm.observe(.standing,timestampMs:0,visible:true))
+  XCTAssertFalse(rhythm.observe(.standing,timestampMs:200,visible:true))
+  XCTAssertFalse(rhythm.observe(.lowered,timestampMs:233,visible:true))
+  XCTAssertFalse(rhythm.observe(.standing,timestampMs:266,visible:true))
+  XCTAssertFalse(rhythm.observe(.standing,timestampMs:466,visible:true))
+  XCTAssertEqual(rhythm.completedCycles,0)
+ }
+
+ func testGuidedRhythmResetsOnOutOfOrderAndExpiredWindow() {
   var rhythm=GuidedRhythmSession(variant:.standing,maxSequenceDurationMs:1_000)
   XCTAssertFalse(rhythm.observe(.standing,timestampMs:100,visible:true))
-  XCTAssertFalse(rhythm.observe(.lowered,timestampMs:200,visible:false))
-  XCTAssertFalse(rhythm.observe(.lowered,timestampMs:300,visible:true))
-  XCTAssertFalse(rhythm.observe(.standing,timestampMs:250,visible:true))
+  XCTAssertFalse(rhythm.observe(.standing,timestampMs:300,visible:true))
+  XCTAssertFalse(rhythm.observe(.lowered,timestampMs:250,visible:true))
   XCTAssertFalse(rhythm.observe(.standing,timestampMs:500,visible:true))
-  XCTAssertFalse(rhythm.observe(.lowered,timestampMs:700,visible:true))
-  XCTAssertFalse(rhythm.observe(.standing,timestampMs:1_501,visible:true))
+  XCTAssertFalse(rhythm.observe(.standing,timestampMs:700,visible:true))
+  XCTAssertFalse(rhythm.observe(.lowered,timestampMs:900,visible:true))
+  XCTAssertFalse(rhythm.observe(.lowered,timestampMs:1_100,visible:true))
+  XCTAssertFalse(rhythm.observe(.standing,timestampMs:1_900,visible:true))
+  XCTAssertFalse(rhythm.observe(.standing,timestampMs:2_100,visible:true))
   XCTAssertEqual(rhythm.completedCycles,0)
-  XCTAssertFalse(rhythm.observe(.standing,timestampMs:2_000,visible:true))
-  XCTAssertFalse(rhythm.observe(.lowered,timestampMs:2_200,visible:true))
-  XCTAssertTrue(rhythm.observe(.standing,timestampMs:2_400,visible:true))
+  XCTAssertFalse(rhythm.observe(.standing,timestampMs:2_300,visible:true))
+  XCTAssertFalse(rhythm.observe(.lowered,timestampMs:2_500,visible:true))
+  XCTAssertFalse(rhythm.observe(.lowered,timestampMs:2_700,visible:true))
+  XCTAssertFalse(rhythm.observe(.standing,timestampMs:2_900,visible:true))
+  XCTAssertTrue(rhythm.observe(.standing,timestampMs:3_100,visible:true))
   XCTAssertEqual(rhythm.completedCycles,1)
   rhythm.interrupt()
   XCTAssertEqual(rhythm.completedCycles,1)

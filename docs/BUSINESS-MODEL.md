@@ -18,7 +18,7 @@ Do not add a points wallet, cash stakes or several paid tiers to the first relea
 | Experience | Approved scope | Why it exists |
 |---|---|---|
 | Full preview | All current features for thirty elapsed days after the first successfully saved alarm; no card or signup | Experience enough real mornings to judge usefulness |
-| Free after preview | Alarm scheduling, Gentle mode, Balanced's three push-ups, system sound for new alarms, Stop and recovery | Useful indefinitely, including for people who never subscribe |
+| Free after preview | Alarm scheduling, Gentle mode, Balanced's three push-ups, system sound for new alarms, backup rings and "I'm awake" | Useful indefinitely, including for people who never subscribe |
 | Pro monthly | Focused mode, extra sounds, thirty-day history and a custom weekly goal | A lower commitment paid option at about $2/month |
 | Pro annual | The same Pro features | Support people who find lasting value at about $20/year |
 
@@ -49,7 +49,7 @@ planned. Only advertise features that work in the submitted build.
 5. **After a missed day:** Keep prior progress and offer an easy return. Do not
    add repetitions, penalties or pressure to buy.
 6. **At thirty days:** Explain that the preview has ended and show the Free options.
-   Offer monthly or annual Pro voluntarily; do not require payment to dismiss an
+   Offer monthly or annual Pro voluntarily; do not require payment to finish an
    alarm or retrieve the privacy controls.
 
 ## Encourage commitment without making it a condition of purchase
@@ -63,8 +63,9 @@ This is a product experiment, not a claim that habits form in 14 days. Keep task
 duration and effort predictable; preview changes before the next alarm.
 
 Record completion honestly: locally checked, AI verified, self-confirmed,
-dismissed or unavailable. Self-confirmation remains a valid exit but must not be
-reported as AI verification. An uncertain AI result should offer recovery, not
+dismissed (historical) or unavailable. "I'm awake" unlocks 5 minutes after the
+first ring and cancels the backup rings. It is logged as self-confirmed, is not
+counted as completed and must not be reported as AI verification. An uncertain AI result should offer recovery, not
 erase progress or accuse the person of cheating.
 
 Start with weekly progress and a small milestone illustration. Do not build a

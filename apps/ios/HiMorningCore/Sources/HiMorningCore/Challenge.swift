@@ -95,50 +95,17 @@ public struct ReadAloudPrompt: Codable, Equatable, Identifiable, Sendable {
  public init(id:String,text:String) {self.id=id;self.text=text}
 }
 
-public enum EnglishChallengeContent {
- public static let readAndChoose:[ReadAndChoosePrompt]=[
-  ReadAndChoosePrompt(id:"morning-window",sentence:"Please open the window and welcome the morning.",choices:["Open the window to greet the morning.","Close the door and go to sleep.","Make dinner before going outside."],correctChoiceIndex:0),
-  ReadAndChoosePrompt(id:"fresh-start",sentence:"Today is a fresh start.",choices:["Yesterday must happen again.","Today is a new beginning.","The day has already ended."],correctChoiceIndex:1),
-  ReadAndChoosePrompt(id:"small-step",sentence:"A small step can begin a great day.",choices:["You must do everything at once.","Small actions never matter.","One little action can start a good day."],correctChoiceIndex:2)
- ]
- public static let readAloud:[ReadAloudPrompt]=[
-  ReadAloudPrompt(id:"ready-for-day",text:"Before the world asks for my attention, I will take a quiet breath and choose one meaningful thing to begin."),
-  ReadAloudPrompt(id:"steady-progress",text:"Progress rarely arrives all at once; it grows when we return with patience, curiosity, and the courage to try again."),
-  ReadAloudPrompt(id:"morning-energy",text:"Beyond the familiar path, a small discovery may be waiting, so today I will leave a little room for wonder."),
-  ReadAloudPrompt(id:"quiet-attention",text:"Before opening another app, I will decide what deserves my attention and give that task a few quiet minutes."),
-  ReadAloudPrompt(id:"corner-bakery",text:"At the corner bakery, warm bread and friendly conversation remind me that ordinary routines can hold small moments of joy."),
-  ReadAloudPrompt(id:"unfamiliar-street",text:"Curiosity turns an unfamiliar street into a possibility, especially when I slow down enough to notice the details around me."),
-  ReadAloudPrompt(id:"room-for-surprises",text:"A clear plan leaves room for surprises; I can prepare carefully while staying open to a better idea along the way."),
-  ReadAloudPrompt(id:"smaller-pieces",text:"When a difficult task feels overwhelming, I will break it into smaller pieces and begin with the part I understand."),
-  ReadAloudPrompt(id:"generous-listening",text:"Listening closely is a quiet kind of generosity, because another person may need understanding before they need advice or an answer."),
-  ReadAloudPrompt(id:"gentle-beginning",text:"After a restless night, I can treat myself with patience and choose a gentle beginning instead of demanding a perfect morning."),
-  ReadAloudPrompt(id:"beyond-the-clouds",text:"Somewhere beyond the clouds, the sun is still rising, and a cloudy sky can offer its own kind of beautiful light."),
-  ReadAloudPrompt(id:"learning-with-patience",text:"Learning a new skill means being willing to make awkward attempts, ask useful questions, and return tomorrow with a little more understanding."),
-  ReadAloudPrompt(id:"short-walk",text:"On a crowded day, a short walk can create enough space to breathe, notice the weather, and return with a clearer mind."),
-  ReadAloudPrompt(id:"bridge-to-action",text:"The strongest bridge between an idea and a result is often a modest action repeated with care, even when progress feels slow."),
-  ReadAloudPrompt(id:"while-the-kettle-warms",text:"While the kettle warms, I can stretch my shoulders, drink some water, and let the day begin without rushing into every notification."),
-  ReadAloudPrompt(id:"different-approach",text:"An unexpected problem may invite a different approach; I can pause, gather the facts, and choose the next step with a steady mind."),
-  ReadAloudPrompt(id:"books-and-conversation",text:"Books can carry us across oceans and centuries, but a good conversation can also reveal a world we have never considered before."),
-  ReadAloudPrompt(id:"honest-step",text:"Instead of measuring this morning against the achievements of others, I will notice what matters to me and take one honest step forward."),
-  ReadAloudPrompt(id:"patient-growth",text:"A seed grows without announcing its progress, reminding me that patient work can create meaningful change long before the results become visible."),
-  ReadAloudPrompt(id:"adjust-the-route",text:"If my plans change, I can adjust the route without abandoning the destination, and I may discover something useful along the way."),
-  ReadAloudPrompt(id:"first-few-minutes",text:"The first few minutes of the day do not need to solve everything; they can simply help me arrive with attention and purpose."),
-  ReadAloudPrompt(id:"breakfast-promise",text:"Making time for breakfast is a small promise to myself that my energy, comfort, and health deserve a place in a busy schedule."),
-  ReadAloudPrompt(id:"quiet-ripple",text:"Across a quiet lake, even a small ripple travels far, just as a thoughtful word can influence a day in ways we cannot see."),
-  ReadAloudPrompt(id:"thoughtful-question",text:"Today I will ask one thoughtful question, try one unfamiliar thing, and leave enough space to appreciate what happens between my plans.")
- ]
-}
-
 public struct ReadAloudAttempt:Sendable {
  private let target:String
+ private let language:String
  private let expectedWords:Int
  public private(set) var transcript=""
  public private(set) var ended=false
  public private(set) var completed=false
 
- public init(target:String) {self.target=target;expectedWords=RecognizedWordMatch.tokens(in:target).count}
+ public init(target:String,language:String="en") {self.target=target;self.language=language;expectedWords=RecognizedWordMatch.tokens(in:target,language:language).count}
  public var listeningDuration:TimeInterval {max(45,Double(expectedWords)*3+15)}
- public var feedback:RecognizedWordMatch.Feedback {RecognizedWordMatch.feedback(target:target,recognized:transcript,finished:ended)}
+ public var feedback:RecognizedWordMatch.Feedback {RecognizedWordMatch.feedback(target:target,recognized:transcript,finished:ended,language:language)}
  public var progress:Double {feedback.score}
  public var hasEnoughSpeech:Bool {progress>=RecognizedWordMatch.passingScore && !feedback.words.contains(where:{$0.status == .pending})}
 
@@ -168,16 +135,16 @@ public enum RecognizedWordMatch {
   public let score:Double
  }
 
- public static func score(target:String,recognized:String) -> Double {
-  feedback(target:target,recognized:recognized,finished:true).score
+ public static func score(target:String,recognized:String,language:String="en") -> Double {
+  feedback(target:target,recognized:recognized,finished:true,language:language).score
  }
 
- public static func passes(target:String,recognized:String) -> Bool {
-  score(target:target,recognized:recognized)>=passingScore
+ public static func passes(target:String,recognized:String,language:String="en") -> Bool {
+  score(target:target,recognized:recognized,language:language)>=passingScore
  }
 
- public static func feedback(target:String,recognized:String,finished:Bool) -> Feedback {
-  let expected=tokens(in:target),actual=tokens(in:recognized)
+ public static func feedback(target:String,recognized:String,finished:Bool,language:String="en") -> Feedback {
+  let expected=tokens(in:target,language:language),actual=tokens(in:recognized,language:language)
   guard !expected.isEmpty else {return Feedback(words:[],extraWords:actual,score:0)}
   var distance=Array(repeating:Array(repeating:0,count:actual.count+1),count:expected.count+1)
   for index in 0...expected.count {distance[index][0]=index}
@@ -208,8 +175,10 @@ public enum RecognizedWordMatch {
   return Feedback(words:words,extraWords:extras.reversed(),score:score)
  }
 
- public static func tokens(in text:String) -> [String] {
-  let folded=text.folding(options:[.caseInsensitive,.diacriticInsensitive],locale:Locale(identifier:"en_US_POSIX"))
+ public static func tokens(in text:String,language:String="en") -> [String] {
+  let folded=language == "vi"
+   ? text.folding(options:.caseInsensitive,locale:Locale(identifier:"vi_VN"))
+   : text.folding(options:[.caseInsensitive,.diacriticInsensitive],locale:Locale(identifier:"en_US_POSIX"))
   var normalized=""
   normalized.reserveCapacity(folded.count)
   for character in folded {
@@ -238,6 +207,11 @@ public struct GuidedRhythmSession: Sendable {
  private var sequenceStartedAtMs:Int?
  private var latestTimestampMs:Int?
  private var lastAcceptedPose:GuidedRhythmPose?
+ private var candidatePose:GuidedRhythmPose?
+ private var candidateSinceMs=0
+ private var lostSinceMs:Int?
+ private let holdMs=150
+ private let lossGraceMs=600
 
  public init(variant:GuidedRhythmVariant,maxSequenceDurationMs:Int=8_000) {
   self.variant=variant
@@ -248,14 +222,27 @@ public struct GuidedRhythmSession: Sendable {
   step=0
   sequenceStartedAtMs=nil
   lastAcceptedPose=nil
+  candidatePose=nil
+  lostSinceMs=nil
  }
 
  @discardableResult public mutating func observe(_ pose:GuidedRhythmPose,timestampMs:Int,visible:Bool) -> Bool {
   guard timestampMs>=0 else {interrupt();return false}
   guard latestTimestampMs.map({timestampMs>$0}) ?? true else {interrupt();return false}
   latestTimestampMs=timestampMs
-  guard visible else {interrupt();return false}
+  guard visible else {
+   let since=lostSinceMs ?? timestampMs
+   if timestampMs-since>lossGraceMs {interrupt()} else {lostSinceMs=since;candidatePose=nil}
+   return false
+  }
+  if let since=lostSinceMs {
+   lostSinceMs=nil
+   if timestampMs-since>lossGraceMs {interrupt()}
+  }
   if let started=sequenceStartedAtMs,timestampMs-started>maxSequenceDurationMs {interrupt();return false}
+
+  if pose != candidatePose {candidatePose=pose;candidateSinceMs=timestampMs}
+  guard timestampMs-candidateSinceMs>=holdMs else {return false}
 
   let sequence:[GuidedRhythmPose]=variant == .standing ? [.standing,.lowered,.standing] : [.armsDown,.armsUp,.armsDown]
   if pose == lastAcceptedPose {return false}

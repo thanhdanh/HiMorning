@@ -7,6 +7,8 @@ import { workerConfig, MODEL, type Env } from './config.js';
 import { DurableStore, cleanup } from './store.js';
 import { GeminiVerifier, boundedJSON } from './gemini.js';
 import { prepareDemoEvidence } from './evidence.js';
+import { contentResponse } from './content.js';
+import challengeContent from '../content/challenge-content.json';
 export class VerificationHub extends DurableObject<Env> {
  private readonly service:VerificationService;
  constructor(ctx:DurableObjectState,env:Env) {
@@ -29,6 +31,7 @@ export default {
  async fetch(request:Request,env:Env):Promise<Response> {
   const started=Date.now(),path=new URL(request.url).pathname;
   try {
+   if(path==='/content/v1/challenge-content.json')return contentResponse(request,challengeContent);
    if(path==='/health'&&request.method==='GET')return Response.json({status:'ok',mode:'synthetic-demo',model:MODEL,enabled:env.AI_VERIFICATION_ENABLED==='true'},{headers:{'Cache-Control':'no-store'}});
    const method=path.slice(1) as Method;
    if(!Object.hasOwn(methods,method))throw new Failure('not-found','Endpoint not found');

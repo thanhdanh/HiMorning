@@ -14,7 +14,7 @@ final class CameraCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDelegate,
  private let queue=DispatchQueue(label:"com.himorning.camera",qos:.userInitiated)
  private var counter:PushUpCounter
  private var started:TimeInterval=0
- private var lastSample:TimeInterval=0
+ private let request=VNDetectHumanBodyPoseRequest()
  private var side:Int?
  private var active=false
  private let lifecycleLock=NSLock()
@@ -25,7 +25,7 @@ final class CameraCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDelegate,
  func start(requestAccess:@Sendable () async ->Bool = {await AVCaptureDevice.requestAccess(for:.video)}) async {
   guard !isCancelled else {return}
   guard await requestAccess() else {
-   publish(ended:true,message:appText("Camera access is off. You can still stop."));return
+   publish(ended:true,message:appText("Camera access is off. You can tap I’m awake when it unlocks."));return
   }
   guard !isCancelled else {return}
   queue.async { [self] in
@@ -45,13 +45,13 @@ final class CameraCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDelegate,
      observers.append(NotificationCenter.default.addObserver(forName:name,object:session,queue:nil) { [weak self] _ in
       self?.queue.async { [weak self] in
        guard let self,self.active else {return}
-       self.stopCamera();self.publish(ended:true,message:appText("The challenge is paused. You can choose another way."))
+       self.stopCamera();self.publish(ended:true,message:appText("The challenge is paused. Start it again, or tap I’m awake when it unlocks."))
       }
      })
     }
-    started=ProcessInfo.processInfo.systemUptime;lastSample=0;active=true;session.startRunning()
+    started=ProcessInfo.processInfo.systemUptime;active=true;session.startRunning()
     publish(ended:false,message:appText("Move slowly up and down, within the camera view."))
-   } catch {stopCamera();publish(ended:true,message:appText("The camera could not open. Please choose another way."))}
+   } catch {stopCamera();publish(ended:true,message:appText("The camera could not open. You can tap I’m awake when it unlocks."))}
   }
  }
  private var isCancelled:Bool {lifecycleLock.lock();defer {lifecycleLock.unlock()};return cancelled}
@@ -62,19 +62,17 @@ final class CameraCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDelegate,
  }
  func captureOutput(_ output:AVCaptureOutput,didOutput sampleBuffer:CMSampleBuffer,from connection:AVCaptureConnection) {
   let now=ProcessInfo.processInfo.systemUptime
-  guard active,!isCancelled,!counter.ready,now-lastSample>=0.12,let buffer=CMSampleBufferGetImageBuffer(sampleBuffer) else {return}
-  lastSample=now
+  guard active,!isCancelled,!counter.ready,let buffer=CMSampleBufferGetImageBuffer(sampleBuffer) else {return}
   let timestamp=Int((now-started)*1000)
   guard timestamp<=EvidenceBuffer.maximumDurationMs else {
-   stopCamera();publish(ended:true,message:appText("Movement capture timed out. Try again or choose another challenge."));return
+   stopCamera();publish(ended:true,message:appText("Movement capture timed out. Try again, or tap I’m awake when it unlocks."));return
   }
   do {
-   let request=VNDetectHumanBodyPoseRequest()
    try VNImageRequestHandler(cvPixelBuffer:buffer,orientation:.leftMirrored).perform([request])
-   guard let body=request.results?.first else {counter.interrupt();publish(ended:false,message:appText("Place your phone so your whole body is visible."));return}
+   guard let body=request.results?.first else {counter.observe(elbowAngle:0,bodyAngle:0,incline:0,visible:false,timestampMs:timestamp);publish(ended:false,message:appText("Place your phone so your whole body is visible."));return}
    let points=try body.recognizedPoints(.all)
    let sides:[[VNHumanBodyPoseObservation.JointName]] = [[.leftShoulder,.leftElbow,.leftWrist,.leftHip,.leftAnkle],[.rightShoulder,.rightElbow,.rightWrist,.rightHip,.rightAnkle]]
-   guard let selected=sides.firstIndex(where:{names in names.allSatisfy {name in PoseGeometry.isVisible(points[name], minConfidence: 0.6)}}) else {counter.interrupt();publish(ended:false,message:appText("The view is unclear. Try moving your phone."));return}
+   guard let selected=sides.firstIndex(where:{names in names.allSatisfy {name in PoseGeometry.isVisible(points[name], minConfidence: 0.6)}}) else {counter.observe(elbowAngle:0,bodyAngle:0,incline:0,visible:false,timestampMs:timestamp);publish(ended:false,message:appText("The view is unclear. Try moving your phone."));return}
    if let side,side != selected {counter.interrupt()};side=selected
    let joints=sides[selected].map {points[$0]!.location}
    let size=CGSize(width:CVPixelBufferGetHeight(buffer),height:CVPixelBufferGetWidth(buffer))

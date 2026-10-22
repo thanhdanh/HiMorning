@@ -67,7 +67,7 @@ tests; unsigned compile-only builds can still use that override.
 
 Native scope: create and edit alarms, weekday repeats, three modes, on/off/delete, sound
 preview, language selection, rehearsal, consented camera, one cloud submission,
-self-confirm, stop, a no-card preview and monthly/annual Pro. QR and native
+"I'm awake", backup rings, a no-card preview and monthly/annual Pro. QR and native
 snooze/countdown are planned. See [subscriptions](SUBSCRIPTIONS.md) for current access.
 
 ## Local Qwen integration
@@ -115,7 +115,7 @@ free Worker deployment is documented separately above.
 From an empty Home, choose **Try a challenge**. The sample uses Balanced mode and
 06:30 for display; it does not create or stop an OS alarm. Consent is still required
 before cloud/camera work. With no Firebase configuration, the unavailable state
-keeps self-confirm and end-trial actions available. See the [screen gallery](UI-DESIGN.md#native-screens).
+keeps "I'm awake" and end-trial actions available. See the [screen gallery](UI-DESIGN.md#native-screens).
 
 ## Preview the earlier design study
 

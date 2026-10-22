@@ -320,7 +320,11 @@ private actor EditingScheduler:AlarmScheduler {
  private var ids:Set<UUID>=[]
  private var failures=0
  private var cancellationFails=false
- func expectSchedule(_ alarm:SavedAlarm) {expected.append(alarm)}
+ func expectSchedule(_ alarm:SavedAlarm) {
+  var expectedAlarm=alarm
+  if expectedAlarm.time.weekdays.isEmpty {expectedAlarm.scheduledOccurrence=expectedAlarm.time.next(after:Date(),calendar:.current)}
+  expected.append(expectedAlarm)
+ }
  func failNext(count:Int=1) {failures=count}
  func failCancellation() {cancellationFails=true}
  func schedule(_ alarm:SavedAlarm) async throws {

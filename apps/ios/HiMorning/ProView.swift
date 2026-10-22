@@ -16,7 +16,7 @@ struct ProView:View {
      Text(appText("Try all features free for 30 days. No card needed. Subscribe only when you choose."))
       .font(.footnote).foregroundStyle(MorningTheme.muted)
      if preview.access == .preview,preview.hasStarted {Text(appText("%lld free days left. No automatic charge.",count:preview.remainingDays)).font(.footnote)}
-     Text(appText("Basic alarms and Stop stay free. History stays on this device.")).font(.footnote).foregroundStyle(MorningTheme.muted)
+     Text(appText("Basic alarms and I’m awake stay free. History stays on this device.")).font(.footnote).foregroundStyle(MorningTheme.muted)
      if store.isPro {Text(appText("Pro is active")).foregroundStyle(MorningTheme.success)}
      if let message=store.message {Text(message).font(.footnote).accessibilityIdentifier("purchaseMessage")}
     }.padding(.horizontal,24)

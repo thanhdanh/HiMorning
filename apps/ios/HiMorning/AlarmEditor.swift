@@ -8,14 +8,15 @@ struct AlarmEditor:View {
  @Environment(\.accessibilityReduceMotion) private var reduceMotion
  private enum ChoiceSection:Equatable {case challenge,sound}
  @State private var expanded:ChoiceSection? = .challenge
- @State private var time=Calendar.current.date(from:DateComponents(hour:6,minute:30)) ?? Date()
+ @State private var time=Date()
  @State private var mode:WakeMode = .gentle
  @State private var sound:AlarmSound = .system
  @State private var challenge:ChallengeSelection = .none
  @State private var pushUpTarget=10
  @State private var rhythmVariant:GuidedRhythmVariant = .standing
  @State private var choseChallenge=false
- @State private var days:Set<Int>=[2,3,4,5,6]
+ @State private var days:Set<Int>=[]
+ @State private var label=""
  @State private var volume:Double=0.3
  @State private var soundPreview=SoundPreview()
  @State private var pro=false
@@ -33,6 +34,7 @@ struct AlarmEditor:View {
    _time=State(initialValue:Calendar.current.date(from:DateComponents(hour:alarm.time.hour,minute:alarm.time.minute)) ?? Date())
    _mode=State(initialValue:alarm.mode);_sound=State(initialValue:alarm.sound)
    _challenge=State(initialValue:alarm.challenge);_days=State(initialValue:alarm.time.weekdays)
+   _label=State(initialValue:alarm.label)
    _pushUpTarget=State(initialValue:alarm.challenge.repetitions ?? 5)
    _rhythmVariant=State(initialValue:alarm.challenge.rhythmVariant ?? .standing)
    _choseChallenge=State(initialValue:true)
@@ -51,6 +53,11 @@ struct AlarmEditor:View {
      DatePicker(appText("Wake-up time"),selection:$time,displayedComponents:.hourAndMinute)
       .datePickerStyle(.wheel).labelsHidden().frame(height:150).clipped()
       .frame(maxWidth:.infinity).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:20))
+      .accessibilityIdentifier("alarmTimePicker").accessibilityValue(DateFormatter.localizedString(from:time,dateStyle:.none,timeStyle:.short))
+     VStack(alignment:.leading,spacing:10) {
+      Text(appText("Label")).font(.subheadline.weight(.semibold)).foregroundStyle(MorningTheme.muted)
+      TextField(appText("Optional label"),text:$label).textFieldStyle(.roundedBorder).accessibilityIdentifier("alarmLabel")
+     }
      VStack(alignment:.leading,spacing:10) {
       Text(appText("Repeat")).font(.subheadline.weight(.semibold)).foregroundStyle(MorningTheme.muted)
       LazyVGrid(columns:[GridItem(.adaptive(minimum:44),spacing:4)],spacing:8) {
@@ -59,7 +66,7 @@ struct AlarmEditor:View {
          Text(dayNames[day-1]).font(.subheadline.weight(.semibold)).frame(maxWidth:.infinity,minHeight:44)
           .foregroundStyle(days.contains(day) ? MorningTheme.onYellow : MorningTheme.muted)
           .background(days.contains(day) ? MorningTheme.yellow : MorningTheme.soft,in:Circle())
-        }.buttonStyle(.plain).accessibilityAddTraits(days.contains(day) ? .isSelected : [])
+        }.buttonStyle(.plain).accessibilityIdentifier("alarmRepeatDay-\(day)").accessibilityAddTraits(days.contains(day) ? .isSelected : [])
        }
       }
       Text(days.isEmpty ? appText("Rings once") : appText("Uses your phone’s local time")).font(.caption).foregroundStyle(MorningTheme.muted)
@@ -130,7 +137,7 @@ struct AlarmEditor:View {
        do {
         let c=Calendar.current.dateComponents([.hour,.minute],from:time)
         let value=try AlarmTime(hour:c.hour ?? 6,minute:c.minute ?? 30,weekdays:days)
-        try await save(SavedAlarm(id:alarmID,time:value,mode:mode,sound:sound,challenge:challenge))
+        try await save(SavedAlarm(id:alarmID,time:value,mode:mode,sound:sound,challenge:challenge,label:label))
         dismiss()
        } catch NativeAlarmError.denied {
         saveError=appText("Alarm access is off. Allow alarms for HiMorning in Settings, then try again.")

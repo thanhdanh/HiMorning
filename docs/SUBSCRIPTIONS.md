@@ -15,7 +15,7 @@ pending.
 | Before the first alarm | Set up and explore the app; the preview clock has not started |
 | Full preview | Thirty elapsed days from the first successfully saved alarm; no card, purchase approval or automatic charge |
 | Preview and Pro | All current features: Gentle, Balanced and Focused modes, extra sounds, thirty days of local history and a custom weekly goal |
-| Free after preview | Alarm scheduling, Gentle mode, Balanced's three push-ups, system sound for new alarms, self-confirmation and Stop |
+| Free after preview | Alarm scheduling, Gentle mode, Balanced's three push-ups, system sound for new alarms, backup rings and "I'm awake" |
 | Monthly Pro | `com.himorning.pro.monthly`; target US price **$2/month** |
 | Annual Pro | `com.himorning.pro.annual`; target US price **$20/year**, in the same subscription group |
 | Sharing | Optional system share sheet; no referral reward or attribution yet |
@@ -38,7 +38,7 @@ verification and durable purchase ownership before backend policy can change.
    refresh starts a preview only when a confirmed saved alarm exists; an alarm
    still needing review does not qualify.
 2. Try the app across real mornings. Progress scores each recorded challenge
-   completion at 100 and self-confirmation or Stop at zero. Rehearsals are excluded.
+   completion at 100 and self-confirmation at zero. Rehearsals are excluded.
    Daily scores average that day's recorded attempts; the monthly score is the
    percentage of recorded attempts completed in the current local calendar month.
    Missing records are unscored. Ratings are Excellent (90–100), Consistent (75–89),
@@ -62,7 +62,7 @@ flowchart LR
   B --> C[Free basic alarms and challenge]
   D[Optional monthly or annual purchase] --> E[Verified StoreKit entitlement]
   E --> F[Pro full access]
-  G[Stop and recovery] --> H[Always available]
+  G[Backup rings and I'm awake] --> H[Never paywalled]
 ```
 
 The access decision combines preview dates with verified StoreKit entitlement.
@@ -87,7 +87,7 @@ access. Unrelated, unverified or superseded transactions do not grant it. See
   `Application Support/HiMorning/mornings.json`. New entries retain 31 local
   calendar days so the monthly rating includes day one of a 31-day month. This
   feature does not upload contacts, recordings or progress events.
-- **Alarm reliability:** Access refresh does not cancel alarms or block Stop.
+- **Alarm reliability:** Access refresh does not cancel alarms, backup rings or "I'm awake".
   Expiry changes the available challenge without rewriting saved preferences.
 - **Honest scope:** Full access covers implemented local features, not future
   dance, speech, referral rewards or unvalidated AI verification.
