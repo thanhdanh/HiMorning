@@ -1,478 +1,290 @@
 [
- {
-  "id": "rd-vi-001",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tôi có hai kim nhưng chẳng biết khâu, có mặt tròn mà chẳng biết cười, đến giờ hẹn là reo gọi bạn dậy. Tôi là gì?",
-  "choices": [
-   "Đồng hồ báo thức",
-   "Cái la bàn",
-   "Cái cân"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rd-vi-002",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Mỗi sáng tôi trèo lên từ phía đông, rải nắng vàng khắp mái nhà, chiều xuống thì lặn sau núi. Tôi là gì?",
-  "choices": [
-   "Mặt trăng",
-   "Mặt trời",
-   "Ngọn đèn"
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rd-vi-003",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tôi nằm trong ấm, bốc khói mỏng, lá của tôi nở ra khi gặp nước sôi. Tôi là gì?",
-  "choices": [
-   "Cà phê",
-   "Sữa đậu",
-   "Trà"
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rd-vi-004",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tôi có lông nhưng không phải thú, mỗi sáng chạy khắp hàm răng của bạn. Tôi là gì?",
-  "choices": [
-   "Bàn chải đánh răng",
-   "Cái lược",
-   "Cây chổi"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rd-vi-005",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Bạn cười tôi cười, bạn nhăn tôi nhăn, nhưng tôi chẳng nói lấy một lời. Tôi là gì?",
-  "choices": [
-   "Bức tranh",
-   "Cái gương",
-   "Cái cửa sổ"
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rd-vi-006",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tôi càng dùng càng nhỏ đi, nhưng lúc nào cũng tạo ra bọt trắng thơm. Tôi là gì?",
-  "choices": [
-   "Cục đá",
-   "Cây nến",
-   "Cục xà phòng"
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rd-vi-007",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Trời mưa tôi xòe ra như đóa hoa, hết mưa tôi khép lại nằm yên một góc. Tôi là gì?",
-  "choices": [
-   "Cái ô",
-   "Cái quạt",
-   "Cái nón"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rd-vi-008",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tôi mềm và êm, đêm nào đầu bạn cũng tựa vào tôi, sáng ra bạn rời đi để tôi nằm lại. Tôi là gì?",
-  "choices": [
-   "Cái bàn",
-   "Cái gối",
-   "Cái mũ"
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rd-vi-009",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tôi có nắp tròn, bên trong chứa gạo, khi tôi kêu một tiếng tách là cơm đã chín. Tôi là gì?",
-  "choices": [
-   "Nồi chiên không dầu",
-   "Lò vi sóng",
-   "Nồi cơm điện"
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rd-vi-010",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Vỏ tôi giòn, ruột tôi xốp, người ta xẻ tôi ra rồi kẹp nhân thơm vào trong. Tôi là gì?",
-  "choices": [
-   "Bánh mì",
-   "Bánh bao",
-   "Bánh quy"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rd-vi-011",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tôi khoác áo vàng bên ngoài, ruột trắng mềm bên trong, bóc áo ra mới ăn được. Tôi là gì?",
-  "choices": [
-   "Củ khoai",
-   "Quả chuối",
-   "Quả ổi"
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rd-vi-012",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Cả ngày tôi quay mặt theo mặt trời, cánh vàng rực rỡ, hạt đen nằm ngay giữa. Tôi là gì?",
-  "choices": [
-   "Hoa sen",
-   "Hoa mai",
-   "Hoa hướng dương"
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rd-vi-013",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Chưa cần đồng hồ, tôi đã cất tiếng gáy đánh thức cả xóm. Tôi là gì?",
-  "choices": [
-   "Gà trống",
-   "Con vịt",
-   "Con mèo"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rd-vi-014",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tôi bé xíu, bay từ bông này sang bông khác, mang mật ngọt về tổ. Tôi là gì?",
-  "choices": [
-   "Con kiến",
-   "Con ong",
-   "Con muỗi"
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rd-vi-015",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tôi đọng trên lá lúc tinh mơ, long lanh như hạt ngọc, nắng lên là biến mất. Tôi là gì?",
-  "choices": [
-   "Hạt cát",
-   "Viên sỏi",
-   "Giọt sương"
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rd-vi-016",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Sau cơn mưa tôi cong như chiếc cầu, bảy màu sáng rực nhưng chẳng ai đi qua được. Tôi là gì?",
-  "choices": [
-   "Cầu vồng",
-   "Cây cầu",
-   "Cái cổng"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rd-vi-017",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tôi từ trên mây rơi xuống, gõ nhịp lộp độp trên mái nhà, cây cối thấy tôi thì vui. Tôi là gì?",
-  "choices": [
-   "Cơn gió",
-   "Cơn mưa",
-   "Tia nắng"
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rd-vi-018",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Chẳng ai thấy hình dáng tôi, nhưng lá lay, cờ bay là biết tôi vừa ghé qua. Tôi là gì?",
-  "choices": [
-   "Dòng sông",
-   "Tiếng chuông",
-   "Cơn gió"
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rd-vi-019",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tôi có cán, có lòng trũng, mỗi bữa đưa cháo đưa canh vào miệng bạn. Tôi là gì?",
-  "choices": [
-   "Cái muỗng",
-   "Cái dao",
-   "Đôi đũa"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rd-vi-020",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hai anh em luôn đi cùng nhau, cùng gắp cơm gắp thức ăn, thiếu một người là chẳng làm được gì. Chúng tôi là gì?",
-  "choices": [
-   "Đôi giày",
-   "Đôi đũa",
-   "Cái kéo"
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rd-vi-021",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tôi nhỏ bé nhưng nắm trong mình quyền mở cánh cửa nhà bạn. Tôi là gì?",
-  "choices": [
-   "Đồng xu",
-   "Cái kẹp giấy",
-   "Chìa khóa"
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rd-vi-022",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Ruột tôi đen, càng viết càng ngắn, gọt nhiều thì chỉ còn lại cái đầu. Tôi là gì?",
-  "choices": [
-   "Cây bút chì",
-   "Cây thước",
-   "Cái hộp bút"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rd-vi-023",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tôi chẳng có miệng mà vẫn kể chuyện hay, bạn lật từng trang là gặp những người bạn mới. Tôi là gì?",
-  "choices": [
-   "Cái chén",
-   "Quyển sách",
-   "Hòn đá"
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rd-vi-024",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tôi có nhiều bậc mà chẳng phải ngôi nhà, bạn bước từng bước để lên chỗ cao. Tôi là gì?",
-  "choices": [
-   "Cái ghế",
-   "Cái mâm",
-   "Cái thang"
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rd-vi-025",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tôi có hai tròng nhưng chẳng phải con mắt, đặt trên mũi để bạn nhìn rõ hơn. Tôi là gì?",
-  "choices": [
-   "Mắt kính",
-   "Cái mũ",
-   "Cái nơ"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rd-vi-026",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Đêm nào tôi cũng đổi hình, lúc tròn như đĩa, lúc cong như lưỡi liềm. Tôi là gì?",
-  "choices": [
-   "Mặt trời",
-   "Mặt trăng",
-   "Ngọn đèn đường"
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rd-vi-027",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tôi có ba cánh mà chẳng biết bay, quay tít cả ngày để mang gió đến cho bạn. Tôi là gì?",
-  "choices": [
-   "Con chim",
-   "Chiếc diều",
-   "Quạt máy"
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rd-vi-028",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tôi bước đi nhẹ như không, thích nằm sưởi nắng bên cửa sổ, đôi mắt tinh nhanh để rình bắt chuột. Tôi là gì?",
-  "choices": [
-   "Con mèo",
-   "Con chó",
-   "Con thỏ"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rd-vi-029",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tôi nhiều răng mà chẳng cắn ai, bạn đưa tôi qua mái tóc mỗi sáng. Tôi là gì?",
-  "choices": [
-   "Cái cưa",
-   "Cái lược",
-   "Cái kẹp tóc"
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rd-vi-030",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tôi cõng nhà đi khắp vườn, chậm rãi để lại sau lưng một vệt bóng loáng. Tôi là gì?",
-  "choices": [
-   "Con chim",
-   "Con ếch",
-   "Ốc sên"
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rd-vi-031",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tôi nằm trên bếp, đến lúc nóng thì huýt sáo, hơi nước phun ra từ chiếc mũi nhỏ. Tôi là gì?",
-  "choices": [
-   "Ấm nước",
-   "Nồi canh",
-   "Cái chảo"
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rd-vi-032",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Tôi treo trên trần nhà, bạn bật công tắc là tôi sáng, đêm nào cũng giữ ánh sáng cho cả phòng. Tôi là gì?",
-  "choices": [
-   "Quạt trần",
-   "Bóng đèn",
-   "Cái đèn ngủ"
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rd-vi-033",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Nhỏ xíu mà làm việc chăm chỉ, xếp thành hàng dài mang thức ăn về tổ. Chúng tôi là gì?",
-  "choices": [
-   "Đàn ong",
-   "Đàn gián",
-   "Đàn kiến"
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rd-vi-034",
-  "kind": "riddle",
-  "language": "vi",
-  "source": "himorning",
-  "license": "original",
-  "text": "Hình tôi như chóp núi nhỏ, che nắng che mưa, bạn đội tôi trên đầu mỗi khi ra đồng. Tôi là gì?",
-  "choices": [
-   "Cái nón lá",
-   "Mũ lưỡi trai",
-   "Cái mũ len"
-  ],
-  "answerIndex": 0
- }
+  {
+    "id": "logic-v2-vi-001",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "workAndStudy",
+    "text": "Mai, Linh và Bảo mỗi người mang một món khác nhau: cốc, trái cây hoặc bánh mì. Mai không mang đồ ăn; Linh không mang bánh mì. Bảo mang gì?",
+    "choices": [
+      "Bánh mì",
+      "Cốc",
+      "Trái cây"
+    ],
+    "answerIndex": 0,
+    "explanation": "Mai mang cốc. Linh phải mang trái cây, nên bánh mì là của Bảo.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-vi-002",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "workAndStudy",
+    "text": "Lúc 9 giờ, một tệp bắt đầu tải trong 5 phút, đồng thời máy in bắt đầu việc mất 8 phút. Cả hai chạy liên tục. Khi nào cả hai xong?",
+    "choices": [
+      "9 giờ 05",
+      "9 giờ 08",
+      "9 giờ 13"
+    ],
+    "answerIndex": 1,
+    "explanation": "Hai việc chạy cùng lúc. Tệp tải xong lúc 9 giờ 05; máy in chậm hơn, xong lúc 9 giờ 08.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-vi-003",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "workAndStudy",
+    "text": "Mọi bản nháp gắn nhãn đỏ đều cần xem lại. Một bản nháp cần xem lại, nhưng nhãn bị che. Nhãn đó có chắc là màu đỏ không?",
+    "choices": [
+      "Chắc chắn màu đỏ",
+      "Chắc chắn không đỏ",
+      "Quy tắc chưa đủ để biết"
+    ],
+    "answerIndex": 2,
+    "explanation": "Quy tắc nói bản gắn nhãn đỏ cần xem lại, chứ không nói chỉ bản nhãn đỏ mới cần xem lại.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-vi-004",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "everydayLife",
+    "text": "Bạn cắt một dải ruy băng thẳng thành 4 đoạn rời, mỗi lần chỉ cắt một chỗ, không gấp hay chồng lên nhau. Cần mấy lần cắt?",
+    "choices": [
+      "3",
+      "4",
+      "5"
+    ],
+    "answerIndex": 0,
+    "explanation": "Từ một đoạn, mỗi lần cắt thêm được một đoạn. Vì vậy 3 lần cắt tạo ra 4 đoạn.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-vi-005",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "everydayLife",
+    "text": "Hai hũ kín chứa trà hoặc cà phê, mỗi loại một hũ. Hai nhãn ghi trà và cà phê đều dán sai. Hũ ghi cà phê chứa gì?",
+    "choices": [
+      "Cà phê",
+      "Trà",
+      "Không đủ thông tin"
+    ],
+    "answerIndex": 1,
+    "explanation": "Cả hai nhãn đều sai và mỗi hũ chỉ có một loại. Hũ ghi cà phê vì thế phải chứa trà.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-vi-006",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "everydayLife",
+    "text": "Túi nhỏ đựng tối đa 6 ký. Máy ảnh nặng 2 ký, sách 3 ký, loa 4 ký. Cặp nào vừa túi mà tận dụng hết mức cân?",
+    "choices": [
+      "Sách và loa",
+      "Máy ảnh và sách",
+      "Máy ảnh và loa"
+    ],
+    "answerIndex": 2,
+    "explanation": "Máy ảnh và loa đúng 6 ký. Sách với loa nặng 7 ký; máy ảnh với sách mới dùng 5 ký.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-vi-007",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "peopleAndPlans",
+    "text": "Ba người bạn chỉ rảnh những ngày sau: An thứ Sáu hoặc thứ Bảy, Bảo thứ Bảy hoặc Chủ nhật, Chi thứ Sáu hoặc thứ Bảy. Ngày nào cả ba đều rảnh?",
+    "choices": [
+      "Thứ Bảy",
+      "Thứ Sáu",
+      "Chủ nhật"
+    ],
+    "answerIndex": 0,
+    "explanation": "Thứ Bảy có trong cả ba danh sách. Bảo không rảnh thứ Sáu; An và Chi không rảnh Chủ nhật.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-vi-008",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "peopleAndPlans",
+    "text": "Chìa khóa nằm trong đúng một hộp: xanh dương, xanh lá hoặc vàng. Trong hai câu “Ở hộp xanh dương” và “Không ở hộp vàng”, đúng một câu đúng. Khóa ở đâu?",
+    "choices": [
+      "Hộp xanh dương",
+      "Hộp xanh lá",
+      "Hộp vàng"
+    ],
+    "answerIndex": 1,
+    "explanation": "Hộp xanh dương khiến cả hai câu đúng; hộp vàng khiến cả hai sai. Hộp xanh lá chỉ khiến câu “không ở hộp vàng” đúng.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-vi-009",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "peopleAndPlans",
+    "text": "Bốn người bạn mỗi người gửi một lời chào riêng cho từng người còn lại. An gửi Bảo khác với Bảo gửi An. Có tất cả bao nhiêu lời chào?",
+    "choices": [
+      "6",
+      "8",
+      "12"
+    ],
+    "answerIndex": 2,
+    "explanation": "Mỗi người gửi 3 lời chào. Có 4 người nên tổng là 12; mỗi chiều gửi được tính riêng.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-vi-010",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "creativeBreaks",
+    "text": "Làm một cuốn tạp chí nhỏ có ba bước: in, gấp, bấm ghim. Phải in trước khi gấp, gấp trước khi bấm ghim. Bước ngay trước bấm ghim là gì?",
+    "choices": [
+      "Gấp",
+      "In",
+      "In hoặc gấp đều được"
+    ],
+    "answerIndex": 0,
+    "explanation": "Thứ tự bắt buộc là in, gấp, bấm ghim. Gấp là bước ngay trước bấm ghim.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-vi-011",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "creativeBreaks",
+    "text": "Một nhịp lặp lại theo thứ tự: vỗ tay, gõ, gõ, nghỉ, bắt đầu từ nhịp 1. Đến nhịp 7 là gì?",
+    "choices": [
+      "Vỗ tay",
+      "Gõ",
+      "Nghỉ"
+    ],
+    "answerIndex": 1,
+    "explanation": "Nhịp 5 đến 8 lặp lại vỗ tay, gõ, gõ, nghỉ. Nhịp 7 là lần gõ thứ hai trong nhóm này.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-vi-012",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "creativeBreaks",
+    "text": "Ảnh rộng 12 đơn vị, cao 8 đơn vị. Bạn chỉ cắt bớt chiều rộng để thành hình vuông, giữ nguyên chiều cao. Tổng cộng phải bỏ bao nhiêu đơn vị chiều rộng?",
+    "choices": [
+      "2",
+      "8",
+      "4"
+    ],
+    "answerIndex": 2,
+    "explanation": "Hình vuông phải rộng 8 đơn vị để bằng chiều cao. Từ 12 xuống 8, tổng cộng cần bỏ 4 đơn vị.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-vi-013",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "cityAndTravel",
+    "text": "Có hai đường tới quán: xe buýt đi thẳng mất 12 phút; hoặc tàu điện 4 phút, chuyển tuyến 5 phút rồi đi bộ thêm 2 phút. Đường nào nhanh hơn?",
+    "choices": [
+      "Đường tàu điện nhanh hơn 1 phút",
+      "Đường xe buýt nhanh hơn 1 phút",
+      "Hai đường bằng nhau"
+    ],
+    "answerIndex": 0,
+    "explanation": "Đường tàu điện mất 4 cộng 5 cộng 2, tổng 11 phút, ít hơn đường xe buýt 1 phút.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-vi-014",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "cityAndTravel",
+    "text": "Tàu khởi hành lúc 8 giờ 50 và đến lúc 9 giờ 15 trong cùng buổi sáng. Chuyến đi kéo dài bao lâu?",
+    "choices": [
+      "35 phút",
+      "25 phút",
+      "65 phút"
+    ],
+    "answerIndex": 1,
+    "explanation": "Từ 8 giờ 50 đến 9 giờ là 10 phút, rồi thêm 15 phút nữa. Tổng cộng là 25 phút.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-vi-015",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "cityAndTravel",
+    "text": "Xe đi qua A, B, C, D, E theo thứ tự. Bạn lên ở B, xuống ở E. Tính cả điểm đến E nhưng không tính điểm lên B, bạn tới mấy điểm dừng?",
+    "choices": [
+      "2",
+      "4",
+      "3"
+    ],
+    "answerIndex": 2,
+    "explanation": "Sau khi lên ở B, bạn tới C, D rồi E: tổng cộng 3 điểm dừng.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-vi-016",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "curiosity",
+    "text": "Dãy số lặp hai bước: cộng 3, rồi nhân 2. Bắt đầu từ 2 được 2, 5, 10, 13, 26. Số tiếp theo là gì?",
+    "choices": [
+      "29",
+      "52",
+      "30"
+    ],
+    "answerIndex": 0,
+    "explanation": "Sau bước nhân 2 đến bước cộng 3. Vì vậy 26 cộng 3 bằng 29.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-vi-017",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "curiosity",
+    "text": "Lọ có đúng 3 hạt xanh và 2 hạt trắng. Không nhìn và không bỏ lại hạt nào, bạn cần lấy ít nhất mấy hạt để chắc chắn có hai hạt cùng màu?",
+    "choices": [
+      "2",
+      "3",
+      "4"
+    ],
+    "answerIndex": 1,
+    "explanation": "Hai lần lấy có thể được mỗi màu một hạt. Hạt thứ ba chắc chắn trùng một trong hai màu đã lấy.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "logic-v2-vi-018",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "curiosity",
+    "text": "Trong bộ thẻ này, mọi hình tam giác đều có sọc. Một thẻ không có sọc. Theo quy tắc đó, hình nào bị loại trừ?",
+    "choices": [
+      "Hình tròn",
+      "Hình vuông",
+      "Hình tam giác"
+    ],
+    "answerIndex": 2,
+    "explanation": "Hình tam giác bắt buộc có sọc. Thẻ không sọc không thể là tam giác; quy tắc không nói gì về hình tròn hay vuông.",
+    "source": "himorning",
+    "license": "original"
+  }
 ]

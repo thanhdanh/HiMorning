@@ -39,7 +39,7 @@ final class ChallengeCelebrationUITests:XCTestCase {
    let history=app.otherElements["selectedDayChallenges"]
    XCTAssertTrue(history.waitForExistence(timeout:5))
    XCTAssertTrue(history.staticTexts.matching(NSPredicate(format:"identifier BEGINSWITH %@","historyMode-")).firstMatch.label.contains(vietnamese ? "Vừa sức" : "Balanced"))
-   XCTAssertTrue(history.staticTexts.matching(NSPredicate(format:"identifier BEGINSWITH %@","historyChallenge-")).firstMatch.label.contains(vietnamese ? "Đọc và chọn" : "Read & Choose"))
+   XCTAssertTrue(history.staticTexts.matching(NSPredicate(format:"identifier BEGINSWITH %@","historyChallenge-")).firstMatch.label.contains(vietnamese ? "Đọc và Chọn" : "Read & Choose"))
    app.terminate()
   }
  }

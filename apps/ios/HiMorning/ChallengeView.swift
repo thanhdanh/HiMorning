@@ -60,6 +60,7 @@ struct ChallengeView: View {
  @State private var speechFinishing = false
  @State private var speechListening = false
  @State private var awakeAvailableAt = Date().addingTimeInterval(WakeEnforcementPolicy.selfConfirmDelay)
+ @Environment(\.dynamicTypeSize) private var dynamicTypeSize
  @Environment(\.accessibilityReduceMotion) private var reduceMotion
  @State private var readPrompt: ChallengePrompt?
  @State private var riddlePrompt: ChallengePrompt?
@@ -74,6 +75,8 @@ struct ChallengeView: View {
  @State private var retrying = false
  private var practicing: Bool { rehearsal || model.rehearsal || retrying }
  private var finished: Bool { completion != nil }
+ private var isContentChallenge:Bool {[ChallengeKind.readAndChoose,.riddle,.readAloud].contains(challenge.kind)}
+ private var scrollCompletionActions:Bool {isContentChallenge && dynamicTypeSize.isAccessibilitySize}
  private var celebrates: Bool { completion == .localCompleted || completion == .openaiVerified || completion == .aiVerified }
  @State private var historyID = UUID()
  @State private var stopping = false
@@ -82,12 +85,12 @@ struct ChallengeView: View {
  var body: some View {
   ScrollViewReader { scroll in
    ScrollView {
-    VStack(spacing: 20) {
+    VStack(spacing: isContentChallenge ? 14 : 20) {
      if celebrates {
       ChallengeCelebrationView()
      } else {
       Text(practicing ? appText("Try a challenge") : appText("Good morning ☀️")).font(.headline)
-      if practicing { Text(appText("Practice only. Your alarms stay as they are.")).font(.footnote).foregroundStyle(MorningTheme.muted) }
+      if practicing { Text(appText("Practice only. Your alarms stay as they are, and this does not count toward progress.")).font(.footnote).foregroundStyle(MorningTheme.muted) }
       if testingTrackingOverlay {
        #if DEBUG
        CameraTrackingFixturePreview()
@@ -100,14 +103,29 @@ struct ChallengeView: View {
        cameraBlock(rhythmCamera.session, counter: "\(rhythmCycles) / 3")
       } else if challenge.kind.hasMovementIllustration {
        MovementGuide(selection:challenge)
-      } else {
+      } else if !practicing || !isContentChallenge {
        HStack(spacing: 16) {
-        MorningSun(size: 64)
-        Text(String(format: "%02d:%02d", alarm.time.hour, alarm.time.minute)).font(.system(.largeTitle, design: .rounded).weight(.regular)).monospacedDigit()
+        MorningSun(size: isContentChallenge ? 32 : 64)
+        Text(String(format: "%02d:%02d", alarm.time.hour, alarm.time.minute)).font(.system(isContentChallenge ? .title3 : .largeTitle, design: .rounded).weight(.regular)).monospacedDigit()
        }
       }
      }
+     if celebrates && practicing {
+      Text(appText("Practice complete. A real morning win counts when you complete a challenge after your alarm."))
+       .font(.subheadline).multilineTextAlignment(.center).fixedSize(horizontal:false,vertical:true)
+       .accessibilityIdentifier("practiceCompleteExplanation")
+     }
      Text(challenge.displayTitle).font(.subheadline.weight(.medium)).padding(.horizontal, 14).padding(.vertical, 8).background(MorningTheme.soft, in: Capsule())
+     if let theme = contentTheme {
+      Text(ChallengePrompts.themeTitle(theme)).font(.caption.weight(.semibold)).foregroundStyle(MorningTheme.muted)
+       .accessibilityIdentifier("contentTheme")
+     }
+     if celebrates && practicing,let explanation = contentExplanation {
+      VStack(alignment:.leading,spacing:8) {
+       Text(appText("The small discovery")).font(.headline)
+       Text(explanation).font(.body).fixedSize(horizontal:false,vertical:true).accessibilityIdentifier("contentExplanation")
+      }.padding(16).frame(maxWidth:.infinity,alignment:.leading).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:18))
+     }
      if effectiveAlarm.mode != alarm.mode || effectiveAlarm.challenge != alarm.challenge {
       Text(appText("Your preview has ended. This morning uses the basic challenge. Your saved choice stays the same.")).font(.footnote).foregroundStyle(MorningTheme.muted)
      }
@@ -126,7 +144,7 @@ struct ChallengeView: View {
       ProgressView().accessibilityLabel(message)
      }
      if (challenge.kind == .readAndChoose || challenge.kind == .riddle) && !finished, let prompt = challenge.kind == .riddle ? riddlePrompt : readPrompt {
-      Text(prompt.text).font(.title2.weight(.semibold)).multilineTextAlignment(.center)
+      Text(prompt.text).font(.title3.weight(.semibold)).multilineTextAlignment(.center)
       ForEach(Array(prompt.choices.enumerated()), id: \.offset) { index, choice in
        Button(choice) { chooseMeaning(index, prompt: prompt) }.buttonStyle(MorningButtonStyle(primary: false)).accessibilityIdentifier("readChoice-\(index)")
       }
@@ -144,7 +162,8 @@ struct ChallengeView: View {
        }.buttonStyle(MorningButtonStyle(primary: false)).disabled(busy || stopping || preparingExample || speech != nil).accessibilityIdentifier("hearSentence")
       }
      }
-    }.padding(24).frame(maxWidth: .infinity).id("challengeTop")
+     if finished && scrollCompletionActions { completionActions }
+    }.padding(isContentChallenge ? 20 : 24).frame(maxWidth: .infinity).id("challengeTop")
    }
    .background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink)
    .onChange(of: finished) { _, _ in scroll.scrollTo("challengeTop", anchor: .top) }
@@ -154,10 +173,7 @@ struct ChallengeView: View {
    .safeAreaInset(edge: .bottom) {
     VStack(spacing: 12) {
      if finished {
-      if celebrates {
-       Button(appText("Try again")) { retryChallenge() }.buttonStyle(MorningButtonStyle(primary: false))
-        .disabled(busy || stopping || preparingExample).accessibilityIdentifier("retryChallenge")
-      }
+      if !scrollCompletionActions { completionActions }
       Button(appText(rehearsal ? "Back to alarm" : "Back to home")) { dismiss() }.buttonStyle(MorningButtonStyle()).accessibilityIdentifier("backToHome")
      } else {
       if challenge.kind == .pushUps && camera == nil {
@@ -176,7 +192,7 @@ struct ChallengeView: View {
         Button { Task { await startSpeech() } } label: { ChallengeStartLabel(title: "Start reading", symbol: "mic.fill") }.buttonStyle(MorningButtonStyle()).disabled(busy || stopping || preparingExample || spokenExample.isSpeaking).accessibilityIdentifier("startReadAloud")
        }
       }
-      if !rehearsal {
+      if !rehearsal && (!practicing || !isContentChallenge) {
       TimelineView(.periodic(from: .now, by: 1)) { context in
        let remaining = max(0, Int(ceil(awakeAvailableAt.timeIntervalSince(context.date))))
        Button { finish(.selfConfirmed) } label: {
@@ -211,7 +227,7 @@ struct ChallengeView: View {
     if arguments.contains("--ui-testing"), arguments.contains("--ui-reading-correct-first"), let prompt = readPrompt {
      let correct = prompt.choices[prompt.correctChoiceIndex]
      let choices = [correct] + prompt.choices.enumerated().filter { $0.offset != prompt.correctChoiceIndex }.map(\.element)
-     readPrompt = ChallengePrompt(id: prompt.id, text: prompt.text, choices: choices, correctChoiceIndex: 0)
+     readPrompt = ChallengePrompt(id: prompt.id, text: prompt.text, choices: choices, correctChoiceIndex: 0, theme: prompt.theme, explanation: prompt.explanation)
     }
     if arguments.contains("--ui-testing") {
      if arguments.contains("--ui-awake-ready") { awakeAvailableAt = .distantPast }
@@ -331,6 +347,9 @@ struct ChallengeView: View {
   guard !finished else { return }
   pauseResources(); completion = outcome
   model.recordMorning(id: historyID, alarm: performedAlarm, outcome: outcome, rehearsal: practicing)
+  if !practicing,celebrates,let explanation=contentExplanation {
+   model.contentTakeaway=CompletedContentTakeaway(theme:contentTheme,explanation:explanation,date:Date())
+  }
   if !practicing, celebrates { model.celebrationID = reduceMotion ? nil : UUID(); dismiss(); return }
   switch outcome {
   case .localCompleted: result = success ?? appText("Challenge completed")
@@ -339,6 +358,17 @@ struct ChallengeView: View {
   case .dismissed: break
   }
   if let result { voice?.speak(result) }
+ }
+
+ @ViewBuilder private var completionActions:some View {
+      if celebrates && practicing && !rehearsal && model.alarms.isEmpty {
+       Button(appText("Set your first alarm")) {model.createAlarmAfterPractice=true;dismiss()}
+        .buttonStyle(MorningButtonStyle()).accessibilityIdentifier("setFirstAlarmAfterPractice")
+      }
+      if celebrates {
+       Button(appText("Try again")) { retryChallenge() }.buttonStyle(MorningButtonStyle(primary: false))
+        .disabled(busy || stopping || preparingExample).accessibilityIdentifier("retryChallenge")
+      }
  }
 
  private func retryChallenge() {
@@ -353,12 +383,28 @@ struct ChallengeView: View {
 
  private func preparePrompt(repickReadAloud: Bool = true) {
   switch challenge.kind {
-  case .readAndChoose: readPrompt = model.nextPrompt(.readAndChoose).flatMap(\.readAndChoosePrompt).map(ChallengePrompts.readAndChoose) ?? readPrompt
-  case .riddle: riddlePrompt = model.nextPrompt(.riddle).flatMap(\.readAndChoosePrompt).map(ChallengePrompts.readAndChoose) ?? riddlePrompt
+  case .readAndChoose: readPrompt = model.nextPrompt(.readAndChoose).flatMap(ChallengePrompts.fromItem) ?? readPrompt
+  case .riddle: riddlePrompt = model.nextPrompt(.riddle).flatMap(ChallengePrompts.fromItem) ?? riddlePrompt
   case .readAloud: if repickReadAloud || readAloudItem == nil { readAloudItem = model.nextPrompt(.readAloud) ?? readAloudItem }
   default: break
   }
   message = challengeInstructions
+ }
+
+ private var contentTheme:String? {
+  switch challenge.kind {
+  case .readAndChoose:return readPrompt?.theme
+  case .riddle:return riddlePrompt?.theme
+  case .readAloud:return readAloudItem?.theme
+  default:return nil
+  }
+ }
+ private var contentExplanation:String? {
+  switch challenge.kind {
+  case .readAndChoose:return readPrompt?.explanation
+  case .riddle:return riddlePrompt?.explanation
+  default:return nil
+  }
  }
 
  private var challengeInstructions: String {
@@ -367,7 +413,7 @@ struct ChallengeView: View {
 
  private func chooseMeaning(_ index: Int, prompt: ChallengePrompt) {
   if prompt.isCorrect(choiceIndex: index) { finish(.localCompleted, success: appText("Correct. Challenge completed!")) }
-  else { message = appText(challenge.kind == .riddle ? "Not quite. Think it over and try again." : "Not quite. Read the sentence and try again.") }
+  else { message = appText(challenge.kind == .riddle ? "Not quite. Think it over and try again." : "Not quite. Read the clues and try again.") }
  }
 
  @MainActor private func startRhythm() async {
@@ -478,6 +524,7 @@ struct ChallengeView: View {
 private struct ChallengeStartLabel: View {
  let title: String
  var symbol = "play.circle.fill"
+ @Environment(\.dynamicTypeSize) private var dynamicTypeSize
  @Environment(\.accessibilityReduceMotion) private var reduceMotion
  @Environment(\.isEnabled) private var enabled
  @State private var animate = false

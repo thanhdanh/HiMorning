@@ -1,590 +1,386 @@
 [
- {
-  "id": "morning-window",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "Please open the window and welcome the morning.",
-  "choices": [
-   "Open the window to greet the morning.",
-   "Close the door and go to sleep.",
-   "Make dinner before going outside."
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "fresh-start",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "Today is a fresh start.",
-  "choices": [
-   "Yesterday must happen again.",
-   "Today is a new beginning.",
-   "The day has already ended."
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "small-step",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "A small step can begin a great day.",
-  "choices": [
-   "You must do everything at once.",
-   "Small actions never matter.",
-   "One little action can start a good day."
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "tea",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "A warm cup of tea can make a quiet morning feel special.",
-  "choices": [
-   "Tea can make a calm morning feel pleasant.",
-   "Tea makes every morning noisy.",
-   "A cup of tea is always cold."
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "walk",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "She takes a short walk before starting work.",
-  "choices": [
-   "She walks after work is finished.",
-   "She takes a brief walk before working.",
-   "She stays home all day."
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "umbrella",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "Bring an umbrella because rain is expected this afternoon.",
-  "choices": [
-   "It will be sunny all afternoon.",
-   "The umbrella is broken.",
-   "Rain may come later today."
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "plant",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "The plant grew new leaves after it received water and sunlight.",
-  "choices": [
-   "Water and sunlight helped the plant grow.",
-   "The plant lost all its leaves.",
-   "The plant grew without light or water."
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "listening",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "He listened carefully before sharing his idea.",
-  "choices": [
-   "He spoke before anyone else.",
-   "He paid attention before speaking.",
-   "He forgot to share his idea."
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rc-en-001",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "The bakery on the corner opens before sunrise.",
-  "choices": [
-   "The corner bakery starts work very early.",
-   "The bakery stays closed until the evening.",
-   "The corner shop only sells umbrellas."
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rc-en-002",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "A neighbor left fresh flowers by the front door.",
-  "choices": [
-   "A neighbor took the flowers away.",
-   "Someone placed new flowers near the entrance.",
-   "The front door was painted bright red."
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rc-en-003",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "She packed her bag the night before to stay calm.",
-  "choices": [
-   "She forgot her bag at the office.",
-   "She left home without any plans.",
-   "She prepared her bag early so the morning would be calm."
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rc-en-004",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "The train was quiet, so he read a few pages.",
-  "choices": [
-   "He read a little because the train was peaceful.",
-   "The train was too loud for reading.",
-   "He slept through the whole journey."
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rc-en-005",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "Soft rain tapped on the window all morning.",
-  "choices": [
-   "A loud storm shook the house.",
-   "A gentle rain fell against the glass.",
-   "The sun burned brightly all day."
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rc-en-006",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "We ate breakfast on the balcony in the sunshine.",
-  "choices": [
-   "We had dinner in the basement.",
-   "We skipped breakfast and stayed in bed.",
-   "Breakfast was outside in the sun."
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rc-en-007",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "The kettle whistled, and she made a pot of tea.",
-  "choices": [
-   "She prepared tea when the kettle sounded.",
-   "The kettle was broken and silent.",
-   "She poured cold juice into a bowl."
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rc-en-008",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "He watered the herbs on the windowsill every day.",
-  "choices": [
-   "He never remembered the herbs.",
-   "The windowsill herbs get water daily.",
-   "The herbs grew in a distant field."
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rc-en-009",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "The library opens at nine and closes at six.",
-  "choices": [
-   "The library is open all night.",
-   "The library never opens on weekdays.",
-   "The library is open during the day."
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rc-en-010",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "A warm scarf is useful on a chilly morning.",
-  "choices": [
-   "A scarf helps when the morning is cold.",
-   "A scarf is needed in the hottest weather.",
-   "A scarf is only good for the summer."
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rc-en-011",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "The children walked to school together, laughing along the way.",
-  "choices": [
-   "The children traveled to school alone and silent.",
-   "The kids went to school as a happy group.",
-   "The school was closed, so everyone stayed home."
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rc-en-012",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "After stretching, she felt more awake and ready.",
-  "choices": [
-   "Stretching made her very sleepy.",
-   "She felt tired and refused to move.",
-   "Stretching helped her feel alert."
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rc-en-013",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "The market was busy with people buying fruit.",
-  "choices": [
-   "Many shoppers were buying fruit at the market.",
-   "The market was empty and silent.",
-   "People were selling shoes at the market."
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rc-en-014",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "He turned off the lights to save energy.",
-  "choices": [
-   "He turned on every light in the house.",
-   "He switched off the lights so less power was used.",
-   "He left the lights burning all day."
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rc-en-015",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "A short pause can help you think more clearly.",
-  "choices": [
-   "You should never stop to think.",
-   "Pausing always makes the day longer.",
-   "Taking a brief break can clear your mind."
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rc-en-016",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "The river was calm, and a single boat floated by.",
-  "choices": [
-   "One boat drifted along the still river.",
-   "Many boats raced across rough water.",
-   "The river had dried up completely."
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rc-en-017",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "She hung the laundry outside because the day was sunny.",
-  "choices": [
-   "She hung the laundry in the snow.",
-   "Sunny weather let her dry the clothes outdoors.",
-   "She refused to wash any clothes."
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rc-en-018",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "The old bridge connects the town to the hills.",
-  "choices": [
-   "The bridge is brand new and unused.",
-   "The town has no way to the hills.",
-   "A bridge links the town with the hills."
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rc-en-019",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "He read the instructions twice before starting.",
-  "choices": [
-   "He checked the directions two times first.",
-   "He began without looking at anything.",
-   "He threw the instructions away unread."
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rc-en-020",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "The cat slept in a patch of warm sunlight.",
-  "choices": [
-   "The cat ran through the cold rain.",
-   "The cat napped where the sun was warm.",
-   "The cat sat in a dark closet."
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rc-en-021",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "It is easier to wake up when the room is bright.",
-  "choices": [
-   "Darkness makes waking up easier.",
-   "Brightness makes everyone fall asleep.",
-   "Bright light makes waking up simpler."
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rc-en-022",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "The musician practiced a quiet tune before breakfast.",
-  "choices": [
-   "A musician played soft music before eating.",
-   "The musician refused to play at all.",
-   "A loud concert began after midnight."
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rc-en-023",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "We planted tomato seeds, and soon small shoots appeared.",
-  "choices": [
-   "The seeds turned to stone overnight.",
-   "Tiny plants came up soon after we planted the seeds.",
-   "We never planted anything this year."
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rc-en-024",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "The bus was late, so she decided to walk.",
-  "choices": [
-   "The bus arrived early, so she rode it.",
-   "She took a taxi to the moon.",
-   "Because the bus was delayed, she went on foot."
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rc-en-025",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "He saved a seat for a tired friend.",
-  "choices": [
-   "He kept a chair free for his weary friend.",
-   "He sat in every chair himself.",
-   "He told his friend to stand outside."
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rc-en-026",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "The soup needs a few more minutes on the stove.",
-  "choices": [
-   "The soup is finished and cold.",
-   "The soup is not ready yet.",
-   "The stove broke before cooking started."
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rc-en-027",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "Leaves drifted down from the trees onto the path.",
-  "choices": [
-   "The path was swept perfectly clean.",
-   "The trees grew taller overnight.",
-   "Leaves fell from the trees and covered the path."
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rc-en-028",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "A good habit grows from repeating a small action.",
-  "choices": [
-   "Repeating a little action can build a good habit.",
-   "One huge effort builds every habit.",
-   "Habits form without any action at all."
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rc-en-029",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "The fog lifted slowly as the sun climbed higher.",
-  "choices": [
-   "The fog became thicker at noon.",
-   "The mist cleared as the sun rose.",
-   "The sun disappeared behind the fog forever."
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rc-en-030",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "She wrote a thank you note to her teacher.",
-  "choices": [
-   "She ignored her teacher completely.",
-   "She wrote an angry letter to a stranger.",
-   "She sent her teacher a note of thanks."
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rc-en-031",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "The garden smells sweet after a morning shower.",
-  "choices": [
-   "A little rain makes the garden smell pleasant.",
-   "The garden smells terrible in the rain.",
-   "The garden is covered in sand."
-  ],
-  "answerIndex": 0
- },
- {
-  "id": "rc-en-032",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "He folded the map and put it in his pocket.",
-  "choices": [
-   "He tore the map into pieces.",
-   "He tucked the folded map into his pocket.",
-   "He left the map open on a bench."
-  ],
-  "answerIndex": 1
- },
- {
-  "id": "rc-en-033",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "The street was calm until the delivery truck arrived.",
-  "choices": [
-   "The street was loud before the truck came.",
-   "The delivery truck never reached the street.",
-   "A delivery truck broke the street's calm."
-  ],
-  "answerIndex": 2
- },
- {
-  "id": "rc-en-034",
-  "kind": "readAndChoose",
-  "language": "en",
-  "source": "himorning",
-  "license": "original",
-  "text": "Warm bread tastes best with a little butter.",
-  "choices": [
-   "Bread is especially nice warm with butter.",
-   "Cold stones taste best with butter.",
-   "Butter makes bread impossible to eat."
-  ],
-  "answerIndex": 0
- }
+  {
+    "id": "rc-v2-en-001",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "workAndStudy",
+    "text": "You have twenty minutes before a call. Editing a draft needs twenty uninterrupted minutes; replying to messages takes five. Which plan finishes the draft before the call?",
+    "choices": [
+      "Edit the draft now",
+      "Reply first, then edit",
+      "Edit for ten minutes, reply, then finish"
+    ],
+    "answerIndex": 0,
+    "explanation": "Editing now uses the full twenty-minute window. Replying first leaves fifteen minutes; interrupting the edit also breaks its uninterrupted requirement.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "rc-v2-en-002",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "workAndStudy",
+    "text": "The shared folder contains Draft 3 and Draft 4. A message says, “I corrected the figures in Draft 4; the conclusion is unchanged.” Which file should a reviewer use for the corrected figures?",
+    "choices": [
+      "Draft 3, because the conclusion is unchanged",
+      "Draft 4, where the figures were corrected",
+      "Either file; the figures must match"
+    ],
+    "answerIndex": 1,
+    "explanation": "The message distinguishes the corrected figures from the unchanged conclusion. Only Draft 4 is identified as containing those corrections.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "rc-v2-en-003",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "workAndStudy",
+    "text": "A workshop has two rooms. One holds eight people with a screen; the other holds twelve without a screen. Nine people need a screen, and furniture cannot move. What does this tell the organizer?",
+    "choices": [
+      "The twelve-seat room meets both needs",
+      "The eight-seat room meets both needs",
+      "Neither room meets both needs as arranged"
+    ],
+    "answerIndex": 2,
+    "explanation": "One room lacks a seat; the other lacks a screen. More capacity alone does not satisfy both requirements.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "rc-v2-en-004",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "workAndStudy",
+    "text": "A portal always shows a receipt for a submitted report, and receipts stay visible. Noor sees no receipt for hers. Under these stated rules, what follows?",
+    "choices": [
+      "Her report is not recorded as submitted",
+      "Her report was rejected after submission",
+      "The reviewer has not opened her report"
+    ],
+    "answerIndex": 0,
+    "explanation": "A submitted report would have a visible receipt. The absence establishes submission status, not a reviewer decision or reading status.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "rc-v2-en-005",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "everydayLife",
+    "text": "A recipe uses two cups of rice for four servings. You need six servings, keeping the same ratio. Which amount fits?",
+    "choices": [
+      "Two and a half cups",
+      "Three cups",
+      "Four cups"
+    ],
+    "answerIndex": 1,
+    "explanation": "Each serving uses half a cup. Six servings therefore need three cups.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "rc-v2-en-006",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "everydayLife",
+    "text": "The pickup note says, “Your parcel is in locker 12. The shop counter only handles returns.” You want to collect this parcel. Where should you go?",
+    "choices": [
+      "The counter to ask for the parcel",
+      "Either place handles collection",
+      "Locker 12"
+    ],
+    "answerIndex": 2,
+    "explanation": "The note assigns collection to locker 12 and returns to the counter. They serve different purposes.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "rc-v2-en-007",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "everydayLife",
+    "text": "A refill sign says, “Same cup, same day, receipt required.” You have today’s receipt but brought yesterday’s cup instead of the cup on that receipt. Which condition is missing?",
+    "choices": [
+      "Using the cup from today’s purchase",
+      "Having a receipt",
+      "Returning on the same day"
+    ],
+    "answerIndex": 0,
+    "explanation": "The receipt and date meet two conditions. The cup must also be the one associated with that purchase.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "rc-v2-en-008",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "everydayLife",
+    "text": "The community library accepts returns through a slot all day, but loans require a volunteer from 2 to 5. You arrive at noon with one borrowed book and want another. What can you do immediately?",
+    "choices": [
+      "Borrow a new book only",
+      "Return the borrowed book only",
+      "Both return and borrow"
+    ],
+    "answerIndex": 1,
+    "explanation": "The return slot is available at noon. Borrowing must wait until the volunteer arrives at 2.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "rc-v2-en-009",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "peopleAndPlans",
+    "text": "Ari can meet Monday or Tuesday; Bo can meet Tuesday or Wednesday. Cam is available only Tuesday. Which day works for everyone?",
+    "choices": [
+      "Monday",
+      "Wednesday",
+      "Tuesday"
+    ],
+    "answerIndex": 2,
+    "explanation": "Tuesday is in all three availability lists. The other days each exclude at least one person.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "rc-v2-en-010",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "peopleAndPlans",
+    "text": "Jo writes, “If the film starts after eight, save me a seat. Before eight, I am still on the train.” The screening starts at 8:30. What has Jo asked the group to do?",
+    "choices": [
+      "Save a seat for Jo",
+      "Move the screening earlier",
+      "Assume Jo cannot come"
+    ],
+    "answerIndex": 0,
+    "explanation": "The screening meets Jo’s stated condition: it starts after eight. The request is to save a seat.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "rc-v2-en-011",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "peopleAndPlans",
+    "text": "Minh says, “I can bring dessert, but I cannot bring anything that needs a fridge.” The host offers ice cream that must stay frozen, or biscuits that keep at room temperature. Which fits Minh’s offer?",
+    "choices": [
+      "Ice cream, because it is dessert",
+      "Biscuits, because they need no fridge",
+      "Both, because both are sweet"
+    ],
+    "answerIndex": 1,
+    "explanation": "Both are desserts, but only the biscuits also satisfy the no-fridge condition.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "rc-v2-en-012",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "peopleAndPlans",
+    "text": "A message says, “I like the café idea; I still need to check whether I’m free.” What is confirmed?",
+    "choices": [
+      "The person will attend",
+      "The meeting time is agreed",
+      "The person likes the idea, but attendance is undecided"
+    ],
+    "answerIndex": 2,
+    "explanation": "Enthusiasm for the idea is explicit. Availability has not yet been checked, so attendance is not confirmed.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "rc-v2-en-013",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "creativeBreaks",
+    "text": "A lamp casts a sculpture’s shadow west. In this setup the shadow falls directly away from the lamp. Which side is the lamp on?",
+    "choices": [
+      "East",
+      "West",
+      "North"
+    ],
+    "answerIndex": 0,
+    "explanation": "Westward shadow means light comes from the opposite side, east.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "rc-v2-en-014",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "creativeBreaks",
+    "text": "A photo shows empty chairs after a concert. The caption says only, “Ten minutes after the last song.” Which statement is supported without inventing a reason?",
+    "choices": [
+      "The audience disliked the concert",
+      "The chairs were empty ten minutes after the last song",
+      "Nobody attended the concert"
+    ],
+    "answerIndex": 1,
+    "explanation": "The image and caption establish the scene and timing. They do not reveal attendance earlier or how people felt.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "rc-v2-en-015",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "creativeBreaks",
+    "text": "A poster brief says, “Keep the title above the photo, and the date below the photo.” In a draft the date sits between the title and the photo. What needs moving?",
+    "choices": [
+      "Move the title below the photo",
+      "Move the photo below the date",
+      "Move the date below the photo"
+    ],
+    "answerIndex": 2,
+    "explanation": "The title already belongs above the photo. Moving the date below the photo restores the required order.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "rc-v2-en-016",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "creativeBreaks",
+    "text": "A short film needs thirty seconds of continuous music. Three clips are twenty seconds, thirty-five seconds, and forty seconds. You can trim but cannot join clips. Of the three original clips, which is the shortest that can supply the music?",
+    "choices": [
+      "35 seconds",
+      "20 seconds",
+      "40 seconds"
+    ],
+    "answerIndex": 0,
+    "explanation": "Twenty seconds is too short. Both longer clips can be trimmed to thirty seconds, and thirty-five is the shorter of those.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "rc-v2-en-017",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "cityAndTravel",
+    "text": "On a map, the market is directly north of the library. The café is directly east of the library. From the café, which direction leads toward the market?",
+    "choices": [
+      "Southeast",
+      "Northwest",
+      "Southwest"
+    ],
+    "answerIndex": 1,
+    "explanation": "From the café, the market lies north and west: northwest.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "rc-v2-en-018",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "cityAndTravel",
+    "text": "Bus A serves the museum but not the station. Bus B serves the station but not the museum. Both stop at Central. Starting at the station, which route reaches the museum?",
+    "choices": [
+      "Take A from the station, then B",
+      "Stay on B all the way",
+      "Take B to Central, then A"
+    ],
+    "answerIndex": 2,
+    "explanation": "Bus B can take you from the station to the shared stop. Bus A then connects that stop to the museum.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "rc-v2-en-019",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "cityAndTravel",
+    "text": "A gallery normally closes at six. Today’s sign says, “Open until eight for exhibition night; last entry thirty minutes before closing.” When is today’s last entry?",
+    "choices": [
+      "7:30",
+      "5:30",
+      "8:00"
+    ],
+    "answerIndex": 0,
+    "explanation": "Today’s special closing time is eight, so last entry is thirty minutes earlier, at seven thirty.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "rc-v2-en-020",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "cityAndTravel",
+    "text": "You reach a station at 10:10. The express leaves at 10:20 and takes twenty minutes; the local leaves now and takes thirty-five. Ignoring other delays, which gets you there first?",
+    "choices": [
+      "The local, because it leaves now",
+      "The express, by five minutes",
+      "Both arrive together"
+    ],
+    "answerIndex": 1,
+    "explanation": "The express arrives at 10:40, including its wait. The local arrives at 10:45, so the express wins by five minutes.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "rc-v2-en-021",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "curiosity",
+    "text": "A sensor records an alert only when a room is below its light threshold. An alert appears at noon. What can the alert establish?",
+    "choices": [
+      "The room has no windows",
+      "The weather outside is cloudy",
+      "The room was below the set light threshold"
+    ],
+    "answerIndex": 2,
+    "explanation": "The alert establishes the measured light level. It does not identify the cause, such as weather or windows.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "rc-v2-en-022",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "curiosity",
+    "text": "A clock loses one minute every hour. It is set correctly at noon. Three real hours later, what time will it show?",
+    "choices": [
+      "2:57",
+      "3:00",
+      "3:03"
+    ],
+    "answerIndex": 0,
+    "explanation": "Three hours pass, but the clock loses three minutes. It shows three minutes before three: 2:57.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "rc-v2-en-023",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "curiosity",
+    "text": "A photo file was created on Monday when an old print was scanned. The print has no date. What can Monday’s file date tell you?",
+    "choices": [
+      "The original photo was taken Monday",
+      "The digital file was made Monday",
+      "The print was first developed Monday"
+    ],
+    "answerIndex": 1,
+    "explanation": "The file date records the scanning result, not when the original scene was photographed or the print developed.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "rc-v2-en-024",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "curiosity",
+    "text": "A display shows twelve objects. A sign says that every wooden object is handmade. Four objects are wooden. What is the smallest number we know are handmade?",
+    "choices": [
+      "Exactly twelve",
+      "None, because the others are unknown",
+      "At least four"
+    ],
+    "answerIndex": 2,
+    "explanation": "The four wooden objects are guaranteed handmade. Others might be handmade too, but the sign does not establish that.",
+    "source": "himorning",
+    "license": "original"
+  }
 ]

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 export const readAloudTokenRange = [18, 30];
+export const contentThemes = ['workAndStudy', 'everydayLife', 'peopleAndPlans', 'creativeBreaks', 'cityAndTravel', 'curiosity'];
 const filled = z.string().refine(value => value.trim().length > 0, 'must not be blank');
 export const challengeContentItem = z.strictObject({
  id: filled,
@@ -11,6 +12,8 @@ export const challengeContentItem = z.strictObject({
  source: filled,
  license: filled,
  attribution: z.string().optional(),
+ theme: z.enum(contentThemes).optional(),
+ explanation: filled.optional(),
 }).superRefine((item, ctx) => {
  const issue = message => ctx.addIssue({ code: 'custom', message });
  if (item.kind === 'readAloud') {
@@ -19,6 +22,7 @@ export const challengeContentItem = z.strictObject({
   if (count < readAloudTokenRange[0] || count > readAloudTokenRange[1]) issue(`readAloud needs ${readAloudTokenRange[0]}-${readAloudTokenRange[1]} tokens, got ${count}`);
   return;
  }
+ if (item.choices && new Set(item.choices.map(choice => choice.trim().toLowerCase())).size !== item.choices.length) issue('choices must be distinct');
  if (item.choices?.length !== 3) issue('choices must have exactly 3 entries');
  if (!Number.isInteger(item.answerIndex) || item.answerIndex < 0 || item.answerIndex > 2) issue('answerIndex must be 0-2');
 });

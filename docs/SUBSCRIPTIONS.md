@@ -13,8 +13,8 @@ billing acceptance remain pending. Reviewed on 22 October 2026.
 |---|---|
 | Before first save | Explore and create a draft; preview time has not started |
 | Preview | 30 elapsed days from the first confirmed alarm save; no purchase or automatic charge |
-| Preview / Pro | All catalog levels, bundled sounds, 30-day progress view and custom weekly goal |
-| Free after expiry | Alarm scheduling and recovery; Gentle/Balanced editor levels, system sound for new choices; effective saved push-up target capped at 5 |
+| Preview / Pro | All catalog levels, bundled sounds, 30-day progress view and custom weekly goal; an optional energetic mission path and 30-day challenge reflection |
+| Free after expiry | Alarm scheduling and recovery; Gentle/Balanced editor levels, system sound for new choices; effective saved push-up target capped at 5; three starter purposes, seven-morning journeys and recent completed-day summary |
 | Monthly Pro | `com.himorning.pro.monthly`, local target price US $2/month |
 | Annual Pro | `com.himorning.pro.annual`, local target price US $20/year, same subscription group |
 
@@ -48,6 +48,27 @@ excluded. A completed challenge scores 100, self-confirmation scores zero, and
 missing records are unscored. History retains up to 31 local calendar days so a
 31-day month's first day is available; the paid progress view covers 30 days and
 shows a weekly goal. There is no history-deletion UI.
+
+## Ongoing routine value
+
+The [morning journeys](FIRST-MORNING-PLAN.md) connect existing challenges into a
+purposeful sequence. Free includes clear-start, gentle-movement and reading-aloud
+starter purposes, seven earned mornings, small milestones and an explicit next
+round. Missed days do not erase earned steps. Practice and self-confirmation do
+not advance the journey, and one local day can earn only one step.
+
+Preview/Pro includes an explicitly selected energetic movement path and a
+30-day reflection showing actual completed days and the challenge kinds the user
+returns to. It describes completion records, not sleep quality or verified waking
+time. This is a hypothesis for recurring value, not evidence of conversion or
+willingness to pay.
+
+After expiry, an existing energetic purpose suggests gentle missions while
+preserving earned steps and stored intent. Saved alarm schedules and recovery
+choices remain unchanged. Mission suggestions are applied through an alarm draft
+that the user reviews and saves; a repeated alarm does not silently rotate its
+saved challenge. Journey progress is stored separately from the journal so its
+31-day retention does not erase an unfinished path after a longer break.
 
 ## Configure and test
 

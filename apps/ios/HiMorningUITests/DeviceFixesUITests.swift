@@ -243,7 +243,7 @@ final class DeviceFixesUITests:XCTestCase {
   XCTAssertTrue(app.buttons["backToHome"].waitForExistence(timeout:5))
   XCTAssertEqual(app.buttons["backToHome"].label,"Back to alarm")
   XCTAssertFalse(app.buttons["confirmAwake"].exists)
-  XCTAssertTrue(app.staticTexts["Practice only. Your alarms stay as they are."].exists)
+  XCTAssertTrue(app.staticTexts["Practice only. Your alarms stay as they are, and this does not count toward progress."].exists)
   let demo=XCTAttachment(screenshot:app.screenshot());demo.name="draft-challenge-practice";demo.lifetime = .keepAlways;add(demo)
   app.buttons["readChoice-0"].tap()
   XCTAssertTrue(app.buttons["retryChallenge"].waitForExistence(timeout:5))

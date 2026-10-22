@@ -57,6 +57,20 @@
           },
           "attribution": {
             "type": "string"
+          },
+          "theme": {
+            "type": "string",
+            "enum": [
+              "workAndStudy",
+              "everydayLife",
+              "peopleAndPlans",
+              "creativeBreaks",
+              "cityAndTravel",
+              "curiosity"
+            ]
+          },
+          "explanation": {
+            "type": "string"
           }
         },
         "required": [

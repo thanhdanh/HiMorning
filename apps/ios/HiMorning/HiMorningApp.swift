@@ -15,20 +15,29 @@ struct NoopBackupScheduler:BackupRingScheduler {
  func cancel(id:UUID) async throws {}
 }
 #endif
+struct CompletedContentTakeaway {
+ let theme:String?
+ let explanation:String
+ let date:Date
+}
 @MainActor final class PilotModel:ObservableObject {
  @Published var alarms:[SavedAlarm]=[]
  @Published var error:String?
  @Published var selected:SavedAlarm?
  @Published var rehearsal=false
+ @Published var createAlarmAfterPractice=false
  @Published var backupWarning=false
  @Published var activeWake:UnresolvedWake?
  let subscriptions=SubscriptionStore()
+ @Published var journey=JourneyStore()
+ private var journeyObserver:AnyCancellable?
  lazy var preview=PreviewStore(subscriptions:subscriptions)
  private var accessObserver:AnyCancellable?
  var access:MorningAccess {preview.access}
  @Published var journal:MorningJournal?
  @Published var progressError:String?
  @Published var celebrationID:UUID?
+ @Published var contentTakeaway:CompletedContentTakeaway?
  let scheduler=NativeAlarmScheduler()
  let cloud:(any CloudVerification)?
  private let library:AlarmLibrary?
@@ -57,6 +66,7 @@ struct NoopBackupScheduler:BackupRingScheduler {
   do {
    var url=try FileManager.default.url(for:.applicationSupportDirectory,in:.userDomainMask,appropriateFor:nil,create:true).appendingPathComponent("HiMorning/alarms.json")
    #if DEBUG
+   if ProcessInfo.processInfo.arguments.contains("--ui-testing"),ProcessInfo.processInfo.arguments.contains("--ui-empty-home") {url=FileManager.default.temporaryDirectory.appendingPathComponent("himorning-empty-\(UUID().uuidString).json")}
    if ProcessInfo.processInfo.arguments.contains("--ui-testing"),ProcessInfo.processInfo.arguments.contains("--ui-disabled-alarm") || ProcessInfo.processInfo.arguments.contains("--ui-enabled-alarm") || ProcessInfo.processInfo.arguments.contains("--ui-home-alarms") {
     url=FileManager.default.temporaryDirectory.appendingPathComponent("himorning-ui-edit-alarm.json")
     var fixture=SavedAlarm(id:UUID(uuidString:"00000000-0000-0000-0000-000000000001")!,time:try AlarmTime(hour:7,minute:15,weekdays:[2,4,6]),mode:.balanced,sound:.sunrise,challenge:.guidedRhythm(variant:.seated))
@@ -82,6 +92,10 @@ struct NoopBackupScheduler:BackupRingScheduler {
       let tomorrow=Calendar.current.date(byAdding:.day,value:1,to:Calendar.current.startOfDay(for:Date()))!
       let occurrence=Calendar.current.date(bySettingHour:9,minute:0,second:0,of:tomorrow)!
       disabled=SavedAlarm(id:disabled.id,time:disabled.time,scheduledOccurrence:occurrence);disabled.state = .confirmed
+     }
+     if ProcessInfo.processInfo.arguments.contains("--ui-elapsed-once") {
+      upcoming=SavedAlarm(id:upcoming.id,time:try AlarmTime(hour:20,minute:30,weekdays:[]),mode:.balanced,challenge:.readAndChoose,scheduledOccurrence:Date().addingTimeInterval(-60))
+      upcoming.state = .confirmed
      }
      fixtures=[fixture,upcoming,disabled]
      if ProcessInfo.processInfo.arguments.contains("--ui-open-alarm") {UserDefaults.standard.set(fixture.id.uuidString,forKey:"pendingAlarmID")}
@@ -143,9 +157,39 @@ struct NoopBackupScheduler:BackupRingScheduler {
    preview=PreviewStore(subscriptions:subscriptions,load:{data},save:{_ in})
   }
   #endif
+  #if DEBUG
+  if ProcessInfo.processInfo.arguments.contains("--ui-testing") {
+   journey=JourneyStore(load:{nil},save:{_ in})
+   if ProcessInfo.processInfo.arguments.contains("--ui-journey-fixture") {
+    let now=Date(),calendar=Calendar.current
+    _=journey.choose(.clearStart,access:.free,now:calendar.date(byAdding:.day,value:-45,to:now)!)
+    let count=ProcessInfo.processInfo.arguments.contains("--ui-journey-complete") ? 7 : 3
+    for index in 0..<count {
+     let offset=ProcessInfo.processInfo.arguments.contains("--ui-journey-today") ? index-count+1 : index-count-2
+     let day=calendar.date(byAdding:.day,value:offset,to:now)!
+     _=journey.record(date:day,outcome:.localCompleted,rehearsal:false,now:now)
+    }
+   }
+  }
+  #endif
+  journeyObserver=journey.objectWillChange.sink { [weak self] in self?.objectWillChange.send() }
   accessObserver=preview.objectWillChange.sink { [weak self] in self?.objectWillChange.send() }
  }
+ func practice(_ kind:ChallengeKind) {
+  guard let time=try? AlarmTime(hour:6,minute:30,weekdays:[]) else {return}
+  rehearsal=true
+  selected=SavedAlarm(time:time,mode:kind.preferredMode,challenge:kind == .none ? .none : kind == .pushUps ? .pushUps(repetitions:kind.localMovementTarget ?? 10) : ChallengeSelection(kind:kind))
+ }
+ func practiceMission(_ selection:ChallengeSelection) {
+  guard let time=try? AlarmTime(hour:6,minute:30,weekdays:[]) else {return}
+  rehearsal=true;selected=SavedAlarm(time:time,mode:selection.kind.preferredMode,challenge:selection)
+ }
  func nextPrompt(_ kind:ContentKind)->ChallengeContentItem? {
+  #if DEBUG
+  let args=ProcessInfo.processInfo.arguments
+  if args.contains("--ui-testing"),let index=args.firstIndex(of:"--ui-content-id"),args.indices.contains(index+1),
+     let fixture=content.items(kind:kind,language:appLocale().identifier).first(where:{$0.id==args[index+1]}) {return fixture}
+  #endif
   let item=content.next(kind:kind,language:appLocale().identifier,history:&contentHistory)
   if let data=try? JSONEncoder().encode(contentHistory) {UserDefaults.standard.set(data,forKey:"contentHistory")}
   return item
@@ -161,7 +205,12 @@ struct NoopBackupScheduler:BackupRingScheduler {
    Task {await enforcer?.resolve(alarmID:alarm.id);await replanBackups()}
   }
   guard journal != nil else {return}
-  do {try journal?.record(MorningEntry(id:id,alarmID:alarm.id,mode:alarm.mode,challenge:alarm.challenge,outcome:outcome),rehearsal:rehearsal)}
+  do {
+   let now=Date()
+   if try journal?.record(MorningEntry(id:id,alarmID:alarm.id,mode:alarm.mode,challenge:alarm.challenge,date:now,outcome:outcome),rehearsal:rehearsal) == true {
+    journey.record(date:now,outcome:outcome,rehearsal:rehearsal,now:now)
+   }
+  }
   catch {progressError=appText("Your progress could not be saved. Your alarm is already stopped.")}
  }
  private func wakeEntries(now:Date=Date())->[MorningEntry] {
@@ -305,7 +354,7 @@ extension ScheduleState {
 struct HomeView:View {
  @Environment(\.colorScheme) private var colorScheme
  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
- private struct AlarmDraft:Identifiable {let id=UUID();let alarm:SavedAlarm?;var scope:AlarmEditorScope = .all}
+ private struct AlarmDraft:Identifiable {let id=UUID();let alarm:SavedAlarm?;var scope:AlarmEditorScope = .all;var suggestedChallenge:ChallengeSelection?}
  @ObservedObject var model:PilotModel
  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
  @Environment(\.scenePhase) private var phase
@@ -315,6 +364,8 @@ struct HomeView:View {
  @State private var alarmToDelete:SavedAlarm?
  @State private var progress=false
  @State private var pro=false
+ @State private var choosingPurpose=false
+ @State private var proAfterPurpose=false
  @AppStorage("appLanguage") private var language="system"
  @ScaledMetric(relativeTo:.largeTitle) private var clockSize=48
  var body:some View {
@@ -345,22 +396,23 @@ struct HomeView:View {
       }
       }
      }
+     MorningJourneyCard(model:model,store:model.journey,choosePurpose:{choosingPurpose=true},plan:{selection,alarm in
+      let upcoming=alarm.flatMap {$0.canPrepareJourney() ? $0 : nil}
+      editor=AlarmDraft(alarm:upcoming,scope:upcoming == nil ? .all:.challenge,suggestedChallenge:selection)
+     },showProgress:{progress=true},showPro:{pro=true})
+     if let takeaway=model.contentTakeaway,Calendar.current.isDateInToday(takeaway.date) {
+      VStack(alignment:.leading,spacing:8) {
+       Text(appText("The small discovery")).font(.headline)
+       if let theme=takeaway.theme {Text(ChallengePrompts.themeTitle(theme)).font(.caption).foregroundStyle(MorningTheme.muted)}
+       Text(takeaway.explanation).font(.body).fixedSize(horizontal:false,vertical:true).accessibilityIdentifier("homeContentTakeaway")
+      }.padding(18).frame(maxWidth:.infinity,alignment:.leading).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:20))
+     }
      HStack(alignment:.firstTextBaseline) {
       Text(appText("Alarms")).font(.title2.weight(.semibold))
       Spacer(minLength:12)
       Text(Date(),format:.dateTime.weekday(.abbreviated).day().month(.abbreviated).locale(appLocale())).font(.caption).foregroundStyle(MorningTheme.muted)
      }
-     if model.alarms.isEmpty {
-      HStack(spacing:16) {
-       VStack(alignment:.leading,spacing:10) {
-        Text(appText("No alarms yet")).font(.title3.weight(.semibold))
-        Text(appText("Set your first alarm for tomorrow.")).font(.subheadline)
-       }
-       Spacer(minLength:0)
-       MorningSun(size:88)
-      }.padding(24).frame(maxWidth:.infinity,minHeight:180).foregroundStyle(MorningTheme.onYellow)
-       .background(MorningTheme.hero,in:RoundedRectangle(cornerRadius:24))
-     }
+     if model.alarms.isEmpty && model.journey.journey == nil {firstMorningCard}
      if let error=model.progressError {
       Label(error,systemImage:"exclamationmark.triangle").font(.footnote).foregroundStyle(MorningTheme.muted).accessibilityIdentifier("homeProgressError")
      }
@@ -376,15 +428,12 @@ struct HomeView:View {
       .buttonStyle(MorningButtonStyle()).accessibilityIdentifier("addAlarm")
       Menu {
        ForEach(ChallengeKind.allCases,id:\.self) {kind in
-        Button(kind.title) {
-         if let time=try? AlarmTime(hour:6,minute:30,weekdays:[]) {
-          let mode=kind.preferredMode
-          model.rehearsal=true;model.selected=SavedAlarm(time:time,mode:mode,challenge:kind == .none ? .none : kind == .pushUps ? .pushUps(repetitions:kind.localMovementTarget ?? 10) : ChallengeSelection(kind:kind))
-         }
+        Button(kind.title) {model.practice(kind)
         }.accessibilityIdentifier("practice-"+kind.editorIdentifier)
        }
       } label: {Text(appText("Explore challenges")).frame(maxWidth:.infinity)}
        .buttonStyle(MorningButtonStyle(primary:false)).accessibilityIdentifier("practiceChallenges")
+     if !model.alarms.isEmpty || (model.journal?.completedChallengeDays(inLast:7) ?? 0)>0 {recentWinsCard}
      if let message=model.preview.message {Text(message).font(.footnote).foregroundStyle(MorningTheme.muted)}
      if model.access == .preview {
       Text(model.preview.hasStarted ? appText("%lld free days left. No automatic charge.",count:model.preview.remainingDays) : appText("Your 30 free days begin when you save your first alarm. No card needed."))
@@ -397,12 +446,16 @@ struct HomeView:View {
    }.background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink).tint(MorningTheme.accent)
    .navigationTitle("HiMorning").toolbar(.hidden,for:.navigationBar)
    .preferredColorScheme(testingColorScheme)
-   .sheet(item:$editor) {draft in AlarmEditor(alarm:draft.alarm,scope:draft.scope,store:model.subscriptions,preview:model.preview,practiceModel:model,save:model.save)}
+   .sheet(item:$editor) {draft in AlarmEditor(alarm:draft.alarm,scope:draft.scope,suggestedChallenge:draft.suggestedChallenge,store:model.subscriptions,preview:model.preview,practiceModel:model,save:model.save)}
+   .sheet(isPresented:$choosingPurpose,onDismiss:{if proAfterPurpose {proAfterPurpose=false;pro=true}}) {MorningPurposePicker(model:model,store:model.journey,showPro:{proAfterPurpose=true;choosingPurpose=false})}
    .sheet(isPresented:$progress) {MorningProgressView(model:model,store:model.subscriptions)}
    .sheet(isPresented:$pro) {ProView(store:model.subscriptions,preview:model.preview)}
-   .fullScreenCover(item:$model.selected,onDismiss:{Task {await model.refresh()}}) {alarm in ChallengeView(alarm:alarm,model:model)}
+   .fullScreenCover(item:$model.selected,onDismiss:{
+    if model.createAlarmAfterPractice {model.createAlarmAfterPractice=false;editor=AlarmDraft(alarm:nil)}
+    Task {await model.refresh()}
+   }) {alarm in ChallengeView(alarm:alarm,model:model)}
    .onChange(of:model.selected) {_,value in
-    if value != nil,!model.rehearsal {editor=nil;progress=false;pro=false}
+    if value != nil,!model.rehearsal {editor=nil;progress=false;pro=false;proAfterPurpose=false;choosingPurpose=false}
    }
    .overlay {
     if model.selected == nil,let id=model.celebrationID,!reduceMotion {
@@ -428,6 +481,44 @@ struct HomeView:View {
    .onReceive(NotificationCenter.default.publisher(for:UserDefaults.didChangeNotification).receive(on:RunLoop.main)) {_ in model.openPending()}
    .onChange(of:phase) {_,value in if value == .active {Task {await model.refresh();await model.subscriptions.refresh()};Task {await model.refreshContent()}}}
    .onChange(of:reduceMotion) {_,value in if value {model.celebrationID=nil}}
+  }
+ }
+ private var firstMorningCard:some View {
+  VStack(alignment:.leading,spacing:14) {
+   Text(appText("Start your morning with a small win.")).font(.title2.weight(.semibold))
+    .fixedSize(horizontal:false,vertical:true).accessibilityIdentifier("firstMorningPromise")
+   Text(appText("An alarm, a short challenge, a reason to get going.")).font(.subheadline)
+    .fixedSize(horizontal:false,vertical:true)
+   VStack(alignment:.leading,spacing:8) {
+    Label(appText("Set an alarm for your morning."),systemImage:"1.circle")
+    Label(appText("When it rings, complete your chosen challenge."),systemImage:"2.circle")
+    Label(appText("See your completed mornings add up."),systemImage:"3.circle")
+   }.font(.subheadline).fixedSize(horizontal:false,vertical:true)
+   Button {model.practice(.readAndChoose)} label: {
+    Label(appText("Try Read & Choose"),systemImage:"play.circle")
+   }.buttonStyle(MorningButtonStyle(primary:false)).accessibilityIdentifier("quickPractice")
+   Text(appText("Practice now. No camera, microphone or alarm needed.")).font(.footnote)
+    .fixedSize(horizontal:false,vertical:true)
+  }.padding(20).frame(maxWidth:.infinity,alignment:.leading).foregroundStyle(MorningTheme.onYellow)
+   .background(MorningTheme.hero,in:RoundedRectangle(cornerRadius:24))
+ }
+ @ViewBuilder private var recentWinsCard:some View {
+  if let journal=model.journal {
+   let days=journal.completedChallengeDays(inLast:7)
+   VStack(alignment:.leading,spacing:10) {
+    Label(appText("Your recent wins"),systemImage:"sun.max.fill").font(.headline)
+    Text(appText("%lld of the last 7 days with a completed challenge",count:days))
+     .font(.subheadline.weight(.medium)).fixedSize(horizontal:false,vertical:true).accessibilityIdentifier("recentWinCount")
+    Text(appText("Each day counts once. Practice and I’m awake do not count here."))
+     .font(.footnote).foregroundStyle(MorningTheme.muted).fixedSize(horizontal:false,vertical:true)
+    if days == 0 {
+     Text(appText("Complete a challenge after your alarm to earn your first win."))
+      .font(.subheadline).fixedSize(horizontal:false,vertical:true)
+    }
+    Button(appText("Your progress")) {progress=true}.font(.subheadline.weight(.medium))
+     .frame(minHeight:44).accessibilityIdentifier("recentWinsProgress")
+   }.padding(20).frame(maxWidth:.infinity,alignment:.leading).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:24))
+
   }
  }
  private var testingColorScheme:ColorScheme? {
@@ -563,7 +654,7 @@ struct HomeView:View {
     } icon: {
      Image(systemName:alarm.state == .needsReview ? "exclamationmark.triangle" : "clock").accessibilityHidden(true)
     }.font(.caption.weight(.semibold)).fixedSize(horizontal:false,vertical:true)
-   } else if alarm.enabled,alarm.state == .confirmed,let next=alarm.time.next(after:now) {
+   } else if alarm.enabled,alarm.state == .confirmed,let next=alarm.time.weekdays.isEmpty ? alarm.scheduledOccurrence : alarm.time.next(after:now),next>now {
     Text(String(format:appText("Next: %@"),locale:appLocale(),next.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).locale(appLocale()))))
      .font(.caption).foregroundStyle(MorningTheme.onYellow.opacity(0.7)).fixedSize(horizontal:false,vertical:true)
      .accessibilityIdentifier("nextAlarm-"+alarm.id.uuidString)

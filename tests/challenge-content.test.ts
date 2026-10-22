@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
-import { buildPack, challengeContentPack, tokenCount, validatePack } from '../scripts/lib/challenge-content.mjs';
+import { buildPack, challengeContentPack, contentThemes, tokenCount, validatePack } from '../scripts/lib/challenge-content.mjs';
 const read = (path: string) => JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8'));
 const sample = () => read('../shared/contracts/v1/fixtures/challenge-content.sample.json');
 const base = { source: 'himorning', license: 'original' };
@@ -15,6 +15,7 @@ describe('challenge content pack', () => {
   const result = validatePack(sample());
   expect(result.errors).toEqual([]);
   expect(result.valid).toHaveLength(12);
+  expect(result.valid.find((i: any) => i.id === 'en-rc-window')?.explanation).toContain('open window');
  });
  it('rejects a 17-token readAloud', () => {
   expect(validatePack(pack([readAloud('short', words(17))])).errors).toHaveLength(1);
@@ -69,15 +70,34 @@ describe('challenge content pack', () => {
   expect(first.items.map(i => i.id)).toEqual(['m', 'a', 'a2', 'b', 'z']);
   expect(first.version).toBe(2);
  });
- it('bundled pack meets minimum counts per kind and language', () => {
+ it('curated bilingual pool has balanced themes, explanations and matching puzzles', () => {
   const bundled = read('../apps/ios/Resources/challenge-content.json');
   expect(validatePack(bundled).errors).toEqual([]);
-  const minimums = { en: { readAloud: 200, readAndChoose: 40, riddle: 40 }, vi: { readAloud: 100, readAndChoose: 30, riddle: 30 } };
-  for (const [language, kinds] of Object.entries(minimums)) {
-   for (const [kind, minimum] of Object.entries(kinds)) {
-    const count = bundled.items.filter((i: { kind: string; language: string }) => i.language === language && i.kind === kind).length;
-    expect(count, `${language} ${kind}`).toBeGreaterThanOrEqual(minimum);
+  expect(bundled.version).toBe(2);
+  for (const kind of ['readAloud', 'readAndChoose', 'riddle']) {
+   const perTheme = kind === 'riddle' ? 3 : kind === 'readAndChoose' ? 4 : 6;
+   for (const language of ['en', 'vi']) {
+    const items = bundled.items.filter((i: any) => i.kind === kind && i.language === language);
+    expect(items).toHaveLength(perTheme * contentThemes.length);
+    for (const theme of contentThemes) expect(items.filter((i: any) => i.theme === theme)).toHaveLength(perTheme);
+    for (const item of items) {
+     expect(item.source).toBe('himorning'); expect(item.license).toBe('original');
+     const pair = bundled.items.find((other: any) => other.id === item.id.replace(`-${language}-`, `-${language === 'en' ? 'vi' : 'en'}-`));
+     expect(pair?.theme).toBe(item.theme); expect(pair?.kind).toBe(item.kind);
+     if (kind !== 'readAloud') {
+      expect(item.explanation?.trim().length).toBeGreaterThan(10);
+      expect(item.explanation).not.toMatch(/(?:first|second|third) (?:option|choice)|option [ABC]|lựa chọn (?:thứ|[ABC])/iu);
+      expect(pair?.answerIndex).toBe(item.answerIndex);
+     }
+    }
    }
+  }
+ });
+ it('accepts old payloads and validates optional editorial metadata', () => {
+  expect(validatePack(pack([choice('legacy')])).errors).toEqual([]);
+  expect(validatePack(pack([choice('new', {theme:'curiosity', explanation:'The clue determines this answer.'})])).errors).toEqual([]);
+  for (const override of [{theme:'other'}, {explanation:' '}, {choices:['Tea',' tea ','Coffee']}]) {
+   expect(validatePack(pack([choice('bad', override)])).errors.length).toBeGreaterThan(0);
   }
  });
  it('bundled pack copies match a fresh build from the sources', () => {

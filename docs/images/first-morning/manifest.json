@@ -1,0 +1,50 @@
+[
+  {
+    "file": "journey-deeper-routine-reflection.png",
+    "test": "MorningJourneyUITests/testDeeperRoutineAndReflectionUseRealCompletedPatterns()",
+    "timestamp": 1792698427.94,
+    "sourceResult": "himorning-journey-final-ui.xcresult"
+  },
+  {
+    "file": "journey-seven-morning-milestone.png",
+    "test": "MorningJourneyUITests/testMilestonesAndExplicitNewRoundKeepEarnedHistory()",
+    "timestamp": 1792698639.96,
+    "sourceResult": "himorning-journey-supplemental.xcresult"
+  },
+  {
+    "file": "journey-purpose-vi.png",
+    "test": "MorningJourneyUITests/testPurposePracticeAndPresetDraftInBothLanguages()",
+    "timestamp": 1792698485.153,
+    "sourceResult": "himorning-journey-final-ui.xcresult"
+  },
+  {
+    "file": "journey-purpose-en.png",
+    "test": "MorningJourneyUITests/testPurposePracticeAndPresetDraftInBothLanguages()",
+    "timestamp": 1792698467.851,
+    "sourceResult": "himorning-journey-final-ui.xcresult"
+  },
+  {
+    "file": "journey-real-win-next-mission.png",
+    "test": "MorningJourneyUITests/testRealCompletionEarnsNextStepAndOffersPreparingTomorrow()",
+    "timestamp": 1792698502.349,
+    "sourceResult": "himorning-journey-final-ui.xcresult"
+  },
+  {
+    "file": "journey-gentle-vi-accessibility.png",
+    "test": "MorningJourneyUITests/testThreeMorningRewardAndLargeVietnameseMission()",
+    "timestamp": 1792698530.239,
+    "sourceResult": "himorning-journey-final-ui.xcresult"
+  },
+  {
+    "file": "journey-three-morning-reward.png",
+    "test": "MorningJourneyUITests/testThreeMorningRewardAndLargeVietnameseMission()",
+    "timestamp": 1792698513.32,
+    "sourceResult": "himorning-journey-final-ui.xcresult"
+  },
+  {
+    "file": "journey-seven-morning-today.png",
+    "test": "MorningJourneyUITests/testMilestonesAndExplicitNewRoundKeepEarnedHistory()",
+    "timestamp": 1792698646.35,
+    "sourceResult": "himorning-journey-supplemental.xcresult"
+  }
+]
