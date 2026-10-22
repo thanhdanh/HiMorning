@@ -344,3 +344,15 @@
 "Backup rings are unavailable right now. Your main alarms still work." = "Backup rings are unavailable right now. Your main alarms still work.";
 "Label" = "Label";
 "Optional label" = "Optional label";
+"Never" = "Never";
+"Every day" = "Every day";
+"Done" = "Done";
+
+// Alarm composer
+"A gentle start" = "A gentle start";
+"Find your energy" = "Find your energy";
+"Pick your first win" = "Pick your first win";
+"Set the mood" = "Set the mood";
+"The little details" = "The little details";
+"Today · Once" = "Today · Once";
+"Tomorrow · Once" = "Tomorrow · Once";

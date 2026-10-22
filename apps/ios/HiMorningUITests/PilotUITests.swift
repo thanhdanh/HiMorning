@@ -1,6 +1,27 @@
 import XCTest
 import UIKit
 final class PilotUITests:XCTestCase {
+ private func reveal(_ element:XCUIElement,in app:XCUIApplication) {
+  for _ in 0..<12 {
+   if !element.exists {app.swipeUp();continue}
+   let frame=element.frame
+   let navigation=app.navigationBars.firstMatch
+   let top=navigation.exists ? navigation.frame.maxY : app.frame.minY
+   let bottom=app.buttons["saveAlarm"].exists ? app.buttons["saveAlarm"].frame.minY : app.frame.maxY
+   if element.isHittable,frame.minY>=top,frame.maxY<=bottom {return}
+   let mid=CGPoint(x:app.frame.midX,y:(top+bottom)/2)
+   let distance=min(180,(bottom-top)*0.35)
+   let start=app.coordinate(withNormalizedOffset:.zero).withOffset(CGVector(dx:mid.x,dy:mid.y))
+   let end=start.withOffset(CGVector(dx:0,dy:frame.minY<top ? distance : -distance))
+   start.press(forDuration:0.05,thenDragTo:end)
+  }
+  XCTAssertTrue(element.isHittable)
+ }
+ private func toggleSound(in app:XCUIApplication) {
+  if app.buttons["doneSound"].exists {app.buttons["doneSound"].tap()}
+  else {let button=app.buttons["chooseSound"];reveal(button,in:app);button.tap()}
+ }
+
  private func capture(_ app:XCUIApplication,name:String) {
   let attachment=XCTAttachment(screenshot:app.screenshot())
   attachment.name=name;attachment.lifetime = .keepAlways;add(attachment)
@@ -11,7 +32,7 @@ final class PilotUITests:XCTestCase {
    capture(app,name:mode+"-"+language)
   }
   let chooseSound=app.buttons["chooseSound"]
-  XCTAssertTrue(chooseSound.isHittable,"Sound selection must be reachable without scrolling")
+  reveal(chooseSound,in:app)
   chooseSound.tap()
   XCTAssertTrue(app.buttons["sound-system"].waitForExistence(timeout:5))
   app.buttons["sound-sunrise"].tap()
@@ -19,7 +40,7 @@ final class PilotUITests:XCTestCase {
   for _ in 0..<10 where !slider.isHittable {app.swipeUp()}
   XCTAssertTrue(slider.isHittable)
   capture(app,name:"sounds-"+language)
-  app.buttons["chooseSound"].tap()
+  toggleSound(in:app)
  }
  private func launch(language:String,expired:Bool=false,awakeReady:Bool=false,editorFixture:Bool=false)->XCUIApplication {
   let app=XCUIApplication()
@@ -52,7 +73,7 @@ final class PilotUITests:XCTestCase {
   capture(app,name:"home-vi")
   app.buttons["addAlarm"].tap()
   XCTAssertTrue(app.navigationBars["Báo thức mới"].waitForExistence(timeout:5))
-  XCTAssertTrue(app.staticTexts["Thức dậy theo nhịp của bạn"].exists)
+  XCTAssertEqual(app.staticTexts["modeExplanation"].label,"Thức dậy theo nhịp riêng của bạn")
   capture(app,name:"alarm-editor-vi")
   captureEditorChoices(app,language:"vi")
   app.buttons["Hủy"].tap()
@@ -63,6 +84,8 @@ final class PilotUITests:XCTestCase {
   let before=Date()
   app.buttons["addAlarm"].tap()
   XCTAssertTrue(app.navigationBars["New alarm"].waitForExistence(timeout:5))
+  let timeButton=app.datePickers["alarmTimePicker"]
+  XCTAssertTrue(timeButton.isHittable)
   let picker=app.datePickers["alarmTimePicker"]
   XCTAssertTrue(picker.exists)
   let pickerValue=picker.value as? String ?? ""
@@ -70,8 +93,10 @@ final class PilotUITests:XCTestCase {
   let formatter=DateFormatter();formatter.locale=Locale(identifier:"en_US");formatter.dateStyle = .none;formatter.timeStyle = .short
   let currentTimes=[before,after].map {formatter.string(from:$0)}
   XCTAssertTrue(currentTimes.contains(pickerValue),"The draft should start at the current local time: \(pickerValue)")
-  for day in 1...7 {XCTAssertFalse(app.buttons["alarmRepeatDay-\(day)"].isSelected)}
+  capture(app,name:"composer-clock-time-en")
+  reveal(app.buttons["alarmRepeatDay-2"],in:app)
   XCTAssertTrue(app.staticTexts["Rings once"].exists)
+  for day in 1...7 {XCTAssertFalse(app.buttons["alarmRepeatDay-\(day)"].isSelected)}
   app.buttons["Cancel"].tap()
  }
  private func assertBrandColors(_ app:XCUIApplication) {
@@ -272,7 +297,7 @@ final class PilotUITests:XCTestCase {
   let app=launch(language:"en")
   app.buttons["addAlarm"].tap()
   app.swipeUp()
-  app.buttons["chooseSound"].tap()
+  toggleSound(in:app)
   app.buttons["sound-sunrise"].tap()
   let preview=app.buttons["preview-sunrise"]
   XCTAssertTrue(preview.waitForExistence(timeout:5))
@@ -286,7 +311,7 @@ final class PilotUITests:XCTestCase {
   app.buttons["preview-softChime"].tap()
   app.buttons["sound-system"].tap()
   XCTAssertFalse(app.sliders["previewVolume"].exists)
-  app.buttons["chooseSound"].tap()
+  toggleSound(in:app)
   app.buttons["Cancel"].tap()
   XCTAssertTrue(app.buttons["addAlarm"].waitForExistence(timeout:5))
   app.buttons["addAlarm"].tap()
@@ -298,7 +323,7 @@ final class PilotUITests:XCTestCase {
    let app=launch(language:language)
    app.buttons["addAlarm"].tap()
    app.swipeUp()
-   app.buttons["chooseSound"].tap()
+   toggleSound(in:app)
    XCTAssertEqual(app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@","sound-")).count,15)
    XCTAssertEqual(app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@","preview-")).count,14)
    let sound=app.buttons["sound-saxDaybreak"]
@@ -310,7 +335,7 @@ final class PilotUITests:XCTestCase {
    app.buttons["preview-saxGlow"].tap()
    XCTAssertFalse(app.staticTexts["alarmSaveError"].exists,"Preview controls must not activate Save")
    capture(app,name:"expanded-sounds-"+language)
-   app.buttons["chooseSound"].tap()
+   toggleSound(in:app)
    XCTAssertTrue(app.buttons["chooseSound"].label.contains(language == "vi" ? "Sax ban mai" : "Sax daybreak"),app.buttons["chooseSound"].debugDescription)
    app.buttons[language == "vi" ? "Hủy" : "Cancel"].tap()
    app.terminate()
@@ -347,7 +372,7 @@ final class PilotUITests:XCTestCase {
    let button=app.buttons["mode-"+mode]
    for _ in 0..<8 {
     let frame=button.frame
-    if frame.minY<app.buttons["editorChallengeSection"].frame.maxY {app.scrollViews.firstMatch.swipeDown()}
+    if frame.minY<app.navigationBars.firstMatch.frame.maxY {app.scrollViews.firstMatch.swipeDown()}
     else if !button.isHittable || frame.midY>app.buttons["saveAlarm"].frame.minY {app.scrollViews.firstMatch.swipeUp()}
     else {break}
    }
@@ -390,7 +415,7 @@ final class PilotUITests:XCTestCase {
   let readChoice=app.buttons["challenge-readAndChoose"]
   XCTAssertTrue(readChoice.waitForExistence(timeout:3))
   XCTAssertTrue(readChoice.isSelected)
-  for _ in 0..<6 where !app.buttons["mode-focused"].isHittable || app.buttons["mode-focused"].frame.minY<app.buttons["editorChallengeSection"].frame.maxY {app.swipeDown()}
+  for _ in 0..<6 where !app.buttons["mode-focused"].isHittable || app.buttons["mode-focused"].frame.minY<app.navigationBars.firstMatch.frame.maxY {app.swipeDown()}
   app.buttons["mode-focused"].tap()
   app.swipeUp()
   let target=app.staticTexts["pushUpTarget"]
@@ -441,13 +466,13 @@ final class PilotUITests:XCTestCase {
    let app=launch(language:language,expired:true)
    app.buttons["addAlarm"].tap()
    app.buttons["mode-balanced"].tap()
-   XCTAssertEqual(app.staticTexts["modeExplanation"].label,language == "vi" ? "Đọc một câu ngắn rồi chọn nghĩa phù hợp." : "Read one short sentence and choose its meaning.")
+   XCTAssertEqual(app.staticTexts["modeExplanation"].label,language == "vi" ? "Đọc một câu ngắn và chọn ý nghĩa của nó." : "Read one short sentence and choose its meaning.")
    app.buttons["mode-focused"].tap()
    XCTAssertTrue(app.buttons["closePro"].waitForExistence(timeout:5))
    capture(app,name:"expired-pro-"+language)
    app.buttons["closePro"].tap()
    app.swipeUp()
-   app.buttons["chooseSound"].tap()
+   toggleSound(in:app)
    app.buttons["sound-sunrise"].tap()
    XCTAssertTrue(app.buttons["closePro"].waitForExistence(timeout:5))
    app.buttons["closePro"].tap()
@@ -466,7 +491,7 @@ final class PilotUITests:XCTestCase {
    let system=app.buttons["sound-system"]
    for _ in 0..<10 where !system.isHittable {app.swipeDown()}
    XCTAssertTrue(system.isSelected)
-   app.buttons["chooseSound"].tap()
+   toggleSound(in:app)
    app.buttons[language == "vi" ? "Hủy" : "Cancel"].tap()
    app.buttons["morningProgress"].tap()
    XCTAssertTrue(app.buttons["explorePro"].waitForExistence(timeout:5))

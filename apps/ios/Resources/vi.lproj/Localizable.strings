@@ -301,7 +301,7 @@
 "Awake" = "Đã thức dậy";
 "Energized" = "Tươi tỉnh";
 "Default: 10 push-ups" = "Mặc định: 10 lần chống đẩy";
-"Wave hello" = "Chào wave";
+"Wave hello" = "Vẫy chào";
 "Neck turns" = "Xoay cổ";
 "Riddle" = "Đố vui";
 "Jumping jacks" = "Nhảy dây";
@@ -343,3 +343,15 @@
 "Backup rings are unavailable right now. Your main alarms still work." = "Chuông dự phòng tạm thời không dùng được. Báo thức chính vẫn hoạt động.";
 "Label" = "Nhãn";
 "Optional label" = "Nhãn tùy chọn";
+"Never" = "Không lặp";
+"Every day" = "Mỗi ngày";
+"Done" = "Xong";
+
+// Alarm composer
+"A gentle start" = "Khởi đầu nhẹ nhàng";
+"Find your energy" = "Chọn nhịp thức dậy";
+"Pick your first win" = "Thử thách mở đầu ngày mới";
+"Set the mood" = "Giai điệu buổi sáng";
+"The little details" = "Thiết lập thêm";
+"Today · Once" = "Hôm nay · Một lần";
+"Tomorrow · Once" = "Ngày mai · Một lần";

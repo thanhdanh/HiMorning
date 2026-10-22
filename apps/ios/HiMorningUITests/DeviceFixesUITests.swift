@@ -16,8 +16,24 @@ final class DeviceFixesUITests:XCTestCase {
   return app
  }
  private func reveal(_ element:XCUIElement,in app:XCUIApplication) {
-  for _ in 0..<8 where !element.isHittable {app.swipeUp()}
+  for _ in 0..<12 {
+   if !element.exists {app.swipeUp();continue}
+   let frame=element.frame
+   let navigation=app.navigationBars.firstMatch
+   let top=navigation.exists ? navigation.frame.maxY : app.frame.minY
+   let bottom=app.buttons["saveAlarm"].exists ? app.buttons["saveAlarm"].frame.minY : app.frame.maxY
+   if element.isHittable,frame.minY>=top,frame.maxY<=bottom {return}
+   let mid=CGPoint(x:app.frame.midX,y:(top+bottom)/2)
+   let distance=min(180,(bottom-top)*0.35)
+   let start=app.coordinate(withNormalizedOffset:.zero).withOffset(CGVector(dx:mid.x,dy:mid.y))
+   let end=start.withOffset(CGVector(dx:0,dy:frame.minY<top ? distance : -distance))
+   start.press(forDuration:0.05,thenDragTo:end)
+  }
   XCTAssertTrue(element.isHittable)
+ }
+ private func toggleSound(in app:XCUIApplication) {
+  if app.buttons["doneSound"].exists {app.buttons["doneSound"].tap()}
+  else {let button=app.buttons["chooseSound"];reveal(button,in:app);button.tap()}
  }
  private func skipIfNativeAlarmAccessIsDenied(_ app:XCUIApplication) throws {
   let feedback=app.staticTexts["alarmSaveError"]
@@ -37,7 +53,13 @@ final class DeviceFixesUITests:XCTestCase {
    let navigation=app.navigationBars[vietnamese ? "Sửa báo thức" : "Edit alarm"]
    XCTAssertTrue(navigation.waitForExistence(timeout:5))
    let label=app.textFields["alarmLabel"]
-   XCTAssertTrue(label.exists);label.tap();label.typeText("  School  ")
+   let preview=XCTAttachment(screenshot:app.screenshot())
+   preview.name="clock-style-alarm-form-\(vietnamese ? "vi" : "en")";preview.lifetime = .keepAlways;add(preview)
+   reveal(label,in:app);XCTAssertTrue(label.exists);label.tap();label.typeText("  School  ")
+   XCTAssertEqual(label.value as? String,"  School  ")
+   let keyboardPreview=XCTAttachment(screenshot:app.screenshot())
+   keyboardPreview.name="composer-label-keyboard";keyboardPreview.lifetime = .keepAlways;add(keyboardPreview)
+   if app.buttons["doneSound"].exists {app.buttons["doneSound"].tap()}
    app.buttons["saveAlarm"].tap()
    let saved=app.staticTexts["alarmLabel-"+id]
    XCTAssertTrue(saved.waitForExistence(timeout:5));XCTAssertEqual(saved.label,"School")
@@ -45,6 +67,36 @@ final class DeviceFixesUITests:XCTestCase {
    saved.tap()
    XCTAssertTrue(navigation.waitForExistence(timeout:5))
    XCTAssertEqual(label.value as? String,"School")
+   app.buttons[vietnamese ? "Hủy" : "Cancel"].tap()
+   app.terminate()
+  }
+ }
+ func testRepeatDaysUseInlineCirclesAndPersistSelection() {
+  for (vietnamese,largeText) in [(false,false),(true,false),(true,true)] {
+   let arguments=["--ui-disabled-alarm"]+(largeText ? ["-UIPreferredContentSizeCategoryName","UICTContentSizeCategoryAccessibilityM","--ui-reduce-motion"] : [])
+   let app=launch(arguments,vietnamese:vietnamese)
+   app.staticTexts["alarmTime-00000000-0000-0000-0000-000000000001"].tap()
+   reveal(app.buttons["alarmRepeatDay-2"],in:app)
+   for day in 1...7 {
+    let choice=app.buttons["alarmRepeatDay-\(day)"]
+    reveal(choice,in:app)
+    XCTAssertEqual(choice.isSelected,[2,4,6].contains(day))
+    XCTAssertGreaterThanOrEqual(choice.frame.height,44)
+    XCTAssertGreaterThanOrEqual(choice.frame.width,44)
+    if !choice.isSelected {choice.tap()}
+   }
+   XCTAssertEqual(app.staticTexts["alarmRepeatSummary"].label,vietnamese ? "Mỗi ngày" : "Every day")
+   let frames=[2,3,4,5,6,7,1].map {app.buttons["alarmRepeatDay-\($0)"].frame}
+   for frame in frames {XCTAssertEqual(frame.midY,frames[0].midY,accuracy:1,"Weekdays must stay on one row, including large text")}
+   for index in 1..<frames.count {XCTAssertGreaterThanOrEqual(frames[index].minX,frames[index-1].maxX-1)}
+   let preview=XCTAttachment(screenshot:app.screenshot())
+   preview.name="inline-repeat-circles-\(vietnamese ? "vi" : "en")-\(largeText ? "large" : "default")";preview.lifetime = .keepAlways;add(preview)
+   app.buttons["alarmRepeatDay-1"].tap()
+   app.buttons["saveAlarm"].tap()
+   let edit=app.staticTexts["alarmTime-00000000-0000-0000-0000-000000000001"]
+   XCTAssertTrue(edit.waitForExistence(timeout:5));edit.tap()
+   reveal(app.buttons["alarmRepeatDay-2"],in:app)
+   for day in 1...7 {XCTAssertEqual(app.buttons["alarmRepeatDay-\(day)"].isSelected,day != 1)}
    app.buttons[vietnamese ? "Hủy" : "Cancel"].tap()
    app.terminate()
   }
@@ -74,13 +126,18 @@ final class DeviceFixesUITests:XCTestCase {
   for vietnamese in [false,true] {
    let app=launch(["--ui-home-alarms","--ui-completed-alarm"],vietnamese:vietnamese)
    let time=app.staticTexts["alarmTime-"+id],delete=app.buttons["deleteAlarm-"+id]
+   let practice=app.buttons[vietnamese ? "Thử thử thách này" : "Try this challenge"].firstMatch
    XCTAssertTrue(time.exists)
    XCTAssertEqual(time.label,"07:15 AM")
    XCTAssertEqual(app.staticTexts["alarmTime-00000000-0000-0000-0000-000000000002"].label,"08:30 PM")
    XCTAssertTrue(app.staticTexts["alarmTime-00000000-0000-0000-0000-000000000003"].label.contains("09:00 AM"))
    XCTAssertEqual(app.staticTexts["alarmChallenge-"+id].label,vietnamese ? "Đọc và Chọn" : "Read & Choose")
+   XCTAssertEqual(app.staticTexts["alarmRepeat-"+id].label,vietnamese ? "T2, T4, T6" : "Mon, Wed, Fri")
    XCTAssertTrue(app.staticTexts["alarmMode-"+id].label.contains(vietnamese ? "Đã thức dậy" : "Awake"))
    XCTAssertGreaterThan(delete.frame.minY,time.frame.maxY,"Destructive actions belong below the alarm information")
+   XCTAssertEqual(practice.frame.width,delete.frame.width,accuracy:1,"The two footer actions should share the card evenly")
+   XCTAssertEqual(practice.frame.midY,delete.frame.midY,accuracy:1)
+   XCTAssertGreaterThanOrEqual(practice.frame.height,44)
    XCTAssertTrue(app.descendants(matching:.any)["alarmCard-"+id].exists)
    XCTAssertEqual(app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@","editAlarm-")).count,0)
    let attachment=XCTAttachment(screenshot:app.screenshot())
@@ -137,6 +194,7 @@ final class DeviceFixesUITests:XCTestCase {
    XCTAssertTrue(navigation.waitForExistence(timeout:5))
    let reading=app.buttons["challenge-readAloud"]
    reveal(reading,in:app);reading.tap();XCTAssertTrue(reading.isSelected)
+   if app.buttons["doneSound"].exists {app.buttons["doneSound"].tap()}
    app.buttons["saveAlarm"].tap()
    let closed=XCTNSPredicateExpectation(predicate:NSPredicate(format:"exists == false"),object:navigation)
    guard XCTWaiter.wait(for:[closed],timeout:5) == .completed else {
@@ -148,6 +206,7 @@ final class DeviceFixesUITests:XCTestCase {
    XCTAssertTrue(app.staticTexts[vietnamese ? "Đọc to" : "Read Aloud"].exists)
    XCTAssertEqual(app.alerts.count,0)
    edit.tap();reveal(reading,in:app);XCTAssertTrue(reading.isSelected)
+   if app.buttons["doneSound"].exists {app.buttons["doneSound"].tap()}
    app.buttons["saveAlarm"].tap()
    let unchanged=XCTNSPredicateExpectation(predicate:NSPredicate(format:"exists == false"),object:navigation)
    XCTAssertEqual(XCTWaiter.wait(for:[unchanged],timeout:5),.completed,"Saving unchanged settings must also close")
@@ -229,22 +288,20 @@ final class DeviceFixesUITests:XCTestCase {
    let edit=app.staticTexts["alarmTime-00000000-0000-0000-0000-000000000001"]
    reveal(edit,in:app);edit.tap()
    XCTAssertTrue(app.navigationBars[vietnamese ? "Sửa báo thức" : "Edit alarm"].waitForExistence(timeout:5))
-   XCTAssertTrue(app.buttons["chooseSound"].isHittable,"Sound must be visible when the editor opens")
+   XCTAssertTrue(app.datePickers["alarmTimePicker"].isHittable,"Time is the primary control")
    XCTAssertTrue(app.buttons["mode-balanced"].isSelected)
    reveal(app.buttons["challenge-guidedRhythm"],in:app)
    XCTAssertTrue(app.buttons["challenge-guidedRhythm"].isSelected)
+   reveal(app.buttons[vietnamese ? "Ngồi" : "Seated"],in:app)
    XCTAssertTrue(app.buttons[vietnamese ? "Ngồi" : "Seated"].isSelected)
-   let soundPanel=app.buttons["chooseSound"],challengePanel=app.buttons["editorChallengeSection"]
-   XCTAssertTrue(soundPanel.isHittable,"Sound must be reachable without scrolling")
-   XCTAssertTrue(challengePanel.isHittable)
-   soundPanel.tap()
+   toggleSound(in:app)
    XCTAssertTrue(app.buttons["sound-sunrise"].isSelected)
    app.buttons["sound-softChime"].tap()
-   challengePanel.tap()
+   toggleSound(in:app)
    XCTAssertTrue(app.buttons["mode-balanced"].isSelected,"Changing panels must retain the alarm draft")
-   soundPanel.tap()
+   toggleSound(in:app)
    XCTAssertTrue(app.buttons["sound-softChime"].isSelected,"Panel changes must retain the selected sound")
-   soundPanel.tap()
+   if app.buttons["doneSound"].exists {app.buttons["doneSound"].tap()}
    app.buttons["saveAlarm"].tap()
    XCTAssertTrue(edit.waitForExistence(timeout:5))
    XCTAssertEqual(app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@","editAlarm-")).count,0)
@@ -252,7 +309,7 @@ final class DeviceFixesUITests:XCTestCase {
    XCTAssertEqual(app.staticTexts.matching(NSPredicate(format:"identifier BEGINSWITH %@","nextAlarm-")).count,0)
    XCTAssertFalse(app.staticTexts.containing(NSPredicate(format:"label CONTAINS %@",vietnamese ? "Chuông dịu" : "Soft chime")).firstMatch.exists)
    XCTAssertEqual(app.alerts.count,0,"Editing a disabled alarm must not request alarm access")
-   edit.tap();reveal(app.buttons["chooseSound"],in:app);app.buttons["chooseSound"].tap()
+   edit.tap();reveal(app.buttons["chooseSound"],in:app);toggleSound(in:app)
    XCTAssertTrue(app.buttons["sound-softChime"].isSelected,"Collapsed details must still persist")
    app.terminate()
   }
@@ -260,18 +317,21 @@ final class DeviceFixesUITests:XCTestCase {
  func testSoundAccessExpiringAtSavePreservesDraftAndOffersRecovery() {
   let app=launch(["--ui-disabled-alarm","--ui-sound-access-expires"])
   let edit=app.staticTexts["alarmTime-00000000-0000-0000-0000-000000000001"]
-  edit.tap();app.buttons["chooseSound"].tap();app.buttons["sound-softChime"].tap()
+  edit.tap();toggleSound(in:app);app.buttons["sound-softChime"].tap()
+  if app.buttons["doneSound"].exists {app.buttons["doneSound"].tap()}
   app.buttons["saveAlarm"].tap()
   XCTAssertTrue(app.staticTexts["This sound is no longer available. Choose System sound or unlock Pro."].waitForExistence(timeout:5))
+  toggleSound(in:app)
   XCTAssertTrue(app.buttons["sound-softChime"].isSelected,"Save must not silently replace the selected sound")
+  toggleSound(in:app)
   XCTAssertTrue(app.buttons["saveAlarm"].isEnabled)
-  app.buttons["Cancel"].tap();edit.tap();app.buttons["chooseSound"].tap()
+  app.buttons["Cancel"].tap();edit.tap();toggleSound(in:app)
   XCTAssertTrue(app.buttons["sound-sunrise"].isSelected,"Failed Save must preserve the stored alarm")
-  app.buttons["sound-system"].tap();app.buttons["saveAlarm"].tap()
+  app.buttons["sound-system"].tap();toggleSound(in:app);app.buttons["saveAlarm"].tap()
   XCTAssertTrue(edit.waitForExistence(timeout:5))
-  edit.tap();app.buttons["chooseSound"].tap()
+  edit.tap();toggleSound(in:app)
   XCTAssertTrue(app.buttons["sound-system"].isSelected)
-  app.buttons["Cancel"].tap();app.terminate()
+  toggleSound(in:app);app.buttons["Cancel"].tap();app.terminate()
  }
  func testSaveWaitsAndRetainsEditorOnFailure() {
   let app=launch(["--ui-alarm-save-failure"])
@@ -291,17 +351,49 @@ final class DeviceFixesUITests:XCTestCase {
   XCTAssertTrue(app.navigationBars["New alarm"].exists)
   app.buttons["Cancel"].tap()
  }
- func testChallengeSummaryAndSettingsAreInsideSelectedCard() {
+ func testSelectedChallengeSettingsAreGroupedAndAdjustable() {
   let app=launch()
   app.buttons["addAlarm"].tap()
   reveal(app.buttons["mode-focused"],in:app);app.buttons["mode-focused"].tap()
   reveal(app.buttons["challenge-pushUps"],in:app);app.buttons["challenge-pushUps"].tap()
-  let card=app.otherElements["challenge-card-pushUps"]
+  let card=app.otherElements["challenge-settings-pushUps"]
   let summary=app.staticTexts["challenge-summary-pushUps"],target=app.staticTexts["pushUpTarget"]
+  reveal(target,in:app)
   XCTAssertTrue(card.exists);XCTAssertTrue(summary.exists);XCTAssertTrue(target.exists)
   XCTAssertTrue(card.frame.contains(summary.frame))
   XCTAssertTrue(card.frame.contains(target.frame))
+  XCTAssertTrue(app.buttons["decreasePushUpTarget"].isEnabled == false)
+  app.buttons["increasePushUpTarget"].tap()
+  XCTAssertTrue(target.label.contains("11"))
   app.buttons["Cancel"].tap()
+ }
+ func testGlassComposerSelectionAndPinnedControlsInDarkAndLargeText() {
+  for largeText in [false,true] {
+   var args=["--ui-dark-mode","--ui-reduce-motion"]
+   if largeText {args += ["-UIPreferredContentSizeCategoryName","UICTContentSizeCategoryAccessibilityM","--ui-reduce-transparency"]}
+   let app=launch(args,vietnamese:true)
+   app.buttons["addAlarm"].tap()
+   XCTAssertTrue(app.staticTexts["composerChallengeTitle"].waitForExistence(timeout:5))
+   let time=app.datePickers["alarmTimePicker"],save=app.buttons["saveAlarm"]
+   XCTAssertTrue(time.isHittable);XCTAssertTrue(save.isHittable)
+   let selected=app.buttons["challenge-waveHand"]
+   reveal(selected,in:app);selected.tap()
+   XCTAssertTrue(selected.isSelected)
+   XCTAssertEqual(app.staticTexts["composerChallengeTitle"].label,"Vẫy chào")
+   toggleSound(in:app)
+   XCTAssertTrue(app.buttons["sound-system"].isSelected)
+   toggleSound(in:app)
+   reveal(time,in:app)
+   XCTAssertEqual(app.staticTexts["composerChallengeTitle"].label,"Vẫy chào")
+   reveal(time,in:app)
+   XCTAssertTrue(time.isHittable);XCTAssertTrue(save.isHittable)
+   XCTAssertTrue(app.windows.firstMatch.frame.contains(time.frame))
+   XCTAssertTrue(app.windows.firstMatch.frame.contains(save.frame))
+   let screenshot=XCTAttachment(screenshot:app.screenshot())
+   screenshot.name=largeText ? "composer-dark-large-reduced" : "composer-dark-glass"
+   screenshot.lifetime = .keepAlways;add(screenshot)
+   app.buttons["Hủy"].tap();app.terminate()
+  }
  }
  func testEnabledAlarmSoundEditReschedulesTheSameNativeAlarm() throws {
   let app=launch()
@@ -320,9 +412,10 @@ final class DeviceFixesUITests:XCTestCase {
    self.wait(for:[removed],timeout:10)
   }
   app.buttons["addAlarm"].tap()
-  reveal(app.buttons["chooseSound"],in:app);app.buttons["chooseSound"].tap()
+  reveal(app.buttons["chooseSound"],in:app);toggleSound(in:app)
   app.buttons["sound-sunrise"].tap()
-  app.buttons["chooseSound"].tap()
+  toggleSound(in:app)
+  if app.buttons["doneSound"].exists {app.buttons["doneSound"].tap()}
   app.buttons["saveAlarm"].tap()
   let permission=XCUIApplication(bundleIdentifier:"com.apple.springboard").alerts.firstMatch
   if permission.waitForExistence(timeout:2) {
@@ -343,10 +436,11 @@ final class DeviceFixesUITests:XCTestCase {
   XCTAssertFalse(app.staticTexts["Alarm is set"].exists)
   XCTAssertTrue(app.staticTexts["nextAlarm-"+alarmID].exists)
   edit.tap()
-  reveal(app.buttons["chooseSound"],in:app);app.buttons["chooseSound"].tap()
+  reveal(app.buttons["chooseSound"],in:app);toggleSound(in:app)
   XCTAssertTrue(app.buttons["sound-sunrise"].isSelected)
   app.buttons["sound-softChime"].tap()
-  app.buttons["chooseSound"].tap()
+  toggleSound(in:app)
+  if app.buttons["doneSound"].exists {app.buttons["doneSound"].tap()}
   app.buttons["saveAlarm"].tap()
   let edited=XCTNSPredicateExpectation(predicate:NSPredicate(format:"exists == false"),object:app.navigationBars["Edit alarm"])
   guard XCTWaiter.wait(for:[edited],timeout:15) == .completed else {
@@ -359,9 +453,9 @@ final class DeviceFixesUITests:XCTestCase {
   XCTAssertFalse(app.staticTexts["Alarm is set"].exists)
   XCTAssertTrue(app.staticTexts["nextAlarm-"+alarmID].exists)
   edit.tap()
-  reveal(app.buttons["chooseSound"],in:app);app.buttons["chooseSound"].tap()
+  reveal(app.buttons["chooseSound"],in:app);toggleSound(in:app)
   XCTAssertTrue(app.buttons["sound-softChime"].isSelected,"The same alarm must persist its changed sound")
-  app.buttons["chooseSound"].tap()
+  toggleSound(in:app)
   app.buttons["Cancel"].tap()
  }
 }

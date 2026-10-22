@@ -398,6 +398,12 @@ struct HomeView:View {
    .onChange(of:reduceMotion) {_,value in if value {model.celebrationID=nil}}
   }
  }
+ private func alarmRepeatSummary(_ days:Set<Int>)->String {
+  if days.isEmpty {return appText("Rings once")}
+  if days.count == 7 {return appText("Every day")}
+  let names=[appText("Sun"),appText("Mon"),appText("Tue"),appText("Wed"),appText("Thu"),appText("Fri"),appText("Sat")]
+  return [2,3,4,5,6,7,1].filter {days.contains($0)}.map {names[$0-1]}.joined(separator:", ")
+ }
  private func alarmCard(_ alarm:SavedAlarm,now:Date)->some View {
   let completed=model.journal?.completedToday(alarmID:alarm.id,now:now) ?? false
   let time=String(format:"%02d:%02d",alarm.time.hour%12 == 0 ? 12 : alarm.time.hour%12,alarm.time.minute)
@@ -433,6 +439,9 @@ struct HomeView:View {
     Text(alarm.label).font(.subheadline.weight(.semibold)).accessibilityIdentifier("alarmLabel-"+alarm.id.uuidString)
    }
    if alarm.enabled {
+    Label(alarmRepeatSummary(alarm.time.weekdays),systemImage:"calendar")
+     .font(.caption.weight(.semibold)).foregroundStyle(MorningTheme.onYellow.opacity(0.8))
+     .accessibilityIdentifier("alarmRepeat-"+alarm.id.uuidString)
     Label(alarm.challenge.displayTitle,systemImage:alarm.challenge.kind.icon).font(.subheadline.weight(.semibold)).accessibilityIdentifier("alarmChallenge-"+alarm.id.uuidString)
     HStack(alignment:.top,spacing:12) {
      Label(alarm.mode.title,systemImage:alarm.mode.icon).font(.caption.weight(.medium)).foregroundStyle(MorningTheme.onYellow.opacity(0.75))
@@ -449,14 +458,13 @@ struct HomeView:View {
    }
    if alarm.enabled {
     Divider().overlay(MorningTheme.onYellow.opacity(0.15))
-    HStack {
-     Spacer(minLength:8)
-     Button {model.rehearsal=true;model.selected=alarm} label:{Text(appText("Try")).frame(minWidth:44,minHeight:44).contentShape(Rectangle())}
+    HStack(spacing:0) {
+     Button {model.rehearsal=true;model.selected=alarm} label:{Label(appText("Try"),systemImage:"play.fill").frame(maxWidth:.infinity,minHeight:44).contentShape(Rectangle())}
       .accessibilityLabel(appText("Try this challenge"))
-     Spacer(minLength:8)
-     Button(role:.destructive) {Task {await model.remove(alarm)}} label:{Text(appText("Delete")).frame(minWidth:44,minHeight:44).contentShape(Rectangle())}
+     Divider().overlay(MorningTheme.onYellow.opacity(0.15)).frame(height:20).accessibilityHidden(true)
+     Button(role:.destructive) {Task {await model.remove(alarm)}} label:{Label(appText("Delete"),systemImage:"trash").frame(maxWidth:.infinity,minHeight:44).contentShape(Rectangle())}
       .accessibilityIdentifier("deleteAlarm-"+alarm.id.uuidString)
-    }.buttonStyle(.plain).font(.footnote.weight(.medium)).foregroundStyle(MorningTheme.onYellow.opacity(0.75))
+    }.buttonStyle(.plain).font(.subheadline.weight(.medium)).foregroundStyle(MorningTheme.onYellow.opacity(0.8))
    }
   }.padding(alarm.enabled ? 18 : 16).foregroundStyle(alarm.enabled ? MorningTheme.onYellow : MorningTheme.muted)
    .background(alarm.enabled ? MorningTheme.hero : MorningTheme.soft,in:RoundedRectangle(cornerRadius:22))
