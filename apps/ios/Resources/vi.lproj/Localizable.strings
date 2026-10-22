@@ -8,14 +8,14 @@
 "Completed today" = "Đã xong hôm nay";
 "Alarm sound" = "Âm báo";
 "Back to home" = "Về trang chính";
-"Balanced" = "Cân bằng";
+"Balanced" = "Vừa sức";
 "Camera access is off. You can tap I’m awake when it unlocks." = "Chưa có quyền camera. Bạn có thể nhấn “Tôi đã thức dậy” khi nút mở khóa.";
 "Start challenge" = "Bắt đầu thử thách";
 "Open camera" = "Mở camera";
 "The camera counts push-ups on this iPhone. Video is not saved or uploaded." = "Camera nhận diện động tác và đếm số lần chống đẩy ngay trên iPhone. Video không được lưu hay tải lên.";
 "Allow the camera to check your push-ups on this iPhone. Video and sound are not saved or uploaded. You can stop at any time." = "Cho phép camera nhận diện động tác chống đẩy ngay trên iPhone. Video và âm thanh không được lưu hay tải lên. Bạn có thể dừng bất cứ lúc nào.";
 "Place your phone to the side so your whole body is visible. Start the camera, then do your push-ups. Each full down-and-up movement counts once." = "Đặt điện thoại ở bên cạnh để camera thấy toàn thân. Bật camera rồi bắt đầu chống đẩy. Mỗi lần hạ người và đẩy lên đủ sẽ được tính một lần.";
-"Push-ups complete. Have a good morning!" = "Bạn đã hoàn thành chống đẩy. Chúc buổi sáng tốt lành!";
+"Push-ups complete." = "Bạn đã hoàn thành chống đẩy.";
 "Keep your body straight in a push-up position, with your whole body in view." = "Giữ người thẳng ở tư thế chống đẩy và để camera thấy toàn thân.";
 "This attempt has timed out. You can start again." = "Lượt này đã hết thời gian. Bạn có thể bắt đầu lại.";
 "Camera challenges are checked on this iPhone. Video and sound are not saved or uploaded." = "Các thử thách dùng camera được kiểm tra ngay trên iPhone. Video và âm thanh không được lưu hay tải lên.";
@@ -37,7 +37,7 @@
 "Mon" = "T2";
 "Move slowly up and down, within the camera view." = "Lên và xuống chậm, trong vùng camera.";
 "Movement detected. Checking…" = "Đã nhận diện động tác. Đang kiểm tra…";
-"Movement checked. Have a good morning!" = "Đã xác minh động tác. Chúc bạn một ngày nhiều năng lượng!";
+"Movement checked." = "Đã xác minh động tác.";
 "New alarm" = "Báo thức mới";
 "No alarms yet" = "Chưa có báo thức";
 "Off" = "Đã tắt";
@@ -87,7 +87,7 @@
 "Wed" = "T4";
 "You can always confirm you are awake or stop." = "Bạn luôn có thể xác nhận đã thức dậy hoặc dừng lại.";
 "You can always stop. A challenge is just a little help to start your day." = "Bạn luôn có thể dừng lại. Thử thách chỉ là chút giúp đỡ để bắt đầu ngày mới.";
-"You confirmed you are awake. Have a good morning!" = "Bạn đã xác nhận đã thức dậy. Chúc một buổi sáng tốt lành!";
+"You confirmed you are awake." = "Bạn đã xác nhận thức dậy.";
 "Your alarms could not be checked. Please check alarm access." = "Không thể kiểm tra báo thức của bạn. Vui lòng kiểm tra quyền truy cập báo thức.";
 "Your morning" = "Buổi sáng của bạn";
 "Your free preview could not be checked. Basic alarms are available." = "Phiên dùng thử chưa thể xác nhận được. Báo thức cơ bản vẫn có sẵn.";
@@ -96,9 +96,9 @@
 "Your 30 free days begin when you save your first alarm. No card needed." = "30 ngày dùng thử bắt đầu khi bạn lưu báo thức đầu tiên. Không cần thẻ thanh toán.";
 "Enjoying your mornings? Explore Pro" = "Thích buổi sáng của bạn? Khám phá phiên bản Pro";
 "Your preview has ended. This morning uses the basic challenge. Your saved choice stays the same." = "Phiên dùng thử đã kết thúc. Buổi sáng này sử dụng thử thách cơ bản. Lựa chọn của bạn được lưu nguyên.";
-"Focused challenges and more sounds" = "Thử thách tập trung và nhiều âm thanh hơn";
+"More challenges and sounds" = "Thêm thử thách và âm thanh";
 "Try all features free for 30 days. No card needed. Subscribe only when you choose." = "Dùng thử tất cả tính năng miễn phí trong 30 ngày. Không cần thẻ thanh toán. Đăng ký chỉ khi bạn chọn.";
-"Your free preview has ended. Basic alarms and challenges stay free. Pro unlocks your progress, Focused mode and more sounds." = "Phiên dùng thử đã kết thúc. Báo thức và thử thách cơ bản vẫn miễn phí. Pro mở khóa tiến độ của bạn, chế độ tập trung và nhiều âm thanh hơn.";
+"Your free preview has ended. Basic alarms and challenges stay free. Pro unlocks your progress, the Challenging level and more sounds." = "Phiên dùng thử đã kết thúc. Báo thức và thử thách cơ bản vẫn miễn phí. Pro mở khóa tiến độ của bạn, mức Năng động và nhiều âm thanh hơn.";
 "Your saved alarms could not be read. Changes are paused." = "Không thể đọc báo thức đã lưu. Thay đổi đang tạm dừng.";
 "Choose a sound for your morning." = "Chọn âm thanh cho buổi sáng của bạn.";
 "Practice only. Your alarms stay as they are." = "Chỉ dùng thử. Báo thức vẫn giữ nguyên như cũ.";
@@ -164,13 +164,12 @@
 "Stay seated and move both arms down, up, then down." = "Ngồi yên và đưa cả hai tay xuống, lên rồi xuống.";
 "Keep your whole body in view." = "Giữ toàn thân trong tầm nhìn.";
 "Keep your upper body and both wrists in view." = "Giữ phần trên người và cả cổ tay trong tầm nhìn.";
-"Rhythm complete. Good morning!" = "Nhịp điệu hoàn thành. Chúc buổi sáng tốt lành!";
+"Rhythm complete." = "Đã hoàn thành nhịp điệu.";
 "Move smoothly and follow the rhythm." = "Di chuyển mượt mà và làm theo nhịp điệu.";
 "The pose is unclear. Try again slowly." = "Vị trí không rõ ràng. Hãy thử lại từ từ.";
 "Recognized-word match" = "Trùng khớp từ được nhận diện";
 "Start guided rhythm" = "Bắt đầu nhịp điệu hướng dẫn";
 "Start reading" = "Bắt đầu đọc";
-"Challenge completed. Have a good morning!" = "Bạn đã hoàn thành thử thách. Chúc buổi sáng tốt lành!";
 "Complete the selected push-ups in view of the camera." = "Hoàn thành số lần chống đẩy được chọn trong tầm nhìn của camera.";
 "Choose the closest meaning." = "Chọn ý nghĩa gần nhất.";
 "Stay seated. Lower your arms, raise them, then lower them. Complete 3 cycles. Video stays on this device." = "Ngồi yên. Hạ tay xuống, đưa lên rồi hạ xuống. Hoàn thành 3 chu kỳ. Video chỉ được xử lý trên thiết bị này.";
@@ -178,8 +177,8 @@
 "Speech is recognized on this device. This checks words, not accent quality." = "Lời nói được nhận diện trên thiết bị này. Kiểm tra từ vựng chứ không phải chất lượng giọng nói.";
 "Correct. Challenge completed!" = "Đúng rồi. Thử thách hoàn thành!";
 "Not quite. Read the sentence and try again." = "Chưa chính xác. Đọc lại câu và thử lại.";
-"Guided rhythm completed. Have a good morning!" = "Nhịp điệu hướng dẫn đã hoàn thành. Chúc buổi sáng tốt lành!";
-"Read aloud completed. Have a good morning!" = "Đọc to đã hoàn thành. Chúc buổi sáng tốt lành!";
+"Guided rhythm completed." = "Đã hoàn thành thử thách.";
+"Read aloud completed." = "Đã hoàn thành đọc to.";
 "Listening timed out. Try again or choose another challenge." = "Hết thời gian nghe. Hãy thử lại hoặc chọn thử thách khác.";
 "Classic" = "Kinh điển";
 "Plucked strings" = "Dây đàn được bấm";
@@ -216,7 +215,7 @@
 "Keep reading. Tap Finish reading when you are done." = "Tiếp tục đọc. Nhấn Hoàn thành đọc khi bạn xong.";
 "On-device AI detects a reading from the amount of speech recognized. It does not grade pronunciation." = "AI trên thiết bị phát hiện đọc từ số lời nói được nhận diện. Nó không chấm điểm cách phát âm.";
 "You have about %d seconds. Read at your own pace." = "Bạn có khoảng %d giây. Đọc theo nhịp riêng của bạn.";
-"Reading recorded. Have a good morning!" = "Đã ghi âm đọc. Chúc buổi sáng tốt lành!";
+"Reading recorded." = "Đã ghi nhận phần đọc.";
 "Edit" = "Sửa";
 "Edit alarm" = "Sửa báo thức";
 "Saving…" = "Đang lưu…";
@@ -240,7 +239,7 @@
 "The score compares recognized words with the sentence; it does not measure accent or pronunciation quality." = "Điểm số so sánh từ được nhận diện với câu; không đo chất lượng giọng nói hay phát âm.";
 "Your word match score is below 80. Review the highlighted words and try again." = "Điểm trùng khớp từ của bạn dưới 80. Xem lại các từ được đánh dấu và thử lại.";
 "Recognition is taking too long. Try again, or tap I’m awake when it unlocks." = "Nhận diện mất quá nhiều thời gian. Hãy thử lại, hoặc nhấn “Tôi đã thức dậy” khi nút mở khóa.";
-"Great reading. Have a good morning!" = "Đọc tốt. Chúc buổi sáng tốt lành!";
+"Great reading." = "Đọc tốt.";
 "Movement photos go through HiMorning to Qwen on Modal. Modal may retain inputs and outputs for up to 7 days. No audio is uploaded. You can stop at any time." = "Ảnh động tác đi qua HiMorning đến Qwen trên Modal. Modal có thể giữ dữ liệu đầu vào và đầu ra trong tối đa 7 ngày. Không có âm thanh nào được tải lên. Bạn có thể dừng bất cứ lúc nào.";
 "Cloud challenges use a guest Firebase account. With your consent, movement photos are processed by Qwen on Modal and may be retained by Modal for up to 7 days. Local progress contains dates and outcomes, not photos or audio." = "Các thử thách đám mây sử dụng tài khoản khách Firebase. Với sự đồng ý của bạn, ảnh động tác được xử lý bởi Qwen trên Modal và có thể được giữ lại bởi Modal trong tối đa 7 ngày. Lịch sử trên iPhone chỉ lưu ngày và kết quả, không lưu ảnh hay âm thanh.";
 "Modal data policies" = "Chính sách dữ liệu Modal";
@@ -348,14 +347,14 @@
 
 // Alarm composer
 "A gentle start" = "Khởi đầu nhẹ nhàng";
-"Find your energy" = "Chọn nhịp thức dậy";
+"Challenge level" = "Mức thử thách";
 "Pick your first win" = "Thử thách mở đầu ngày mới";
 "Set the mood" = "Giai điệu buổi sáng";
 "The little details" = "Thiết lập thêm";
 "Today · Once" = "Hôm nay · Một lần";
 "Tomorrow · Once" = "Ngày mai · Một lần";
 
-"Mode: %@" = "Chế độ: %@";
+"Challenge level: %@" = "Mức thử thách: %@";
 
 "Movement guide" = "Hướng dẫn động tác";
 "Follow the movement" = "Làm theo động tác";
@@ -385,3 +384,42 @@
 "This alarm and its scheduled rings will be removed." = "Báo thức này và các lần reo đã đặt sẽ được xóa.";
 
 "Back to alarm" = "Về báo thức";
+
+"Try this challenge?" = "Bạn muốn thử thử thách này?";
+
+"Tap twice quickly to try." = "Chạm nhanh hai lần để thử.";
+"Challenging" = "Năng động";
+
+"Every Sunday" = "Chủ nhật hằng tuần";
+
+"Every Monday" = "Thứ 2 hằng tuần";
+
+"Every Tuesday" = "Thứ 3 hằng tuần";
+
+"Every Wednesday" = "Thứ 4 hằng tuần";
+
+"Every Thursday" = "Thứ 5 hằng tuần";
+
+"Every Friday" = "Thứ 6 hằng tuần";
+
+"Every Saturday" = "Thứ 7 hằng tuần";
+
+"Once · %@" = "Một lần · %@";
+
+"Keep both shoulders and elbows in view." = "Để camera thấy rõ hai vai và hai khuỷu tay.";
+
+"Raise both arms to count one. Lower them before raising them again." = "Giơ cả hai tay lên để tính một lần. Hạ tay xuống trước khi giơ lần tiếp theo.";
+
+"Keep both shoulders and elbows in view. Raise both arms to count one. Lower them before raising them again." = "Để camera thấy rõ hai vai và hai khuỷu tay. Giơ cả hai tay lên để tính một lần. Hạ tay xuống trước khi giơ lần tiếp theo.";
+
+"Lower yourself, then push up." = "Hạ người xuống, rồi đẩy lên.";
+
+"Wave your hand side to side." = "Vẫy tay qua lại.";
+
+"Open your arms and legs, then bring them together." = "Dang tay chân, rồi khép lại.";
+
+"Raise both arms to count one." = "Giơ cả hai tay lên để tính một lần.";
+
+"Arms down, up, then down." = "Hạ tay, giơ lên, rồi hạ xuống.";
+
+"Bend your knees, then stand up." = "Khuỵu gối, rồi đứng lên.";

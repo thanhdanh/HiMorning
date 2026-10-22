@@ -76,6 +76,13 @@ struct NoopBackupScheduler:BackupRingScheduler {
       fixture=SavedAlarm(id:fixture.id,time:fixture.time,mode:.focused,challenge:.pushUps(repetitions:10));fixture.state = .confirmed
       upcoming=SavedAlarm(id:upcoming.id,time:upcoming.time,mode:.gentle,challenge:.none);upcoming.state = .confirmed
      }
+     if ProcessInfo.processInfo.arguments.contains("--ui-card-repeat") {
+      fixture=SavedAlarm(id:fixture.id,time:try AlarmTime(hour:7,minute:15,weekdays:[4]),mode:.balanced,challenge:.readAndChoose);fixture.state = .confirmed
+      upcoming=SavedAlarm(id:upcoming.id,time:try AlarmTime(hour:20,minute:30,weekdays:[4,5,6]),mode:.focused,challenge:.readAloud);upcoming.state = .confirmed
+      let tomorrow=Calendar.current.date(byAdding:.day,value:1,to:Calendar.current.startOfDay(for:Date()))!
+      let occurrence=Calendar.current.date(bySettingHour:9,minute:0,second:0,of:tomorrow)!
+      disabled=SavedAlarm(id:disabled.id,time:disabled.time,scheduledOccurrence:occurrence);disabled.state = .confirmed
+     }
      fixtures=[fixture,upcoming,disabled]
      if ProcessInfo.processInfo.arguments.contains("--ui-open-alarm") {UserDefaults.standard.set(fixture.id.uuidString,forKey:"pendingAlarmID")}
     }
@@ -240,7 +247,7 @@ struct NoopBackupScheduler:BackupRingScheduler {
  }
 }
 extension WakeMode {
- var title:String {switch self {case .gentle:return appText("Gentle");case .balanced:return appText("Awake");case .focused:return appText("Energized")}}
+ var title:String {switch self {case .gentle:return appText("Gentle");case .balanced:return appText("Balanced");case .focused:return appText("Challenging")}}
  var icon:String {switch self {case .gentle:return "leaf";case .balanced:return "circle.lefthalf.filled";case .focused:return "scope"}}
 }
 extension AlarmSound {
@@ -296,6 +303,7 @@ extension ScheduleState {
  var title:String {switch self {case .pending:return appText("Checking…");case .confirmed:return appText("Alarm is set");case .off:return appText("Off");case .needsReview:return appText("Check system alarms")}}
 }
 struct HomeView:View {
+ @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
  private struct AlarmDraft:Identifiable {let id=UUID();let alarm:SavedAlarm?}
  @ObservedObject var model:PilotModel
  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
@@ -428,9 +436,19 @@ struct HomeView:View {
   nil
   #endif
  }
- private func alarmRepeatSummary(_ days:Set<Int>)->String {
-  if days.isEmpty {return appText("Rings once")}
+ private func alarmRepeatSummary(_ alarm:SavedAlarm,now:Date)->String {
+  let days=alarm.time.weekdays
+  if days.isEmpty {
+   guard let occurrence=alarm.scheduledOccurrence ?? alarm.time.next(after:now,calendar:.current) else {return appText("Rings once")}
+   if Calendar.current.isDate(occurrence,inSameDayAs:now) {return appText("Today · Once")}
+   if let tomorrow=Calendar.current.date(byAdding:.day,value:1,to:now),Calendar.current.isDate(occurrence,inSameDayAs:tomorrow) {return appText("Tomorrow · Once")}
+   return String(format:appText("Once · %@"),locale:appLocale(),occurrence.formatted(.dateTime.day().month(.abbreviated).locale(appLocale())))
+  }
   if days.count == 7 {return appText("Every day")}
+  if days.count == 1,let day=days.first {
+   let weekly=[appText("Every Sunday"),appText("Every Monday"),appText("Every Tuesday"),appText("Every Wednesday"),appText("Every Thursday"),appText("Every Friday"),appText("Every Saturday")]
+   return weekly[day-1]
+  }
   let names=[appText("Sun"),appText("Mon"),appText("Tue"),appText("Wed"),appText("Thu"),appText("Fri"),appText("Sat")]
   return [2,3,4,5,6,7,1].filter {days.contains($0)}.map {names[$0-1]}.joined(separator:", ")
  }
@@ -445,9 +463,12 @@ struct HomeView:View {
   }
   let toggle=Toggle(appText(alarm.enabled ? "Turn off" : "Turn on"),isOn:Binding(get:{alarm.enabled},set:{_ in Task {await model.toggle(alarm)}}))
    .labelsHidden().fixedSize().tint(alarm.enabled ? MorningTheme.successOnYellow : MorningTheme.success).accessibilityIdentifier("toggleAlarm-"+alarm.id.uuidString)
-  let repeatDays=Text(alarmRepeatSummary(alarm.time.weekdays)).font(.caption.weight(.medium))
-   .foregroundStyle(MorningTheme.onYellow.opacity(0.8)).fixedSize(horizontal:false,vertical:true)
-   .accessibilityIdentifier("alarmRepeat-"+alarm.id.uuidString)
+  let repeatDays=HStack(alignment:.firstTextBaseline,spacing:5) {
+   Image(systemName:alarm.time.weekdays.isEmpty ? "calendar.badge.clock" : "repeat")
+    .font(.caption2.weight(.semibold)).accessibilityHidden(true)
+   Text(alarmRepeatSummary(alarm,now:now)).font(.caption.weight(.medium))
+    .fixedSize(horizontal:false,vertical:true).accessibilityIdentifier("alarmRepeat-"+alarm.id.uuidString)
+  }.foregroundStyle(MorningTheme.onYellow.opacity(0.8))
   let clockBlock=VStack(alignment:.leading,spacing:6) {
    if !alarm.label.isEmpty {
     Text(alarm.label).font(.subheadline.weight(.medium)).lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
@@ -480,12 +501,31 @@ struct HomeView:View {
     }
    }
   }.padding(18).foregroundStyle(alarm.enabled ? MorningTheme.onYellow : MorningTheme.muted)
-   .background(alarm.enabled ? MorningTheme.alarmCard : MorningTheme.soft,in:RoundedRectangle(cornerRadius:26))
+   .background {alarmCardBackground(alarm)}
    .overlay {RoundedRectangle(cornerRadius:26).strokeBorder(alarm.enabled ? MorningTheme.onYellow.opacity(0.08) : MorningTheme.line,lineWidth:1)}
    .contentShape(RoundedRectangle(cornerRadius:26))
    .accessibilityElement(children:.contain).accessibilityIdentifier("alarmCard-"+alarm.id.uuidString)
    .onTapGesture {if revealedAlarmID == alarm.id {revealedAlarmID=nil} else {revealedAlarmID=nil;editor=AlarmDraft(alarm:alarm)}}
    .accessibilityAction(.default) {editor=AlarmDraft(alarm:alarm)}
+ }
+ private func alarmCardBackground(_ alarm:SavedAlarm)->some View {
+  ZStack(alignment:.topTrailing) {
+   alarm.enabled ? MorningTheme.alarmCard : MorningTheme.soft
+   if alarm.enabled,alarm.challenge.kind != .none,!reduceTransparency {
+    let tint:Color=switch alarm.mode {
+    case .gentle:Color(red:0.20,green:0.60,blue:0.44)
+    case .balanced:Color(red:0.58,green:0.42,blue:0.76)
+    case .focused:Color(red:0.91,green:0.31,blue:0.16)
+    }
+    Canvas {context,size in
+     let center=CGPoint(x:size.width,y:0)
+     for (index,radius) in [160.0,120,80,40].enumerated() {
+      let circle=Path(ellipseIn:CGRect(x:center.x-radius,y:center.y-radius,width:radius*2,height:radius*2))
+      context.fill(circle,with:.color(tint.opacity(0.04+Double(index)*0.01)))
+     }
+    }.blur(radius:1.5)
+   }
+  }.clipShape(RoundedRectangle(cornerRadius:26)).accessibilityHidden(true)
  }
  @ViewBuilder private func alarmChallengeSummary(_ alarm:SavedAlarm)->some View {
   let accessible=dynamicTypeSize.isAccessibilitySize
@@ -504,7 +544,7 @@ struct HomeView:View {
     Text(alarm.challenge.displayTitle).font(.subheadline.weight(.semibold)).fixedSize(horizontal:false,vertical:true)
      .accessibilityIdentifier("alarmChallenge-"+alarm.id.uuidString)
     Text(alarm.mode.title).font(.caption).foregroundStyle(MorningTheme.onYellow.opacity(0.7)).fixedSize(horizontal:false,vertical:true)
-     .accessibilityLabel(String(format:appText("Mode: %@"),locale:appLocale(),alarm.mode.title))
+     .accessibilityLabel(String(format:appText("Challenge level: %@"),locale:appLocale(),alarm.mode.title))
      .accessibilityIdentifier("alarmMode-"+alarm.id.uuidString)
    }.multilineTextAlignment(accessible ? .leading : .trailing)
   }.frame(width:accessible ? nil : 132,alignment:accessible ? .leading : .trailing)

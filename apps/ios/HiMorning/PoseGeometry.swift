@@ -51,6 +51,7 @@ extension FramingHint {
   case .ok:return nil
   case .stepBack:return appText("Step back so your whole body fits.")
   case .showFeet:return appText("Show your feet in the camera.")
+  case .showArms:return appText("Keep both shoulders and elbows in view.")
   case .comeCloser:return appText("Come a little closer.")
   case .noPerson:return appText("Stand where the camera can see you.")
   }

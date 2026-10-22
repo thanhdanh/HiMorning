@@ -112,7 +112,7 @@ final class GuidedRhythmCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDel
    case .pose(let pose):
     let completedCycle=rhythm.observe(pose,timestampMs:timestamp,visible:true)
     let completed=rhythm.completedCycles>=targetCycles
-    publish(completed:completed,ended:completed,message:completed ? appText("Rhythm complete. Good morning!") : instruction,hint:hint)
+    publish(completed:completed,ended:completed,message:completed ? appText("Rhythm complete.") : instruction,hint:hint)
     if completedCycle && completed {
      stopCamera()
     }

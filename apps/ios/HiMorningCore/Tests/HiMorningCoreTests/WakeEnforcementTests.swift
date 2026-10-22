@@ -149,6 +149,26 @@ final class WakeEnforcementTests:XCTestCase {
   let rings=await enforcer.rings();XCTAssertEqual(rings.count,15)
  }
 
+ func testSystemDismissalAndRestartKeepOneTimeWakeAndBackupRingsUnresolved() async throws {
+  let file=tempFile();defer {try? FileManager.default.removeItem(at:file.deletingLastPathComponent())}
+  let spy=RingSchedulerSpy();let enforcer=try makeEnforcer(spy,file:file)
+  var a=try confirmed(6,30);let o=try occurrence(a)
+  await enforcer.plan(alarms:[a],entries:[],now:o-60,calendar:calendar)
+  let before=await enforcer.rings()
+  // Reconciliation no longer sees the one-time native alarm after a system Stop.
+  a.state = .needsReview
+  let entries=[MorningEntry(alarmID:a.id,date:o+10,outcome:.dismissed)]
+  let restarted=try makeEnforcer(spy,file:file)
+  let result=await restarted.plan(alarms:[a],entries:entries,now:o+60,calendar:calendar)
+  XCTAssertEqual(result,WakePlanResult(scheduled:0,limited:false))
+  let remaining=await restarted.rings()
+  XCTAssertEqual(remaining,before)
+  XCTAssertEqual(remaining.first?.fireDate,o+120)
+  XCTAssertEqual(WakePlanner.unresolvedWake(alarms:[a],entries:entries,now:o+60,calendar:calendar,rings:remaining)?.alarmID,a.id)
+  let cancelled=await spy.cancelled;XCTAssertTrue(cancelled.isEmpty)
+  await restarted.resolve(alarmID:a.id)
+  let after=await restarted.rings();XCTAssertTrue(after.isEmpty)
+ }
  func testPlanIsIdempotentAcrossRestart() async throws {
   let file=tempFile();defer {try? FileManager.default.removeItem(at:file.deletingLastPathComponent())}
   let spy=RingSchedulerSpy();let alarms=[try confirmed(6,30)]

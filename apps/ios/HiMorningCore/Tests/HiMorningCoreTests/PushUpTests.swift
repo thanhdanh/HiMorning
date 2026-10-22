@@ -51,6 +51,11 @@ final class PushUpTests:XCTestCase {
   feed(&counter,[(0,165,true),(300,130,true),(600,110,true),(900,130,true),(1200,165,true)])
   XCTAssertEqual(counter.completedReps,0)
  }
+ func testQuickerControlledPushUpStillCounts() {
+  var counter=PushUpCounter(target:1)
+  feed(&counter,[(0,165,true),(180,120,true),(375,80,true),(560,120,true),(750,165,true)])
+  XCTAssertEqual(counter.completedReps,1)
+ }
  func testFastDescentWithoutMiddleBandSamplesCounts() {
   var counter=PushUpCounter(target:1)
   feed(&counter,[(0,165,true),(400,80,true),(900,165,true)])

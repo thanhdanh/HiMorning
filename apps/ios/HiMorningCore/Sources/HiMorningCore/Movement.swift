@@ -7,10 +7,55 @@ public enum MovementObservation:Sendable {
  case stretch(overhead:Bool)
 }
 
+public enum ReachUpPose:Equatable,Sendable {
+ case lowered,raised,transition,unclear
+ public var observation:MovementObservation {
+  switch self {
+  case .lowered:return .stretch(overhead:false)
+  case .raised:return .stretch(overhead:true)
+  case .transition:return .transition
+  case .unclear:return .unavailable
+  }
+ }
+}
+
+public struct ReachUpAssessment:Sendable {
+ public let pose:ReachUpPose
+ public let hint:FramingHint
+}
+
+public enum ReachUpGeometry {
+ public static func assess(_ joints:[BodyJoint:JointSample],imageWidth:Double,imageHeight:Double)->ReachUpAssessment {
+  let hint=BodyFraming.upperBodyHint(joints)
+  guard hint == .ok else {return .init(pose:.unclear,hint:hint)}
+  guard imageWidth.isFinite,imageHeight.isFinite,imageWidth>0,imageHeight>0 else {return .init(pose:.unclear,hint:.showArms)}
+  let leftShoulder=joints[.leftShoulder]!,rightShoulder=joints[.rightShoulder]!
+  let leftElbow=joints[.leftElbow]!,rightElbow=joints[.rightElbow]!
+  let dx=(rightShoulder.x-leftShoulder.x)*imageWidth,dy=(rightShoulder.y-leftShoulder.y)*imageHeight
+  let shoulderWidth=hypot(dx,dy)
+  guard shoulderWidth.isFinite,shoulderWidth>=min(imageWidth,imageHeight)*0.06 else {return .init(pose:.unclear,hint:.comeCloser)}
+  // Measure upper-arm elevation against the shoulder line, so a tilted phone
+  // does not turn a level arm into a lowered one. Forearms may leave the image.
+  var upX = -dy/shoulderWidth,upY=dx/shoulderWidth
+  if upY<0 {upX = -upX;upY = -upY}
+  func offset(_ elbow:JointSample,_ shoulder:JointSample)->(x:Double,y:Double) {
+   ((elbow.x-shoulder.x)*imageWidth,(elbow.y-shoulder.y)*imageHeight)
+  }
+  let left=offset(leftElbow,leftShoulder),right=offset(rightElbow,rightShoulder)
+  guard hypot(left.x,left.y)>=shoulderWidth*0.12,hypot(right.x,right.y)>=shoulderWidth*0.12 else {return .init(pose:.unclear,hint:.showArms)}
+  let leftHeight=left.x*upX+left.y*upY,rightHeight=right.x*upX+right.y*upY
+  let raisedTolerance=max(4,shoulderWidth*0.13)
+  let loweredMargin=max(8,shoulderWidth*0.4)
+  let raised=leftHeight >= -raisedTolerance && rightHeight >= -raisedTolerance
+  let lowered=leftHeight <= -loweredMargin && rightHeight <= -loweredMargin
+  return .init(pose:raised ? .raised:lowered ? .lowered:.transition,hint:.ok)
+ }
+}
+
 public struct WaveCounter:Sendable {
- private static let swingThreshold=0.65
+ private static let swingThreshold=0.62
  private static let minimumSwingMs=80
- private static let acquisitionMs=180
+ private static let acquisitionMs=150
  private static let pairWindowMs=2_000
  private static let lossGraceMs=600
  private let target:Int
@@ -104,7 +149,7 @@ public struct WaveCounter:Sendable {
  }
 }
 
-/// Counts ordered, stable Vision poses. An interruption clears the current cycle but keeps completed reps.
+/// Counts stable Vision poses. Reach up counts on the raised pose; jumping jacks require a full cycle.
 public struct MovementChallengeProgress:Sendable {
  private enum Pose:Equatable {case closed,open,lowered,overhead}
  private let kind:ChallengeKind
@@ -114,6 +159,8 @@ public struct MovementChallengeProgress:Sendable {
  private var candidateConsumed=false
  private var lastTimestamp:Int?
  private var phase=0
+ // Keep this latch across interruptions so reacquiring raised arms cannot count twice.
+ private var reachNeedsLowering=false
  private var lossSinceMs:Int?
  public private(set) var completed=0
  public var ready:Bool {completed>=target}
@@ -157,7 +204,7 @@ public struct MovementChallengeProgress:Sendable {
   default:interrupt();return completed
   }
   if pose != candidate {candidate=pose;candidateSince=timestampMs;candidateConsumed=false;return completed}
-  let requiredDuration=(kind == .stretching && pose == .overhead) ? 700:300
+  let requiredDuration=(kind == .stretching && pose == .overhead) ? 120:220
   guard timestampMs-candidateSince>=requiredDuration,!candidateConsumed else {return completed}
   candidateConsumed=true
   consume(pose)
@@ -172,10 +219,10 @@ public struct MovementChallengeProgress:Sendable {
    phase+=1
    if phase==expected.count {completed+=1;phase=1}
   case .stretching:
-   let expected:[Pose]=[.lowered,.overhead,.lowered]
-   guard pose==expected[phase] else {phase=pose == .lowered ? 1:0;return}
-   phase+=1
-   if phase==expected.count {completed+=1;phase=1}
+   if pose == .lowered {reachNeedsLowering=false}
+   else if pose == .overhead && !reachNeedsLowering {
+    completed+=1;reachNeedsLowering=true
+   }
   default:break
   }
  }
@@ -186,7 +233,7 @@ public struct NeckTurnCounter:Sendable {
  private static let sideDegrees=20.0
  private static let centerDegrees=8.0
  private static let heldTurnDegrees=15.0
- private static let commitMs=150
+ private static let commitMs=120
  private static let heldTurnLossMs=1_500
  private static let lossGraceMs=600
  private let target:Int

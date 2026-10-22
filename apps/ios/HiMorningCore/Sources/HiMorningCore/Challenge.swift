@@ -210,7 +210,7 @@ public struct GuidedRhythmSession: Sendable {
  private var candidatePose:GuidedRhythmPose?
  private var candidateSinceMs=0
  private var lostSinceMs:Int?
- private let holdMs=150
+ private let holdMs=120
  private let lossGraceMs=600
 
  public init(variant:GuidedRhythmVariant,maxSequenceDurationMs:Int=8_000) {

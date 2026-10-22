@@ -15,7 +15,7 @@
 "The camera counts push-ups on this iPhone. Video is not saved or uploaded." = "The camera counts push-ups on this iPhone. Video is not saved or uploaded.";
 "Allow the camera to check your push-ups on this iPhone. Video and sound are not saved or uploaded. You can stop at any time." = "Allow the camera to check your push-ups on this iPhone. Video and sound are not saved or uploaded. You can stop at any time.";
 "Place your phone to the side so your whole body is visible. Start the camera, then do your push-ups. Each full down-and-up movement counts once." = "Place your phone to the side so your whole body is visible. Start the camera, then do your push-ups. Each full down-and-up movement counts once.";
-"Push-ups complete. Have a good morning!" = "Push-ups complete. Have a good morning!";
+"Push-ups complete." = "Push-ups complete.";
 "Keep your body straight in a push-up position, with your whole body in view." = "Keep your body straight in a push-up position, with your whole body in view.";
 "This attempt has timed out. You can start again." = "This attempt has timed out. You can start again.";
 "Camera challenges are checked on this iPhone. Video and sound are not saved or uploaded." = "Camera challenges are checked on this iPhone. Video and sound are not saved or uploaded.";
@@ -37,7 +37,7 @@
 "Mon" = "Mon";
 "Move slowly up and down, within the camera view." = "Move slowly up and down, within the camera view.";
 "Movement detected. Checking…" = "Movement detected. Checking…";
-"Movement checked. Have a good morning!" = "Movement checked. Have a good morning!";
+"Movement checked." = "Movement checked.";
 "New alarm" = "New alarm";
 "No alarms yet" = "No alarms yet";
 "Off" = "Off";
@@ -87,7 +87,7 @@
 "Wed" = "Wed";
 "You can always confirm you are awake or stop." = "You can always confirm you are awake or stop.";
 "You can always stop. A challenge is just a little help to start your day." = "You can always stop. A challenge is just a little help to start your day.";
-"You confirmed you are awake. Have a good morning!" = "You confirmed you are awake. Have a good morning!";
+"You confirmed you are awake." = "You confirmed you are awake.";
 "Your alarms could not be checked. Please check alarm access." = "Your alarms could not be checked. Please check alarm access.";
 "Your morning" = "Your morning";
 "Your free preview could not be checked. Basic alarms are available." = "Your free preview could not be checked. Basic alarms are available.";
@@ -96,9 +96,9 @@
 "Your 30 free days begin when you save your first alarm. No card needed." = "Your 30 free days begin when you save your first alarm. No card needed.";
 "Enjoying your mornings? Explore Pro" = "Enjoying your mornings? Explore Pro";
 "Your preview has ended. This morning uses the basic challenge. Your saved choice stays the same." = "Your preview has ended. This morning uses the basic challenge. Your saved choice stays the same.";
-"Focused challenges and more sounds" = "Focused challenges and more sounds";
+"More challenges and sounds" = "More challenges and sounds";
 "Try all features free for 30 days. No card needed. Subscribe only when you choose." = "Try all features free for 30 days. No card needed. Subscribe only when you choose.";
-"Your free preview has ended. Basic alarms and challenges stay free. Pro unlocks your progress, Focused mode and more sounds." = "Your free preview has ended. Basic alarms and challenges stay free. Pro unlocks your progress, Focused mode and more sounds.";
+"Your free preview has ended. Basic alarms and challenges stay free. Pro unlocks your progress, the Challenging level and more sounds." = "Your free preview has ended. Basic alarms and challenges stay free. Pro unlocks your progress, the Challenging level and more sounds.";
 "Your saved alarms could not be read. Changes are paused." = "Your saved alarms could not be read. Changes are paused.";
 "Choose a sound for your morning." = "Choose a sound for your morning.";
 "Practice only. Your alarms stay as they are." = "Practice only. Your alarms stay as they are.";
@@ -164,13 +164,12 @@
 "Stay seated and move both arms down, up, then down." = "Stay seated and move both arms down, up, then down.";
 "Keep your whole body in view." = "Keep your whole body in view.";
 "Keep your upper body and both wrists in view." = "Keep your upper body and both wrists in view.";
-"Rhythm complete. Good morning!" = "Rhythm complete. Good morning!";
+"Rhythm complete." = "Rhythm complete.";
 "Move smoothly and follow the rhythm." = "Move smoothly and follow the rhythm.";
 "The pose is unclear. Try again slowly." = "The pose is unclear. Try again slowly.";
 "Recognized-word match" = "Recognized-word match";
 "Start guided rhythm" = "Start guided rhythm";
 "Start reading" = "Start reading";
-"Challenge completed. Have a good morning!" = "Challenge completed. Have a good morning!";
 "Complete the selected push-ups in view of the camera." = "Complete the selected push-ups in view of the camera.";
 "Choose the closest meaning." = "Choose the closest meaning.";
 "Stay seated. Lower your arms, raise them, then lower them. Complete 3 cycles. Video stays on this device." = "Stay seated. Lower your arms, raise them, then lower them. Complete 3 cycles. Video stays on this device.";
@@ -178,8 +177,8 @@
 "Speech is recognized on this device. This checks words, not accent quality." = "Speech is recognized on this device. This checks words, not accent quality.";
 "Correct. Challenge completed!" = "Correct. Challenge completed!";
 "Not quite. Read the sentence and try again." = "Not quite. Read the sentence and try again.";
-"Guided rhythm completed. Have a good morning!" = "Guided rhythm completed. Have a good morning!";
-"Read aloud completed. Have a good morning!" = "Read aloud completed. Have a good morning!";
+"Guided rhythm completed." = "Guided rhythm completed.";
+"Read aloud completed." = "Read aloud completed.";
 "Listening timed out. Try again or choose another challenge." = "Listening timed out. Try again or choose another challenge.";
 "Classic" = "Classic";
 "Plucked strings" = "Plucked strings";
@@ -216,7 +215,7 @@
 "Keep reading. Tap Finish reading when you are done." = "Keep reading. Tap Finish reading when you are done.";
 "On-device AI detects a reading from the amount of speech recognized. It does not grade pronunciation." = "On-device AI detects a reading from the amount of speech recognized. It does not grade pronunciation.";
 "You have about %d seconds. Read at your own pace." = "You have about %d seconds. Read at your own pace.";
-"Reading recorded. Have a good morning!" = "Reading recorded. Have a good morning!";
+"Reading recorded." = "Reading recorded.";
 "Edit" = "Edit";
 "Edit alarm" = "Edit alarm";
 "Saving…" = "Saving…";
@@ -240,7 +239,7 @@
 "The score compares recognized words with the sentence; it does not measure accent or pronunciation quality." = "The score compares recognized words with the sentence; it does not measure accent or pronunciation quality.";
 "Your word match score is below 80. Review the highlighted words and try again." = "Your word match score is below 80. Review the highlighted words and try again.";
 "Recognition is taking too long. Try again, or tap I’m awake when it unlocks." = "Recognition is taking too long. Try again, or tap I’m awake when it unlocks.";
-"Great reading. Have a good morning!" = "Great reading. Have a good morning!";
+"Great reading." = "Great reading.";
 "Movement photos go through HiMorning to Qwen on Modal. Modal may retain inputs and outputs for up to 7 days. No audio is uploaded. You can stop at any time." = "Movement photos go through HiMorning to Qwen on Modal. Modal may retain inputs and outputs for up to 7 days. No audio is uploaded. You can stop at any time.";
 "Cloud challenges use a guest Firebase account. With your consent, movement photos are processed by Qwen on Modal and may be retained by Modal for up to 7 days. Local progress contains dates and outcomes, not photos or audio." = "Cloud challenges use a guest Firebase account. With your consent, movement photos are processed by Qwen on Modal and may be retained by Modal for up to 7 days. Local progress contains dates and outcomes, not photos or audio.";
 "Modal data policies" = "Modal data policies";
@@ -349,14 +348,14 @@
 
 // Alarm composer
 "A gentle start" = "A gentle start";
-"Find your energy" = "Find your energy";
+"Challenge level" = "Challenge level";
 "Pick your first win" = "Pick your first win";
 "Set the mood" = "Set the mood";
 "The little details" = "The little details";
 "Today · Once" = "Today · Once";
 "Tomorrow · Once" = "Tomorrow · Once";
 
-"Mode: %@" = "Mode: %@";
+"Challenge level: %@" = "Challenge level: %@";
 
 "Movement guide" = "Movement guide";
 "Follow the movement" = "Follow the movement";
@@ -386,3 +385,42 @@
 "This alarm and its scheduled rings will be removed." = "This alarm and its scheduled rings will be removed.";
 
 "Back to alarm" = "Back to alarm";
+
+"Try this challenge?" = "Try this challenge?";
+
+"Tap twice quickly to try." = "Tap twice quickly to try.";
+"Challenging" = "Challenging";
+
+"Every Sunday" = "Every Sunday";
+
+"Every Monday" = "Every Monday";
+
+"Every Tuesday" = "Every Tuesday";
+
+"Every Wednesday" = "Every Wednesday";
+
+"Every Thursday" = "Every Thursday";
+
+"Every Friday" = "Every Friday";
+
+"Every Saturday" = "Every Saturday";
+
+"Once · %@" = "Once · %@";
+
+"Keep both shoulders and elbows in view." = "Keep both shoulders and elbows in view.";
+
+"Raise both arms to count one. Lower them before raising them again." = "Raise both arms to count one. Lower them before raising them again.";
+
+"Keep both shoulders and elbows in view. Raise both arms to count one. Lower them before raising them again." = "Keep both shoulders and elbows in view. Raise both arms to count one. Lower them before raising them again.";
+
+"Lower yourself, then push up." = "Lower yourself, then push up.";
+
+"Wave your hand side to side." = "Wave your hand side to side.";
+
+"Open your arms and legs, then bring them together." = "Open your arms and legs, then bring them together.";
+
+"Raise both arms to count one." = "Raise both arms to count one.";
+
+"Arms down, up, then down." = "Arms down, up, then down.";
+
+"Bend your knees, then stand up." = "Bend your knees, then stand up.";

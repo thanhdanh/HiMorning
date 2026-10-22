@@ -46,7 +46,7 @@ public struct PushUpCounter:Sendable {
   if phase == 2 {
    // A one-frame elbow dip must not become a completed rep after holding the plank.
    guard let loweredAt,timestampMs-loweredAt>=150 else {interrupt();return}
-   if let began,timestampMs-began>=800 {completedReps+=1}
+   if let began,timestampMs-began>=750 {completedReps+=1}
    interrupt()
   } else {phase+=1}
  }

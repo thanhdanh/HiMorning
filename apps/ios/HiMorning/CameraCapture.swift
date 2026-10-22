@@ -87,7 +87,7 @@ final class CameraCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDelegate,
    let supported=joints[0].y>=joints[2].y-0.02 && abs(joints[2].y-joints[4].y)*size.height<=max(20,hypot(dx,dy)*0.2)
    counter.observe(elbowAngle:elbow,bodyAngle:bodyAngle,incline:incline,visible:supported,timestampMs:timestamp)
    let aligned=supported && bodyAngle>=150 && incline<=35
-   publish(ended:counter.ready,message:appText(counter.ready ? "Push-ups complete. Have a good morning!" : aligned ? "Move slowly up and down, within the camera view." : "Keep your body straight in a push-up position, with your whole body in view."))
+   publish(ended:counter.ready,message:appText(counter.ready ? "Push-ups complete." : aligned ? "Move slowly up and down, within the camera view." : "Keep your body straight in a push-up position, with your whole body in view."))
    if counter.ready {stopCamera()}
   } catch {counter.interrupt();publish(ended:false,message:appText("The movement is unclear. Try moving your phone."))}
  }

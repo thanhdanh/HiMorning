@@ -51,6 +51,10 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
  private let faceRequest:VNDetectFaceRectanglesRequest={
   let request=VNDetectFaceRectanglesRequest();request.revision=VNDetectFaceRectanglesRequestRevision3;return request
  }()
+ private let faceLandmarksRequest:VNDetectFaceLandmarksRequest={
+  let request=VNDetectFaceLandmarksRequest();request.revision=VNDetectFaceLandmarksRequestRevision3
+  return request
+ }()
  private let bodyRequest=VNDetectHumanBodyPoseRequest()
  private var started=0.0
  private var tracking:CameraTrackingSnapshot = .empty
@@ -143,11 +147,19 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
  }
 
  private func observeNeck(_ buffer:CVPixelBuffer,size:CGSize,timestamp:Int) throws {
-  try VNImageRequestHandler(cvPixelBuffer:buffer,orientation:.leftMirrored).perform([faceRequest])
+  let handler=VNImageRequestHandler(cvPixelBuffer:buffer,orientation:.leftMirrored)
+  try handler.perform([faceRequest])
   tracking = .face(faceRequest.results?.first,imageSize:size)
   guard let face=faceRequest.results?.first,face.confidence>=0.6,let yaw=face.yaw?.doubleValue,case .neck(var neck)=counter else {
    counter.observeLoss(timestampMs:timestamp);publish(kind.movementInstruction);return
   }
+  // Reuse the detected face for landmarks. Counting retains its existing yaw
+  // input even when the optional visual landmark pass cannot produce a curve.
+  faceLandmarksRequest.inputFaceObservations=[face]
+  do {
+   try handler.perform([faceLandmarksRequest])
+   if let markedFace=faceLandmarksRequest.results?.first {tracking = .face(markedFace,imageSize:size)}
+  } catch { /* Keep the current face box; never reuse an older curve. */ }
   neck.observe(yawDegrees:yaw*180/Double.pi,timestampMs:timestamp)
   counter = .neck(neck)
   finishFrame()
@@ -159,8 +171,22 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
    counter.observeLoss(timestampMs:timestamp);publish(kind.movementInstruction,hint:.noPerson);return
   }
   let allPoints=try body.recognizedPoints(.all)
-  tracking = .body(allPoints,imageSize:size)
-  let hint=BodyFraming.hint(PoseGeometry.jointSamples(allPoints),needsFeet:kind == .jumpingJacks)
+  tracking = .body(allPoints,imageSize:size,
+   minConfidence:kind == .stretching ? Float(BodyFraming.upperBodyMinConfidence):0.6,
+   edgeMargin:kind == .stretching ? CGFloat(BodyFraming.upperBodyEdgeMargin):0.02)
+  let samples=PoseGeometry.jointSamples(allPoints)
+  if kind == .stretching {
+   let assessment=ReachUpGeometry.assess(samples,imageWidth:Double(size.width),imageHeight:Double(size.height))
+   tracking.requiredJointsVisible=assessment.pose != .unclear
+   guard case .body(var progress)=counter else {return}
+   _=progress.observe(assessment.pose.observation,timestampMs:timestamp)
+   counter = .body(progress)
+   if assessment.pose == .unclear {
+    publish("Keep both shoulders and elbows in view.",hint:assessment.hint)
+   } else {finishFrame()}
+   return
+  }
+  let hint=BodyFraming.hint(samples,needsFeet:true)
   func point(_ name:VNHumanBodyPoseObservation.JointName)->CGPoint? {
    guard let p=allPoints[name],PoseGeometry.isVisible(p,minConfidence:0.6) else {return nil}
    return p.location
@@ -168,22 +194,15 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
   guard let leftShoulder=point(.leftShoulder),let rightShoulder=point(.rightShoulder),let leftWrist=point(.leftWrist),let rightWrist=point(.rightWrist) else {
    counter.observeLoss(timestampMs:timestamp);publish(hint == .ok ? "The view is unclear. Try moving your phone.":kind.movementInstruction,hint:hint);return
   }
-  let observation:MovementObservation
-  if kind == .stretching {
-   let raised=leftWrist.y>leftShoulder.y+0.08 && rightWrist.y>rightShoulder.y+0.08
-   let lowered=leftWrist.y<leftShoulder.y-0.05 && rightWrist.y<rightShoulder.y-0.05
-   observation = raised ? .stretch(overhead:true):lowered ? .stretch(overhead:false):.transition
-  } else {
-   guard let leftAnkle=point(.leftAnkle),let rightAnkle=point(.rightAnkle) else {
-    counter.observeLoss(timestampMs:timestamp);publish(kind.movementInstruction,hint:hint);return
-   }
-   let shoulderWidth=abs(leftShoulder.x-rightShoulder.x),ankleWidth=abs(leftAnkle.x-rightAnkle.x)
-   let armsRaised=leftWrist.y>leftShoulder.y+0.06 && rightWrist.y>rightShoulder.y+0.06
-   let armsLowered=leftWrist.y<leftShoulder.y-0.05 && rightWrist.y<rightShoulder.y-0.05
-   let legsApart=ankleWidth>shoulderWidth*1.25
-   let legsTogether=ankleWidth<=shoulderWidth*1.15
-   observation = armsRaised && legsApart ? .jumpingJack(open:true) : armsLowered && legsTogether ? .jumpingJack(open:false) : .transition
+  guard let leftAnkle=point(.leftAnkle),let rightAnkle=point(.rightAnkle) else {
+   counter.observeLoss(timestampMs:timestamp);publish(kind.movementInstruction,hint:hint);return
   }
+  let shoulderWidth=abs(leftShoulder.x-rightShoulder.x),ankleWidth=abs(leftAnkle.x-rightAnkle.x)
+  let armsRaised=leftWrist.y>leftShoulder.y+0.06 && rightWrist.y>rightShoulder.y+0.06
+  let armsLowered=leftWrist.y<leftShoulder.y-0.05 && rightWrist.y<rightShoulder.y-0.05
+  let legsApart=ankleWidth>shoulderWidth*1.25
+  let legsTogether=ankleWidth<=shoulderWidth*1.15
+  let observation:MovementObservation=armsRaised && legsApart ? .jumpingJack(open:true) : armsLowered && legsTogether ? .jumpingJack(open:false) : .transition
   guard case .body(var progress)=counter else {return}
   _=progress.observe(observation,timestampMs:timestamp)
   counter = .body(progress)
@@ -210,7 +229,7 @@ private extension ChallengeKind {
   switch self {
   case .waveHand:return "Place your hand in view and wave it side to side."
   case .neckRotation:return "Turn your head to each side, then back to the middle."
-  case .stretching:return "Raise both hands above your shoulders, then lower them."
+  case .stretching:return "Raise both arms to count one. Lower them before raising them again."
   default:return "Keep your whole body visible and move through the jumping jack."
   }
  }

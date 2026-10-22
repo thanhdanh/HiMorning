@@ -40,7 +40,7 @@ struct MorningProgressView:View {
      if !model.access.hasFullAccess {
       VStack(alignment:.leading,spacing:16) {
        Label(appText("Your progress"),systemImage:"chart.bar.xaxis").font(.title2.bold())
-       Text(appText("Your free preview has ended. Basic alarms and challenges stay free. Pro unlocks your progress, Focused mode and more sounds.")).font(.subheadline).foregroundStyle(MorningTheme.muted)
+       Text(appText("Your free preview has ended. Basic alarms and challenges stay free. Pro unlocks your progress, the Challenging level and more sounds.")).font(.subheadline).foregroundStyle(MorningTheme.muted)
        Button(appText("Explore Pro")) {pro=true}.buttonStyle(MorningButtonStyle()).accessibilityIdentifier("explorePro")
       }.padding(24).background(MorningTheme.surface,in:RoundedRectangle(cornerRadius:24))
      } else if store.isPro {

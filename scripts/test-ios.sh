@@ -12,6 +12,7 @@ case "${2:-push}" in
       -only-testing:HiMorningUITests/DeviceFixesUITests/testDisabledAlarmIsCompactAndCanBeEditedAndDeletedInBothLanguages \
       -only-testing:HiMorningUITests/DeviceFixesUITests/testAlarmCardShowsTimeRepeatAndDirectPractice \
       -only-testing:HiMorningUITests/DeviceFixesUITests/testSwipeDeleteRequiresConfirmationAndCancelPreservesTheAlarm \
+      -only-testing:HiMorningUITests/DeviceFixesUITests/testChallengeDoubleTapAsksBeforePracticeInBothLanguages \
       -only-testing:HiMorningUITests/DeviceFixesUITests/testDraftChallengePracticeReturnsToTheUnsavedForm \
       -only-testing:HiMorningUITests/PilotUITests/testProgressDayModesAndChallengeDetailsInBothLanguages \
       -only-testing:HiMorningUITests/ChallengeCelebrationUITests/testRealAlarmCompletionReturnsHomeAndMarksOnlyThatAlarmInBothLanguages \

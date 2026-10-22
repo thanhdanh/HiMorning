@@ -277,6 +277,32 @@ final class CoreTests: XCTestCase {
    XCTAssertEqual(rhythm.completedCycles,0)
   }
  }
+ func testFluidJacksAndShorterStretchHoldCompleteFullCycles() {
+  for kind in [ChallengeKind.jumpingJacks,.stretching] {
+   var progress=MovementChallengeProgress(kind:kind,target:1)
+   let rest:MovementObservation=kind == .jumpingJacks ? .jumpingJack(open:false):.stretch(overhead:false)
+   let action:MovementObservation=kind == .jumpingJacks ? .jumpingJack(open:true):.stretch(overhead:true)
+   for time in stride(from:0,through:231,by:33) {_=progress.observe(rest,timestampMs:time)}
+   _=progress.observe(.transition,timestampMs:264)
+   let last=kind == .stretching ? 858:528
+   for time in stride(from:297,through:last,by:33) {_=progress.observe(action,timestampMs:time)}
+   _=progress.observe(.transition,timestampMs:last+33)
+   for time in stride(from:last+66,through:last+297,by:33) {_=progress.observe(rest,timestampMs:time)}
+   XCTAssertEqual(progress.completed,1)
+  }
+ }
+ func testFluidGuidedMovementInBothVariants() {
+  for variant in [GuidedRhythmVariant.standing,.seated] {
+   var rhythm=GuidedRhythmSession(variant:variant)
+   let rest:GuidedRhythmPose=variant == .standing ? .standing:.armsDown
+   let action:GuidedRhythmPose=variant == .standing ? .lowered:.armsUp
+   for (pose,start) in [(rest,0),(action,198),(rest,396)] {
+    for time in stride(from:start,through:start+132,by:33) {_=rhythm.observe(pose,timestampMs:time,visible:true)}
+    rhythm.transition(timestampMs:start+165)
+   }
+   XCTAssertEqual(rhythm.completedCycles,1)
+  }
+ }
  func testJacksAndStretchingRejectSpikesAndPartialCycles() {
   for kind in [ChallengeKind.jumpingJacks,.stretching] {
    var progress=MovementChallengeProgress(kind:kind,target:1)

@@ -228,14 +228,14 @@ struct ChallengeView: View {
     }
     if arguments.contains("--ui-testing"), practicing, arguments.contains("--ui-complete-challenge") {
      switch challenge.kind {
-     case .pushUps: complete(.localCompleted, success: appText("Push-ups complete. Have a good morning!"))
-     case .guidedRhythm: complete(.localCompleted, success: appText("Guided rhythm completed. Have a good morning!"))
+     case .pushUps: complete(.localCompleted, success: appText("Push-ups complete."))
+     case .guidedRhythm: complete(.localCompleted, success: appText("Guided rhythm completed."))
      case .readAloud:
       if transcript.isEmpty, let item = readAloudItem { transcript = item.text }
       speechEnded = true
-      complete(.localCompleted, success: appText("Great reading. Have a good morning!"))
+      complete(.localCompleted, success: appText("Great reading."))
      case .readAndChoose, .riddle: complete(.localCompleted, success: appText("Correct. Challenge completed!"))
-     case .waveHand, .neckRotation, .jumpingJacks, .stretching: complete(.localCompleted, success: appText("Challenge completed. Have a good morning!"))
+     case .waveHand, .neckRotation, .jumpingJacks, .stretching: complete(.localCompleted, success: appText("Challenge completed"))
      case .none: break
      }
     }
@@ -275,7 +275,18 @@ struct ChallengeView: View {
   voice?.stop()
   let coach = VoiceCoach()
   voice = coach
-  coach.speak(challengeInstructions)
+  coach.speak(spokenMovementCue)
+ }
+ private var spokenMovementCue:String {
+  switch challenge.kind {
+  case .pushUps:return appText("Lower yourself, then push up.")
+  case .waveHand:return appText("Wave your hand side to side.")
+  case .neckRotation:return appText("Turn your head to each side, then back to the middle.")
+  case .jumpingJacks:return appText("Open your arms and legs, then bring them together.")
+  case .stretching:return appText("Raise both arms to count one.")
+  case .guidedRhythm:return challenge.rhythmVariant == .seated ? appText("Arms down, up, then down.") : appText("Bend your knees, then stand up.")
+  default:return challengeInstructions
+  }
  }
 
  @MainActor private func startCamera() async {
@@ -286,7 +297,7 @@ struct ChallengeView: View {
   let capture = CameraCapture(target: target) { update in Task { @MainActor in
    guard captureGeneration == generation, consent, !finished, !stopping else { return }
    if update.reps > reps { voice?.rep(update.reps, spoken: !update.ready) }
-   if update.message != message { voice?.hint(update.message) }
+   voice?.hint(update.message)
    tracking=update.tracking
    reps = update.reps; message = update.message
    if update.ready { await completePushUps(update.counter) }
@@ -302,7 +313,7 @@ struct ChallengeView: View {
   do {
    let applied = try await coordinator.completePushUps(counter)
    guard captureGeneration == generation, !stopping, scene == .active else { return }
-   if applied { complete(.localCompleted, success: appText("Push-ups complete. Have a good morning!")) }
+   if applied { complete(.localCompleted, success: appText("Push-ups complete.")) }
   } catch { message = appText("The alarm could not be stopped just now. Please try again.") }
  }
 
@@ -324,9 +335,9 @@ struct ChallengeView: View {
   model.recordMorning(id: historyID, alarm: performedAlarm, outcome: outcome, rehearsal: practicing)
   if !practicing, celebrates { model.celebrationID = reduceMotion ? nil : UUID(); dismiss(); return }
   switch outcome {
-  case .localCompleted: result = success ?? appText("Challenge completed. Have a good morning!")
-  case .openaiVerified, .aiVerified: result = appText("Movement checked. Have a good morning!")
-  case .selfConfirmed: result = appText("You confirmed you are awake. Have a good morning!")
+  case .localCompleted: result = success ?? appText("Challenge completed")
+  case .openaiVerified, .aiVerified: result = appText("Movement checked.")
+  case .selfConfirmed: result = appText("You confirmed you are awake.")
   case .dismissed: break
   }
   if let result { voice?.speak(result) }
@@ -361,7 +372,7 @@ struct ChallengeView: View {
   case .waveHand: return appText("Place your hand in view and wave it side to side. Video stays on this device.")
   case .neckRotation: return appText("Keep your face visible and turn your head left and right. Video stays on this device.")
   case .jumpingJacks: return appText("Keep your whole body visible and complete 10 gentle jumping jacks. Video stays on this device.")
-  case .stretching: return appText("Raise both hands above your shoulders, then lower them. Video stays on this device.")
+  case .stretching: return appText("Keep both shoulders and elbows in view. Raise both arms to count one. Lower them before raising them again.")
   case .guidedRhythm: return challenge.rhythmVariant == .seated ? appText("Stay seated. Lower your arms, raise them, then lower them. Complete 3 cycles. Video stays on this device.") : appText("Stand sideways in view, bend your knees gently, then stand again.")
   case .readAloud: return appText("Tap Start reading, then read the sentence aloud. Match at least 80% of the words.")
   }
@@ -379,10 +390,10 @@ struct ChallengeView: View {
   let capture = GuidedRhythmCapture(variant: challenge.rhythmVariant ?? .standing, targetCycles: 3) { update in Task { @MainActor in
    guard captureGeneration == generation, !finished, !stopping else { return }
    if update.cycles > rhythmCycles { voice?.rep(update.cycles, spoken: !update.completed) }
-   if update.message != message { voice?.hint(update.message) }
+   voice?.hint(update.message)
    tracking=update.tracking
    rhythmCycles = update.cycles; message = update.message
-   if update.completed { finish(.localCompleted, success: appText("Guided rhythm completed. Have a good morning!")) }
+   if update.completed { finish(.localCompleted, success: appText("Guided rhythm completed.")) }
    else if update.ended { rhythmCamera?.stop(); rhythmCamera = nil }
   }}
   beginCoaching(); rhythmCamera = capture; await capture.start(); busy = false
@@ -396,10 +407,10 @@ struct ChallengeView: View {
   let capture = MovementChallengeCapture(kind: challenge.kind) { update in Task { @MainActor in
    guard captureGeneration == generation, !finished, !stopping else { return }
    if update.reps > reps { voice?.rep(update.reps, spoken: !update.ready) }
-   if update.message != message { voice?.hint(update.message) }
+   voice?.hint(update.message)
    tracking=update.tracking
    reps = update.reps; message = update.message
-   if update.ready { finish(.localCompleted, success: appText("Challenge completed. Have a good morning!")) }
+   if update.ready { finish(.localCompleted, success: appText("Challenge completed")) }
    else if update.ended { movementCamera?.stop(); movementCamera = nil }
   }}
   beginCoaching(); movementCamera = capture; await capture.start(); busy = false
@@ -413,7 +424,7 @@ struct ChallengeView: View {
    guard captureGeneration == generation, !finished, !stopping else { return }
    if update.unsupported, !practicing { fallBackToReading(); return }
    transcript = update.transcript; speechEnded = update.ended; speechFinishing = update.finishing && !update.ended; speechListening = update.listening; message = update.message
-   if update.completed { finish(.localCompleted, success: appText("Great reading. Have a good morning!")) }
+   if update.completed { finish(.localCompleted, success: appText("Great reading.")) }
    else if update.ended { speech?.stop(); speech = nil }
   }}
   speech = capture; await capture.start(); busy = false

@@ -24,6 +24,7 @@ struct AlarmEditor:View {
  @State private var soundPreview=SoundPreview()
  @State private var pro=false
  @State private var practiceAlarm:SavedAlarm?
+ @State private var confirmingPractice=false
  @State private var saving=false
  @State private var saveError:String?
  @State private var alarmAccessDenied=false
@@ -77,7 +78,7 @@ struct AlarmEditor:View {
      VStack(alignment:.leading,spacing:24) {
       challengeHero
       VStack(alignment:.leading,spacing:12) {
-       Text(appText("Find your energy")).font(.headline)
+       Text(appText("Challenge level")).font(.headline)
        GlassEffectContainer(spacing:8) {
         HStack(spacing:8) {ForEach(WakeMode.allCases,id:\.self) {modeButton($0)}}
        }
@@ -93,7 +94,6 @@ struct AlarmEditor:View {
         ForEach(ChallengeKind.available(in:mode),id:\.self) {challengeButton($0)}
        }
        if challenge.kind == .pushUps || challenge.kind == .guidedRhythm {challengeSettings}
-       if challenge.kind != .none {practiceButton}
       }
       VStack(alignment:.leading,spacing:12) {
        Text(appText("The little details")).font(.headline)
@@ -121,28 +121,25 @@ struct AlarmEditor:View {
     .environment(\.composerReduceTransparency,transparencyReduced)
     .sheet(isPresented:$pro) {ProView(store:store,preview:preview)}
     .sheet(isPresented:$choosingSound) {soundPicker}
+    .alert(appText("Try this challenge?"),isPresented:$confirmingPractice) {
+     Button(appText("Try")) {startPractice()}.accessibilityIdentifier("confirmDraftPractice")
+     Button(appText("Cancel"),role:.cancel) {}.accessibilityIdentifier("cancelDraftPractice")
+    } message: {Text(challenge.displayTitle)}
     .fullScreenCover(item:$practiceAlarm) {alarm in
      ChallengeView(alarm:alarm,model:practiceModel,rehearsal:true)
     }
   }
  }
- private var practiceButton:some View {
-  Button {
-   labelFocused=false;soundPreview.stop()
-   let components=Calendar.current.dateComponents([.hour,.minute],from:time)
-   guard let alarmTime=try? AlarmTime(hour:components.hour ?? 0,minute:components.minute ?? 0,weekdays:days) else {return}
-   practiceAlarm=SavedAlarm(time:alarmTime,mode:mode,sound:sound,challenge:challenge,label:label)
-  } label: {
-   HStack(spacing:10) {
-    Image(systemName:"play.circle.fill").font(.title3)
-    Text(appText("Try this challenge")).font(.subheadline.weight(.semibold))
-    Spacer(minLength:0)
-    Image(systemName:"arrow.up.forward").font(.caption.weight(.semibold))
-   }.padding(16).frame(minHeight:52).contentShape(RoundedRectangle(cornerRadius:18))
-  }.buttonStyle(.plain).foregroundStyle(challengeColor)
-   .background(MorningTheme.surface.opacity(0.8),in:RoundedRectangle(cornerRadius:18))
-   .overlay {RoundedRectangle(cornerRadius:18).strokeBorder(challengeColor.opacity(0.2),lineWidth:1)}
-   .accessibilityIdentifier("tryDraftChallenge")
+ private func requestPractice(_ kind:ChallengeKind) {
+  guard kind != .none else {return}
+  selectChallenge(kind)
+  labelFocused=false;soundPreview.stop();confirmingPractice=true
+ }
+ private func startPractice() {
+  let components=Calendar.current.dateComponents([.hour,.minute],from:time)
+  guard challenge.kind != .none,
+        let alarmTime=try? AlarmTime(hour:components.hour ?? 0,minute:components.minute ?? 0,weekdays:days) else {return}
+  practiceAlarm=SavedAlarm(time:alarmTime,mode:mode,sound:sound,challenge:challenge,label:label)
  }
  private var occurrenceSummary:String {
   guard days.isEmpty else {return repeatSummary}
@@ -188,7 +185,7 @@ struct AlarmEditor:View {
    ScrollView {
     VStack(alignment:.leading,spacing:24) {
      Label(appText("Set the mood"),systemImage:"waveform").font(.title2.bold()).fontDesign(.rounded)
-     SoundSelection(sound:$sound,volume:$volume,access:preview.access,unlock:{soundPro=true},preview:playPreview,stopPreview:{soundPreview.stop()})
+     SoundSelection(sound:$sound,volume:$volume,access:preview.access,unlock:{soundPro=true},preview:playPreview,stopPreview:{soundPreview.stop()},onSelection:{choosingSound=false})
     }.padding(20)
    }.background(MorningTheme.canvas).foregroundStyle(MorningTheme.ink)
     .navigationTitle(appText("Sound")).navigationBarTitleDisplayMode(.inline)
@@ -314,17 +311,7 @@ struct AlarmEditor:View {
   let selected=challenge.kind == kind
   let tint=AlarmComposerPalette.color(for:kind)
   return Button {
-    choseChallenge=true
-    switch kind {
-    case .none:challenge = .none
-    case .pushUps:
-     pushUpTarget=max(mode == .focused ? 10 : 5,pushUpTarget)
-     challenge = .pushUps(repetitions:pushUpTarget)
-    case .readAndChoose:challenge = .readAndChoose
-    case .guidedRhythm:challenge = .guidedRhythm(variant:rhythmVariant)
-    case .waveHand,.neckRotation,.riddle,.jumpingJacks,.stretching:challenge=ChallengeSelection(kind:kind)
-    case .readAloud:challenge = .readAloud
-    }
+    selectChallenge(kind)
    } label: {
     VStack(alignment:.leading,spacing:18) {
      HStack {
@@ -347,7 +334,25 @@ struct AlarmEditor:View {
      .overlay {RoundedRectangle(cornerRadius:24).strokeBorder(selected ? tint.opacity(0.85) : MorningTheme.line.opacity(0.7),lineWidth:selected ? 2 : 1)}
      .contentShape(RoundedRectangle(cornerRadius:24))
    }.buttonStyle(AlarmComposerPressStyle()).accessibilityIdentifier("challenge-"+kind.editorIdentifier)
+    .simultaneousGesture(TapGesture(count:2).onEnded {requestPractice(kind)})
     .accessibilityAddTraits(selected ? .isSelected : [])
+    .accessibilityHint(kind == .none ? "" : appText("Tap twice quickly to try."))
+    .accessibilityActions {
+     if kind != .none {Button(appText("Try this challenge")) {requestPractice(kind)}}
+    }
+ }
+ private func selectChallenge(_ kind:ChallengeKind) {
+    choseChallenge=true
+    switch kind {
+    case .none:challenge = .none
+    case .pushUps:
+     pushUpTarget=max(mode == .focused ? 10 : 5,pushUpTarget)
+     challenge = .pushUps(repetitions:pushUpTarget)
+    case .readAndChoose:challenge = .readAndChoose
+    case .guidedRhythm:challenge = .guidedRhythm(variant:rhythmVariant)
+    case .waveHand,.neckRotation,.riddle,.jumpingJacks,.stretching:challenge=ChallengeSelection(kind:kind)
+    case .readAloud:challenge = .readAloud
+    }
  }
  private var challengeSettings:some View {
   let kind=challenge.kind
@@ -423,6 +428,7 @@ private struct SoundSelection:View {
  let unlock:()->Void
  let preview:(AlarmSound)->Void
  let stopPreview:()->Void
+ let onSelection:()->Void
  var body:some View {
    VStack(alignment:.leading,spacing:24) {
     ForEach(AlarmSound.groups,id:\.title) {group in
@@ -430,7 +436,7 @@ private struct SoundSelection:View {
       Text(group.title).font(.subheadline.weight(.semibold)).foregroundStyle(MorningTheme.muted).padding(.bottom,4)
       ForEach(group.sounds,id:\.self) {value in
        HStack(spacing:8) {
-        Button {stopPreview();if access.allows(sound:value) {sound=value} else {unlock()}} label: {
+        Button {stopPreview();if access.allows(sound:value) {sound=value;onSelection()} else {unlock()}} label: {
          HStack(spacing:14) {
           Image(systemName:value == .system ? "alarm" : value == .sunrise ? "sunrise" : "music.note")
            .frame(width:44,height:44).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:12))

@@ -27,6 +27,11 @@ final class PilotUITests:XCTestCase {
   attachment.name=name;attachment.lifetime = .keepAlways;add(attachment)
  }
  private func captureEditorChoices(_ app:XCUIApplication,language:String) {
+  let vi=language == "vi"
+  XCTAssertTrue(app.staticTexts[vi ? "Mức thử thách" : "Challenge level"].exists)
+  for (mode,title) in [("gentle",vi ? "Nhẹ nhàng":"Gentle"),("balanced",vi ? "Vừa sức":"Balanced"),("focused",vi ? "Năng động":"Challenging")] {
+   XCTAssertTrue(app.buttons["mode-"+mode].label.contains(title))
+  }
   for mode in ["balanced","focused"] {
    app.buttons["mode-"+mode].tap()
    capture(app,name:mode+"-"+language)
@@ -36,6 +41,8 @@ final class PilotUITests:XCTestCase {
   chooseSound.tap()
   XCTAssertTrue(app.buttons["sound-system"].waitForExistence(timeout:5))
   app.buttons["sound-sunrise"].tap()
+  XCTAssertTrue(app.buttons["chooseSound"].waitForExistence(timeout:3))
+  toggleSound(in:app)
   let slider=app.sliders["previewVolume"]
   for _ in 0..<10 where !slider.isHittable {app.swipeUp()}
   XCTAssertTrue(slider.isHittable)
@@ -138,7 +145,7 @@ final class PilotUITests:XCTestCase {
   XCTAssertFalse(app.staticTexts[vi ? "Hoan hô!" : "Hooray!"].exists)
   capture(app,name:"camera-denied-"+language)
   app.buttons["confirmAwake"].tap()
-  let confirmed=vi ? "Bạn đã tự xác nhận thức dậy. Chúc buổi sáng tốt lành!" : "You confirmed you are awake. Have a good morning!"
+  let confirmed=vi ? "Bạn đã xác nhận thức dậy." : "You confirmed you are awake."
   XCTAssertTrue(app.staticTexts[confirmed].waitForExistence(timeout:5))
   capture(app,name:"self-confirmed-"+language)
   app.buttons["backToHome"].tap()
@@ -212,17 +219,17 @@ final class PilotUITests:XCTestCase {
    }
    let today=dayButton(0),mixed=dayButton(-2),legacy=dayButton(-6),empty=dayButton(-5)
    XCTAssertTrue(today.waitForExistence(timeout:5))
-   XCTAssertTrue(today.label.contains(vi ? "Bứt phá" : "Energized"))
+   XCTAssertTrue(today.label.contains(vi ? "Năng động" : "Challenging"))
    XCTAssertTrue(today.isSelected)
    let details=app.otherElements["selectedDayChallenges"]
    XCTAssertTrue(details.staticTexts[vi ? "5 lần chống đẩy" : "5 push-ups"].exists)
-   XCTAssertTrue(details.staticTexts[vi ? "Bứt phá" : "Energized"].exists)
+   XCTAssertTrue(details.staticTexts[vi ? "Năng động" : "Challenging"].exists)
    XCTAssertTrue(mixed.label.contains(vi ? "Nhiều mức" : "Mixed modes"))
    for _ in 0..<4 where !mixed.isHittable {app.swipeUp()}
    mixed.tap()
    XCTAssertTrue(mixed.isSelected)
    XCTAssertTrue(details.staticTexts[vi ? "Đọc và Chọn" : "Read & Choose"].exists)
-   XCTAssertTrue(details.staticTexts[vi ? "Đã thức dậy" : "Awake"].exists)
+   XCTAssertTrue(details.staticTexts[vi ? "Vừa sức" : "Balanced"].exists)
    XCTAssertTrue(details.staticTexts[vi ? "Nhẹ nhàng" : "Gentle"].exists)
    XCTAssertTrue(details.staticTexts[vi ? "Đã dừng" : "Stopped"].exists)
    XCTAssertTrue(details.staticTexts[vi ? "Chưa lưu chi tiết thử thách" : "Challenge details not recorded"].exists)
@@ -231,7 +238,7 @@ final class PilotUITests:XCTestCase {
    XCTAssertTrue(legacy.label.contains(vi ? "Chưa lưu chi tiết thử thách" : "Challenge details not recorded"))
    legacy.tap()
    XCTAssertTrue(details.staticTexts[vi ? "Chưa lưu chi tiết thử thách" : "Challenge details not recorded"].exists)
-   XCTAssertFalse(details.staticTexts[vi ? "Bứt phá" : "Energized"].exists,"Legacy history must not borrow the current alarm mode")
+   XCTAssertFalse(details.staticTexts[vi ? "Năng động" : "Challenging"].exists,"Legacy history must not borrow the current alarm mode")
    empty.tap()
    XCTAssertTrue(details.staticTexts[vi ? "Chưa có thử thách được ghi nhận" : "No challenges recorded"].exists)
    app.terminate()
@@ -282,7 +289,7 @@ final class PilotUITests:XCTestCase {
    for _ in 0..<6 where !today.isHittable {app.swipeUp()}
    XCTAssertTrue(today.isHittable)
    XCTAssertGreaterThanOrEqual(today.frame.height,44)
-   XCTAssertTrue(today.label.contains(vi ? "Bứt phá" : "Energized"))
+   XCTAssertTrue(today.label.contains(vi ? "Năng động" : "Challenging"))
    today.tap()
    let challenge=app.otherElements["selectedDayChallenges"].staticTexts[vi ? "5 lần chống đẩy" : "5 push-ups"]
    for _ in 0..<4 where !challenge.isHittable {app.swipeUp()}
@@ -299,6 +306,8 @@ final class PilotUITests:XCTestCase {
   app.swipeUp()
   toggleSound(in:app)
   app.buttons["sound-sunrise"].tap()
+  XCTAssertTrue(app.buttons["chooseSound"].waitForExistence(timeout:3))
+  toggleSound(in:app)
   let preview=app.buttons["preview-sunrise"]
   XCTAssertTrue(preview.waitForExistence(timeout:5))
   preview.tap()
@@ -308,10 +317,14 @@ final class PilotUITests:XCTestCase {
   for _ in 0..<10 where !preview.isHittable {app.swipeDown()}
   preview.tap()
   app.buttons["sound-softChime"].tap()
-  app.buttons["preview-softChime"].tap()
-  app.buttons["sound-system"].tap()
-  XCTAssertFalse(app.sliders["previewVolume"].exists)
+  XCTAssertTrue(app.buttons["chooseSound"].waitForExistence(timeout:3))
   toggleSound(in:app)
+  app.buttons["preview-softChime"].tap()
+  XCTAssertTrue(app.buttons["doneSound"].exists,"Listening must keep the picker open")
+  app.buttons["sound-system"].tap()
+  XCTAssertTrue(app.buttons["chooseSound"].waitForExistence(timeout:3))
+  XCTAssertFalse(app.sliders["previewVolume"].exists)
+  XCTAssertFalse(app.buttons["doneSound"].exists)
   app.buttons["Cancel"].tap()
   XCTAssertTrue(app.buttons["addAlarm"].waitForExistence(timeout:5))
   app.buttons["addAlarm"].tap()
@@ -330,13 +343,17 @@ final class PilotUITests:XCTestCase {
    for _ in 0..<10 where !sound.isHittable {app.swipeUp()}
    XCTAssertTrue(sound.isHittable)
    sound.tap()
+   XCTAssertTrue(app.buttons["chooseSound"].waitForExistence(timeout:3))
+   XCTAssertTrue(app.buttons["chooseSound"].label.contains(language == "vi" ? "Bình minh saxophone" : "Sax daybreak"))
+   toggleSound(in:app)
    XCTAssertTrue(sound.isSelected,"The visible row must select the sound")
+   reveal(app.buttons["preview-saxDaybreak"],in:app)
    app.buttons["preview-saxDaybreak"].tap()
    app.buttons["preview-saxGlow"].tap()
    XCTAssertFalse(app.staticTexts["alarmSaveError"].exists,"Preview controls must not activate Save")
    capture(app,name:"expanded-sounds-"+language)
    toggleSound(in:app)
-   XCTAssertTrue(app.buttons["chooseSound"].label.contains(language == "vi" ? "Sax ban mai" : "Sax daybreak"),app.buttons["chooseSound"].debugDescription)
+   XCTAssertTrue(app.buttons["chooseSound"].label.contains(language == "vi" ? "Bình minh saxophone" : "Sax daybreak"),app.buttons["chooseSound"].debugDescription)
    app.buttons[language == "vi" ? "Hủy" : "Cancel"].tap()
    app.terminate()
   }
@@ -350,14 +367,14 @@ final class PilotUITests:XCTestCase {
    XCTAssertTrue(example.waitForExistence(timeout:5))
    example.tap()
    XCTAssertEqual(app.alerts.count,0,"The example must not request microphone access")
-   XCTAssertFalse(app.staticTexts[language == "vi" ? "Bạn đọc tốt lắm. Chúc bạn buổi sáng tốt lành!" : "Great reading. Have a good morning!"].exists)
+   XCTAssertFalse(app.staticTexts[language == "vi" ? "Đọc tốt." : "Great reading."].exists)
    XCTAssertTrue(app.buttons["backToHome"].isHittable)
    XCUIDevice.shared.press(.home)
    app.activate()
    let ready=XCTNSPredicateExpectation(predicate:NSPredicate(format:"enabled == true"),object:start)
    wait(for:[ready],timeout:5)
    XCTAssertTrue(example.exists)
-   XCTAssertFalse(app.staticTexts[language == "vi" ? "Bạn đọc tốt lắm. Chúc bạn buổi sáng tốt lành!" : "Great reading. Have a good morning!"].exists)
+   XCTAssertFalse(app.staticTexts[language == "vi" ? "Đọc tốt." : "Great reading."].exists)
    app.buttons["backToHome"].tap()
    XCTAssertTrue(app.buttons["practiceChallenges"].waitForExistence(timeout:5))
    app.terminate()
@@ -432,7 +449,7 @@ final class PilotUITests:XCTestCase {
   for _ in 0..<6 where !increase.isHittable {app.swipeUp()}
   XCTAssertTrue(target.label.contains("10"))
   XCTAssertTrue(decrease.exists)
-  XCTAssertFalse(decrease.isEnabled,"Energized cannot go below 10")
+  XCTAssertFalse(decrease.isEnabled,"Challenging cannot go below 10")
   increase.tap()
   XCTAssertTrue(target.label.contains("11"))
   decrease.tap()

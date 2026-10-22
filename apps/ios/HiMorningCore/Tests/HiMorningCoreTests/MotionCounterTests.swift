@@ -5,6 +5,235 @@ import XCTest
 #endif
 
 final class MotionCounterTests:XCTestCase {
+ private func reachArms(width:Double=0.2,raised:Bool,imageWidth:Double=480,imageHeight:Double=640)->[BodyJoint:JointSample] {
+  let elbowY=0.55-width*imageWidth/imageHeight*(raised ? 0.05:0.75)
+  let reach=raised ? 0.95:0.6
+  return [
+   .leftShoulder:.init(x:0.5-width/2,y:0.55,confidence:0.95),
+   .rightShoulder:.init(x:0.5+width/2,y:0.55,confidence:0.95),
+   .leftElbow:.init(x:0.5-width*reach,y:elbowY,confidence:0.95),
+   .rightElbow:.init(x:0.5+width*reach,y:elbowY,confidence:0.95)
+  ]
+ }
+ func testReachUpCountsRaisedArmsWithoutStartingOrFinishingLowered() {
+  var progress=MovementChallengeProgress(kind:.stretching,target:3)
+  for time in [0,50,100,119] {_=progress.observe(.stretch(overhead:true),timestampMs:time)}
+  XCTAssertEqual(progress.completed,0)
+  _=progress.observe(.stretch(overhead:true),timestampMs:120)
+  XCTAssertEqual(progress.completed,1)
+  for time in stride(from:200,through:3000,by:50) {_=progress.observe(.stretch(overhead:true),timestampMs:time)}
+  XCTAssertEqual(progress.completed,1)
+ }
+ func testReachUpSlightlyLowerRaisedArmsCountQuicklyButSmallLiftsDoNot() {
+  for heightBelowShoulder in [0.12,0.16,0.55] {
+   var joints=reachArms(raised:true)
+   let elbowY=0.55-heightBelowShoulder*0.2*480/640
+   joints[.leftElbow] = .init(x:0.3,y:elbowY,confidence:0.8)
+   joints[.rightElbow] = .init(x:0.7,y:elbowY,confidence:0.8)
+   let pose=ReachUpGeometry.assess(joints,imageWidth:480,imageHeight:640).pose
+   XCTAssertEqual(pose,heightBelowShoulder<0.13 ? .raised:heightBelowShoulder>=0.4 ? .lowered:.transition)
+   var progress=MovementChallengeProgress(kind:.stretching,target:3)
+   for time in stride(from:0,through:1000,by:30) {_=progress.observe(pose.observation,timestampMs:time)}
+   XCTAssertEqual(progress.completed,heightBelowShoulder<0.13 ? 1:0)
+  }
+ }
+ func testReachUpRearmsOnlyAfterBothArmsAreLowered() {
+  var progress=MovementChallengeProgress(kind:.stretching,target:3)
+  for time in [0,150] {_=progress.observe(.stretch(overhead:true),timestampMs:time)}
+  for time in [200,500] {_=progress.observe(.transition,timestampMs:time)}
+  for time in [600,750] {_=progress.observe(.stretch(overhead:true),timestampMs:time)}
+  XCTAssertEqual(progress.completed,1)
+  _=progress.observe(.stretch(overhead:false),timestampMs:800)
+  for time in [850,1000] {_=progress.observe(.stretch(overhead:true),timestampMs:time)}
+  XCTAssertEqual(progress.completed,1)
+  for time in [1100,1320] {_=progress.observe(.stretch(overhead:false),timestampMs:time)}
+  XCTAssertEqual(progress.completed,1)
+  for time in [1400,1550] {_=progress.observe(.stretch(overhead:true),timestampMs:time)}
+  XCTAssertEqual(progress.completed,2)
+ }
+ func testReachUpTrackingLossAndInterruptCannotRecountHeldArms() {
+  var progress=MovementChallengeProgress(kind:.stretching,target:3)
+  for time in [0,150] {_=progress.observe(.stretch(overhead:true),timestampMs:time)}
+  for time in [200,900] {_=progress.observe(.unavailable,timestampMs:time)}
+  for time in [1000,1150] {_=progress.observe(.stretch(overhead:true),timestampMs:time)}
+  progress.interrupt()
+  for time in [1200,1350,4000,4150] {_=progress.observe(.stretch(overhead:true),timestampMs:time)}
+  XCTAssertEqual(progress.completed,1)
+  for time in [4200,4420] {_=progress.observe(.stretch(overhead:false),timestampMs:time)}
+  for time in [4500,4650] {_=progress.observe(.stretch(overhead:true),timestampMs:time)}
+  XCTAssertEqual(progress.completed,2)
+ }
+ func testReachUpRejectsRaisedSpikesAndStopsAtTarget() {
+  var progress=MovementChallengeProgress(kind:.stretching,target:1)
+  _=progress.observe(.stretch(overhead:true),timestampMs:0)
+  _=progress.observe(.transition,timestampMs:33)
+  _=progress.observe(.stretch(overhead:true),timestampMs:100)
+  _=progress.observe(.unavailable,timestampMs:150)
+  XCTAssertEqual(progress.completed,0)
+  for time in [200,350] {_=progress.observe(.stretch(overhead:true),timestampMs:time)}
+  XCTAssertTrue(progress.ready)
+  for (raised,time) in [(false,400),(false,650),(true,700),(true,900)] {_=progress.observe(.stretch(overhead:raised),timestampMs:time)}
+  XCTAssertEqual(progress.completed,1)
+ }
+ func testReachUpGeometryCountsRaisedUpperArmsWithoutWristsOrLowering() {
+  for width in [0.1,0.2,0.34] {
+   var progress=MovementChallengeProgress(kind:.stretching,target:1)
+   for time in stride(from:0,through:150,by:50) {
+    let pose=ReachUpGeometry.assess(reachArms(width:width,raised:true),imageWidth:480,imageHeight:640).pose
+    _=progress.observe(pose.observation,timestampMs:time)
+   }
+   XCTAssertTrue(progress.ready)
+  }
+ }
+ func testReachUpIgnoresCutOffLowerBodyAndDoesNotRequireAHead() {
+  var joints=reachArms(raised:true)
+  joints[.leftHip] = .init(x:0.35,y:0.01,confidence:0.9)
+  joints[.rightAnkle] = .init(x:0.65,y:-0.4,confidence:0.9)
+  XCTAssertEqual(BodyFraming.hint(joints,needsFeet:false),.stepBack)
+  XCTAssertEqual(BodyFraming.upperBodyHint(joints),.ok)
+  let assessment=ReachUpGeometry.assess(joints,imageWidth:480,imageHeight:640)
+  XCTAssertEqual(assessment.pose,.raised);XCTAssertEqual(assessment.hint,.ok)
+ }
+ func testReachUpScalesToNearAndFarPeopleInPortraitAndLandscape() {
+  for (width,height) in [(480.0,640.0),(640.0,480.0)] {
+   for shoulderWidth in [0.1,0.2,0.34] {
+    for raised in [false,true] {
+     let joints=reachArms(width:shoulderWidth,raised:raised,imageWidth:width,imageHeight:height)
+     let assessment=ReachUpGeometry.assess(joints,imageWidth:width,imageHeight:height)
+     XCTAssertEqual(assessment.pose,raised ? .raised:.lowered);XCTAssertEqual(assessment.hint,.ok)
+    }
+   }
+  }
+ }
+ func testReachUpWholeCyclesCountWithOnlyVisibleUpperBodyAtDifferentDistances() {
+  for width in [0.1,0.2,0.34] {
+   var progress=MovementChallengeProgress(kind:.stretching,target:3)
+   for rep in 0..<3 {
+    for (raised,start,end) in [(false,0,300),(true,400,1000),(false,1100,1400)] {
+     for time in stride(from:start,through:end,by:50) {
+      let assessment=ReachUpGeometry.assess(reachArms(width:width,raised:raised),imageWidth:480,imageHeight:640)
+      _=progress.observe(assessment.pose.observation,timestampMs:rep*1600+time)
+     }
+    }
+    XCTAssertEqual(progress.completed,rep+1)
+   }
+  }
+ }
+ func testReachUpOneArmAndSmallUpperArmLiftsNeverCount() {
+  for oneArm in [false,true] {
+   var progress=MovementChallengeProgress(kind:.stretching,target:3)
+   for time in stride(from:0,through:4000,by:50) {
+    var joints=reachArms(width:0.1,raised:false)
+    if time>350 && time<3000 {
+     let elbowY=oneArm ? 0.55:0.55-0.1*480/640*0.55+0.003*sin(Double(time))
+     joints[.leftElbow] = .init(x:0.405,y:elbowY,confidence:0.95)
+     if !oneArm {joints[.rightElbow] = .init(x:0.595,y:elbowY,confidence:0.95)}
+    }
+    let assessment=ReachUpGeometry.assess(joints,imageWidth:480,imageHeight:640)
+    _=progress.observe(assessment.pose.observation,timestampMs:time)
+   }
+   XCTAssertEqual(progress.completed,0)
+  }
+ }
+ func testReachUpAcceptsCloseUpperArmsNearImageEdgesWithModerateConfidence() {
+  for confidence in [0.4,0.5,0.59] {
+   var progress=MovementChallengeProgress(kind:.stretching,target:1)
+   let joints:[BodyJoint:JointSample]=[
+    .leftShoulder:.init(x:0.15,y:0.55,confidence:confidence),
+    .rightShoulder:.init(x:0.85,y:0.55,confidence:confidence),
+    .leftElbow:.init(x:0.008,y:0.58,confidence:confidence),
+    .rightElbow:.init(x:0.992,y:0.58,confidence:confidence)
+   ]
+   let pose=ReachUpGeometry.assess(joints,imageWidth:480,imageHeight:640)
+   XCTAssertEqual(pose.hint,.ok);XCTAssertEqual(pose.pose,.raised)
+   for time in [0,50,100,150] {_=progress.observe(pose.pose.observation,timestampMs:time)}
+   XCTAssertTrue(progress.ready)
+  }
+ }
+ func testReachUpAcceptsForeshortenedUpperArmsWhileRejectingCollapsedJoints() {
+  for offset in [0.01,0.045] {
+   var joints=reachArms(width:0.3,raised:true)
+   joints[.leftElbow] = .init(x:0.35-offset,y:0.55,confidence:0.8)
+   joints[.rightElbow] = .init(x:0.65+offset,y:0.55,confidence:0.8)
+   XCTAssertEqual(ReachUpGeometry.assess(joints,imageWidth:480,imageHeight:640).pose,offset<0.03 ? .unclear:.raised)
+  }
+ }
+ func testReachUpCloseViewStillRequiresBothArmsAndRejectsWeakOrOffscreenJoints() {
+  for joint in [BodyJoint.leftShoulder,.rightShoulder,.leftElbow,.rightElbow] {
+   for sample:JointSample? in [nil,.init(x:0.1,y:0.6,confidence:0.39),.init(x:-0.01,y:0.6,confidence:0.9),.init(x:1.01,y:0.6,confidence:0.9)] {
+    var joints=reachArms(raised:true);joints[joint]=sample
+    var progress=MovementChallengeProgress(kind:.stretching,target:1)
+    let assessment=ReachUpGeometry.assess(joints,imageWidth:480,imageHeight:640)
+    XCTAssertEqual(assessment.pose,.unclear)
+    for time in [0,150,300] {_=progress.observe(assessment.pose.observation,timestampMs:time)}
+    XCTAssertEqual(progress.completed,0)
+   }
+  }
+ }
+ func testReachUpReportsMissingOrUncertainRequiredArms() {
+  for joint in [BodyJoint.leftShoulder,.rightShoulder,.leftElbow,.rightElbow] {
+   for sample:JointSample? in [nil,.init(x:0.5,y:0.7,confidence:0.2),.init(x:0,y:0.7,confidence:0.95),.init(x:.nan,y:0.7,confidence:0.95)] {
+    var joints=reachArms(raised:true);joints[joint]=sample
+    let assessment=ReachUpGeometry.assess(joints,imageWidth:480,imageHeight:640)
+    XCTAssertEqual(assessment.pose,.unclear);XCTAssertEqual(assessment.hint,.showArms)
+   }
+  }
+ }
+ func testReachUpMissingElbowsCannotCompleteACycle() {
+  var progress=MovementChallengeProgress(kind:.stretching,target:1)
+  for time in stride(from:0,through:2400,by:50) {
+   var joints=reachArms(raised:time>=400 && time<1800)
+   if time>=400 && time<1800 {joints[.rightElbow]=nil}
+   let assessment=ReachUpGeometry.assess(joints,imageWidth:480,imageHeight:640)
+   _=progress.observe(assessment.pose.observation,timestampMs:time)
+  }
+  XCTAssertEqual(progress.completed,0)
+ }
+ func testReachUpRejectsUnresolvableBodyScaleAndInvalidImageSizes() {
+  let far=ReachUpGeometry.assess(reachArms(width:0.02,raised:true),imageWidth:480,imageHeight:640)
+  XCTAssertEqual(far.pose,.unclear);XCTAssertEqual(far.hint,.comeCloser)
+  for size in [(0.0,640.0),(480.0,Double.nan),(Double.infinity,640.0)] {
+   XCTAssertEqual(ReachUpGeometry.assess(reachArms(raised:true),imageWidth:size.0,imageHeight:size.1).pose,.unclear)
+  }
+ }
+ func testReachUpIgnoresOffscreenOrUncertainWrists() {
+  for raised in [false,true] {
+   var joints=reachArms(raised:raised)
+   joints[.leftWrist] = .init(x:-0.4,y:1.3,confidence:0.95)
+   joints[.rightWrist] = .init(x:.nan,y:.nan,confidence:0)
+   let assessment=ReachUpGeometry.assess(joints,imageWidth:480,imageHeight:640)
+   XCTAssertEqual(assessment.pose,raised ? .raised:.lowered)
+   XCTAssertEqual(assessment.hint,.ok)
+  }
+ }
+ func testReachUpUsesTheShoulderAxisWithATiltedCamera() {
+  for raised in [false,true] {
+   for angle in [-0.45,0.45] {
+    let points=reachArms(raised:raised).mapValues {joint in
+     let x=(joint.x-0.5)*480,y=(joint.y-0.5)*640
+     return JointSample(x:0.5+(x*cos(angle)-y*sin(angle))/480,y:0.5+(x*sin(angle)+y*cos(angle))/640,confidence:joint.confidence)
+    }
+    XCTAssertEqual(ReachUpGeometry.assess(points,imageWidth:480,imageHeight:640).pose,raised ? .raised:.lowered)
+   }
+  }
+ }
+ func testReachUpShoulderShrugsAndWholeBodyMovementNeverCount() {
+  for shrug in [false,true] {
+   var progress=MovementChallengeProgress(kind:.stretching,target:1)
+   for time in stride(from:0,through:4000,by:50) {
+    let shift=0.02*sin(Double(time)/200)
+    let points=reachArms(raised:false).mapValues {joint in
+     JointSample(x:joint.x,y:joint.y+shift,confidence:joint.confidence)
+    }
+    var moved=points
+    if shrug {
+     for name in [BodyJoint.leftElbow,.rightElbow] {moved[name]=reachArms(raised:false)[name]}
+    }
+    _=progress.observe(ReachUpGeometry.assess(moved,imageWidth:480,imageHeight:640).pose.observation,timestampMs:time)
+   }
+   XCTAssertEqual(progress.completed,0)
+  }
+ }
  func testOneEuroPassesConstantSignalUnchanged() {
   var filter=OneEuroFilter(minCutoff:1.0,beta:0.3)
   for t in stride(from:0,through:1_000,by:33) {XCTAssertEqual(filter.filter(5,timestampMs:t),5,accuracy:0.000_001)}
@@ -53,6 +282,20 @@ final class MotionCounterTests:XCTestCase {
  func testTwoHertzWaveCountsAtThirtyAndSevenFramesPerSecond() {
   XCTAssertTrue(wave(hz:2,amplitude:1,spacingMs:33,durationMs:3_000).ready)
   XCTAssertTrue(wave(hz:2,amplitude:1,spacingMs:133,durationMs:3_000).ready)
+ }
+ func testComfortableHorizontalWaveCountsAtBothFrameRates() {
+  for spacing in [33,133] {
+   XCTAssertTrue(wave(hz:1.2,amplitude:0.40,spacingMs:spacing,durationMs:5_000).ready)
+  }
+ }
+ func testRelaxedHeadTurnsCountWithoutLongPauses() {
+  for direction in [-1.0,1.0] {
+   var counter=NeckTurnCounter(target:1),t=0
+   for yaw in [0.0,30*direction,0,-30*direction,0] {
+    t=neckFeed(&counter,yaw,ms:264,from:t)
+   }
+   XCTAssertEqual(counter.completed,1)
+  }
  }
  func testFourHertzWaveAtThirtyFramesCounts() {
   XCTAssertEqual(wave(hz:4,amplitude:0.6,spacingMs:33,durationMs:2_000).completed,3)
