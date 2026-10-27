@@ -1,17 +1,19 @@
 # HiMorning ☀️
 
-A native iPhone alarm app with a small challenge to help start waking up.
+Native iPhone and Android alarm apps with a small challenge to help start waking up.
 
 **Status:** iOS 26+ development pilot, English and Vietnamese. Signed development
 builds have been installed and exercised on an iPhone; release reliability,
 recognition accuracy and production billing are not yet validated. Reviewed against
-source revision `6a1e1e7` on 22 October 2026.
+source revision `6a1e1e7` on 22 October 2026. The Android API 31+ development
+app and its current evidence are described in the [Android guide](apps/android/README.md).
 
 ## Start here
 
 | Task | Guide |
 |---|---|
 | Build, test or run on an iPhone | [Running](docs/RUNNING.md) |
+| Build or test the Android app | [Android](apps/android/README.md) · [Implementation evidence](docs/ANDROID-IMPLEMENTATION.md) |
 | Understand the current system | [Architecture](docs/ARCHITECTURE.md) |
 | Understand challenges and camera framing | [Challenges](docs/MODE-CHALLENGES.md) |
 | Review the interface and interaction rules | [UI design](docs/UI-DESIGN.md) |
@@ -45,7 +47,10 @@ remaining backups. The latter unlocks five minutes after the occurrence and is
 recorded separately from challenge completion. Scheduling capacity and delivery
 still need the [device checks](docs/RELEASE-READINESS.md).
 
-QR, math challenges, native snooze/countdown and Android are not implemented.
+QR, math challenges and iOS native snooze/countdown are not implemented.
+The [Android development app](apps/android/README.md) now includes native alarms,
+snooze, local challenges and progress; Android release/device validation and Play
+purchases remain separate gates.
 The Workers/Gemini synthetic demo and retained Functions/Modal backend are
 [separate development references](docs/README.md#backend-references), not the
 normal camera challenge path.
@@ -85,7 +90,7 @@ unit/UI checks, signing and recovery.
 | `backend/worker/` | Content endpoint and an isolated synthetic Gemini demo |
 | `backend/functions/`, `backend/inference/` | Retained Firebase/Modal verification implementation |
 | `shared/contracts/`, `shared/content/` | Wire fixtures and curated challenge sources |
-| `apps/android/` | Reserved future platform; no Android binary |
+| `apps/android/` | Kotlin/Compose, AlarmManager, CameraX, on-device speech and local progress |
 | `docs/` | Current guides, validation and clearly marked historical records |
 
 Historical AI-development metrics and TDD checkpoints are preserved in

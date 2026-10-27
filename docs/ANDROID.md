@@ -1,76 +1,85 @@
-# Adding Android when the pilot is ready
+# Android architecture
 
-Android should reuse HiMorning's service and product rules while owning its alarm,
-camera and lifecycle behavior. Keeping those boundaries clear now makes the later
-port smaller and easier to test.
+Build and validate HiMorning's native Android alarm and local challenge experience.
+Android reuses the iOS product rules and curated content while owning its platform
+permissions, camera pipeline and background delivery.
 
-**Status:** Folder, contracts and extension plan are in place. There is no Android
-implementation, build or device validation yet.
+**Status:** Development implementation. **Audience:** Android maintainers.
 
-## What can be reused?
+## At a glance
 
-| Reuse directly | Port and test | Implement for Android |
+| Layer | Source | Responsibility |
 |---|---|---|
-| Firebase callables and server policies | Alarm/challenge state machine | Compose screens and English/Vietnamese resources |
-| JSON Schema and wire fixtures | Wake-mode presets and stop races | AlarmManager, receivers and audio |
-| Consent version and evidence limits | Journal/reconciliation behavior | CameraX and a separately evaluated pose pipeline |
-| Reviewed outcome/cue meanings | Ordered capture-cycle selection | Auth, Functions and Play Integrity App Check adapters |
+| UI/composition | `MainActivity.kt`, `ui/` | Custom warm palette/cards, scoped composer, home-to-sheet navigation, practice and permission recovery |
+| Pure domain | `core/Models.kt` | Alarm time/repeat rules, wake session, speech word matching and journey progression |
+| Local data | `core/AndroidRepository.kt` | Atomic JSON transactions shared across service, receivers and UI; fail-closed decode |
+| Content | `core/ContentCatalog.kt`, `assets/` | Same reviewed bilingual prompt pack as iOS, available offline |
+| Alarms | `platform/` | AlarmManager, receivers, foreground audio, snooze and occurrence recovery |
+| Local sensing | `platform/` | CameraX with on-device ML Kit landmarks and Android on-device speech |
 
-Swift source stays in `apps/ios`. TypeScript stays on the server. The small shared
-JSON fixtures describe agreement between implementations; they do not make Swift
-or TypeScript run on Android.
+One application module keeps the initial project small. Domain rules do not import
+Android APIs. Android persistence/adapters stay outside the pure model file.
+Existing Swift source and server implementations remain intact.
 
-## Suggested Kotlin boundaries
+## How it works
 
-```text
-apps/android/                 # future Gradle root
-  app/                        # Compose, navigation and composition root
-  core/domain/                # rules and state; no Android/Firebase imports
-  core/data/                  # local journal and repositories
-  platform/alarm/             # AlarmManager, receivers and sound
-  platform/camera/            # CameraX, pose adapter and bounded evidence
-  platform/cloud/             # Firebase SDK and wire mapping
-  feature/alarm/              # home and alarm editor
-  feature/challenge/          # consent, capture and recovery UI
-```
+Saving preflights exact-alarm access, writes pending intent, then schedules an
+exact `setAlarmClock` occurrence and confirms durable state. A failed save restores
+the previous per-alarm settings; uncertain native registration remains visibly
+`NEEDS_REVIEW`. Receivers validate enabled alarm IDs and
+expected occurrences. A foreground service plays the selected alarm with alarm
+audio attributes. Reboot/time-zone changes rebuild valid schedules; expired
+one-time occurrences do not silently become tomorrow's alarms.
 
-This is a proposed layout, not an empty set of Gradle modules to maintain today.
-Start with a few packages and split modules when dependency control or build time
-makes that useful.
+Challenges use real landmark cycles, correct content answers or recognized speech.
+The 156-item reviewed English/Vietnamese content pack is copied from the iOS bundle.
+Practice does not write progress. Recorded outcomes distinguish successful local
+challenge completion, self-confirmation and dismissal. A seven-morning journey
+counts at most one successful local day.
 
-| Domain port | Existing iOS example | Android responsibility |
-|---|---|---|
-| Alarm scheduler | `AlarmScheduler` | Schedule/cancel/stop and report uncertain registrations |
-| Alarm persistence | `AlarmPersistence` | Durable pending writes and restart recovery |
-| Cloud verifier | `CloudVerification` | Map shared payloads through Firebase callable SDK |
-| Movement / evidence | `PushUpCounter`, `CycleCapture` | Distinguish local completion from server-verified evidence |
+The first successfully scheduled alarm starts a 30-day preview. Expiry changes the
+effective mode/sound/rep limit while keeping saved choices. Stop, snooze and
+recovery do not depend on network access, camera permission or purchases.
 
-Keep the composition root responsible for wiring adapters into domain rules.
-Never require a network request or camera permission to stop a local alarm.
+## Key choices
 
-## Build the port in this order
+- Native Kotlin/Compose follows the existing platform boundary instead of rewriting
+  iOS or adding a shared runtime.
+- Camera frames and speech remain on this device; unavailable on-device speech has
+  an offline reading fallback. No video or audio archive is created.
+- Alarm access, notifications and full-screen presentation are separate Android
+  permissions. The UI shows unfinished setup and requests camera/microphone access
+  only for the matching activity.
+- Play purchases and cloud verification are disabled until Android production
+  configuration exists. The current verifier authenticates the iOS App Check app
+  ID; client code must not bypass that check or reuse iOS credentials.
 
-1. Decode/encode `shared/contracts/v1/wire-fixtures.json` in Kotlin. Accept additive
-   response fields; reject unknown completion statuses. Check wake-mode fixtures.
-2. Port pure time validation, outcome state and cancellation-generation tests.
-3. Add persistence and fake scheduler tests, then the actual alarm adapter.
-4. Test permissions, process death, restart, time-zone changes and battery modes.
-5. Add the local challenge flow, then consented camera/cloud integration.
-6. Review both languages, TalkBack, text scaling,
-   shared rooms and sound comfort with Vietnamese and English-speaking users.
+## Try it
 
-Android exact alarms have their own permission and scheduling rules. Review
-[Android's alarm guidance](https://developer.android.com/develop/background-work/services/alarms)
-when choosing `setAlarmClock` and recovery behavior. Use [CameraX](https://developer.android.com/jetpack/androidx/releases/camera)
-as the camera integration candidate; evaluate the pose estimator separately.
-Apple AlarmKit tests do not establish Android reliability.
+See the [Android README](../apps/android/README.md) for JDK/SDK setup, Gradle commands
+and installation. Exact build/test and emulator results live in the
+[implementation evidence](ANDROID-IMPLEMENTATION.md).
 
-## Decisions and trade-offs
+## What we checked
 
-We keep native apps and a shared service. This preserves direct platform access and
-avoids rewriting the tested iOS pilot. The cost is two client implementations and
-explicit parity tests. A Flutter, React Native or Kotlin Multiplatform rewrite is
-not needed to establish these boundaries; revisit shared runtime code after the
-Android prototype exposes real duplication.
+Domain tests cover time validation, daylight-saving gaps/overlaps, stale completion,
+snooze budgets, speech matching, journey days and the shared wake-mode fixture.
+Instrumented storage tests cover cross-instance updates, corruption preservation
+and interrupted-write recovery. Build/test execution results are recorded separately
+from implemented test cases in the [evidence guide](ANDROID-IMPLEMENTATION.md).
 
-[Architecture](ARCHITECTURE.md) · [Contracts](../shared/contracts/README.md) · [Setup](RUNNING.md)
+## Limits and next steps
+
+Android hardware/OEM power policy needs physical-device testing. Emulator builds
+cannot establish camera calibration, real locked-device alarm reliability or signed
+Google Play readiness. Play product IDs and Android Firebase/App Check registration
+need external configuration before those integrations can be implemented and tested.
+
+Use [Android alarm guidance](https://developer.android.com/develop/background-work/services/alarms)
+and [CameraX releases](https://developer.android.com/jetpack/androidx/releases/camera)
+when changing native integration; Apple AlarmKit tests do not validate Android.
+
+## Read next
+
+[Build/run](../apps/android/README.md) · [Implementation](ANDROID-IMPLEMENTATION.md) ·
+[Shared contracts](../shared/contracts/README.md) · [Architecture](ARCHITECTURE.md)

@@ -1,0 +1,1998 @@
+{
+ "version": 2,
+ "generatedAt": "2026-10-23T03:00:00.000Z",
+ "items": [
+  {
+   "id": "voice-v2-en-001",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "The library printer finally woke up. My notes arrived slightly crooked, but the idea I had almost forgotten was still there on the page.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy"
+  },
+  {
+   "id": "voice-v2-en-002",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "Someone named the shared document final again. I added my small correction, saved it carefully, and resisted giving the file another dramatic title.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy"
+  },
+  {
+   "id": "voice-v2-en-003",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "My first sketch of the project looked like a map drawn by a distracted pigeon. The second one finally showed where to begin.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy"
+  },
+  {
+   "id": "voice-v2-en-004",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "A question I wrote in the margin yesterday made sense this morning. Apparently, leaving room on the page also leaves room for an answer.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy"
+  },
+  {
+   "id": "voice-v2-en-005",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "The study group brought three different explanations for the same problem. We borrowed a little from each and finally found our own way through.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy"
+  },
+  {
+   "id": "voice-v2-en-006",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "The meeting began with a missing microphone and a very expressive wave. By the time sound returned, everyone already knew who was saying hello.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy"
+  },
+  {
+   "id": "voice-v2-en-007",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "The café called my name just as I opened my book. For once, the interruption came with excellent timing and warm coffee.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife"
+  },
+  {
+   "id": "voice-v2-en-008",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "I found the missing sock inside a pillowcase. It had apparently chosen a quieter neighborhood while the rest of the laundry stayed together.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife"
+  },
+  {
+   "id": "voice-v2-en-009",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "The plant by the window has one new leaf. Nobody announced it, but the room somehow feels as though a small guest has arrived.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife"
+  },
+  {
+   "id": "voice-v2-en-010",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "My shopping list said bread, tomatoes, and something nice. I came home with all three, though the last one was a bunch of flowers.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife"
+  },
+  {
+   "id": "voice-v2-en-011",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "A spoon slipped behind the kitchen drawer months ago. Finding it today felt less like cleaning and more like welcoming a tiny explorer home.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife"
+  },
+  {
+   "id": "voice-v2-en-012",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "The neighbor left a bowl beside our door with a note saying too much soup. Some problems arrive with surprisingly delicious solutions.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife"
+  },
+  {
+   "id": "voice-v2-en-013",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "Our group chat spent twenty minutes choosing a place to meet. Once someone suggested the usual café, we all suddenly became excellent decision makers.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans"
+  },
+  {
+   "id": "voice-v2-en-014",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "A friend sent a photo of a cloud shaped like a rabbit. I saw a teapot, and our very small art debate began immediately.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans"
+  },
+  {
+   "id": "voice-v2-en-015",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "We ordered different desserts and agreed to share. For a few happy minutes, the table became a committee with an unusually clear purpose.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans"
+  },
+  {
+   "id": "voice-v2-en-016",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "My friend remembered a story I had told in passing. Hearing it again made an ordinary conversation feel like finding a carefully kept postcard.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans"
+  },
+  {
+   "id": "voice-v2-en-017",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "The invitation said bring nothing, so I brought a story. It turned out someone else had already covered the snacks and the terrible jokes.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans"
+  },
+  {
+   "id": "voice-v2-en-018",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "We moved our picnic indoors when the rain arrived. The blanket stayed, the sandwiches survived, and the weather lost its seat at the table.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans"
+  },
+  {
+   "id": "voice-v2-en-019",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "I tried drawing my mug without looking at the paper. The result had confidence, several extra handles, and almost no interest in being a mug.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks"
+  },
+  {
+   "id": "voice-v2-en-020",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "The playlist put a dramatic song behind my very ordinary breakfast. For three minutes, buttering toast felt like the opening scene of a film.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks"
+  },
+  {
+   "id": "voice-v2-en-021",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "A crooked line in my notebook became the edge of a mountain. I had meant to cross it out, but the mountain seemed worth keeping.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks"
+  },
+  {
+   "id": "voice-v2-en-022",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "I photographed the same corner twice, once for the shadows and once for the colors. The street had quietly offered me two different stories.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks"
+  },
+  {
+   "id": "voice-v2-en-023",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "The recipe asked for a neat swirl of sauce. Mine looked like an unfamiliar island, so dinner came with a map instead.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks"
+  },
+  {
+   "id": "voice-v2-en-024",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "I gave an unfinished tune a ridiculous name so I could find it later. Now I remember the name more easily than the melody.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks"
+  },
+  {
+   "id": "voice-v2-en-025",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "The bus window framed a bakery I had never noticed. Taking the same route again had somehow become a small journey somewhere new.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel"
+  },
+  {
+   "id": "voice-v2-en-026",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "At the station, two strangers compared maps and laughed. They were going in opposite directions, but both had started by finding the same wrong platform.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel"
+  },
+  {
+   "id": "voice-v2-en-027",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "My bag held a ticket, a book, and a snack packed with unreasonable optimism. The journey was short; apparently, my appetite had larger plans.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel"
+  },
+  {
+   "id": "voice-v2-en-028",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "The little shop had no sign, just a doorway full of postcards. I found it by looking up from the map at the right moment.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel"
+  },
+  {
+   "id": "voice-v2-en-029",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "Rain polished the pavement until every shop light had a twin. The street looked dressed for a celebration nobody had remembered to announce.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel"
+  },
+  {
+   "id": "voice-v2-en-030",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "The elevator stopped on every floor this morning. By the lobby, our quiet collection of strangers had become a very temporary neighborhood.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel"
+  },
+  {
+   "id": "voice-v2-en-031",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "A bookmark fell out of a book I borrowed years ago. It was a receipt, quietly preserving the price of a lunch I no longer remembered.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity"
+  },
+  {
+   "id": "voice-v2-en-032",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "I turned the puzzle piece around and suddenly recognized the picture. The piece had not changed; I had simply stopped insisting it was a roof.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity"
+  },
+  {
+   "id": "voice-v2-en-033",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "The jar held buttons from clothes nobody in the house could remember. It was a tiny museum with excellent exhibits and absolutely no labels.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity"
+  },
+  {
+   "id": "voice-v2-en-034",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "I noticed that the clock in the photo was reflected in a mirror. The mystery of our impossibly early dinner finally had a reasonable explanation.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity"
+  },
+  {
+   "id": "voice-v2-en-035",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "A handwritten arrow pointed to a second arrow, which pointed to the café. Whoever made the signs clearly believed that anticipation deserved its own route.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity"
+  },
+  {
+   "id": "voice-v2-en-036",
+   "kind": "readAloud",
+   "language": "en",
+   "text": "The box marked miscellaneous contained exactly what I needed. For one glorious moment, my least organized shelf appeared to have a secret system.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity"
+  },
+  {
+   "id": "rc-v2-en-001",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "You have twenty minutes before a call. Editing a draft needs twenty uninterrupted minutes; replying to messages takes five. Which plan finishes the draft before the call?",
+   "choices": [
+    "Edit the draft now",
+    "Reply first, then edit",
+    "Edit for ten minutes, reply, then finish"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "Editing now uses the full twenty-minute window. Replying first leaves fifteen minutes; interrupting the edit also breaks its uninterrupted requirement."
+  },
+  {
+   "id": "rc-v2-en-002",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "The shared folder contains Draft 3 and Draft 4. A message says, “I corrected the figures in Draft 4; the conclusion is unchanged.” Which file should a reviewer use for the corrected figures?",
+   "choices": [
+    "Draft 3, because the conclusion is unchanged",
+    "Draft 4, where the figures were corrected",
+    "Either file; the figures must match"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "The message distinguishes the corrected figures from the unchanged conclusion. Only Draft 4 is identified as containing those corrections."
+  },
+  {
+   "id": "rc-v2-en-003",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "A workshop has two rooms. One holds eight people with a screen; the other holds twelve without a screen. Nine people need a screen, and furniture cannot move. What does this tell the organizer?",
+   "choices": [
+    "The twelve-seat room meets both needs",
+    "The eight-seat room meets both needs",
+    "Neither room meets both needs as arranged"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "One room lacks a seat; the other lacks a screen. More capacity alone does not satisfy both requirements."
+  },
+  {
+   "id": "rc-v2-en-004",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "A portal always shows a receipt for a submitted report, and receipts stay visible. Noor sees no receipt for hers. Under these stated rules, what follows?",
+   "choices": [
+    "Her report is not recorded as submitted",
+    "Her report was rejected after submission",
+    "The reviewer has not opened her report"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "A submitted report would have a visible receipt. The absence establishes submission status, not a reviewer decision or reading status."
+  },
+  {
+   "id": "rc-v2-en-005",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "A recipe uses two cups of rice for four servings. You need six servings, keeping the same ratio. Which amount fits?",
+   "choices": [
+    "Two and a half cups",
+    "Three cups",
+    "Four cups"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "Each serving uses half a cup. Six servings therefore need three cups."
+  },
+  {
+   "id": "rc-v2-en-006",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "The pickup note says, “Your parcel is in locker 12. The shop counter only handles returns.” You want to collect this parcel. Where should you go?",
+   "choices": [
+    "The counter to ask for the parcel",
+    "Either place handles collection",
+    "Locker 12"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "The note assigns collection to locker 12 and returns to the counter. They serve different purposes."
+  },
+  {
+   "id": "rc-v2-en-007",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "A refill sign says, “Same cup, same day, receipt required.” You have today’s receipt but brought yesterday’s cup instead of the cup on that receipt. Which condition is missing?",
+   "choices": [
+    "Using the cup from today’s purchase",
+    "Having a receipt",
+    "Returning on the same day"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "The receipt and date meet two conditions. The cup must also be the one associated with that purchase."
+  },
+  {
+   "id": "rc-v2-en-008",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "The community library accepts returns through a slot all day, but loans require a volunteer from 2 to 5. You arrive at noon with one borrowed book and want another. What can you do immediately?",
+   "choices": [
+    "Borrow a new book only",
+    "Return the borrowed book only",
+    "Both return and borrow"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "The return slot is available at noon. Borrowing must wait until the volunteer arrives at 2."
+  },
+  {
+   "id": "rc-v2-en-009",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "Ari can meet Monday or Tuesday; Bo can meet Tuesday or Wednesday. Cam is available only Tuesday. Which day works for everyone?",
+   "choices": [
+    "Monday",
+    "Wednesday",
+    "Tuesday"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Tuesday is in all three availability lists. The other days each exclude at least one person."
+  },
+  {
+   "id": "rc-v2-en-010",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "Jo writes, “If the film starts after eight, save me a seat. Before eight, I am still on the train.” The screening starts at 8:30. What has Jo asked the group to do?",
+   "choices": [
+    "Save a seat for Jo",
+    "Move the screening earlier",
+    "Assume Jo cannot come"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "The screening meets Jo’s stated condition: it starts after eight. The request is to save a seat."
+  },
+  {
+   "id": "rc-v2-en-011",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "Minh says, “I can bring dessert, but I cannot bring anything that needs a fridge.” The host offers ice cream that must stay frozen, or biscuits that keep at room temperature. Which fits Minh’s offer?",
+   "choices": [
+    "Ice cream, because it is dessert",
+    "Biscuits, because they need no fridge",
+    "Both, because both are sweet"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Both are desserts, but only the biscuits also satisfy the no-fridge condition."
+  },
+  {
+   "id": "rc-v2-en-012",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "A message says, “I like the café idea; I still need to check whether I’m free.” What is confirmed?",
+   "choices": [
+    "The person will attend",
+    "The meeting time is agreed",
+    "The person likes the idea, but attendance is undecided"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Enthusiasm for the idea is explicit. Availability has not yet been checked, so attendance is not confirmed."
+  },
+  {
+   "id": "rc-v2-en-013",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "A lamp casts a sculpture’s shadow west. In this setup the shadow falls directly away from the lamp. Which side is the lamp on?",
+   "choices": [
+    "East",
+    "West",
+    "North"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "Westward shadow means light comes from the opposite side, east."
+  },
+  {
+   "id": "rc-v2-en-014",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "A photo shows empty chairs after a concert. The caption says only, “Ten minutes after the last song.” Which statement is supported without inventing a reason?",
+   "choices": [
+    "The audience disliked the concert",
+    "The chairs were empty ten minutes after the last song",
+    "Nobody attended the concert"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "The image and caption establish the scene and timing. They do not reveal attendance earlier or how people felt."
+  },
+  {
+   "id": "rc-v2-en-015",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "A poster brief says, “Keep the title above the photo, and the date below the photo.” In a draft the date sits between the title and the photo. What needs moving?",
+   "choices": [
+    "Move the title below the photo",
+    "Move the photo below the date",
+    "Move the date below the photo"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "The title already belongs above the photo. Moving the date below the photo restores the required order."
+  },
+  {
+   "id": "rc-v2-en-016",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "A short film needs thirty seconds of continuous music. Three clips are twenty seconds, thirty-five seconds, and forty seconds. You can trim but cannot join clips. Of the three original clips, which is the shortest that can supply the music?",
+   "choices": [
+    "35 seconds",
+    "20 seconds",
+    "40 seconds"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "Twenty seconds is too short. Both longer clips can be trimmed to thirty seconds, and thirty-five is the shorter of those."
+  },
+  {
+   "id": "rc-v2-en-017",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "On a map, the market is directly north of the library. The café is directly east of the library. From the café, which direction leads toward the market?",
+   "choices": [
+    "Southeast",
+    "Northwest",
+    "Southwest"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "From the café, the market lies north and west: northwest."
+  },
+  {
+   "id": "rc-v2-en-018",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "Bus A serves the museum but not the station. Bus B serves the station but not the museum. Both stop at Central. Starting at the station, which route reaches the museum?",
+   "choices": [
+    "Take A from the station, then B",
+    "Stay on B all the way",
+    "Take B to Central, then A"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "Bus B can take you from the station to the shared stop. Bus A then connects that stop to the museum."
+  },
+  {
+   "id": "rc-v2-en-019",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "A gallery normally closes at six. Today’s sign says, “Open until eight for exhibition night; last entry thirty minutes before closing.” When is today’s last entry?",
+   "choices": [
+    "7:30",
+    "5:30",
+    "8:00"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "Today’s special closing time is eight, so last entry is thirty minutes earlier, at seven thirty."
+  },
+  {
+   "id": "rc-v2-en-020",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "You reach a station at 10:10. The express leaves at 10:20 and takes twenty minutes; the local leaves now and takes thirty-five. Ignoring other delays, which gets you there first?",
+   "choices": [
+    "The local, because it leaves now",
+    "The express, by five minutes",
+    "Both arrive together"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "The express arrives at 10:40, including its wait. The local arrives at 10:45, so the express wins by five minutes."
+  },
+  {
+   "id": "rc-v2-en-021",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "A sensor records an alert only when a room is below its light threshold. An alert appears at noon. What can the alert establish?",
+   "choices": [
+    "The room has no windows",
+    "The weather outside is cloudy",
+    "The room was below the set light threshold"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "The alert establishes the measured light level. It does not identify the cause, such as weather or windows."
+  },
+  {
+   "id": "rc-v2-en-022",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "A clock loses one minute every hour. It is set correctly at noon. Three real hours later, what time will it show?",
+   "choices": [
+    "2:57",
+    "3:00",
+    "3:03"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "Three hours pass, but the clock loses three minutes. It shows three minutes before three: 2:57."
+  },
+  {
+   "id": "rc-v2-en-023",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "A photo file was created on Monday when an old print was scanned. The print has no date. What can Monday’s file date tell you?",
+   "choices": [
+    "The original photo was taken Monday",
+    "The digital file was made Monday",
+    "The print was first developed Monday"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "The file date records the scanning result, not when the original scene was photographed or the print developed."
+  },
+  {
+   "id": "rc-v2-en-024",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "A display shows twelve objects. A sign says that every wooden object is handmade. Four objects are wooden. What is the smallest number we know are handmade?",
+   "choices": [
+    "Exactly twelve",
+    "None, because the others are unknown",
+    "At least four"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "The four wooden objects are guaranteed handmade. Others might be handmade too, but the sign does not establish that."
+  },
+  {
+   "id": "logic-v2-en-001",
+   "kind": "riddle",
+   "language": "en",
+   "text": "Mai, Lin, and Bo each bring a different item: a cup, fruit, or bread. Mai brings neither food item, and Lin does not bring bread. What does Bo bring?",
+   "choices": [
+    "Bread",
+    "A cup",
+    "Fruit"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "Mai brings the cup. Lin must bring fruit, leaving bread for Bo."
+  },
+  {
+   "id": "logic-v2-en-002",
+   "kind": "riddle",
+   "language": "en",
+   "text": "At 9:00, a file starts downloading for five minutes while a printer starts an eight-minute job. Both run without interruption. When are both jobs finished?",
+   "choices": [
+    "9:05",
+    "9:08",
+    "9:13"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "The jobs run at the same time. The download ends at 9:05; the slower printer ends at 9:08."
+  },
+  {
+   "id": "logic-v2-en-003",
+   "kind": "riddle",
+   "language": "en",
+   "text": "Every draft with a red tag needs review. A draft needs review, but its tag is hidden. Must its tag be red?",
+   "choices": [
+    "Yes, it must be red",
+    "No, it cannot be red",
+    "The rule does not tell us"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "The rule tells us what red tags require. It does not say that only red-tagged drafts need review."
+  },
+  {
+   "id": "logic-v2-en-004",
+   "kind": "riddle",
+   "language": "en",
+   "text": "You cut one straight ribbon into four separate pieces, making one cut at a time and never stacking or folding it. How many cuts are needed?",
+   "choices": [
+    "3",
+    "4",
+    "5"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "One piece becomes two after one cut. Each additional cut adds one piece, so three cuts make four."
+  },
+  {
+   "id": "logic-v2-en-005",
+   "kind": "riddle",
+   "language": "en",
+   "text": "Two closed jars contain only tea or only coffee, one of each. Their labels say tea and coffee, but both labels are wrong. What is in the jar labeled coffee?",
+   "choices": [
+    "Coffee",
+    "Tea",
+    "Not enough information"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "Both labels are wrong and each jar holds just one drink. The coffee-labeled jar must hold tea."
+  },
+  {
+   "id": "logic-v2-en-006",
+   "kind": "riddle",
+   "language": "en",
+   "text": "A small bag holds at most six kilograms. The camera weighs two, the books three, and the speaker four. Which pair fits and uses the full weight allowance?",
+   "choices": [
+    "Books and speaker",
+    "Camera and books",
+    "Camera and speaker"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "The camera and speaker weigh exactly six kilograms. The books with the speaker weigh seven; the camera with books uses only five."
+  },
+  {
+   "id": "logic-v2-en-007",
+   "kind": "riddle",
+   "language": "en",
+   "text": "Three friends can meet only on these days: An on Friday or Saturday, Bao on Saturday or Sunday, Chi on Friday or Saturday. Which day works for all three?",
+   "choices": [
+    "Saturday",
+    "Friday",
+    "Sunday"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Saturday appears in all three lists. Bao is unavailable Friday, and An and Chi are unavailable Sunday."
+  },
+  {
+   "id": "logic-v2-en-008",
+   "kind": "riddle",
+   "language": "en",
+   "text": "A key is in exactly one of three boxes: blue, green, or gold. Exactly one statement is true: “It is in blue” and “It is not in gold.” Where is the key?",
+   "choices": [
+    "Blue box",
+    "Green box",
+    "Gold box"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Blue makes both statements true; gold makes both false. Green makes only “not in gold” true."
+  },
+  {
+   "id": "logic-v2-en-009",
+   "kind": "riddle",
+   "language": "en",
+   "text": "Four friends each send one private greeting to every other friend. A greeting from An to Bao is separate from Bao to An. How many greetings are sent?",
+   "choices": [
+    "6",
+    "8",
+    "12"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Each of four people sends three greetings. Four times three is twelve; each direction counts separately."
+  },
+  {
+   "id": "logic-v2-en-010",
+   "kind": "riddle",
+   "language": "en",
+   "text": "A zine has three steps: print, fold, and staple. Folding must follow printing, and stapling must follow folding. Which step is immediately before stapling?",
+   "choices": [
+    "Fold",
+    "Print",
+    "Either print or fold"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "The required order is print, fold, staple. Folding is the step directly before stapling."
+  },
+  {
+   "id": "logic-v2-en-011",
+   "kind": "riddle",
+   "language": "en",
+   "text": "A rhythm repeats clap, tap, tap, rest, starting at beat one. What happens on beat seven?",
+   "choices": [
+    "Clap",
+    "Tap",
+    "Rest"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "Beats five through eight repeat clap, tap, tap, rest. Beat seven is the second tap in that group."
+  },
+  {
+   "id": "logic-v2-en-012",
+   "kind": "riddle",
+   "language": "en",
+   "text": "A photo is twelve units wide and eight tall. You crop only its width to make a square, keeping the full height. How many width units must you remove in total?",
+   "choices": [
+    "2",
+    "8",
+    "4"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "The square must be eight units wide to match its height. Twelve minus eight leaves four units to remove in total."
+  },
+  {
+   "id": "logic-v2-en-013",
+   "kind": "riddle",
+   "language": "en",
+   "text": "The café is reached by either of two routes: a direct twelve-minute bus ride, or a four-minute metro ride plus a five-minute transfer and a two-minute walk. Which is quicker?",
+   "choices": [
+    "Metro route by one minute",
+    "Bus route by one minute",
+    "They take the same time"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "The metro route takes four plus five plus two, or eleven minutes. That is one minute less than twelve."
+  },
+  {
+   "id": "logic-v2-en-014",
+   "kind": "riddle",
+   "language": "en",
+   "text": "A train leaves at 8:50 and arrives at 9:15 the same morning. How long is the trip?",
+   "choices": [
+    "35 minutes",
+    "25 minutes",
+    "65 minutes"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "Ten minutes takes us to 9:00; fifteen more takes us to 9:15. The trip lasts twenty-five minutes."
+  },
+  {
+   "id": "logic-v2-en-015",
+   "kind": "riddle",
+   "language": "en",
+   "text": "A shuttle travels A, B, C, D, E in that order. You board at B and get off at E. Counting arrival at E but not boarding at B, how many stops do you reach?",
+   "choices": [
+    "2",
+    "4",
+    "3"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "After boarding at B, you reach C, D, and E: three stops."
+  },
+  {
+   "id": "logic-v2-en-016",
+   "kind": "riddle",
+   "language": "en",
+   "text": "A sequence alternates two steps: add three, then multiply by two. Starting at two gives 2, 5, 10, 13, 26. What comes next?",
+   "choices": [
+    "29",
+    "52",
+    "30"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "The step after multiplying is adding three. Twenty-six plus three is twenty-nine."
+  },
+  {
+   "id": "logic-v2-en-017",
+   "kind": "riddle",
+   "language": "en",
+   "text": "A jar has exactly three blue beads and two white beads. Without looking and without putting any back, how many must you take to guarantee two of the same color?",
+   "choices": [
+    "2",
+    "3",
+    "4"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "Two draws could give one of each color. The third bead must match one of the two colors already drawn."
+  },
+  {
+   "id": "logic-v2-en-018",
+   "kind": "riddle",
+   "language": "en",
+   "text": "In this card set, every triangle is striped. A card has no stripes. Which shape is ruled out by that rule?",
+   "choices": [
+    "A circle",
+    "A square",
+    "A triangle"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "A triangle must have stripes. Without stripes, this card cannot be a triangle; the rule says nothing about circles or squares."
+  },
+  {
+   "id": "voice-v2-vi-001",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Máy in thư viện cuối cùng cũng chạy. Tờ ghi chú hơi lệch, nhưng ý tưởng suýt quên của tôi vẫn nằm trên giấy.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy"
+  },
+  {
+   "id": "voice-v2-vi-002",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Tệp chung lại có tên bản cuối. Tôi sửa một lỗi nhỏ, lưu cẩn thận, rồi thôi không đặt thêm cái tên kịch tính nào.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy"
+  },
+  {
+   "id": "voice-v2-vi-003",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Bản phác thảo đầu tiên trông như bản đồ do bồ câu vẽ. Đến bản thứ hai, tôi mới nhìn ra chỗ bắt đầu.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy"
+  },
+  {
+   "id": "voice-v2-vi-004",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Câu hỏi viết bên lề hôm qua sáng nay bỗng rõ hơn. Hóa ra khoảng trống trên trang cũng có chỗ cho câu trả lời.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy"
+  },
+  {
+   "id": "voice-v2-vi-005",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Nhóm học mang đến ba cách giải thích cho cùng một bài. Mỗi người góp một chút, rồi cả nhóm tìm được lối đi riêng.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy"
+  },
+  {
+   "id": "voice-v2-vi-006",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Cuộc họp mở đầu bằng chiếc mic im lặng và một màn vẫy tay nhiệt tình. Khi có tiếng, mọi người đã biết ai đang chào.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy"
+  },
+  {
+   "id": "voice-v2-vi-007",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Quán gọi tên ngay lúc tôi mở sách. Lần này, bị ngắt quãng cũng đáng: một cốc cà phê ấm đang chờ.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife"
+  },
+  {
+   "id": "voice-v2-vi-008",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Tôi tìm thấy chiếc tất thất lạc trong vỏ gối. Nó đã chọn một khu phố yên tĩnh hơn phần đồ giặt còn lại.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife"
+  },
+  {
+   "id": "voice-v2-vi-009",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Cây bên cửa sổ có thêm một chiếc lá. Chẳng ai thông báo, nhưng căn phòng như vừa đón một vị khách nhỏ.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife"
+  },
+  {
+   "id": "voice-v2-vi-010",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Danh sách mua đồ ghi bánh mì, cà chua và một thứ vui vui. Tôi mang đủ về; món cuối là một bó hoa.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife"
+  },
+  {
+   "id": "voice-v2-vi-011",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Chiếc thìa kẹt sau ngăn kéo từ lâu. Tìm thấy nó hôm nay giống đón một nhà thám hiểm bé xíu trở về.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife"
+  },
+  {
+   "id": "voice-v2-vi-012",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Hàng xóm để bát canh bên cửa, nhắn rằng nấu hơi nhiều. Có những rắc rối lại mang theo cách giải quyết rất ngon.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife"
+  },
+  {
+   "id": "voice-v2-vi-013",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Nhóm chat mất hai mươi phút chọn chỗ gặp. Có người nhắc quán quen, thế là tất cả bỗng trở thành chuyên gia quyết định.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans"
+  },
+  {
+   "id": "voice-v2-vi-014",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Bạn gửi ảnh đám mây giống con thỏ. Tôi lại thấy ấm trà, và cuộc tranh luận nghệ thuật nho nhỏ bắt đầu ngay.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans"
+  },
+  {
+   "id": "voice-v2-vi-015",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Chúng tôi gọi mỗi người một món ngọt rồi chia nhau. Cả bàn thành một hội đồng vui vẻ, với mục tiêu rất rõ.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans"
+  },
+  {
+   "id": "voice-v2-vi-016",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Bạn nhớ câu chuyện tôi từng kể thoáng qua. Nghe lại, cuộc trò chuyện bình thường bỗng giống tìm thấy một tấm bưu thiếp được giữ kỹ.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans"
+  },
+  {
+   "id": "voice-v2-vi-017",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Lời mời ghi không cần mang gì, nên tôi mang một câu chuyện. May là đã có người lo đồ ăn và những câu đùa nhạt.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans"
+  },
+  {
+   "id": "voice-v2-vi-018",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Mưa đến, chúng tôi chuyển buổi picnic vào nhà. Tấm khăn vẫn trải, bánh mì vẫn ngon, chỉ thời tiết mất chỗ ngồi ở bàn.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans"
+  },
+  {
+   "id": "voice-v2-vi-019",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Tôi thử vẽ cốc mà không nhìn giấy. Bức tranh rất tự tin, có thêm vài cái quai, và chẳng mấy thiết tha làm chiếc cốc.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks"
+  },
+  {
+   "id": "voice-v2-vi-020",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Danh sách nhạc bật bài đầy kịch tính giữa bữa sáng bình thường. Bỗng nhiên, phết bơ lên bánh giống cảnh mở đầu một bộ phim.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks"
+  },
+  {
+   "id": "voice-v2-vi-021",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Nét vẽ lệch trong sổ thành sườn núi. Tôi định gạch bỏ, rồi lại thấy ngọn núi này cũng đáng được ở lại.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks"
+  },
+  {
+   "id": "voice-v2-vi-022",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Tôi chụp góc phố hai lần: lần vì bóng đổ, lần vì màu sắc. Con phố lặng lẽ đưa ra hai câu chuyện khác nhau.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks"
+  },
+  {
+   "id": "voice-v2-vi-023",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Công thức bảo rưới sốt thành vòng thật đẹp. Phần của tôi giống một hòn đảo lạ, thế là bữa tối có thêm bản đồ.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks"
+  },
+  {
+   "id": "voice-v2-vi-024",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Tôi đặt tên ngớ ngẩn cho đoạn nhạc còn dang dở để dễ tìm. Giờ tôi nhớ cái tên rõ hơn cả giai điệu.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks"
+  },
+  {
+   "id": "voice-v2-vi-025",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Cửa kính xe buýt đóng khung tiệm bánh tôi chưa từng để ý. Tuyến đường quen hôm nay bỗng có một điểm đến mới.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel"
+  },
+  {
+   "id": "voice-v2-vi-026",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Ở ga, hai người lạ xem bản đồ rồi cười. Họ đi ngược hướng nhau, nhưng đều bắt đầu bằng việc tìm nhầm sân ga.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel"
+  },
+  {
+   "id": "voice-v2-vi-027",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Trong túi có vé, sách và phần ăn được chuẩn bị đầy lạc quan. Chuyến đi thì ngắn; có vẻ chiếc bụng dự định xa hơn.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel"
+  },
+  {
+   "id": "voice-v2-vi-028",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Cửa hàng nhỏ không có biển, chỉ có bưu thiếp đầy lối vào. Tôi tìm thấy nhờ ngẩng khỏi bản đồ đúng lúc.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel"
+  },
+  {
+   "id": "voice-v2-vi-029",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Mưa làm mặt đường bóng lên, mỗi ánh đèn có thêm một bản sao. Con phố như sửa soạn cho một bữa tiệc chưa ai thông báo.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel"
+  },
+  {
+   "id": "voice-v2-vi-030",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Thang máy sáng nay dừng ở mọi tầng. Xuống đến sảnh, những người lạ im lặng đã thành một khu phố chỉ tồn tại chốc lát.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel"
+  },
+  {
+   "id": "voice-v2-vi-031",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Từ cuốn sách mượn đã lâu, một hóa đơn rơi ra. Nó từng làm dấu trang, giờ nhắc lại bữa trưa tôi chẳng nhớ.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity"
+  },
+  {
+   "id": "voice-v2-vi-032",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Xoay miếng ghép lại, tôi bỗng nhận ra bức tranh. Miếng ghép chẳng đổi, chỉ là tôi thôi khăng khăng nó phải là mái nhà.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity"
+  },
+  {
+   "id": "voice-v2-vi-033",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Lọ đựng những chiếc cúc từ quần áo chẳng ai còn nhớ. Một bảo tàng bé xíu, hiện vật thú vị mà không có nhãn nào.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity"
+  },
+  {
+   "id": "voice-v2-vi-034",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Tôi nhận ra đồng hồ trong ảnh nằm trong gương. Bí ẩn về bữa tối sớm không tưởng cuối cùng cũng có lời giải hợp lý.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity"
+  },
+  {
+   "id": "voice-v2-vi-035",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Mũi tên viết tay chỉ sang mũi tên nữa, rồi mới tới quán. Người làm biển hẳn muốn sự háo hức cũng có đường đi riêng.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity"
+  },
+  {
+   "id": "voice-v2-vi-036",
+   "kind": "readAloud",
+   "language": "vi",
+   "text": "Hộp ghi linh tinh chứa đúng thứ tôi cần. Trong một khoảnh khắc huy hoàng, chiếc kệ bừa nhất dường như có hệ thống bí mật.",
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity"
+  },
+  {
+   "id": "rc-v2-vi-001",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Bạn có 20 phút trước cuộc gọi. Chỉnh bản nháp cần 20 phút liền; trả lời tin nhắn mất 5 phút. Kế hoạch nào hoàn tất bản nháp trước cuộc gọi?",
+   "choices": [
+    "Chỉnh bản nháp ngay",
+    "Trả lời tin nhắn rồi chỉnh",
+    "Chỉnh 10 phút, trả lời rồi chỉnh tiếp"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "Chỉnh ngay tận dụng đủ 20 phút liền. Trả lời trước chỉ còn 15 phút; chen tin nhắn vào giữa cũng làm gián đoạn việc chỉnh."
+  },
+  {
+   "id": "rc-v2-vi-002",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Thư mục chung có Bản nháp 3 và Bản nháp 4. Tin nhắn ghi: “Mình sửa số liệu trong Bản 4, kết luận giữ nguyên.” Muốn xem số liệu đã sửa, nên mở bản nào?",
+   "choices": [
+    "Bản 3 vì kết luận không đổi",
+    "Bản 4, nơi số liệu đã sửa",
+    "Bản nào cũng được vì số liệu chắc giống nhau"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "Tin nhắn phân biệt số liệu đã sửa với kết luận không đổi. Chỉ Bản 4 được xác nhận có phần số liệu mới."
+  },
+  {
+   "id": "rc-v2-vi-003",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Buổi chia sẻ có hai phòng: một phòng 8 chỗ có màn hình, một phòng 12 chỗ không có màn hình. Có 9 người cần xem màn hình, đồ đạc không thể chuyển. Người tổ chức biết gì?",
+   "choices": [
+    "Phòng 12 chỗ đáp ứng cả hai điều kiện",
+    "Phòng 8 chỗ đáp ứng cả hai điều kiện",
+    "Cách bố trí hiện tại chưa phòng nào đáp ứng đủ"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "Một phòng thiếu chỗ ngồi, phòng kia thiếu màn hình. Chỉ nhiều chỗ hơn vẫn chưa đáp ứng cả hai điều kiện."
+  },
+  {
+   "id": "rc-v2-vi-004",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Cổng nộp bài luôn hiện biên nhận cho bài đã nộp, và biên nhận luôn được giữ lại. Nhi không thấy biên nhận bài của mình. Theo quy tắc đã nêu, điều gì đúng?",
+   "choices": [
+    "Bài chưa được ghi nhận là đã nộp",
+    "Bài đã nộp nhưng bị từ chối",
+    "Người chấm chưa mở bài của cô ấy"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "Bài đã nộp phải có biên nhận hiện rõ. Không có biên nhận cho biết trạng thái nộp, chứ không cho biết quyết định hay việc đọc của người chấm."
+  },
+  {
+   "id": "rc-v2-vi-005",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Công thức dùng 2 cốc gạo cho 4 phần ăn. Bạn cần 6 phần, giữ nguyên tỷ lệ. Lượng nào phù hợp?",
+   "choices": [
+    "Hai cốc rưỡi",
+    "Ba cốc",
+    "Bốn cốc"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "Mỗi phần dùng nửa cốc. Sáu phần vì thế cần ba cốc."
+  },
+  {
+   "id": "rc-v2-vi-006",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Giấy báo ghi: “Kiện hàng ở ngăn tủ 12. Quầy cửa hàng chỉ nhận hàng trả lại.” Bạn muốn lấy kiện này. Nên đến đâu?",
+   "choices": [
+    "Quầy để nhận kiện hàng",
+    "Chỗ nào cũng nhận hàng được",
+    "Ngăn tủ 12"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "Giấy báo chỉ rõ lấy hàng ở ngăn 12, trả hàng ở quầy. Hai nơi có vai trò khác nhau."
+  },
+  {
+   "id": "rc-v2-vi-007",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Biển châm thêm đồ uống ghi: “Cùng cốc, cùng ngày, cần hóa đơn.” Bạn có hóa đơn hôm nay nhưng mang cốc hôm qua, không phải cốc trên hóa đơn. Còn thiếu điều kiện nào?",
+   "choices": [
+    "Dùng đúng cốc của lần mua hôm nay",
+    "Có hóa đơn",
+    "Quay lại trong cùng ngày"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "Hóa đơn và ngày đã đáp ứng hai điều kiện. Cốc còn phải đúng chiếc đi cùng lần mua đó."
+  },
+  {
+   "id": "rc-v2-vi-008",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Tủ sách cộng đồng nhận trả sách qua khe cả ngày; mượn sách cần tình nguyện viên từ 2 đến 5 giờ. Bạn tới lúc trưa, muốn trả một cuốn và mượn cuốn khác. Việc nào làm ngay được?",
+   "choices": [
+    "Chỉ mượn cuốn mới",
+    "Chỉ trả cuốn đã mượn",
+    "Cả trả lẫn mượn"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "Khe trả sách dùng được lúc trưa. Muốn mượn phải đợi tình nguyện viên tới lúc 2 giờ."
+  },
+  {
+   "id": "rc-v2-vi-009",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "An gặp được thứ Hai hoặc thứ Ba; Bảo rảnh thứ Ba hoặc thứ Tư. Chi chỉ rảnh thứ Ba. Ngày nào cả nhóm gặp được?",
+   "choices": [
+    "Thứ Hai",
+    "Thứ Tư",
+    "Thứ Ba"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Thứ Ba có trong cả ba lịch rảnh. Mỗi ngày còn lại đều có ít nhất một người không tham gia được."
+  },
+  {
+   "id": "rc-v2-vi-010",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Trang nhắn: “Phim bắt đầu sau 8 giờ thì giữ chỗ cho mình. Trước 8 giờ mình còn trên tàu.” Suất chiếu bắt đầu 8 giờ rưỡi. Trang đã nhờ nhóm làm gì?",
+   "choices": [
+    "Giữ chỗ cho Trang",
+    "Chuyển suất chiếu sớm hơn",
+    "Cho rằng Trang không đến được"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Suất chiếu đáp ứng điều kiện Trang nêu: bắt đầu sau 8 giờ. Lời nhờ là giữ một chỗ."
+  },
+  {
+   "id": "rc-v2-vi-011",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Minh nói: “Mình mang món ngọt được, nhưng không mang thứ cần tủ lạnh.” Chủ nhà gợi ý kem phải giữ đông hoặc bánh quy để được ở nhiệt độ phòng. Món nào hợp lời Minh?",
+   "choices": [
+    "Kem vì đó là món ngọt",
+    "Bánh quy vì không cần tủ lạnh",
+    "Cả hai vì đều ngọt"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Cả hai là món ngọt, nhưng chỉ bánh quy đáp ứng thêm điều kiện không cần tủ lạnh."
+  },
+  {
+   "id": "rc-v2-vi-012",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Tin nhắn ghi: “Mình thích ý tưởng ra quán đó, nhưng còn phải xem hôm ấy có rảnh không.” Điều gì đã được xác nhận?",
+   "choices": [
+    "Người đó chắc chắn tham gia",
+    "Giờ gặp đã được chốt",
+    "Người đó thích ý tưởng, nhưng chưa chốt tham gia"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Sự hào hứng với ý tưởng đã rõ. Lịch rảnh chưa được kiểm tra, nên việc tham gia vẫn chưa chốt."
+  },
+  {
+   "id": "rc-v2-vi-013",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Đèn chiếu bóng tượng về phía tây. Trong bố trí này, bóng đổ thẳng về hướng ngược với đèn. Đèn nằm phía nào của tượng?",
+   "choices": [
+    "Phía đông",
+    "Phía tây",
+    "Phía bắc"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "Bóng hướng tây nghĩa là ánh sáng đến từ phía đối diện, tức phía đông."
+  },
+  {
+   "id": "rc-v2-vi-014",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Ảnh chụp những chiếc ghế trống sau buổi nhạc. Chú thích chỉ ghi: “Mười phút sau bài cuối.” Câu nào có căn cứ mà không tự đoán nguyên nhân?",
+   "choices": [
+    "Khán giả không thích buổi nhạc",
+    "Ghế trống mười phút sau bài cuối",
+    "Buổi nhạc không có người xem"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "Ảnh và chú thích cho biết cảnh lúc chụp cùng thời điểm. Chúng không cho biết lượng người xem trước đó hay cảm nhận của họ."
+  },
+  {
+   "id": "rc-v2-vi-015",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Yêu cầu áp phích ghi: “Tên sự kiện trên ảnh, ngày tổ chức dưới ảnh.” Bản nháp đặt ngày giữa tên và ảnh. Cần chuyển gì?",
+   "choices": [
+    "Đưa tên xuống dưới ảnh",
+    "Đưa ảnh xuống dưới ngày",
+    "Đưa ngày xuống dưới ảnh"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "Tên vốn cần nằm trên ảnh. Chuyển ngày xuống dưới ảnh sẽ khôi phục đúng thứ tự yêu cầu."
+  },
+  {
+   "id": "rc-v2-vi-016",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Phim ngắn cần 30 giây nhạc liền mạch. Ba đoạn dài 20, 35 và 40 giây. Được cắt bớt, không được nối đoạn. Trong ba đoạn gốc, đoạn ngắn nhất đủ dùng dài bao lâu?",
+   "choices": [
+    "35 giây",
+    "20 giây",
+    "40 giây"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "Đoạn 20 giây quá ngắn. Hai đoạn dài hơn đều cắt còn 30 giây được; 35 giây là đoạn ngắn hơn trong hai đoạn ấy."
+  },
+  {
+   "id": "rc-v2-vi-017",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Trên bản đồ, chợ ở thẳng phía bắc thư viện. Quán cà phê ở thẳng phía đông thư viện. Từ quán nhìn về chợ là hướng nào?",
+   "choices": [
+    "Đông nam",
+    "Tây bắc",
+    "Tây nam"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "Từ quán, chợ nằm về phía bắc và phía tây, tức tây bắc."
+  },
+  {
+   "id": "rc-v2-vi-018",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Xe A qua bảo tàng, không qua ga. Xe B qua ga, không qua bảo tàng. Cả hai dừng ở Trung tâm. Từ ga, đi thế nào để tới bảo tàng?",
+   "choices": [
+    "Đi A từ ga rồi đổi B",
+    "Ngồi B suốt chuyến",
+    "Đi B đến Trung tâm rồi đổi A"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "Xe B đưa bạn từ ga tới điểm chung. Từ đó xe A mới đi tiếp tới bảo tàng."
+  },
+  {
+   "id": "rc-v2-vi-019",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Phòng tranh thường đóng lúc 6 giờ. Biển hôm nay ghi: “Đêm triển lãm mở đến 8 giờ; ngừng nhận khách trước khi đóng 30 phút.” Hôm nay nhận khách muộn nhất lúc nào?",
+   "choices": [
+    "7 giờ rưỡi",
+    "5 giờ rưỡi",
+    "8 giờ"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "Hôm nay đóng muộn lúc 8 giờ, nên giờ nhận khách cuối cùng sớm hơn 30 phút, tức 7 giờ rưỡi."
+  },
+  {
+   "id": "rc-v2-vi-020",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Bạn tới ga lúc 10 giờ 10. Tàu nhanh rời lúc 10 giờ 20, đi 20 phút; tàu thường rời ngay, đi 35 phút. Không có chậm trễ khác, tàu nào đến trước?",
+   "choices": [
+    "Tàu thường vì rời ngay",
+    "Tàu nhanh, sớm hơn 5 phút",
+    "Hai tàu đến cùng lúc"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "Tính cả lúc chờ, tàu nhanh tới lúc 10 giờ 40. Tàu thường tới 10 giờ 45, muộn hơn 5 phút."
+  },
+  {
+   "id": "rc-v2-vi-021",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Cảm biến chỉ ghi cảnh báo khi ánh sáng trong phòng dưới ngưỡng đặt sẵn. Một cảnh báo xuất hiện lúc trưa. Cảnh báo cho biết được điều gì?",
+   "choices": [
+    "Phòng không có cửa sổ",
+    "Ngoài trời đang nhiều mây",
+    "Ánh sáng trong phòng dưới ngưỡng đặt sẵn"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "Cảnh báo xác nhận mức sáng đo được, không xác định nguyên nhân như thời tiết hay cửa sổ."
+  },
+  {
+   "id": "rc-v2-vi-022",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Đồng hồ chạy chậm 1 phút mỗi giờ. Nó được chỉnh đúng lúc 12 giờ trưa. Sau 3 giờ thực tế, nó chỉ mấy giờ?",
+   "choices": [
+    "2 giờ 57",
+    "3 giờ",
+    "3 giờ 03"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "Lúc thời gian thật là 3 giờ, đồng hồ còn chậm 3 phút, nên chỉ 2 giờ 57."
+  },
+  {
+   "id": "rc-v2-vi-023",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Tệp ảnh được tạo thứ Hai khi quét một tấm ảnh giấy cũ. Ảnh giấy không ghi ngày. Ngày tạo tệp thứ Hai cho biết điều gì?",
+   "choices": [
+    "Ảnh gốc được chụp thứ Hai",
+    "Tệp kỹ thuật số được tạo thứ Hai",
+    "Ảnh giấy được rửa lần đầu thứ Hai"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "Ngày tệp ghi nhận kết quả quét, không cho biết lúc chụp cảnh gốc hay lúc rửa ảnh giấy."
+  },
+  {
+   "id": "rc-v2-vi-024",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Kệ trưng bày có 12 món. Biển ghi mọi món bằng gỗ đều làm thủ công. Có 4 món bằng gỗ. Ta biết chắc ít nhất mấy món làm thủ công?",
+   "choices": [
+    "Đúng 12 món",
+    "Không món nào vì chưa rõ các món khác",
+    "Ít nhất 4 món"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "Bốn món gỗ chắc chắn làm thủ công. Các món khác có thể cũng vậy, nhưng biển không xác nhận điều đó."
+  },
+  {
+   "id": "logic-v2-vi-001",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Mai, Linh và Bảo mỗi người mang một món khác nhau: cốc, trái cây hoặc bánh mì. Mai không mang đồ ăn; Linh không mang bánh mì. Bảo mang gì?",
+   "choices": [
+    "Bánh mì",
+    "Cốc",
+    "Trái cây"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "Mai mang cốc. Linh phải mang trái cây, nên bánh mì là của Bảo."
+  },
+  {
+   "id": "logic-v2-vi-002",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Lúc 9 giờ, một tệp bắt đầu tải trong 5 phút, đồng thời máy in bắt đầu việc mất 8 phút. Cả hai chạy liên tục. Khi nào cả hai xong?",
+   "choices": [
+    "9 giờ 05",
+    "9 giờ 08",
+    "9 giờ 13"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "Hai việc chạy cùng lúc. Tệp tải xong lúc 9 giờ 05; máy in chậm hơn, xong lúc 9 giờ 08."
+  },
+  {
+   "id": "logic-v2-vi-003",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Mọi bản nháp gắn nhãn đỏ đều cần xem lại. Một bản nháp cần xem lại, nhưng nhãn bị che. Nhãn đó có chắc là màu đỏ không?",
+   "choices": [
+    "Chắc chắn màu đỏ",
+    "Chắc chắn không đỏ",
+    "Quy tắc chưa đủ để biết"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "Quy tắc nói bản gắn nhãn đỏ cần xem lại, chứ không nói chỉ bản nhãn đỏ mới cần xem lại."
+  },
+  {
+   "id": "logic-v2-vi-004",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Bạn cắt một dải ruy băng thẳng thành 4 đoạn rời, mỗi lần chỉ cắt một chỗ, không gấp hay chồng lên nhau. Cần mấy lần cắt?",
+   "choices": [
+    "3",
+    "4",
+    "5"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "Từ một đoạn, mỗi lần cắt thêm được một đoạn. Vì vậy 3 lần cắt tạo ra 4 đoạn."
+  },
+  {
+   "id": "logic-v2-vi-005",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Hai hũ kín chứa trà hoặc cà phê, mỗi loại một hũ. Hai nhãn ghi trà và cà phê đều dán sai. Hũ ghi cà phê chứa gì?",
+   "choices": [
+    "Cà phê",
+    "Trà",
+    "Không đủ thông tin"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "Cả hai nhãn đều sai và mỗi hũ chỉ có một loại. Hũ ghi cà phê vì thế phải chứa trà."
+  },
+  {
+   "id": "logic-v2-vi-006",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Túi nhỏ đựng tối đa 6 ký. Máy ảnh nặng 2 ký, sách 3 ký, loa 4 ký. Cặp nào vừa túi mà tận dụng hết mức cân?",
+   "choices": [
+    "Sách và loa",
+    "Máy ảnh và sách",
+    "Máy ảnh và loa"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "Máy ảnh và loa đúng 6 ký. Sách với loa nặng 7 ký; máy ảnh với sách mới dùng 5 ký."
+  },
+  {
+   "id": "logic-v2-vi-007",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Ba người bạn chỉ rảnh những ngày sau: An thứ Sáu hoặc thứ Bảy, Bảo thứ Bảy hoặc Chủ nhật, Chi thứ Sáu hoặc thứ Bảy. Ngày nào cả ba đều rảnh?",
+   "choices": [
+    "Thứ Bảy",
+    "Thứ Sáu",
+    "Chủ nhật"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Thứ Bảy có trong cả ba danh sách. Bảo không rảnh thứ Sáu; An và Chi không rảnh Chủ nhật."
+  },
+  {
+   "id": "logic-v2-vi-008",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Chìa khóa nằm trong đúng một hộp: xanh dương, xanh lá hoặc vàng. Trong hai câu “Ở hộp xanh dương” và “Không ở hộp vàng”, đúng một câu đúng. Khóa ở đâu?",
+   "choices": [
+    "Hộp xanh dương",
+    "Hộp xanh lá",
+    "Hộp vàng"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Hộp xanh dương khiến cả hai câu đúng; hộp vàng khiến cả hai sai. Hộp xanh lá chỉ khiến câu “không ở hộp vàng” đúng."
+  },
+  {
+   "id": "logic-v2-vi-009",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Bốn người bạn mỗi người gửi một lời chào riêng cho từng người còn lại. An gửi Bảo khác với Bảo gửi An. Có tất cả bao nhiêu lời chào?",
+   "choices": [
+    "6",
+    "8",
+    "12"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Mỗi người gửi 3 lời chào. Có 4 người nên tổng là 12; mỗi chiều gửi được tính riêng."
+  },
+  {
+   "id": "logic-v2-vi-010",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Làm một cuốn tạp chí nhỏ có ba bước: in, gấp, bấm ghim. Phải in trước khi gấp, gấp trước khi bấm ghim. Bước ngay trước bấm ghim là gì?",
+   "choices": [
+    "Gấp",
+    "In",
+    "In hoặc gấp đều được"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "Thứ tự bắt buộc là in, gấp, bấm ghim. Gấp là bước ngay trước bấm ghim."
+  },
+  {
+   "id": "logic-v2-vi-011",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Một nhịp lặp lại theo thứ tự: vỗ tay, gõ, gõ, nghỉ, bắt đầu từ nhịp 1. Đến nhịp 7 là gì?",
+   "choices": [
+    "Vỗ tay",
+    "Gõ",
+    "Nghỉ"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "Nhịp 5 đến 8 lặp lại vỗ tay, gõ, gõ, nghỉ. Nhịp 7 là lần gõ thứ hai trong nhóm này."
+  },
+  {
+   "id": "logic-v2-vi-012",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Ảnh rộng 12 đơn vị, cao 8 đơn vị. Bạn chỉ cắt bớt chiều rộng để thành hình vuông, giữ nguyên chiều cao. Tổng cộng phải bỏ bao nhiêu đơn vị chiều rộng?",
+   "choices": [
+    "2",
+    "8",
+    "4"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "Hình vuông phải rộng 8 đơn vị để bằng chiều cao. Từ 12 xuống 8, tổng cộng cần bỏ 4 đơn vị."
+  },
+  {
+   "id": "logic-v2-vi-013",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Có hai đường tới quán: xe buýt đi thẳng mất 12 phút; hoặc tàu điện 4 phút, chuyển tuyến 5 phút rồi đi bộ thêm 2 phút. Đường nào nhanh hơn?",
+   "choices": [
+    "Đường tàu điện nhanh hơn 1 phút",
+    "Đường xe buýt nhanh hơn 1 phút",
+    "Hai đường bằng nhau"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "Đường tàu điện mất 4 cộng 5 cộng 2, tổng 11 phút, ít hơn đường xe buýt 1 phút."
+  },
+  {
+   "id": "logic-v2-vi-014",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Tàu khởi hành lúc 8 giờ 50 và đến lúc 9 giờ 15 trong cùng buổi sáng. Chuyến đi kéo dài bao lâu?",
+   "choices": [
+    "35 phút",
+    "25 phút",
+    "65 phút"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "Từ 8 giờ 50 đến 9 giờ là 10 phút, rồi thêm 15 phút nữa. Tổng cộng là 25 phút."
+  },
+  {
+   "id": "logic-v2-vi-015",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Xe đi qua A, B, C, D, E theo thứ tự. Bạn lên ở B, xuống ở E. Tính cả điểm đến E nhưng không tính điểm lên B, bạn tới mấy điểm dừng?",
+   "choices": [
+    "2",
+    "4",
+    "3"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "Sau khi lên ở B, bạn tới C, D rồi E: tổng cộng 3 điểm dừng."
+  },
+  {
+   "id": "logic-v2-vi-016",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Dãy số lặp hai bước: cộng 3, rồi nhân 2. Bắt đầu từ 2 được 2, 5, 10, 13, 26. Số tiếp theo là gì?",
+   "choices": [
+    "29",
+    "52",
+    "30"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "Sau bước nhân 2 đến bước cộng 3. Vì vậy 26 cộng 3 bằng 29."
+  },
+  {
+   "id": "logic-v2-vi-017",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Lọ có đúng 3 hạt xanh và 2 hạt trắng. Không nhìn và không bỏ lại hạt nào, bạn cần lấy ít nhất mấy hạt để chắc chắn có hai hạt cùng màu?",
+   "choices": [
+    "2",
+    "3",
+    "4"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "Hai lần lấy có thể được mỗi màu một hạt. Hạt thứ ba chắc chắn trùng một trong hai màu đã lấy."
+  },
+  {
+   "id": "logic-v2-vi-018",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Trong bộ thẻ này, mọi hình tam giác đều có sọc. Một thẻ không có sọc. Theo quy tắc đó, hình nào bị loại trừ?",
+   "choices": [
+    "Hình tròn",
+    "Hình vuông",
+    "Hình tam giác"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "curiosity",
+   "explanation": "Hình tam giác bắt buộc có sọc. Thẻ không sọc không thể là tam giác; quy tắc không nói gì về hình tròn hay vuông."
+  }
+ ]
+}

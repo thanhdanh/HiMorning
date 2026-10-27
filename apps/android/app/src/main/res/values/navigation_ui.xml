@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nav_your_progress">Your progress</string>
+    <string name="nav_explore_challenges">Explore challenges</string>
+    <string name="nav_language">Language</string>
+    <string name="nav_morning_purpose">My morning purpose</string>
+    <string name="nav_purpose_question">What would make your morning worth getting up for?</string>
+    <string name="nav_purpose_note">Seven successful mornings, at your pace. Changing purpose keeps the mornings you have already earned.</string>
+    <string name="nav_focus_clear">One small decision or riddle before work or study.</string>
+    <string name="nav_focus_gentle">Wave, turn gently and follow a seated rhythm. Checked on this device.</string>
+    <string name="nav_focus_voice">Start with a short sentence, then try reading aloud in your app language.</string>
+    <string name="nav_focus_energy">A standing workout mix with push-ups, stretches and jumping jacks. Choose what fits you.</string>
+    <string name="nav_pro_title">Make room for better mornings.</string>
+    <string name="nav_pro_challenges">More ways to move and start your day</string>
+    <string name="nav_pro_sounds">A sound that feels like your morning</string>
+    <string name="nav_pro_history">Thirty-day progress and deeper routines</string>
+    <string name="nav_explore_pro">Explore Pro</string>
+    <string name="nav_this_month">This month</string>
+    <string name="nav_points">/ 100 points</string>
+    <string name="nav_month_completed">%1$d of %2$d challenges completed</string>
+    <string name="nav_past_week">Past 7 days</string>
+    <string name="nav_past_month">Past 30 days</string>
+    <string name="nav_decrease_goal">Decrease weekly goal</string>
+    <string name="nav_increase_goal">Increase weekly goal</string>
+    <string name="nav_share_progress">Share my progress</string>
+    <string name="nav_new_alarm">New alarm</string>
+    <string name="nav_plan_mission">Plan this mission with an alarm</string>
+    <string name="nav_select_alarm">Choose an alarm to prepare</string>
+    <string name="nav_choose_focus">Choose my morning purpose</string>
+    <string name="nav_correct_reading">Read the clues. Choose the answer supported by them.</string>
+    <string name="nav_complete_guide">A small win to begin your morning.</string>
+    <string name="nav_return_to_alarm">Back to alarm</string>
+    <string name="nav_done">Done</string>
+    <string name="nav_alarm_save_uncertain">This alarm could not be confirmed. Check your system alarms before relying on it.</string>
+</resources>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nav_your_progress">Tiến trình của bạn</string>
+    <string name="nav_explore_challenges">Khám phá thử thách</string>
+    <string name="nav_language">Ngôn ngữ</string>
+    <string name="nav_morning_purpose">Mục đích buổi sáng</string>
+    <string name="nav_purpose_question">Điều gì khiến bạn muốn thức dậy mỗi sáng?</string>
+    <string name="nav_purpose_note">Bảy buổi sáng thành công, theo nhịp của bạn. Đổi mục đích vẫn giữ những buổi sáng bạn đã đạt được.</string>
+    <string name="nav_focus_clear">Một lựa chọn nhỏ hoặc câu đố trước khi làm việc hay học tập.</string>
+    <string name="nav_focus_gentle">Vẫy tay, xoay nhẹ và làm theo nhịp khi ngồi. Kiểm tra trên thiết bị.</string>
+    <string name="nav_focus_voice">Bắt đầu bằng một câu ngắn, rồi thử đọc thành tiếng bằng ngôn ngữ ứng dụng.</string>
+    <string name="nav_focus_energy">Kết hợp chống đẩy, vươn tay và bật nhảy khi đứng. Chọn bài phù hợp với bạn.</string>
+    <string name="nav_pro_title">Dành chỗ cho buổi sáng tốt hơn.</string>
+    <string name="nav_pro_challenges">Thêm cách vận động và bắt đầu ngày mới</string>
+    <string name="nav_pro_sounds">Âm báo hợp với buổi sáng của bạn</string>
+    <string name="nav_pro_history">Tiến trình 30 ngày và thói quen sâu hơn</string>
+    <string name="nav_explore_pro">Khám phá Pro</string>
+    <string name="nav_this_month">Tháng này</string>
+    <string name="nav_points">/ 100 điểm</string>
+    <string name="nav_month_completed">Hoàn thành %1$d trong %2$d thử thách</string>
+    <string name="nav_past_week">7 ngày qua</string>
+    <string name="nav_past_month">30 ngày qua</string>
+    <string name="nav_decrease_goal">Giảm mục tiêu tuần</string>
+    <string name="nav_increase_goal">Tăng mục tiêu tuần</string>
+    <string name="nav_share_progress">Chia sẻ tiến trình</string>
+    <string name="nav_new_alarm">Báo thức mới</string>
+    <string name="nav_plan_mission">Lên lịch nhiệm vụ này bằng báo thức</string>
+    <string name="nav_select_alarm">Chọn báo thức để chuẩn bị</string>
+    <string name="nav_choose_focus">Chọn mục đích buổi sáng</string>
+    <string name="nav_correct_reading">Đọc gợi ý. Chọn đáp án đúng với gợi ý.</string>
+    <string name="nav_complete_guide">Một chiến thắng nhỏ để bắt đầu buổi sáng.</string>
+    <string name="nav_return_to_alarm">Trở lại báo thức</string>
+    <string name="nav_done">Xong</string>
+    <string name="nav_alarm_save_uncertain">Chưa xác nhận được báo thức này. Kiểm tra báo thức hệ thống trước khi sử dụng.</string>
+</resources>
