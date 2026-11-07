@@ -68,6 +68,27 @@ Do not make that optional experiment a prerequisite for local alarm testing.
 Recheck current platform/store requirements when preparing the release archive;
 historical research and successful local builds are not approval evidence.
 
+## Privacy manifest and archive review
+
+The app's [`PrivacyInfo.xcprivacy`](../apps/ios/Resources/PrivacyInfo.xcprivacy)
+declares two required-reason API categories used by its source:
+
+- `UserDefaults` uses `CA92.1` for app-owned language, journey, content and
+  pending-alarm settings. It does not read another app's defaults or an App Group.
+- `systemUptime` uses `35F9.1` for elapsed challenge time, camera tracking freshness,
+  animation and timeout calculations. Boot time itself is not sent off-device.
+
+These reasons follow [Apple's category definitions](https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacyaccessedapitypes/nsprivacyaccessedapitype).
+The manifest is under the existing XcodeGen `Resources` source path. The native
+`PrivacyManifestResourceTests` checks the built app bundle, not just the source
+file. Run that test and inspect the release archive's privacy report before upload.
+
+This file does not establish the final App Store privacy label. Review the resolved
+Firebase SDK manifests and the actual archive's optional `GoogleService-Info.plist`
+and `HiMorningCloud-Info.plist` configuration. Do not infer "no data collected"
+from the local camera path alone. Confirm the release's service configuration,
+public privacy/support URLs and required data disclosures separately.
+
 ## What we checked
 
 [Validation](VALIDATION.md) records the latest available local results and their
