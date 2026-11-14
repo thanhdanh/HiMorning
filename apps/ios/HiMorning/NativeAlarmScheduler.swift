@@ -34,6 +34,12 @@ struct OpenMorningIntent: LiveActivityIntent {
 
 actor NativeAlarmScheduler: AlarmScheduler, BackupRingScheduler {
 
+    func authorizeScheduling() async throws {
+        guard try await AlarmManager.shared.requestAuthorization() == .authorized else {
+            throw AlarmScheduleError.accessDenied
+        }
+    }
+
     func schedule(_ alarm: SavedAlarm) async throws {
         // MARK: - Schedule
 
@@ -88,15 +94,15 @@ actor NativeAlarmScheduler: AlarmScheduler, BackupRingScheduler {
         for alarm: SavedAlarm,
         schedule: Alarm.Schedule
     ) async throws -> AlarmManager.AlarmConfiguration<MorningMetadata> {
-        guard try await AlarmManager.shared.requestAuthorization() == .authorized else {
-            throw NativeAlarmError.denied
+        guard AlarmManager.shared.authorizationState == .authorized else {
+            throw AlarmScheduleError.accessDenied
         }
-
+        let challengeIntent = !alarm.hasChallengeIntent ? nil : OpenMorningIntent(id: alarm.id)
         return .alarm(
             schedule: schedule,
             attributes: attributes(for: alarm),
-            stopIntent: OpenMorningIntent(id: alarm.id),
-            secondaryIntent: OpenMorningIntent(id: alarm.id),
+            stopIntent: challengeIntent,
+            secondaryIntent: challengeIntent,
             sound: sound(for: alarm)
         )
     }
@@ -120,8 +126,8 @@ actor NativeAlarmScheduler: AlarmScheduler, BackupRingScheduler {
         if #available(iOS 26.1, *) {
             alert = AlarmPresentation.Alert(
                 title: title,
-                secondaryButton: openButton,
-                secondaryButtonBehavior: .custom
+                secondaryButton: !alarm.hasChallengeIntent ? nil : openButton,
+                secondaryButtonBehavior: !alarm.hasChallengeIntent ? nil : .custom
             )
         } else {
             alert = AlarmPresentation.Alert(
@@ -133,8 +139,8 @@ actor NativeAlarmScheduler: AlarmScheduler, BackupRingScheduler {
                     textColor: .white,
                     systemImageName: "stop.fill"
                 ),
-                secondaryButton: openButton,
-                secondaryButtonBehavior: .custom
+                secondaryButton: !alarm.hasChallengeIntent ? nil : openButton,
+                secondaryButtonBehavior: !alarm.hasChallengeIntent ? nil : .custom
             )
         }
 
@@ -193,8 +199,4 @@ actor NativeAlarmScheduler: AlarmScheduler, BackupRingScheduler {
             try manager.alarms.map(\.id)
         )
     }
-}
-
-enum NativeAlarmError: Error {
-    case denied
 }

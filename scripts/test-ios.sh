@@ -1,6 +1,7 @@
 #!/bin/sh
 set -eu
 TASK_SIMULATOR=${1:?Pass an iPhone simulator UDID}
+TASK_ONLY=${3:-}
 case "${2:-push}" in
   push)
     set -- -only-testing:HiMorningTests \
@@ -21,11 +22,14 @@ case "${2:-push}" in
       -only-testing:HiMorningUITests/ChallengeCelebrationUITests/testRealAlarmCompletionReturnsHomeAndMarksOnlyThatAlarmInBothLanguages \
       -only-testing:HiMorningUITests/ChallengeCelebrationUITests/testReadingSuccessCelebratesAndReturnsHomeInBothLanguages \
       -only-testing:HiMorningUITests/ChallengeCelebrationUITests/testReadAloudRetryKeepsTheSentenceAndClearsThePreviousScore \
-      -only-testing:HiMorningUITests/ChallengeCelebrationUITests/testAwakeConfirmationCountsDownBeforeEnabling
+      -only-testing:HiMorningUITests/ChallengeCelebrationUITests/testPracticeExitReturnsHomeAndSelfConfirmationKeepsItsOwnMessage
     ;;
   workflow_dispatch) set -- ;;
   *) echo 'Expected push or workflow_dispatch' >&2; exit 64 ;;
 esac
+if [ -n "$TASK_ONLY" ]; then
+  set -- "-only-testing:$TASK_ONLY"
+fi
 TASK_DERIVED="${RUNNER_WORKSPACE:?}/himorning-derived"
 TASK_PACKAGES="$TASK_DERIVED/SourcePackages"
 TASK_RESOLVE_LOG="${RUNNER_TEMP:?}/himorning-packages.log"

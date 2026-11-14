@@ -55,7 +55,7 @@ describe('iOS CI test selection', () => {
   expect(selectors).toContain('-only-testing:HiMorningUITests/DeviceFixesUITests/testEnabledAlarmChallengeEditClosesAndKeepsTheNewChoiceInBothLanguages');
   expect(selectors).toContain('-only-testing:HiMorningUITests/ChallengeCelebrationUITests/testReadingSuccessCelebratesAndReturnsHomeInBothLanguages');
   expect(selectors).toContain('-only-testing:HiMorningUITests/ChallengeCelebrationUITests/testReadAloudRetryKeepsTheSentenceAndClearsThePreviousScore');
-  expect(selectors).toContain('-only-testing:HiMorningUITests/ChallengeCelebrationUITests/testAwakeConfirmationCountsDownBeforeEnabling');
+  expect(selectors).toContain('-only-testing:HiMorningUITests/ChallengeCelebrationUITests/testPracticeExitReturnsHomeAndSelfConfirmationKeepsItsOwnMessage');
   for (const selector of selectors) {
    const [, suite, name] = selector.split('/');
    expect(readFileSync(`apps/ios/HiMorningUITests/${suite}.swift`, 'utf8')).toContain(`func ${name}()`);

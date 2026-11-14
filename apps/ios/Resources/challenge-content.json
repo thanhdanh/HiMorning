@@ -1,330 +1,493 @@
 {
- "version": 2,
- "generatedAt": "2026-10-23T03:00:00.000Z",
+ "version": 4,
+ "generatedAt": "2026-11-14T17:30:00Z",
  "items": [
   {
-   "id": "voice-v2-en-001",
+   "id": "voice-v4-en-001",
    "kind": "readAloud",
    "language": "en",
-   "text": "The library printer finally woke up. My notes arrived slightly crooked, but the idea I had almost forgotten was still there on the page.",
+   "text": "The projector flickered just as Priya reached the first chart, so she drew the trend on the whiteboard. The room followed her explanation more easily once everyone could see the numbers take shape.",
    "source": "himorning",
    "license": "original",
    "theme": "workAndStudy"
   },
   {
-   "id": "voice-v2-en-002",
+   "id": "voice-v4-en-002",
    "kind": "readAloud",
    "language": "en",
-   "text": "Someone named the shared document final again. I added my small correction, saved it carefully, and resisted giving the file another dramatic title.",
+   "text": "On Thursday, our teacher asked us to explain a difficult idea to a partner. I thought I understood it until she asked me a simple question that I could not answer.",
    "source": "himorning",
    "license": "original",
    "theme": "workAndStudy"
   },
   {
-   "id": "voice-v2-en-003",
+   "id": "voice-v4-en-003",
    "kind": "readAloud",
    "language": "en",
-   "text": "My first sketch of the project looked like a map drawn by a distracted pigeon. The second one finally showed where to begin.",
+   "text": "Grace left a voice message for her colleague because the instructions were easier to say than to type. She paused between each step so he could write down the details without rushing.",
    "source": "himorning",
    "license": "original",
    "theme": "workAndStudy"
   },
   {
-   "id": "voice-v2-en-004",
+   "id": "voice-v4-en-004",
    "kind": "readAloud",
    "language": "en",
-   "text": "A question I wrote in the margin yesterday made sense this morning. Apparently, leaving room on the page also leaves room for an answer.",
+   "text": "I brought three sketches to the meeting, but nobody chose the one I liked best. They pointed out a flaw I had missed, and together we found a simpler way forward.",
    "source": "himorning",
    "license": "original",
    "theme": "workAndStudy"
   },
   {
-   "id": "voice-v2-en-005",
+   "id": "voice-v4-en-005",
    "kind": "readAloud",
    "language": "en",
-   "text": "The study group brought three different explanations for the same problem. We borrowed a little from each and finally found our own way through.",
+   "text": "The library was closing when I finally found the reference I needed for my essay. I took a quick photo of the page so I could check the exact wording at home.",
    "source": "himorning",
    "license": "original",
    "theme": "workAndStudy"
   },
   {
-   "id": "voice-v2-en-006",
+   "id": "voice-v4-en-006",
    "kind": "readAloud",
    "language": "en",
-   "text": "The meeting began with a missing microphone and a very expressive wave. By the time sound returned, everyone already knew who was saying hello.",
+   "text": "During the workshop, we had to describe a picture without showing it to our partners. I learned that a few precise words could save us several minutes of guessing and redrawing.",
    "source": "himorning",
    "license": "original",
    "theme": "workAndStudy"
   },
   {
-   "id": "voice-v2-en-007",
+   "id": "voice-v4-en-007",
    "kind": "readAloud",
    "language": "en",
-   "text": "The café called my name just as I opened my book. For once, the interruption came with excellent timing and warm coffee.",
+   "text": "The bakery smelled of fresh bread when I stepped inside to escape the rain. While I waited for it to ease, the baker showed me how to tell when a loaf was ready.",
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife"
   },
   {
-   "id": "voice-v2-en-008",
+   "id": "voice-v4-en-008",
    "kind": "readAloud",
    "language": "en",
-   "text": "I found the missing sock inside a pillowcase. It had apparently chosen a quieter neighborhood while the rest of the laundry stayed together.",
+   "text": "I thought the kettle had stopped working, but the switch had simply come loose. Once I pushed it back into place, I could hear the water begin to warm and whisper.",
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife"
   },
   {
-   "id": "voice-v2-en-009",
+   "id": "voice-v4-en-009",
    "kind": "readAloud",
    "language": "en",
-   "text": "The plant by the window has one new leaf. Nobody announced it, but the room somehow feels as though a small guest has arrived.",
+   "text": "At the market, I reached for the brightest peaches, but the seller suggested the softer ones. She was right, and by lunchtime their juice was running down my wrists.",
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife"
   },
   {
-   "id": "voice-v2-en-010",
+   "id": "voice-v4-en-010",
    "kind": "readAloud",
    "language": "en",
-   "text": "My shopping list said bread, tomatoes, and something nice. I came home with all three, though the last one was a bunch of flowers.",
+   "text": "Our neighbor lent us a ladder after the wind knocked a branch onto the roof. We cleared it together, then stayed outside a little longer to watch the clouds break apart.",
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife"
   },
   {
-   "id": "voice-v2-en-011",
+   "id": "voice-v4-en-011",
    "kind": "readAloud",
    "language": "en",
-   "text": "A spoon slipped behind the kitchen drawer months ago. Finding it today felt less like cleaning and more like welcoming a tiny explorer home.",
+   "text": "The zipper on my jacket stuck halfway up while I was getting ready to leave. I rubbed a little soap along the teeth, and it slid smoothly on the next try.",
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife"
   },
   {
-   "id": "voice-v2-en-012",
+   "id": "voice-v4-en-012",
    "kind": "readAloud",
    "language": "en",
-   "text": "The neighbor left a bowl beside our door with a note saying too much soup. Some problems arrive with surprisingly delicious solutions.",
+   "text": "I threw on a sweater and stepped outside to see why the dog was scratching at the door. A small frog sat on the path, and the dog refused to pass it.",
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife"
   },
   {
-   "id": "voice-v2-en-013",
+   "id": "voice-v4-en-013",
    "kind": "readAloud",
    "language": "en",
-   "text": "Our group chat spent twenty minutes choosing a place to meet. Once someone suggested the usual café, we all suddenly became excellent decision makers.",
+   "text": "We planned to picnic near the bridge, but the grass was still wet from the storm. Theo found a sheltered bench, where we shared sandwiches and watched the river rise.",
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans"
   },
   {
-   "id": "voice-v2-en-014",
+   "id": "voice-v4-en-014",
    "kind": "readAloud",
    "language": "en",
-   "text": "A friend sent a photo of a cloud shaped like a rabbit. I saw a teapot, and our very small art debate began immediately.",
+   "text": "My sister sent me a photo of the menu before she chose a restaurant for her birthday. She wanted to make sure there was something our grandmother could enjoy as well.",
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans"
   },
   {
-   "id": "voice-v2-en-015",
+   "id": "voice-v4-en-015",
    "kind": "readAloud",
    "language": "en",
-   "text": "We ordered different desserts and agreed to share. For a few happy minutes, the table became a committee with an unusually clear purpose.",
+   "text": "Rachel worried that she had forgotten the address, but she recognized the blue shutters as soon as we turned the corner. The friends we had come to visit were waiting outside.",
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans"
   },
   {
-   "id": "voice-v2-en-016",
+   "id": "voice-v4-en-016",
    "kind": "readAloud",
    "language": "en",
-   "text": "My friend remembered a story I had told in passing. Hearing it again made an ordinary conversation feel like finding a carefully kept postcard.",
+   "text": "The whole group fell quiet when our friend admitted she was nervous about moving. We asked her what she would miss most and made plans to visit before winter set in.",
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans"
   },
   {
-   "id": "voice-v2-en-017",
+   "id": "voice-v4-en-017",
    "kind": "readAloud",
    "language": "en",
-   "text": "The invitation said bring nothing, so I brought a story. It turned out someone else had already covered the snacks and the terrible jokes.",
+   "text": "Three friends arrived early to help carry the chairs into the courtyard. By the time the sun slipped behind the building, we had enough seats for everyone to eat outside.",
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans"
   },
   {
-   "id": "voice-v2-en-018",
+   "id": "voice-v4-en-018",
    "kind": "readAloud",
    "language": "en",
-   "text": "We moved our picnic indoors when the rain arrived. The blanket stayed, the sandwiches survived, and the weather lost its seat at the table.",
+   "text": "When my cousin missed her train, we used the extra hour to get breakfast together. She had been rushing all morning, so a quiet table and warm toast felt like a relief.",
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans"
   },
   {
-   "id": "voice-v2-en-019",
+   "id": "voice-v4-en-019",
    "kind": "readAloud",
    "language": "en",
-   "text": "I tried drawing my mug without looking at the paper. The result had confidence, several extra handles, and almost no interest in being a mug.",
+   "text": "I tried to paint the reflection of a tree, but the wind kept shifting the branches. When I stopped chasing every detail, I finally captured the movement I could see.",
    "source": "himorning",
    "license": "original",
    "theme": "creativeBreaks"
   },
   {
-   "id": "voice-v2-en-020",
+   "id": "voice-v4-en-020",
    "kind": "readAloud",
    "language": "en",
-   "text": "The playlist put a dramatic song behind my very ordinary breakfast. For three minutes, buttering toast felt like the opening scene of a film.",
+   "text": "At the pottery studio, my bowl wobbled each time I pressed too hard. The instructor showed me how to steady my wrists, and the clay began to hold its shape.",
    "source": "himorning",
    "license": "original",
    "theme": "creativeBreaks"
   },
   {
-   "id": "voice-v2-en-021",
+   "id": "voice-v4-en-021",
    "kind": "readAloud",
    "language": "en",
-   "text": "A crooked line in my notebook became the edge of a mountain. I had meant to cross it out, but the mountain seemed worth keeping.",
+   "text": "The choir rushed through the first verse until the director asked us to listen to each other. On the next try, we found a shared rhythm and finished the phrase together.",
    "source": "himorning",
    "license": "original",
    "theme": "creativeBreaks"
   },
   {
-   "id": "voice-v2-en-022",
+   "id": "voice-v4-en-022",
    "kind": "readAloud",
    "language": "en",
-   "text": "I photographed the same corner twice, once for the shadows and once for the colors. The street had quietly offered me two different stories.",
+   "text": "I took my camera out just as the sun broke through the clouds. The wet pavement reflected a row of shop windows, so I crouched down to catch the whole street.",
    "source": "himorning",
    "license": "original",
    "theme": "creativeBreaks"
   },
   {
-   "id": "voice-v2-en-023",
+   "id": "voice-v4-en-023",
    "kind": "readAloud",
    "language": "en",
-   "text": "The recipe asked for a neat swirl of sauce. Mine looked like an unfamiliar island, so dinner came with a map instead.",
+   "text": "The first print came out darker than I had planned, and I nearly threw it away. A friend held it near the window, where the shadows made the scene feel warmer.",
    "source": "himorning",
    "license": "original",
    "theme": "creativeBreaks"
   },
   {
-   "id": "voice-v2-en-024",
+   "id": "voice-v4-en-024",
    "kind": "readAloud",
    "language": "en",
-   "text": "I gave an unfinished tune a ridiculous name so I could find it later. Now I remember the name more easily than the melody.",
+   "text": "I was learning a tune on the guitar when I noticed that my left hand was tense. Playing the phrase slowly helped me hear where the rhythm kept slipping away.",
    "source": "himorning",
    "license": "original",
    "theme": "creativeBreaks"
   },
   {
-   "id": "voice-v2-en-025",
+   "id": "voice-v4-en-025",
    "kind": "readAloud",
    "language": "en",
-   "text": "The bus window framed a bakery I had never noticed. Taking the same route again had somehow become a small journey somewhere new.",
+   "text": "The cyclist stopped at the crossroads to check which road led to the station. A street cleaner pointed toward a narrow lane that saved her a long climb up the hill.",
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel"
   },
   {
-   "id": "voice-v2-en-026",
+   "id": "voice-v4-en-026",
    "kind": "readAloud",
    "language": "en",
-   "text": "At the station, two strangers compared maps and laughed. They were going in opposite directions, but both had started by finding the same wrong platform.",
+   "text": "Through the train window, I watched the fields change from green to gold. As we neared the coast, the landscape opened up and I could see the sea beyond the tracks.",
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel"
   },
   {
-   "id": "voice-v2-en-027",
+   "id": "voice-v4-en-027",
    "kind": "readAloud",
    "language": "en",
-   "text": "My bag held a ticket, a book, and a snack packed with unreasonable optimism. The journey was short; apparently, my appetite had larger plans.",
+   "text": "The bus driver waited while an old man searched his pockets for the fare. When he finally sat down, the passenger beside him pointed out the stop where he needed to get off.",
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel"
   },
   {
-   "id": "voice-v2-en-028",
+   "id": "voice-v4-en-028",
    "kind": "readAloud",
    "language": "en",
-   "text": "The little shop had no sign, just a doorway full of postcards. I found it by looking up from the map at the right moment.",
+   "text": "We crossed the square just as the church bells rang and the shops began to close. A florist still had her door open, so we bought flowers to bring to dinner.",
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel"
   },
   {
-   "id": "voice-v2-en-029",
+   "id": "voice-v4-en-029",
    "kind": "readAloud",
    "language": "en",
-   "text": "Rain polished the pavement until every shop light had a twin. The street looked dressed for a celebration nobody had remembered to announce.",
+   "text": "The ferry slowed as it approached the harbor, and a group of children rushed to the rail. Just beyond the pier, a seal surfaced to breathe before slipping beneath the waves.",
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel"
   },
   {
-   "id": "voice-v2-en-030",
+   "id": "voice-v4-en-030",
    "kind": "readAloud",
    "language": "en",
-   "text": "The elevator stopped on every floor this morning. By the lobby, our quiet collection of strangers had become a very temporary neighborhood.",
+   "text": "After taking a wrong turn, I found myself on a quiet street lined with brick houses. There was a small bookshop at the end, so I stayed a while before checking the map.",
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel"
   },
   {
-   "id": "voice-v2-en-031",
+   "id": "voice-v4-en-031",
    "kind": "readAloud",
    "language": "en",
-   "text": "A bookmark fell out of a book I borrowed years ago. It was a receipt, quietly preserving the price of a lunch I no longer remembered.",
+   "text": "I wondered why the river looked darker beneath the bridge, even at noon. Once I stepped out of the shade, I could see how much light the surface had been reflecting.",
    "source": "himorning",
    "license": "original",
    "theme": "curiosity"
   },
   {
-   "id": "voice-v2-en-032",
+   "id": "voice-v4-en-032",
    "kind": "readAloud",
    "language": "en",
-   "text": "I turned the puzzle piece around and suddenly recognized the picture. The piece had not changed; I had simply stopped insisting it was a roof.",
+   "text": "The moth kept circling the porch light, resting briefly on the wall between flights. When I switched the light off, it disappeared into the darkness beyond the garden.",
    "source": "himorning",
    "license": "original",
    "theme": "curiosity"
   },
   {
-   "id": "voice-v2-en-033",
+   "id": "voice-v4-en-033",
    "kind": "readAloud",
    "language": "en",
-   "text": "The jar held buttons from clothes nobody in the house could remember. It was a tiny museum with excellent exhibits and absolutely no labels.",
+   "text": "A friend showed me how to fold a paper plane with longer wings. We tested it against my usual design, and the longer wings helped it stay in the air a little longer.",
    "source": "himorning",
    "license": "original",
    "theme": "curiosity"
   },
   {
-   "id": "voice-v2-en-034",
+   "id": "voice-v4-en-034",
    "kind": "readAloud",
    "language": "en",
-   "text": "I noticed that the clock in the photo was reflected in a mirror. The mystery of our impossibly early dinner finally had a reasonable explanation.",
+   "text": "When I opened the greenhouse door, I could smell the thyme growing beside the path. A volunteer showed me how brushing the leaves gently released even more of their scent.",
    "source": "himorning",
    "license": "original",
    "theme": "curiosity"
   },
   {
-   "id": "voice-v2-en-035",
+   "id": "voice-v4-en-035",
    "kind": "readAloud",
    "language": "en",
-   "text": "A handwritten arrow pointed to a second arrow, which pointed to the café. Whoever made the signs clearly believed that anticipation deserved its own route.",
+   "text": "At low tide, we found a tiny crab hiding beneath a flat stone. We watched it for a moment, then lowered the stone carefully so it could keep its shelter.",
    "source": "himorning",
    "license": "original",
    "theme": "curiosity"
   },
   {
-   "id": "voice-v2-en-036",
+   "id": "voice-v4-en-036",
    "kind": "readAloud",
    "language": "en",
-   "text": "The box marked miscellaneous contained exactly what I needed. For one glorious moment, my least organized shelf appeared to have a secret system.",
+   "text": "The clock on the wall was losing time, so I changed its battery before breakfast. The second hand still stuck at the same spot, which made me look closer at the hands.",
    "source": "himorning",
    "license": "original",
    "theme": "curiosity"
+  },
+  {
+   "id": "library-v3-en-cinema",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "The cinema says, “Please use Door B after 8 p.m.” You arrive at 8:10 p.m. Which door should you use?",
+   "choices": [
+    "Door A",
+    "Door B",
+    "Either door"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "8:10 p.m. is after 8 p.m., so use Door B."
+  },
+  {
+   "id": "library-v3-en-drop-off",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "Minh says, “Leave the bag with reception unless I text you.” Minh hasn’t sent a text. Where should the bag go?",
+   "choices": [
+    "At reception",
+    "Outside the building",
+    "Back home"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "The exception applies only if Minh texts."
+  },
+  {
+   "id": "library-v3-en-jupiter-day",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "Jupiter spins once in about 10 hours. Earth takes 24 hours. Where is a day shorter?",
+   "choices": [
+    "On Jupiter",
+    "On Earth",
+    "They are the same"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/jupiter/jupiter-facts/",
+   "theme": "curiosity",
+   "explanation": "A day here means one full spin. Jupiter takes less than half as long as Earth."
+  },
+  {
+   "id": "library-v3-en-library-return",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "Your library book is due on Tuesday. The library will be closed on Tuesday, but its return slot stays open. Can you return it that day?",
+   "choices": [
+    "Yes, through the slot",
+    "No, it must be Monday",
+    "Only if you borrow it again"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "The return slot is open even while the library is closed."
+  },
+  {
+   "id": "library-v3-en-outer-order",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "A model shows Jupiter, Saturn, Uranus and Neptune in order from the Sun. Which sits between Saturn and Neptune?",
+   "choices": [
+    "Jupiter",
+    "Uranus",
+    "Earth"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/solar-system/planets/",
+   "theme": "curiosity",
+   "explanation": "Uranus is one place farther from the Sun than Saturn and one closer than Neptune."
+  },
+  {
+   "id": "library-v3-en-park",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "Two paths end at the same park. One is open to bikes, the other is for walking only. Which path can you ride on?",
+   "choices": [
+    "Both paths",
+    "The walking path",
+    "The path open to bikes"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "Only one sign allows bikes."
+  },
+  {
+   "id": "library-v3-en-recipe",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "A recipe serves four and uses two eggs. You’re making half the recipe. How many eggs do you need?",
+   "choices": [
+    "One",
+    "Two",
+    "Four"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "Half of two eggs is one egg."
+  },
+  {
+   "id": "library-v3-en-shelter",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "A shelter asks for clean towels and says it has enough blankets. You can bring only one item. What would help?",
+   "choices": [
+    "A clean towel",
+    "A blanket",
+    "A towel that needs washing"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Clean towels are on the request list."
+  },
+  {
+   "id": "library-v3-en-tide-pull",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "A tide chart follows the pull of the Moon and the Sun. What force is it tracking?",
+   "choices": [
+    "Magnetism",
+    "Gravity",
+    "Wind"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "attribution": "Original wording by HiMorning. Factual reference: NOAA · https://www.noaa.gov/education/resource-collections/ocean-coasts/tides",
+   "theme": "curiosity",
+   "explanation": "The gravitational pull of the Moon and Sun sets the tides in motion."
+  },
+  {
+   "id": "library-v3-en-train",
+   "kind": "readAndChoose",
+   "language": "en",
+   "text": "The 7:40 train skips Hill Street. The 7:48 stops there. Your meeting is on Hill Street. Which train should you take?",
+   "choices": [
+    "The 7:40",
+    "The 7:48",
+    "Either train"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "The later train is the only one that stops at Hill Street."
   },
   {
    "id": "rc-v2-en-001",
@@ -618,17 +781,17 @@
    "id": "rc-v2-en-019",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "A gallery normally closes at six. Today’s sign says, “Open until eight for exhibition night; last entry thirty minutes before closing.” When is today’s last entry?",
+   "text": "The gallery closes at 8 p.m. today. Last entry is 30 minutes before closing. What is the latest you can get in?",
    "choices": [
-    "7:30",
-    "5:30",
-    "8:00"
+    "7:30 p.m.",
+    "5:30 p.m.",
+    "8 p.m."
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel",
-   "explanation": "Today’s special closing time is eight, so last entry is thirty minutes earlier, at seven thirty."
+   "explanation": "Thirty minutes before 8 p.m. is 7:30 p.m."
   },
   {
    "id": "rc-v2-en-020",
@@ -709,6 +872,239 @@
    "license": "original",
    "theme": "curiosity",
    "explanation": "The four wooden objects are guaranteed handmade. Others might be handmade too, but the sign does not establish that."
+  },
+  {
+   "id": "library-v3-en-clock",
+   "kind": "riddle",
+   "language": "en",
+   "text": "A clock loses one minute each hour. It is correct at noon. What will it show at 4 p.m.?",
+   "choices": [
+    "3:56",
+    "4:00",
+    "4:04"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "Four hours have passed, so the clock is four minutes slow."
+  },
+  {
+   "id": "library-v3-en-coral",
+   "kind": "riddle",
+   "language": "en",
+   "text": "A coral reef looks like a garden. What are the corals themselves?",
+   "choices": [
+    "Animals",
+    "Plants",
+    "Rocks"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "attribution": "Original wording by HiMorning. Factual reference: NOAA · https://oceanexplorer.noaa.gov/ocean-fact/coral-animal/",
+   "theme": "curiosity",
+   "explanation": "Corals are made up of tiny animals called polyps."
+  },
+  {
+   "id": "library-v3-en-ganymede",
+   "kind": "riddle",
+   "language": "en",
+   "text": "Which of these moons is bigger than the planet Mercury?",
+   "choices": [
+    "Europa",
+    "Ganymede",
+    "The Moon"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/jupiter/jupiter-moons/ganymede/facts/",
+   "theme": "curiosity",
+   "explanation": "Ganymede, which orbits Jupiter, is the largest moon in the solar system."
+  },
+  {
+   "id": "library-v3-en-mercury-year",
+   "kind": "riddle",
+   "language": "en",
+   "text": "Which planet takes about 88 Earth days to go around the Sun?",
+   "choices": [
+    "Mercury",
+    "Venus",
+    "Mars"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/mercury/facts/",
+   "theme": "curiosity",
+   "explanation": "Mercury is the closest planet to the Sun and has the shortest year."
+  },
+  {
+   "id": "library-v3-en-octopus-hearts",
+   "kind": "riddle",
+   "language": "en",
+   "text": "How many hearts does an octopus have?",
+   "choices": [
+    "One",
+    "Two",
+    "Three"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "attribution": "Original wording by HiMorning. Factual reference: NOAA · https://www.noaa.gov/stories/love-is-in-air-and-sea-5-facts-about-affections-of-marine-creatures",
+   "theme": "curiosity",
+   "explanation": "Two send blood to the gills. The third sends it around the body."
+  },
+  {
+   "id": "library-v3-en-pacific",
+   "kind": "riddle",
+   "language": "en",
+   "text": "Which ocean is both the largest and the deepest?",
+   "choices": [
+    "Atlantic",
+    "Indian",
+    "Pacific"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "attribution": "Original wording by HiMorning. Factual reference: NOAA · https://oceanservice.noaa.gov/facts/biggestocean.html",
+   "theme": "cityAndTravel",
+   "explanation": "The Pacific is larger and deeper than any other ocean basin."
+  },
+  {
+   "id": "library-v3-en-race",
+   "kind": "riddle",
+   "language": "en",
+   "text": "You pass the runner in second place. What place are you in now?",
+   "choices": [
+    "First",
+    "Second",
+    "Third"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "You take second place. The leader is still ahead."
+  },
+  {
+   "id": "library-v3-en-rocky-planet",
+   "kind": "riddle",
+   "language": "en",
+   "text": "Which of these is a rocky planet?",
+   "choices": [
+    "Neptune",
+    "Mars",
+    "Saturn"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/solar-system/solar-system-facts/",
+   "theme": "curiosity",
+   "explanation": "Mars is one of the four rocky planets closest to the Sun."
+  },
+  {
+   "id": "library-v3-en-shirts",
+   "kind": "riddle",
+   "language": "en",
+   "text": "A drawer holds only black and white socks. In the dark, how many must you take to guarantee a matching pair?",
+   "choices": [
+    "Two",
+    "Three",
+    "Four"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "The first two could be different. The third must match one of them."
+  },
+  {
+   "id": "library-v3-en-ticket-number",
+   "kind": "riddle",
+   "language": "en",
+   "text": "My ticket number is an even number between 35 and 41. Its digits add up to 11. What number is it?",
+   "choices": [
+    "36",
+    "38",
+    "40"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "Of the even numbers in that range, only 38 has digits that add to 11."
+  },
+  {
+   "id": "library-v3-en-tiles",
+   "kind": "riddle",
+   "language": "en",
+   "text": "A border repeats the colors blue, yellow, white. What color is tile 11?",
+   "choices": [
+    "Blue",
+    "Yellow",
+    "White"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "Tile 9 ends the third set. Tiles 10 and 11 start with blue and yellow."
+  },
+  {
+   "id": "library-v3-en-titan",
+   "kind": "riddle",
+   "language": "en",
+   "text": "Titan has lakes of liquid methane. Which planet does it orbit?",
+   "choices": [
+    "Saturn",
+    "Mars",
+    "Jupiter"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/saturn/facts/",
+   "theme": "curiosity",
+   "explanation": "Titan is a moon of Saturn, and its lakes are made of hydrocarbons."
+  },
+  {
+   "id": "library-v3-en-uranus-tilt",
+   "kind": "riddle",
+   "language": "en",
+   "text": "Which planet spins almost on its side as it orbits the Sun?",
+   "choices": [
+    "Earth",
+    "Neptune",
+    "Uranus"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/uranus/facts/",
+   "theme": "curiosity",
+   "explanation": "Uranus’s axis is tilted so far that the planet appears to roll around the Sun."
+  },
+  {
+   "id": "library-v3-en-venus-heat",
+   "kind": "riddle",
+   "language": "en",
+   "text": "Which planet has the hottest surface in the solar system?",
+   "choices": [
+    "Mercury",
+    "Venus",
+    "Mars"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/resource/solar-system-temperatures/",
+   "theme": "curiosity",
+   "explanation": "Venus has a thick atmosphere that traps heat."
   },
   {
    "id": "logic-v2-en-001",
@@ -1323,6 +1719,169 @@
    "theme": "curiosity"
   },
   {
+   "id": "library-v3-vi-cinema",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Rạp phim ghi: “Sau 8 giờ tối, vui lòng đi cửa B.” Bạn tới lúc 8:10 tối. Bạn đi cửa nào?",
+   "choices": [
+    "Cửa A",
+    "Cửa B",
+    "Cửa nào cũng được"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "8:10 tối đã qua mốc 8 giờ nên bạn đi cửa B."
+  },
+  {
+   "id": "library-v3-vi-drop-off",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Minh nhắn: “Cứ gửi túi ở quầy lễ tân. Có gì đổi mình nhắn sau.” Minh chưa nhắn thêm. Bạn gửi túi ở đâu?",
+   "choices": [
+    "Quầy lễ tân",
+    "Bên ngoài tòa nhà",
+    "Mang về nhà"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Chưa có gì thay đổi nên bạn vẫn gửi túi ở quầy lễ tân."
+  },
+  {
+   "id": "library-v3-vi-jupiter-day",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Sao Mộc tự quay một vòng trong khoảng 10 giờ. Trái Đất mất 24 giờ. Ngày trên hành tinh nào ngắn hơn?",
+   "choices": [
+    "Sao Mộc",
+    "Trái Đất",
+    "Dài bằng nhau"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/jupiter/jupiter-facts/",
+   "theme": "curiosity",
+   "explanation": "Một ngày ở đây tính theo một vòng tự quay. Sao Mộc quay hết một vòng nhanh hơn Trái Đất."
+  },
+  {
+   "id": "library-v3-vi-library-return",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Sách đến hạn trả vào thứ Ba. Hôm đó thư viện đóng cửa, nhưng khe trả sách vẫn mở. Bạn có trả được vào thứ Ba không?",
+   "choices": [
+    "Có, bỏ vào khe trả sách",
+    "Không, phải trả thứ Hai",
+    "Chỉ khi mượn lại sách"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "workAndStudy",
+   "explanation": "Khe trả sách vẫn mở dù thư viện đóng cửa."
+  },
+  {
+   "id": "library-v3-vi-outer-order",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Mô hình xếp Sao Mộc, Sao Thổ, Sao Thiên Vương và Sao Hải Vương theo thứ tự xa dần Mặt Trời. Hành tinh nào nằm giữa Sao Thổ và Sao Hải Vương?",
+   "choices": [
+    "Sao Mộc",
+    "Sao Thiên Vương",
+    "Trái Đất"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/solar-system/planets/",
+   "theme": "curiosity",
+   "explanation": "Sao Thiên Vương đứng ngay sau Sao Thổ và ngay trước Sao Hải Vương."
+  },
+  {
+   "id": "library-v3-vi-park",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Hai lối đi đều dẫn tới công viên. Một lối cho xe đạp, lối kia chỉ dành cho người đi bộ. Bạn được đạp xe ở lối nào?",
+   "choices": [
+    "Cả hai lối",
+    "Lối đi bộ",
+    "Lối cho xe đạp"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "Chỉ một lối có biển cho phép xe đạp."
+  },
+  {
+   "id": "library-v3-vi-recipe",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Công thức cho bốn người dùng hai quả trứng. Bạn làm nửa phần. Cần mấy quả trứng?",
+   "choices": [
+    "Một",
+    "Hai",
+    "Bốn"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "Làm nửa phần thì dùng nửa số trứng, tức một quả."
+  },
+  {
+   "id": "library-v3-vi-shelter",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Trạm cứu hộ đang xin khăn sạch và đã có đủ chăn. Nếu chỉ mang được một món, bạn nên mang gì?",
+   "choices": [
+    "Một chiếc khăn sạch",
+    "Một chiếc chăn",
+    "Một chiếc khăn chưa giặt"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Trạm đang cần khăn sạch."
+  },
+  {
+   "id": "library-v3-vi-tide-pull",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Biểu đồ thủy triều tính đến sức hút của Mặt Trăng và Mặt Trời. Đó là lực gì?",
+   "choices": [
+    "Lực từ",
+    "Lực hấp dẫn",
+    "Sức gió"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "attribution": "Original wording by HiMorning. Factual reference: NOAA · https://www.noaa.gov/education/resource-collections/ocean-coasts/tides",
+   "theme": "curiosity",
+   "explanation": "Lực hấp dẫn của Mặt Trăng và Mặt Trời góp phần tạo ra thủy triều."
+  },
+  {
+   "id": "library-v3-vi-train",
+   "kind": "readAndChoose",
+   "language": "vi",
+   "text": "Chuyến tàu 7:40 bỏ qua ga Đồi. Chuyến 7:48 có dừng. Bạn có hẹn gần ga Đồi. Nên đi chuyến nào?",
+   "choices": [
+    "7:40",
+    "7:48",
+    "Chuyến nào cũng được"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "Trong hai chuyến, chỉ chuyến 7:48 dừng ở ga Đồi."
+  },
+  {
    "id": "rc-v2-vi-001",
    "kind": "readAndChoose",
    "language": "vi",
@@ -1614,17 +2173,17 @@
    "id": "rc-v2-vi-019",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Phòng tranh thường đóng lúc 6 giờ. Biển hôm nay ghi: “Đêm triển lãm mở đến 8 giờ; ngừng nhận khách trước khi đóng 30 phút.” Hôm nay nhận khách muộn nhất lúc nào?",
+   "text": "Phòng tranh hôm nay mở đến 8 giờ tối và ngừng nhận khách trước giờ đóng cửa 30 phút. Muộn nhất bạn có thể vào lúc mấy giờ?",
    "choices": [
-    "7 giờ rưỡi",
-    "5 giờ rưỡi",
-    "8 giờ"
+    "7 giờ rưỡi tối",
+    "8 giờ tối",
+    "5 giờ rưỡi chiều"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel",
-   "explanation": "Hôm nay đóng muộn lúc 8 giờ, nên giờ nhận khách cuối cùng sớm hơn 30 phút, tức 7 giờ rưỡi."
+   "explanation": "Trừ 30 phút từ 8 giờ tối, bạn có giờ vào cửa cuối cùng là 7 giờ rưỡi tối."
   },
   {
    "id": "rc-v2-vi-020",
@@ -1705,6 +2264,239 @@
    "license": "original",
    "theme": "curiosity",
    "explanation": "Bốn món gỗ chắc chắn làm thủ công. Các món khác có thể cũng vậy, nhưng biển không xác nhận điều đó."
+  },
+  {
+   "id": "library-v3-vi-clock",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Một chiếc đồng hồ chạy chậm một phút mỗi giờ. Lúc 12 giờ trưa, nó chỉ đúng giờ. Đến 4 giờ chiều, nó chỉ mấy giờ?",
+   "choices": [
+    "3:56",
+    "4:00",
+    "4:04"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "Sau bốn giờ, đồng hồ chậm bốn phút."
+  },
+  {
+   "id": "library-v3-vi-coral",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Rạn san hô trông như một khu vườn. Bản thân san hô thuộc nhóm nào?",
+   "choices": [
+    "Động vật",
+    "Thực vật",
+    "Đá"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "attribution": "Original wording by HiMorning. Factual reference: NOAA · https://oceanexplorer.noaa.gov/ocean-fact/coral-animal/",
+   "theme": "curiosity",
+   "explanation": "Mỗi cụm san hô gồm nhiều động vật nhỏ gọi là polyp."
+  },
+  {
+   "id": "library-v3-vi-ganymede",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Trong ba vệ tinh này, vệ tinh nào lớn hơn cả Sao Thủy?",
+   "choices": [
+    "Europa",
+    "Ganymede",
+    "Mặt Trăng"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/jupiter/jupiter-moons/ganymede/facts/",
+   "theme": "curiosity",
+   "explanation": "Ganymede quay quanh Sao Mộc và là vệ tinh lớn nhất Hệ Mặt Trời."
+  },
+  {
+   "id": "library-v3-vi-mercury-year",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Hành tinh nào chỉ mất khoảng 88 ngày để đi một vòng quanh Mặt Trời?",
+   "choices": [
+    "Sao Thủy",
+    "Sao Kim",
+    "Sao Hỏa"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/mercury/facts/",
+   "theme": "curiosity",
+   "explanation": "Sao Thủy ở gần Mặt Trời nhất và có năm ngắn nhất."
+  },
+  {
+   "id": "library-v3-vi-octopus-hearts",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Bạch tuộc có mấy trái tim?",
+   "choices": [
+    "Một",
+    "Hai",
+    "Ba"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "attribution": "Original wording by HiMorning. Factual reference: NOAA · https://www.noaa.gov/stories/love-is-in-air-and-sea-5-facts-about-affections-of-marine-creatures",
+   "theme": "curiosity",
+   "explanation": "Hai tim bơm máu tới mang. Tim còn lại đưa máu đi khắp cơ thể."
+  },
+  {
+   "id": "library-v3-vi-pacific",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Đại dương nào vừa rộng nhất vừa sâu nhất?",
+   "choices": [
+    "Đại Tây Dương",
+    "Ấn Độ Dương",
+    "Thái Bình Dương"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "attribution": "Original wording by HiMorning. Factual reference: NOAA · https://oceanservice.noaa.gov/facts/biggestocean.html",
+   "theme": "cityAndTravel",
+   "explanation": "Thái Bình Dương đứng đầu cả về diện tích lẫn độ sâu."
+  },
+  {
+   "id": "library-v3-vi-race",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Bạn vượt qua người đang chạy thứ hai. Giờ bạn đứng thứ mấy?",
+   "choices": [
+    "Thứ nhất",
+    "Thứ hai",
+    "Thứ ba"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "peopleAndPlans",
+   "explanation": "Bạn chiếm vị trí thứ hai. Người dẫn đầu vẫn ở phía trước."
+  },
+  {
+   "id": "library-v3-vi-rocky-planet",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Trong ba hành tinh sau, hành tinh nào thuộc nhóm hành tinh đá?",
+   "choices": [
+    "Sao Hải Vương",
+    "Sao Hỏa",
+    "Sao Thổ"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/solar-system/solar-system-facts/",
+   "theme": "curiosity",
+   "explanation": "Sao Hỏa là một trong bốn hành tinh đá nằm gần Mặt Trời nhất."
+  },
+  {
+   "id": "library-v3-vi-shirts",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Ngăn kéo chỉ có tất đen và tất trắng. Trong bóng tối, bạn phải lấy ít nhất mấy chiếc để chắc chắn có một đôi cùng màu?",
+   "choices": [
+    "Hai",
+    "Ba",
+    "Bốn"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "everydayLife",
+   "explanation": "Hai chiếc đầu có thể khác màu. Chiếc thứ ba chắc chắn trùng màu với một chiếc đã lấy."
+  },
+  {
+   "id": "library-v3-vi-ticket-number",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Số vé của mình là số chẵn lớn hơn 35 và nhỏ hơn 41. Tổng hai chữ số là 11. Số vé là bao nhiêu?",
+   "choices": [
+    "36",
+    "38",
+    "40"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "cityAndTravel",
+   "explanation": "Trong ba số chẵn này, chỉ 38 có hai chữ số cộng lại bằng 11."
+  },
+  {
+   "id": "library-v3-vi-tiles",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Một hàng gạch lặp theo thứ tự xanh, vàng, trắng. Viên thứ 11 màu gì?",
+   "choices": [
+    "Xanh",
+    "Vàng",
+    "Trắng"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "theme": "creativeBreaks",
+   "explanation": "Viên 9 khép lại nhóm thứ ba. Viên 10 màu xanh, viên 11 màu vàng."
+  },
+  {
+   "id": "library-v3-vi-titan",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Titan có các hồ mê-tan lỏng. Vệ tinh này quay quanh hành tinh nào?",
+   "choices": [
+    "Sao Thổ",
+    "Sao Hỏa",
+    "Sao Mộc"
+   ],
+   "answerIndex": 0,
+   "source": "himorning",
+   "license": "original",
+   "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/saturn/facts/",
+   "theme": "curiosity",
+   "explanation": "Titan là vệ tinh của Sao Thổ. Các hồ trên đó chứa mê-tan và các hydrocarbon khác."
+  },
+  {
+   "id": "library-v3-vi-uranus-tilt",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Hành tinh nào gần như nằm nghiêng sang một bên khi quay quanh Mặt Trời?",
+   "choices": [
+    "Trái Đất",
+    "Sao Hải Vương",
+    "Sao Thiên Vương"
+   ],
+   "answerIndex": 2,
+   "source": "himorning",
+   "license": "original",
+   "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/uranus/facts/",
+   "theme": "curiosity",
+   "explanation": "Trục quay của Sao Thiên Vương nghiêng đến mức hành tinh trông như đang lăn quanh Mặt Trời."
+  },
+  {
+   "id": "library-v3-vi-venus-heat",
+   "kind": "riddle",
+   "language": "vi",
+   "text": "Hành tinh nào có bề mặt nóng nhất Hệ Mặt Trời?",
+   "choices": [
+    "Sao Thủy",
+    "Sao Kim",
+    "Sao Hỏa"
+   ],
+   "answerIndex": 1,
+   "source": "himorning",
+   "license": "original",
+   "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/resource/solar-system-temperatures/",
+   "theme": "curiosity",
+   "explanation": "Khí quyển dày của Sao Kim giữ nhiệt gần bề mặt."
   },
   {
    "id": "logic-v2-vi-001",

@@ -292,14 +292,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "cityAndTravel",
-    "text": "A gallery normally closes at six. Today’s sign says, “Open until eight for exhibition night; last entry thirty minutes before closing.” When is today’s last entry?",
+    "text": "The gallery closes at 8 p.m. today. Last entry is 30 minutes before closing. What is the latest you can get in?",
     "choices": [
-      "7:30",
-      "5:30",
-      "8:00"
+      "7:30 p.m.",
+      "5:30 p.m.",
+      "8 p.m."
     ],
     "answerIndex": 0,
-    "explanation": "Today’s special closing time is eight, so last entry is thirty minutes earlier, at seven thirty.",
+    "explanation": "Thirty minutes before 8 p.m. is 7:30 p.m.",
     "source": "himorning",
     "license": "original"
   },

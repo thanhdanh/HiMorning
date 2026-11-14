@@ -8,7 +8,11 @@ import java.util.UUID
 
 /** Weekday numbering follows iOS Calendar: Sunday = 1 through Saturday = 7. */
 enum class WakeMode(val repetitions: Int, val snoozes: Int) { GENTLE(0, 2), BALANCED(5, 1), FOCUSED(10, 0) }
-enum class AlarmSound { SYSTEM, SUNRISE, SOFT_CHIME, PIZZICATO_DAWN, PIZZICATO_STEPS, PIZZICATO_RISE, PIZZICATO_BLOOM, STEEL_SHIMMER, STEEL_BREEZE, STEEL_MORNING, STEEL_SPARKLE, SAX_HELLO, SAX_STROLL, SAX_GLOW, SAX_DAYBREAK }
+enum class AlarmSound {
+    SYSTEM, SUNRISE, SOFT_CHIME, PIZZICATO_DAWN, PIZZICATO_STEPS, PIZZICATO_RISE, PIZZICATO_BLOOM,
+    STEEL_SHIMMER, STEEL_BREEZE, STEEL_MORNING, STEEL_SPARKLE, SAX_HELLO, SAX_STROLL, SAX_GLOW, SAX_DAYBREAK,
+    BRIGHT_KEYS, PIXEL_MORNING, BRASS_RISE, GLASS_CHIME, WOOD_PLUCK, SOFT_BONG
+}
 enum class ScheduleState { PENDING, CONFIRMED, OFF, NEEDS_REVIEW }
 enum class ChallengeKind { NONE, PUSH_UPS, READ_AND_CHOOSE, GUIDED_RHYTHM, READ_ALOUD, WAVE_HAND, NECK_ROTATION, RIDDLE, JUMPING_JACKS, STRETCHING }
 enum class WakeOutcome { SELF_CONFIRMED, LOCAL_COMPLETED, AI_VERIFIED, DISMISSED }
@@ -85,6 +89,10 @@ data class MorningEntry(
     val outcome: WakeOutcome,
 )
 
+internal val MorningEntry.completedChallenge: Boolean
+    get() = challenge != null && challenge != ChallengeKind.NONE &&
+        (outcome == WakeOutcome.LOCAL_COMPLETED || outcome == WakeOutcome.AI_VERIFIED)
+
 data class Journey(
     val focus: MorningFocus = MorningFocus.CLEAR_START,
     val startedAt: Long = 0L,
@@ -98,14 +106,13 @@ data class Journey(
     fun missionIndex(now: Long = System.currentTimeMillis(), zone: ZoneId = ZoneId.systemDefault()): Int =
         if (completedToday(now, zone)) (completions.size - 1).coerceIn(0, 6) else completions.size.coerceAtMost(6)
     fun record(entry: MorningEntry, rehearsal: Boolean, now: Long, zone: ZoneId = ZoneId.systemDefault()): Journey {
-        if (rehearsal || entry.outcome !in SUCCESSFUL || entry.date !in startedAt..now || completions.size >= 7) return this
+        if (rehearsal || !entry.completedChallenge || entry.date !in startedAt..now || completions.size >= 7) return this
         val day = Instant.ofEpochMilli(entry.date).atZone(zone).toLocalDate().toEpochDay()
         if (completions.any { Instant.ofEpochMilli(it).atZone(zone).toLocalDate().toEpochDay() == day } ||
             lastCompletionAt?.let { Instant.ofEpochMilli(it).atZone(zone).toLocalDate().toEpochDay() == day } == true) return this
         return copy(completions = (completions + entry.date).sorted(), lastCompletionAt = maxOf(lastCompletionAt ?: entry.date, entry.date))
     }
 
-    companion object { private val SUCCESSFUL = setOf(WakeOutcome.LOCAL_COMPLETED, WakeOutcome.AI_VERIFIED) }
 }
 
 /** One durable wake row can be promoted from dismissal to a later verified recovery. */
@@ -174,6 +181,15 @@ object RecognizedWordMatch {
         val extras = mutableListOf<String>()
         var i = expected.size
         var j = actual.size
+        // Partial results align to a prefix so early words do not light up later repetitions.
+        if (!finished) {
+            i = 0
+            for (end in 1..expected.size) {
+                val best = distance[i][j]
+                val candidate = distance[end][j]
+                if (candidate < best || (candidate == best && kotlin.math.abs(end - j) < kotlin.math.abs(i - j))) i = end
+            }
+        }
         var laterSpeech = false
         while (i > 0 || j > 0) {
             when {

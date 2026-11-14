@@ -13,6 +13,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.unit.sp
 import com.himorning.android.R
+import com.himorning.android.core.WakeMode
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.material3.Typography
@@ -25,7 +26,7 @@ internal data class MorningColors(
     val muted: Color,
     val line: Color,
     val yellow: Color,
-    val alarmCard: Color,
+    val alarmClockOff: Color,
     val hero: Color,
     val onYellow: Color,
     val accent: Color,
@@ -35,15 +36,15 @@ internal data class MorningColors(
 
 private val lightMorningColors = MorningColors(
     canvas = Color(0xFFFFFCF6), surface = Color.White, soft = Color(0xFFF4F1E9),
-    ink = Color(0xFF29251D), muted = Color(0xFF756F63), line = Color(0xFFE9E5DC),
-    yellow = Color(0xFFF5C842), alarmCard = Color(0xFFF9E07D), hero = Color(0xFFF8D960),
+    ink = Color(0xFF29251D), muted = Color(0xFF6D675B), line = Color(0xFFE9E5DC),
+    yellow = Color(0xFFF5C842), hero = Color(0xFFF8D960), alarmClockOff = Color(0xFF6D675B),
     onYellow = Color(0xFF29251D), accent = Color(0xFF967211), success = Color(0xFF44634A),
     correctWord = Color(0xFF126B36),
 )
 private val darkMorningColors = MorningColors(
     canvas = Color(0xFF201F1A), surface = Color(0xFF2C2A24), soft = Color(0xFF353229),
     ink = Color(0xFFF8F4EA), muted = Color(0xFFC2BBAE), line = Color(0xFF49463D),
-    yellow = Color(0xFFF5C842), alarmCard = Color(0xFFF9E07D), hero = Color(0xFFF8D960),
+    yellow = Color(0xFFF5C842), hero = Color(0xFFF8D960), alarmClockOff = Color(0xFFA8A093),
     onYellow = Color(0xFF29251D), accent = Color(0xFFF5C842), success = Color(0xFFBDD6BF),
     correctWord = Color(0xFF7FE5A2),
 )
@@ -66,6 +67,21 @@ private val LocalMorningColors = compositionLocalOf { lightMorningColors }
 
 internal object MorningTheme {
     val colors: MorningColors @Composable get() = LocalMorningColors.current
+    val alarmCardHighlight = Color(0xFFFBE693)
+    val alarmCardEdge = Color(0xFFE1B73B)
+    val alarmSwitchOn = Color(0xFF355E47)
+    val alarmDetailOnYellow = Color(0xFF5D471D)
+    val successOnYellow = Color(0xFF36563C)
+
+    @Composable
+    fun modeAccent(mode: WakeMode, onYellow: Boolean = false): Color {
+        val dark = isSystemInDarkTheme() && !onYellow
+        return when (mode) {
+            WakeMode.GENTLE -> if (dark) Color(0xFF8EBB99) else if (onYellow) Color(0xFF34543E) else Color(0xFF41644C)
+            WakeMode.BALANCED -> if (dark) Color(0xFFBFAFD4) else if (onYellow) Color(0xFF534366) else Color(0xFF64547B)
+            WakeMode.FOCUSED -> if (dark) Color(0xFFE8AE6E) else if (onYellow) Color(0xFF794419) else Color(0xFF89501F)
+        }
+    }
 }
 
 @Composable

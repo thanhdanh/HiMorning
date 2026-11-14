@@ -5,6 +5,22 @@ import XCTest
 #endif
 
 final class AlarmEditingTests:XCTestCase {
+ func testDeniedAuthorizationLeavesNoNewAlarmAndPreservesAnOffAlarm() async throws {
+  let persistence=EditingPersistence(),scheduler=EditingScheduler()
+  var existing=SavedAlarm(time:try AlarmTime(hour:7,minute:15,weekdays:[2,4]))
+  existing.enabled=false;existing.state = .off
+  try persistence.save([existing])
+  let library=try AlarmLibrary(persistence:persistence,scheduler:scheduler)
+  await scheduler.denyAccess()
+  do {try await library.add(SavedAlarm(time:existing.time));preconditionFailure("Expected denial")}
+  catch AlarmScheduleError.accessDenied {}
+  do {try await library.enable(id:existing.id);preconditionFailure("Expected denial")}
+  catch AlarmScheduleError.accessDenied {}
+  let alarms=await library.all(),attempts=await scheduler.attempts
+  XCTAssertEqual(alarms,[existing])
+  XCTAssertEqual(try persistence.load(),[existing])
+  XCTAssertTrue(attempts.isEmpty)
+ }
  func testEditingEnabledAlarmKeepsIdentityAndReschedulesItsNewSound() async throws {
   let persistence=EditingPersistence(),scheduler=EditingScheduler()
   let library=try AlarmLibrary(persistence:persistence,scheduler:scheduler)
@@ -320,6 +336,9 @@ private actor EditingScheduler:AlarmScheduler {
  private var ids:Set<UUID>=[]
  private var failures=0
  private var cancellationFails=false
+ private var denied=false
+ func denyAccess() {denied=true}
+ func authorizeScheduling() async throws {if denied {throw AlarmScheduleError.accessDenied}}
  func expectSchedule(_ alarm:SavedAlarm) {
   var expectedAlarm=alarm
   if expectedAlarm.time.weekdays.isEmpty {expectedAlarm.scheduledOccurrence=expectedAlarm.time.next(after:Date(),calendar:.current)}

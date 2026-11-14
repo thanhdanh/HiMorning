@@ -12,6 +12,12 @@ struct MorningProgressView:View {
  @State private var selectedDate=Calendar.current.startOfDay(for:Date())
  private var week:[MorningScore] {model.journal?.weeklyScores() ?? []}
  private var days:Int {week.filter {$0.completed>0}.count}
+ private var daysThisWeek:Int {
+  var calendar=Calendar.current
+  calendar.firstWeekday=appLocale().language.languageCode?.identifier == "vi" ? 2 : calendar.firstWeekday
+  guard let interval=calendar.dateInterval(of:.weekOfYear,for:Date()) else {return 0}
+  return Set(week.filter {interval.contains($0.date) && $0.completed>0}.map(\.date)).count
+ }
  private var goal:Int {model.access.weeklyGoal(stored:model.journal?.weeklyGoal ?? 3)}
  private var entries:[MorningEntry] {model.journal?.recent(days:model.access.historyDays) ?? []}
  private var completedEntries:[MorningEntry] {entries.filter {[.localCompleted,.openaiVerified,.aiVerified].contains($0.outcome)}}
@@ -24,11 +30,27 @@ struct MorningProgressView:View {
      if let error=model.progressError {
       Label(error,systemImage:"exclamationmark.circle").font(.subheadline).foregroundStyle(MorningTheme.muted)
      }
+     weeklyGoalCard
+     weeklyCard
      if model.access.hasFullAccess,let month=model.journal?.monthlyScore() {
-      monthlyCard(month)
-      weeklyCard
-      modeSummary
-      weeklyGoalCard
+      DisclosureGroup(appText("More progress details")) {
+       VStack(alignment:.leading,spacing:16) {
+        monthlyCard(month)
+        modeSummary
+       }.padding(.top,12)
+      }.font(.headline).accessibilityIdentifier("moreProgressDetails")
+      DisclosureGroup(appText("Most completed challenges")) {
+       let reflection=MorningReflection(entries:entries)
+       VStack(alignment:.leading,spacing:8) {
+        Text(appText("%lld of the past 30 days with a completed challenge",count:reflection.completedDays))
+         .accessibilityIdentifier("journeyReflectionDays")
+        if let kind=reflection.goToChallenge {
+         Text(String(format:appText("You returned to %@ on %lld days."),locale:appLocale(),kind.title,Int64(reflection.goToDays)))
+        } else {
+         Text(appText("No repeat favorite yet.")).foregroundStyle(MorningTheme.muted)
+        }
+       }.font(.subheadline).padding(.top,12)
+      }.font(.headline)
       DisclosureGroup(appText("Past 30 days")) {
        if entries.isEmpty {Text(appText("Your next morning is a fresh start.")).font(.subheadline).foregroundStyle(MorningTheme.muted)}
        ForEach(entries) {entry in entryRow(entry,showDate:true).padding(.top,16)}
@@ -40,7 +62,7 @@ struct MorningProgressView:View {
      }
      if !model.access.hasFullAccess {
       VStack(alignment:.leading,spacing:16) {
-       Text(appText("Your free preview has ended. Basic alarms and challenges stay free. Pro unlocks your progress, the Challenging level and more sounds.")).font(.subheadline).foregroundStyle(MorningTheme.muted)
+       Text(appText("Your free preview has ended. Basic alarms and Reach up are free. Pro adds more challenges, alarm sounds, and detailed progress.")).font(.subheadline).foregroundStyle(MorningTheme.muted)
        Button(appText("Explore Pro")) {pro=true}.buttonStyle(MorningButtonStyle()).accessibilityIdentifier("explorePro")
       }.padding(24).background(MorningTheme.surface,in:RoundedRectangle(cornerRadius:24))
      } else if store.isPro {
@@ -50,7 +72,7 @@ struct MorningProgressView:View {
    }.background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink).tint(MorningTheme.accent)
     .navigationTitle(appText("Your progress")).navigationBarTitleDisplayMode(.inline)
     .toolbar {ToolbarItem(placement:.cancellationAction) {Button(appText("Close")) {dismiss()}.accessibilityIdentifier("closeProgress")}}
-    .sheet(isPresented:$pro) {ProView(store:store,preview:model.preview)}
+    .sheet(isPresented:$pro) {ProView(store:store,preview:model.preview,ads:model.rewardedAds)}
     .manageSubscriptionsSheet(isPresented:$manage)
     .task {await store.refresh()}
   }
@@ -210,19 +232,20 @@ struct MorningProgressView:View {
  private var weeklyGoalCard:some View {
   VStack(alignment:.leading,spacing:16) {
    HStack {
-    Text(appText("Weekly goal")).font(.headline)
+    Text(appText("This week")).font(.headline)
     Spacer(minLength:8)
-    Text("\(days) / \(goal)").font(.headline).monospacedDigit()
+    Text(String(format:appText("%lld/%lld mornings with a challenge"),locale:appLocale(),Int64(daysThisWeek),Int64(goal)))
+     .font(.subheadline.weight(.semibold)).monospacedDigit()
    }
-   ProgressView(value:Double(min(days,goal)),total:Double(goal)).tint(MorningTheme.success)
-    .accessibilityLabel(appText("Weekly goal")).accessibilityValue("\(days)/\(goal)")
-   Picker(appText("Weekly goal"),selection:Binding(get:{goal},set:{model.setGoal($0)})) {
+   ProgressView(value:Double(min(daysThisWeek,goal)),total:Double(goal)).tint(MorningTheme.success)
+    .accessibilityLabel(appText("Weekly goal")).accessibilityValue("\(daysThisWeek)/\(goal)")
+   if model.access.hasFullAccess {Picker(appText("Weekly goal"),selection:Binding(get:{goal},set:{model.setGoal($0)})) {
     ForEach(1...7,id:\.self) {value in Text(morningCountText(value)).tag(value)}
-   }.disabled(model.journal == nil)
+   }.disabled(model.journal == nil)}
    DisclosureGroup(appText("How ratings work")) {
     VStack(alignment:.leading,spacing:10) {
      Text(appText("100 for completing a challenge, 0 for skipping. Multiple attempts in a morning are averaged. — means no record."))
-     Text(appText("Only completed challenges count. Confirming you are awake earns no points."))
+     Text(appText("Only alarms with a challenge count toward the score. Confirming you’re awake skips the challenge."))
      Text(appText("Based on recorded mornings this month. Days without a record are not scored."))
      Text(appText("Excellent: 90–100 · Consistent: 75–89 · Building: 50–74 · Getting started: 0–49. Your monthly score is the percentage of recorded challenges completed."))
     }.font(.footnote).foregroundStyle(MorningTheme.muted).padding(.top,8)

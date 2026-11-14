@@ -79,12 +79,12 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
    do {
     if session.inputs.isEmpty {
      session.beginConfiguration();defer {session.commitConfiguration()};session.sessionPreset = .vga640x480
-     guard let device=AVCaptureDevice.default(.builtInWideAngleCamera,for:.video,position:.front) else {throw NativeAlarmError.denied}
+     guard let device=AVCaptureDevice.default(.builtInWideAngleCamera,for:.video,position:.front) else {throw CameraSetupError.unavailable}
      let input=try AVCaptureDeviceInput(device:device)
-     guard session.canAddInput(input) else {throw NativeAlarmError.denied};session.addInput(input)
+     guard session.canAddInput(input) else {throw CameraSetupError.unavailable};session.addInput(input)
      let output=AVCaptureVideoDataOutput();output.alwaysDiscardsLateVideoFrames=true
      output.setSampleBufferDelegate(self,queue:queue)
-     guard session.canAddOutput(output) else {throw NativeAlarmError.denied};session.addOutput(output)
+     guard session.canAddOutput(output) else {throw CameraSetupError.unavailable};session.addOutput(output)
     }
     guard !isCancelled else {return}
     counter=MovementCounter(kind:kind);started=ProcessInfo.processInfo.systemUptime;active=true;session.startRunning()

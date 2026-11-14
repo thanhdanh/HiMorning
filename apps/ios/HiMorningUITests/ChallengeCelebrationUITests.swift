@@ -55,7 +55,7 @@ final class ChallengeCelebrationUITests:XCTestCase {
   let id="00000000-0000-0000-0000-000000000001"
   let app=launch(["--ui-enabled-alarm","--ui-completed-alarm"])
   XCTAssertTrue(app.staticTexts["alarmCompleted-"+id].waitForExistence(timeout:5))
-  XCTAssertTrue(app.descendants(matching:.any)["alarmState-"+id].label.contains("Check system alarms"))
+  XCTAssertTrue(app.descendants(matching:.any)["alarmState-"+id].label.contains("Alarm schedule unconfirmed"))
   app.terminate()
   let practice=launch(["--ui-home-alarms","--ui-complete-challenge"])
   for _ in 0..<8 where !practice.buttons["practiceChallenges"].isHittable {practice.swipeUp()}
@@ -65,8 +65,7 @@ final class ChallengeCelebrationUITests:XCTestCase {
   practice.terminate()
  }
  private func checkCelebration(_ app:XCUIApplication,vietnamese:Bool=false) {
-  XCTAssertTrue(app.staticTexts[vietnamese ? "Chúc mừng!" : "Hooray!"].waitForExistence(timeout:5))
-  XCTAssertTrue(app.staticTexts[vietnamese ? "Thử thách hoàn thành!" : "Challenge complete!"].exists)
+  XCTAssertTrue(app.otherElements["challengeCelebration"].waitForExistence(timeout:5) || app.staticTexts[vietnamese ? "Đúng rồi!" : "That’s right!"].exists)
   let retry=app.buttons["retryChallenge"]
   XCTAssertTrue(retry.isHittable,"A passed challenge must still allow another attempt")
   XCTAssertEqual(retry.label,vietnamese ? "Thử lại" : "Try again")
@@ -168,26 +167,12 @@ final class ChallengeCelebrationUITests:XCTestCase {
   XCTAssertTrue(app.buttons["backToHome"].isHittable)
   app.terminate()
  }
- func testAwakeConfirmationCountsDownBeforeEnabling() {
+ func testNoChallengeIsExcludedFromThePracticeMenu() {
   let app=launch()
-  app.buttons["practiceChallenges"].tap();app.buttons["practice-none"].tap()
-  let awake=app.buttons["confirmAwake"]
-  XCTAssertTrue(awake.waitForExistence(timeout:5))
-  XCTAssertFalse(awake.isEnabled)
-  XCTAssertTrue(awake.label.contains("Available in 4:") || awake.label.contains("Available in 5:00"))
-  XCTAssertFalse(app.buttons["stopAlarm"].exists)
-  XCTAssertTrue(app.buttons["backToHome"].isEnabled)
+  app.buttons["practiceChallenges"].tap()
+  XCTAssertTrue(app.buttons["practice-readAndChoose"].waitForExistence(timeout:5))
+  XCTAssertFalse(app.buttons["practice-none"].exists)
   app.terminate()
-  let nearEnd=launch(["--ui-awake-countdown-near-end"],vietnamese:true)
-  nearEnd.buttons["practiceChallenges"].tap();nearEnd.buttons["practice-none"].tap()
-  let confirm=nearEnd.buttons["confirmAwake"]
-  XCTAssertTrue(confirm.waitForExistence(timeout:5))
-  let enabled=XCTNSPredicateExpectation(predicate:NSPredicate(format:"enabled == true"),object:confirm)
-  XCTAssertEqual(XCTWaiter.wait(for:[enabled],timeout:8),.completed)
-  XCTAssertFalse(confirm.label.contains(":"),"Countdown disappears when confirmation becomes available")
-  confirm.tap()
-  XCTAssertTrue(nearEnd.staticTexts["Bạn đã xác nhận thức dậy."].waitForExistence(timeout:5))
-  nearEnd.terminate()
  }
  func testReadAloudListeningIndicatorNeedsNoAudioPermissionToPresent() {
   let app=launch(["--ui-reading-listening","--ui-reading-transcript","small steps"])

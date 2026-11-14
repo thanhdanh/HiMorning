@@ -53,17 +53,23 @@ class DomainTest {
         val json = javaClass.getResourceAsStream("/challenge-content.json")!!.bufferedReader().use { it.readText() }
         val rows = JSONObject(json).getJSONArray("items")
         val prompts = decodePromptPack(json)
-        assertEquals(156, prompts.size)
+        assertEquals(204, prompts.size)
         assertEquals(36, prompts.count { it.kind == "readAloud" && it.language == "en" })
         assertEquals(36, prompts.count { it.kind == "readAloud" && it.language == "vi" })
-        assertEquals(24, prompts.count { it.kind == "readAndChoose" && it.language == "en" })
-        assertEquals(24, prompts.count { it.kind == "readAndChoose" && it.language == "vi" })
-        assertEquals(18, prompts.count { it.kind == "riddle" && it.language == "en" })
-        assertEquals(18, prompts.count { it.kind == "riddle" && it.language == "vi" })
+        assertTrue(prompts.filter { it.kind == "readAloud" && it.language == "en" }.all {
+            RecognizedWordMatch.tokens(it.text, AppLanguage.ENGLISH).size in 28..36
+        })
+        val pack = parsePromptPack(json)
+        assertTrue(pack.copy(items = prompts.filterNot { it.kind == "readAloud" && it.language == "vi" }).complete)
+        assertFalse(pack.copy(items = prompts.filterNot { it.kind == "readAloud" && it.language == "en" }).complete)
+        assertEquals(34, prompts.count { it.kind == "readAndChoose" && it.language == "en" })
+        assertEquals(34, prompts.count { it.kind == "readAndChoose" && it.language == "vi" })
+        assertEquals(32, prompts.count { it.kind == "riddle" && it.language == "en" })
+        assertEquals(32, prompts.count { it.kind == "riddle" && it.language == "vi" })
         for (prompt in prompts.filter { it.correctIndex != null }) assertTrue(prompt.correctIndex!! in prompt.choices.indices)
         val first = rows.getJSONObject(0)
         first.put("license", "unreviewed")
-        assertEquals(155, decodePromptPack(JSONObject(json).put("items", rows).toString()).size)
+        assertEquals(203, decodePromptPack(JSONObject(json).put("items", rows).toString()).size)
     }
 
     @Test fun dismissedWakeCanBePromotedOnceAndSuccessfulOutcomeCannotRegress() {
@@ -83,10 +89,11 @@ class DomainTest {
         assertEquals(journey, journey.record(practice, true, day + 10, zone))
         val selfConfirmed = practice.copy(sessionId = UUID.randomUUID().toString(), outcome = WakeOutcome.SELF_CONFIRMED)
         assertEquals(journey, journey.record(selfConfirmed, false, day + 10, zone))
-        val completion = practice.copy(outcome = WakeOutcome.LOCAL_COMPLETED)
+        assertEquals(journey, journey.record(practice.copy(challenge = ChallengeKind.NONE), false, day + 10, zone))
+        val completion = practice.copy(challenge = ChallengeKind.READ_AND_CHOOSE)
         journey = journey.record(completion, false, day + 10, zone)
         assertEquals(1, journey.completions.size)
-        assertEquals(journey, journey.record(completion.copy(sessionId = UUID.randomUUID().toString(), date = day + 3_600_000), false, day + 10, zone))
+        assertEquals(journey, journey.record(completion.copy(sessionId = UUID.randomUUID().toString(), date = day + 3_600_000), false, day + 3_600_000, zone))
     }
     @Test fun modeCatalogKeepsOnlyItsChoicesAndAnExistingLegacySelection() {
         assertEquals(listOf(ChallengeKind.NONE, ChallengeKind.WAVE_HAND, ChallengeKind.NECK_ROTATION), WakeMode.GENTLE.availableChallenges())
@@ -99,6 +106,8 @@ class DomainTest {
     @Test fun readingFeedbackDistinguishesMisreadWordsFromAnUnreadSuffix() {
         val partial = RecognizedWordMatch.feedback("Small steps create steady progress", "small steps", AppLanguage.ENGLISH, false)
         assertEquals(listOf(RecognizedWordMatch.WordStatus.CORRECT, RecognizedWordMatch.WordStatus.CORRECT, RecognizedWordMatch.WordStatus.PENDING, RecognizedWordMatch.WordStatus.PENDING, RecognizedWordMatch.WordStatus.PENDING), partial.words.map { it.status })
+        val repeated = RecognizedWordMatch.feedback("The rain crossed the valley.", "the", AppLanguage.ENGLISH, false)
+        assertEquals(0, repeated.words.indexOfLast { it.status == RecognizedWordMatch.WordStatus.CORRECT })
         val finished = RecognizedWordMatch.feedback("Small steps create steady progress", "small steps make steady progress", AppLanguage.ENGLISH, true)
         assertEquals(RecognizedWordMatch.WordStatus.INCORRECT, finished.words[2].status)
         assertEquals(.8, finished.score, .00001)

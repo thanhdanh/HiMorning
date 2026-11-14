@@ -47,7 +47,11 @@ final class ChallengeContentTests:XCTestCase {
   let good=item("remote-riddle")
   let store=ChallengeContentStore(bundled:bundled,cached:pack(2,[tooShort,good]))
   XCTAssertEqual(store.version,2)
-  XCTAssertTrue(store.items(kind:.readAloud,language:"en").isEmpty)
+  XCTAssertEqual(store.items(kind:.readAloud,language:"en").count,2)
+  var history=ContentHistory()
+  XCTAssertEqual(store.next(kind:.readAloud,language:"vi",history:&history)?.language,"en")
+  XCTAssertEqual(history.recent(kind:.readAloud,language:"en").count,1)
+  XCTAssertTrue(history.recent(kind:.readAloud,language:"vi").isEmpty)
   XCTAssertEqual(store.items(kind:.riddle,language:"en").map(\.id),["remote-riddle"])
   let empty=ChallengeContentStore(bundled:bundled,cached:pack(3,[tooShort]))
   XCTAssertEqual(empty.version,1)
@@ -61,7 +65,7 @@ final class ChallengeContentTests:XCTestCase {
   let unknownLanguage=item("fr",language:"fr")
   var noSource=item("no-source");noSource.source=""
   var readAloudWithChoices=item("ra",.readAloud);readAloudWithChoices.choices=["a","b","c"]
-  let tooLong=ChallengeContentItem(id:"long",kind:.readAloud,language:"en",text:words(31),choices:nil,answerIndex:nil,source:"himorning",license:"original",attribution:nil)
+  let tooLong=ChallengeContentItem(id:"long",kind:.readAloud,language:"en",text:words(37),choices:nil,answerIndex:nil,source:"himorning",license:"original",attribution:nil)
   let bad=[badAnswer,twoChoices,emptyChoice,unknownLanguage,noSource,readAloudWithChoices,tooLong]
   XCTAssertTrue(ChallengeContentStore.validItems(pack(1,bad)).isEmpty)
   let kept=ChallengeContentStore.validItems(pack(1,[item("dup"),item("dup"),item("ok",.readAloud)]))

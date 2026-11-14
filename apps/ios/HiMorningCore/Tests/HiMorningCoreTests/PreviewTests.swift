@@ -90,12 +90,33 @@ final class PreviewTests:XCTestCase {
    let effective=MorningAccess.free.effectiveAlarm(saved)
    XCTAssertEqual(effective.id,saved.id);XCTAssertEqual(effective.time,saved.time)
    XCTAssertEqual(effective.enabled,saved.enabled);XCTAssertEqual(effective.state,saved.state)
-   XCTAssertEqual(effective.mode,.balanced);XCTAssertEqual(effective.sound,.system)
-   XCTAssertEqual(effective.challenge,challenge.kind == .pushUps ? .pushUps(repetitions:5) : challenge)
+   XCTAssertEqual(effective.mode,challenge.kind == .pushUps ? .focused : .balanced);XCTAssertEqual(effective.sound,.system)
+   XCTAssertEqual(effective.challenge,challenge.kind == .pushUps ? ChallengeSelection(kind:.stretching) : challenge)
    XCTAssertEqual(saved.mode,.focused);XCTAssertEqual(saved.sound,.sunrise);XCTAssertEqual(saved.challenge,challenge)
    for access in [MorningAccess.preview,.pro] {XCTAssertEqual(access.effectiveAlarm(saved),saved)}
   }
  }
+
+ func testFreeFocusedAccessAndTrialStayScopedToOneOccurrence() throws {
+  let time=try AlarmTime(hour:7,minute:0,weekdays:[2,3,4])
+  let base=ChallengeSelection(kind:.stretching)
+  let trial=ChallengeSelection.pushUps(repetitions:10)
+  var alarm=SavedAlarm(time:time,mode:.focused,challenge:base)
+  alarm.challengeTrial=AlarmChallengeTrial(id:UUID(),challenge:trial,occurrence:now)
+  let access=MorningAccess.free
+  XCTAssertTrue(access.allows(challenge:base))
+  XCTAssertFalse(access.allows(challenge:trial))
+  XCTAssertFalse(access.allows(challenge:.jumpingJacks))
+  XCTAssertEqual(access.effectiveAlarm(alarm).mode,.focused)
+  XCTAssertEqual(access.effectiveAlarm(alarm,occurrence:now).challenge,trial)
+  XCTAssertEqual(access.effectiveAlarm(alarm,occurrence:now,rehearsal:true).challenge,base)
+  XCTAssertEqual(access.effectiveAlarm(alarm).challenge,base)
+  XCTAssertEqual(access.effectiveAlarm(alarm,occurrence:now+60*60*24).challenge,base)
+  XCTAssertEqual(MorningAccess.pro.effectiveAlarm(alarm,occurrence:now).challenge,trial)
+  let restored=try JSONDecoder().decode(SavedAlarm.self,from:JSONEncoder().encode(alarm))
+  XCTAssertEqual(restored,alarm)
+ }
+
 }
 
 final class MorningScoreTests:XCTestCase {
@@ -198,7 +219,9 @@ final class MorningScoreTests:XCTestCase {
    let score=MorningScore(date:now,entries:[MorningEntry(date:now,outcome:outcome)])
    XCTAssertEqual(score.score,[.selfConfirmed,.dismissed].contains(outcome) ? 0 : 100)
   }
-  let mixed=MorningScore(date:now,entries:[.localCompleted,.selfConfirmed,.dismissed].map {MorningEntry(date:now,outcome:$0)})
+  let ordinary=MorningEntry(challenge:ChallengeSelection.none,date:now,outcome:.selfConfirmed)
+  XCTAssertNil(MorningScore(date:now,entries:[ordinary]).score)
+  let mixed=MorningScore(date:now,entries:[.localCompleted,.selfConfirmed,.dismissed].map {MorningEntry(date:now,outcome:$0)}+[ordinary])
   XCTAssertEqual(mixed.score,33);XCTAssertEqual(mixed.completed,1);XCTAssertEqual(mixed.attempts,3)
  }
  func testRatingThresholds() {

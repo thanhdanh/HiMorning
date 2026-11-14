@@ -6,7 +6,6 @@ import android.widget.TimePicker
 import android.widget.NumberPicker
 import android.view.View
 import android.view.ViewGroup
-import java.util.Calendar
 import androidx.compose.foundation.*
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
@@ -15,8 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
@@ -24,9 +21,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -36,10 +32,9 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
@@ -56,6 +51,8 @@ import com.himorning.android.core.Alarm
 import com.himorning.android.core.ChallengeKind
 import com.himorning.android.core.WakeMode
 import com.himorning.android.core.availableChallenges
+import com.himorning.android.platform.AlarmScheduler
+import com.himorning.android.platform.movementTarget
 
 enum class AlarmEditorScope { ALL, SCHEDULE, CHALLENGE }
 
@@ -81,18 +78,25 @@ fun AlarmComposer(
     val colors = MorningTheme.colors
     val context = LocalContext.current
     val alarm = draft.alarm
-    val displayTime = remember(alarm.hour, alarm.minute, context) {
-        Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, alarm.hour)
-            set(Calendar.MINUTE, alarm.minute)
-            set(Calendar.SECOND, 0)
-        }.let { DateFormat.getTimeFormat(context).format(it.time) }
-    }
+    val displayTime = alarmTimeText(context, alarm)
     var nativeTimePicker by remember { mutableStateOf<TimePicker?>(null) }
     var soundOpen by remember { mutableStateOf(false) }
-    var confirmPractice by remember { mutableStateOf(false) }
+    var challengeInfo by remember(draft) { mutableStateOf<Alarm?>(null) }
+    var filter by remember(draft) { mutableStateOf(alarm.mode) }
     var confirmDelete by remember { mutableStateOf(false) }
-    val available = alarm.mode.availableChallenges(draft.original.challenge.takeIf { existing && draft.original.mode == alarm.mode })
+    var chooseChallenge by remember(draft) { mutableStateOf(draft.scope == AlarmEditorScope.CHALLENGE) }
+    val lifecycle = androidx.lifecycle.compose.LocalLifecycleOwner.current.lifecycle
+    androidx.compose.runtime.DisposableEffect(lifecycle, draft) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME &&
+                draft.saveError == R.string.alarm_permission_save && AlarmScheduler(context).canScheduleExactAlarms()) {
+                draft.saveError = null
+            }
+        }
+        lifecycle.addObserver(observer)
+        onDispose { lifecycle.removeObserver(observer) }
+    }
+    val available = filter.availableChallenges()
     val scope = draft.scope
     val dayLabels = listOf(R.string.day_mon, R.string.day_tue, R.string.day_wed, R.string.day_thu, R.string.day_fri, R.string.day_sat, R.string.day_sun)
     val systemDay = listOf(2, 3, 4, 5, 6, 7, 1)
@@ -108,7 +112,7 @@ fun AlarmComposer(
         SideEffect { dialogWindow?.setDimAmount(.18f) }
         Surface(Modifier.fillMaxSize().statusBarsPadding().padding(top = 16.dp), shape = RoundedCornerShape(topStart = 34.dp, topEnd = 34.dp), color = Color.Transparent) {
             MorningSystemBars()
-            Box(Modifier.fillMaxSize().morningBackdrop(challengeColor(alarm.challenge))) {
+            Box(Modifier.fillMaxSize().morningBackdrop()) {
             Column(Modifier.fillMaxSize().imePadding()) {
                 Row(Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(horizontal = 18.dp), verticalAlignment = Alignment.CenterVertically) {
                     val cancelInteractions = remember { MutableInteractionSource() }
@@ -122,71 +126,9 @@ fun AlarmComposer(
                     Spacer(Modifier.width(68.dp))
                 }
                 Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(22.dp)) {
-                    if (scope != AlarmEditorScope.CHALLENGE) TimeHero(draft, showMorning = scope != AlarmEditorScope.SCHEDULE, onPickerCreated = { nativeTimePicker = it })
-                    if (scope == AlarmEditorScope.ALL) HorizontalDivider(color = colors.line)
-                    if (scope == AlarmEditorScope.CHALLENGE) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Column(Modifier.weight(1f)) {
-                                Text(stringResource(R.string.composer_your_morning), color = colors.muted, style = MaterialTheme.typography.labelLarge)
-                                Text(stringResource(challengeText(alarm.challenge)), color = colors.ink, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-                                RequirementList(alarm)
-                            }
-                            MorningEmblem(alarm.challenge)
-                        }
-                    }
-                    if (scope != AlarmEditorScope.SCHEDULE) {
-                        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                            Text(stringResource(R.string.composer_challenge_level), color = colors.ink, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                listOf(WakeMode.GENTLE, WakeMode.BALANCED, WakeMode.FOCUSED).forEach { mode ->
-                                    val selected = alarm.mode == mode
-                                    val allowed = fullAccess || mode != WakeMode.FOCUSED
-                                    val modeSurface by animateColorAsState(
-                                        targetValue = if (selected) colors.yellow.copy(alpha = .30f) else colors.surface.copy(alpha = .82f),
-                                        animationSpec = tween(170), label = "modeSurface",
-                                    )
-                                    val modeTint by animateColorAsState(if (selected) colors.yellow else colors.soft, tween(170), label = "modeTint")
-                                    val modeInteractions = remember(mode) { MutableInteractionSource() }
-                                    Column(Modifier.weight(1f).heightIn(min = 70.dp)
-                                        .morningPress(modeInteractions, enabled = allowed && !draft.saving)
-                                        .morningSurface(base = modeSurface, radius = 22.dp, tint = modeTint, elevated = true)
-                                        .clickable(interactionSource = modeInteractions, indication = null, enabled = allowed && !draft.saving, role = Role.Button) {
-                                            draft.alarm = alarm.copy(mode = mode, challenge = when (mode) {
-                                                WakeMode.GENTLE -> ChallengeKind.NONE
-                                                WakeMode.BALANCED -> ChallengeKind.READ_AND_CHOOSE
-                                                WakeMode.FOCUSED -> ChallengeKind.PUSH_UPS
-                                            }, repetitions = mode.repetitions.coerceIn(1, 50))
-                                        }.semantics { this.selected = selected }.padding(horizontal = 4.dp, vertical = 10.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-                                        Icon(composerModeIcon(mode), null, tint = if (selected) colors.accent else colors.muted, modifier = Modifier.size(22.dp))
-                                        Text(stringResource(modeText(mode)), color = if (selected) colors.ink else colors.muted, fontSize = 12.sp, maxLines = 2, textAlign = TextAlign.Center)
-                                    }
-                                }
-                            }
-                            if (!fullAccess && alarm.mode == WakeMode.FOCUSED) Text(stringResource(R.string.preview_locked), color = colors.muted, style = MaterialTheme.typography.bodySmall)
-                        }
-                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(stringResource(R.string.composer_first_win), Modifier.weight(1f), color = colors.ink, style = MaterialTheme.typography.titleMedium, fontFamily = quicksandFont, fontWeight = FontWeight.SemiBold)
-                                Icon(Icons.Outlined.AutoAwesome, null, tint = colors.accent)
-                            }
-                            val oneColumn = LocalConfiguration.current.fontScale >= 1.3f
-                            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                available.chunked(if (oneColumn) 1 else 2).forEach { rowKinds ->
-                                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                                        rowKinds.forEach { kind -> ChallengeCard(draft, kind, Modifier.weight(1f)) { confirmPractice = true } }
-                                        if (!oneColumn && rowKinds.size == 1) Spacer(Modifier.weight(1f))
-                                    }
-                                }
-                            }
-                        if (alarm.challenge == ChallengeKind.PUSH_UPS) PushUpSettings(draft, fullAccess)
-                            if (alarm.challenge == ChallengeKind.GUIDED_RHYTHM) {
-                                ChoiceRow(stringResource(R.string.seated), alarm.seated) { draft.alarm = alarm.copy(seated = it) }
-                            }
-                        }
-                    }
+                    if (scope != AlarmEditorScope.CHALLENGE) TimeHero(draft, showMorning = false, onPickerCreated = { nativeTimePicker = it })
                     if (scope != AlarmEditorScope.CHALLENGE) {
                         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Text(stringResource(R.string.composer_details), color = colors.ink, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                             Column(Modifier.fillMaxWidth().morningSurface(base = colors.surface.copy(alpha = .82f), radius = 22.dp, tint = colors.soft, elevated = true)) {
                                     if (scope == AlarmEditorScope.ALL) {
                                         val soundInteractions = remember { MutableInteractionSource() }
@@ -236,10 +178,92 @@ fun AlarmComposer(
                             if (existing && onDelete != null) TextButton(onClick = { confirmDelete = true }, enabled = !draft.saving) { Icon(Icons.Outlined.DeleteOutline, null); Text(stringResource(R.string.delete)) }
                         }
                     }
+                    if (scope == AlarmEditorScope.ALL) HorizontalDivider(color = colors.line)
+                    if (scope != AlarmEditorScope.SCHEDULE) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Column(Modifier.weight(1f)) {
+                                Text(stringResource(R.string.composer_your_morning), color = colors.muted, style = MaterialTheme.typography.labelLarge)
+                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    Icon(challengeIcon(alarm.challenge, alarm.seated), null, tint = MorningTheme.modeAccent(alarm.mode), modifier = Modifier.size(24.dp))
+                                    Text(stringResource(challengeText(alarm.challenge)), color = colors.ink, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold,
+                                        minLines = if (LocalConfiguration.current.fontScale < 1.3f) 2 else 1)
+                                }
+                            }
+                            val canPractice = alarm.challenge != ChallengeKind.NONE
+                            TextButton(onClick = {
+                                nativeTimePicker?.clearFocus(); nativeTimePicker?.rootView?.findFocus()?.clearFocus()
+                                onPractice(draft.alarm)
+                            }, enabled = canPractice, modifier = if (canPractice) Modifier else Modifier.alpha(0f).clearAndSetSemantics {}) {
+                                Text(stringResource(R.string.composer_try))
+                            }
+                        }
+                    }
+                    if (scope == AlarmEditorScope.ALL) {
+                        TextButton(onClick = { chooseChallenge = !chooseChallenge }) {
+                            Text(stringResource(if (chooseChallenge) R.string.collapse_challenges else R.string.composer_change_challenge))
+                        }
+                    }
+                    if (scope != AlarmEditorScope.SCHEDULE && chooseChallenge) {
+                        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                            Text(stringResource(R.string.composer_challenge_level), color = colors.ink, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                listOf(WakeMode.GENTLE, WakeMode.BALANCED, WakeMode.FOCUSED).forEach { mode ->
+                                    val selected = filter == mode
+                                    val modeTint = MorningTheme.modeAccent(mode)
+                                    val shape = RoundedCornerShape(22.dp)
+                                    val modeInteractions = remember(mode) { MutableInteractionSource() }
+                                    Column(Modifier.weight(1f).heightIn(min = 58.dp)
+                                        .morningPress(modeInteractions, enabled = !draft.saving)
+                                        .clip(shape).background(colors.surface)
+                                        .border(if (selected) 2.dp else 1.dp, if (selected) modeTint else colors.line, shape)
+                                        .clickable(interactionSource = modeInteractions, indication = null, enabled = !draft.saving, role = Role.Button) {
+                                            filter = mode
+                                        }.semantics { this.selected = selected }.padding(horizontal = 4.dp, vertical = 10.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+                                        Icon(composerModeIcon(mode), null, tint = if (selected) modeTint else colors.muted, modifier = Modifier.size(22.dp))
+                                        Text(stringResource(modeText(mode)), color = if (selected) colors.ink else colors.muted, fontSize = 12.sp, maxLines = 2, textAlign = TextAlign.Center)
+                                    }
+                                }
+                            }
+                        }
+                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            Text(stringResource(R.string.composer_first_win), color = colors.ink, style = MaterialTheme.typography.titleMedium, fontFamily = quicksandFont, fontWeight = FontWeight.SemiBold)
+                            val oneColumn = LocalConfiguration.current.fontScale >= 1.3f
+                            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                available.chunked(if (oneColumn) 1 else 2).forEach { rowKinds ->
+                                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                        rowKinds.forEach { kind ->
+                                            key(kind) {
+                                                ChallengeCard(draft, kind, filter, Modifier.weight(1f), wide = rowKinds.size == 1, locked = isProChallenge(kind) && !fullAccess) {
+                                                    challengeInfo = if (kind == alarm.challenge) alarm.copy(mode = filter) else alarm.copy(
+                                                        challenge = kind, mode = filter, repetitions = filter.repetitions.coerceIn(1, 50),
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (alarm.challenge !in available) {
+                                ChallengeCard(draft, alarm.challenge, filter, Modifier.fillMaxWidth(), wide = true, locked = isProChallenge(alarm.challenge) && !fullAccess) { challengeInfo = alarm }
+                            }
+                            if (alarm.challenge == ChallengeKind.PUSH_UPS) PushUpSettings(draft, fullAccess)
+                            if (alarm.challenge == ChallengeKind.GUIDED_RHYTHM) {
+                                ChoiceRow(stringResource(R.string.seated), alarm.seated) { draft.alarm = alarm.copy(seated = it) }
+                            }
+                            RequirementList(alarm)
+                        }
+                    }
                     Spacer(Modifier.height(14.dp))
                 }
-                Column(Modifier.fillMaxWidth().navigationBarsPadding().background(Brush.verticalGradient(listOf(Color.Transparent, colors.canvas.copy(alpha = .72f), colors.canvas.copy(alpha = .91f)))).padding(horizontal = 20.dp, vertical = 10.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    draft.saveError?.let { Text(stringResource(it), Modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
+                Column(Modifier.fillMaxWidth().navigationBarsPadding().background(colors.canvas).padding(horizontal = 20.dp, vertical = 10.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    draft.saveError?.let { error ->
+                        Text(stringResource(error), Modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                        if (error == R.string.alarm_permission_save) {
+                            TextButton(onClick = {
+                                runCatching { context.startActivity(AlarmScheduler(context).exactAlarmSettingsIntent()) }
+                            }) { Text(stringResource(R.string.exact_alarm)) }
+                        }
+                    }
                     val saveInteractions = remember { MutableInteractionSource() }
                     Row(Modifier.fillMaxWidth().heightIn(min = 64.dp)
                         .morningPress(saveInteractions, enabled = !draft.saving)
@@ -261,16 +285,80 @@ fun AlarmComposer(
         }
     }
     if (soundOpen) AlarmSoundPicker(alarm.sound, fullAccess, onDismiss = { soundOpen = false }) { chosen -> draft.alarm = alarm.copy(sound = chosen); soundOpen = false }
-    if (confirmPractice) AlertDialog(onDismissRequest = { confirmPractice = false }, title = { Text(stringResource(R.string.composer_try_challenge)) }, text = { Text(stringResource(challengeText(alarm.challenge))) }, confirmButton = { TextButton(onClick = { nativeTimePicker?.clearFocus(); nativeTimePicker?.rootView?.findFocus()?.clearFocus(); confirmPractice = false; onPractice(draft.alarm) }) { Text(stringResource(R.string.composer_try)) } }, dismissButton = { TextButton(onClick = { confirmPractice = false }) { Text(stringResource(R.string.cancel)) } })
-    if (confirmDelete) AlertDialog(onDismissRequest = { confirmDelete = false }, title = { Text(stringResource(R.string.delete_alarm)) }, text = { Text(alarm.label.ifBlank { "%02d:%02d".format(alarm.hour, alarm.minute) }) }, confirmButton = { TextButton(onClick = { confirmDelete = false; onDelete?.invoke() }) { Text(stringResource(R.string.delete)) } }, dismissButton = { TextButton(onClick = { confirmDelete = false }) { Text(stringResource(R.string.cancel)) } })
+    challengeInfo?.let { details ->
+        val cameraRequired = usesCamera(details.challenge)
+        val tint = MorningTheme.modeAccent(details.mode)
+        AlertDialog(
+            onDismissRequest = { challengeInfo = null },
+            icon = {
+                val iconSize = if (cameraRequired) 58.dp else 28.dp
+                Box(Modifier.background(tint.copy(alpha = .12f), CircleShape).padding(8.dp)) {
+                    MovementChallengeIcon(details.challenge, details.seated, tint = tint, size = iconSize)
+                }
+            },
+            title = {
+                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(stringResource(challengeText(details.challenge)), fontFamily = quicksandFont, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center)
+                    Row(
+                        Modifier.background(tint.copy(alpha = .12f), RoundedCornerShape(50)).padding(horizontal = 10.dp, vertical = 5.dp),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(composerModeIcon(details.mode), null, tint = tint, modifier = Modifier.size(14.dp))
+                        Text(stringResource(modeText(details.mode)), style = MaterialTheme.typography.labelMedium, color = tint)
+                    }
+                }
+            },
+            text = {
+                Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                    if (isProChallenge(details.challenge) && !fullAccess) {
+                        Column(
+                            Modifier.fillMaxWidth().background(colors.soft, RoundedCornerShape(14.dp))
+                                .border(1.dp, colors.yellow.copy(alpha = .4f), RoundedCornerShape(14.dp)).padding(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(6.dp),
+                        ) {
+                            ProLockBadge()
+                            Text(stringResource(R.string.challenge_info_requires_pro), style = MaterialTheme.typography.bodyMedium, color = colors.ink)
+                        }
+                    }
+                    if (cameraRequired) {
+                        Row(
+                            Modifier.fillMaxWidth().background(colors.soft, RoundedCornerShape(14.dp)).padding(12.dp),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        ) {
+                            Icon(Icons.Outlined.CameraAlt, null, tint = tint, modifier = Modifier.size(18.dp))
+                            Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                                Text(stringResource(R.string.challenge_info_camera_required), style = MaterialTheme.typography.labelLarge, color = tint)
+                                Text(stringResource(challengeCameraFraming(details)), style = MaterialTheme.typography.bodySmall, color = colors.muted)
+                            }
+                        }
+                    }
+                    Text(stringResource(challengeInfoInstruction(details)), style = MaterialTheme.typography.bodyLarge, color = colors.ink)
+                    if (cameraRequired) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Icon(Icons.Outlined.AutoAwesome, null, tint = colors.muted, modifier = Modifier.size(18.dp))
+                            Text(
+                                stringResource(R.string.challenge_info_ai_count, movementTarget(details.challenge, details.repetitions)),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = colors.muted,
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = { TextButton(onClick = { challengeInfo = null }) { Text(stringResource(R.string.done)) } },
+            containerColor = colors.surface,
+            titleContentColor = colors.ink,
+        )
+    }
+    if (confirmDelete) AlertDialog(onDismissRequest = { confirmDelete = false }, title = { Text(stringResource(R.string.delete_alarm)) }, text = { Text(alarm.label.ifBlank { displayTime }) }, confirmButton = { TextButton(onClick = { confirmDelete = false; onDelete?.invoke() }) { Text(stringResource(R.string.delete)) } }, dismissButton = { TextButton(onClick = { confirmDelete = false }) { Text(stringResource(R.string.cancel)) } })
 }
 
 @Composable private fun TimeHero(draft: AlarmEditorDraft, showMorning: Boolean, onPickerCreated: (TimePicker) -> Unit) {
     val colors = MorningTheme.colors
     val context = LocalContext.current
     val dark = isSystemInDarkTheme()
-    val tint = challengeColor(draft.alarm.challenge)
-    Column(Modifier.fillMaxWidth().morningSurface(base = colors.surface.copy(alpha = .88f), radius = 32.dp, tint = tint, elevated = true).padding(18.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(Modifier.fillMaxWidth().morningSurface(base = colors.surface.copy(alpha = .88f), radius = 32.dp, elevated = true).padding(18.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 MorningSunrise(size = 20.dp)
                 Text(stringResource(R.string.composer_wakeup_time), Modifier.weight(1f).padding(start = 8.dp), color = colors.ink, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
@@ -303,46 +391,118 @@ fun AlarmComposer(
                         Text(stringResource(if (draft.alarm.challenge == ChallengeKind.NONE) R.string.composer_gentle_start else challengeText(draft.alarm.challenge)), color = colors.ink, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                         RequirementList(draft.alarm)
                     }
-                    MorningEmblem(draft.alarm.challenge)
+                    MorningEmblem(draft.alarm.challenge, draft.alarm.seated, draft.alarm.mode)
                 }
             }
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
-@Composable private fun ChallengeCard(draft: AlarmEditorDraft, kind: ChallengeKind, modifier: Modifier, practice: () -> Unit) {
+@Composable private fun ChallengeCard(draft: AlarmEditorDraft, kind: ChallengeKind, filter: WakeMode, modifier: Modifier, wide: Boolean, locked: Boolean, onInfo: () -> Unit) {
     val colors = MorningTheme.colors
-    val context = LocalContext.current
     val selected = draft.alarm.challenge == kind
     val interactions = remember { MutableInteractionSource() }
-    val tint = challengeColor(kind)
-    val cardTint by animateColorAsState(if (selected) tint else colors.soft, tween(170), label = "challengeTint")
-    val cardBase by animateColorAsState(if (selected) tint.copy(alpha = .12f).compositeOver(colors.surface) else colors.surface.copy(alpha = .8f), tween(170), label = "challengeBase")
-    val legacy = kind == draft.original.challenge && kind !in draft.alarm.mode.availableChallenges()
-    Column(modifier.fillMaxWidth().heightIn(min = 142.dp)
+    val legacy = kind == draft.alarm.challenge && kind !in filter.availableChallenges()
+    val tint = MorningTheme.modeAccent(if (legacy) draft.alarm.mode else filter)
+    val shape = RoundedCornerShape(24.dp)
+    val title = stringResource(challengeText(kind))
+    val cardTitle = if (legacy) stringResource(R.string.composer_saved_choice, title) else title
+    val accessibleTitle = if (locked) stringResource(R.string.challenge_pro_accessibility, cardTitle) else cardTitle
+    Box(modifier.fillMaxWidth().heightIn(min = if (wide) 70.dp else 124.dp)
         .morningPress(interactions)
-        .morningSurface(base = cardBase, radius = 24.dp, tint = cardTint, elevated = true)
-        .combinedClickable(interactionSource = interactions, indication = null, role = Role.Button, onClick = {
-            draft.alarm = draft.alarm.copy(challenge = kind)
-        }, onDoubleClick = { if (kind != ChallengeKind.NONE) { draft.alarm = draft.alarm.copy(challenge = kind); practice() } }).semantics {
-            this.selected = selected
-            if (kind != ChallengeKind.NONE) customActions = listOf(CustomAccessibilityAction(context.getString(R.string.composer_try_challenge)) {
-                draft.alarm = draft.alarm.copy(challenge = kind); practice(); true
+        .clip(shape).background(colors.surface)
+        .border(if (selected) 2.dp else 1.dp, when {
+            selected -> tint
+            locked -> colors.yellow.copy(alpha = .45f)
+            else -> colors.line
+        }, shape)) {
+        Box(Modifier.matchParentSize()
+            .clickable(interactionSource = interactions, indication = null, role = Role.Button) {
+                if (locked) onInfo() else if (!selected) draft.alarm = draft.alarm.copy(
+                    mode = filter, challenge = kind,
+                    repetitions = if (kind == ChallengeKind.PUSH_UPS) filter.repetitions.coerceIn(1, 50) else draft.alarm.repetitions,
+                )
+            }.semantics {
+                this.selected = selected
+                contentDescription = accessibleTitle
             })
-        }.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Box(Modifier.size(50.dp).clip(RoundedCornerShape(17.dp)).background(tint.copy(alpha = .13f)), contentAlignment = Alignment.Center) { Icon(challengeIcon(kind), null, tint = tint, modifier = Modifier.size(26.dp)) }
-                Spacer(Modifier.weight(1f))
-                if (selected) Icon(Icons.Outlined.CheckCircle, null, tint = tint, modifier = Modifier.size(24.dp))
-            }
-            Text(if (legacy) stringResource(R.string.composer_saved_choice, stringResource(challengeText(kind))) else stringResource(challengeText(kind)), color = colors.ink, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, maxLines = 3)
-            if (kind in setOf(ChallengeKind.PUSH_UPS, ChallengeKind.GUIDED_RHYTHM, ChallengeKind.WAVE_HAND, ChallengeKind.NECK_ROTATION, ChallengeKind.JUMPING_JACKS, ChallengeKind.STRETCHING)) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-                    Icon(Icons.Outlined.CameraAlt, null, tint = colors.muted, modifier = Modifier.size(14.dp))
-                    Text(stringResource(R.string.composer_camera), color = colors.muted, style = MaterialTheme.typography.labelSmall)
-                }
+        val badge: @Composable () -> Unit = {
+            Box(Modifier.size(40.dp).clip(RoundedCornerShape(13.dp)).background(tint.copy(alpha = .13f)), contentAlignment = Alignment.Center) {
+                MovementChallengeIcon(kind, draft.alarm.seated, tint = tint, size = 26.dp, animated = false)
             }
         }
+        val description: @Composable () -> Unit = {
+            Column(verticalArrangement = Arrangement.spacedBy(if (wide) 4.dp else 8.dp)) {
+            Text(cardTitle, color = colors.ink, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold,
+                minLines = if (!wide && !legacy && LocalConfiguration.current.fontScale <= 1.15f) 2 else 1)
+            val indicator = when {
+                selected && !locked -> Icons.Outlined.CheckCircle to R.string.composer_challenge_selected
+                usesCamera(kind) -> Icons.Outlined.CameraAlt to R.string.composer_camera
+                kind == ChallengeKind.READ_ALOUD -> Icons.Outlined.Mic to R.string.composer_microphone
+                else -> null
+            }
+            Box(Modifier.heightIn(min = 16.dp)) {
+                if (locked && wide) {
+                    ProLockBadge(compact = true)
+                } else if (indicator != null) Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                    Icon(indicator.first, null, tint = if (selected) tint else colors.muted, modifier = Modifier.size(14.dp))
+                    Text(stringResource(indicator.second), color = if (selected) tint else colors.muted, style = MaterialTheme.typography.labelSmall)
+                }
+            }
+            }
+        }
+        val content = Modifier.fillMaxWidth().padding(start = 14.dp, end = if (wide) 52.dp else 14.dp, top = 12.dp, bottom = 12.dp)
+            .clearAndSetSemantics {}
+        if (wide) {
+            Row(content.align(Alignment.CenterStart), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                badge()
+                description()
+            }
+        } else {
+            Column(content.align(Alignment.TopStart), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(5.dp), verticalAlignment = Alignment.CenterVertically) {
+                    badge()
+                    if (locked) ProLockBadge(compact = true)
+                }
+                description()
+            }
+        }
+        IconButton(onClick = onInfo, modifier = Modifier.align(if (wide) Alignment.CenterEnd else Alignment.TopEnd).padding(4.dp)) {
+            Icon(Icons.Outlined.Info, stringResource(R.string.composer_challenge_info, stringResource(challengeText(kind))), tint = colors.muted, modifier = Modifier.size(17.dp))
+        }
+    }
+}
+
+private fun isProChallenge(kind: ChallengeKind): Boolean =
+    kind == ChallengeKind.PUSH_UPS || kind == ChallengeKind.JUMPING_JACKS
+
+private fun usesCamera(kind: ChallengeKind): Boolean = when (kind) {
+    ChallengeKind.PUSH_UPS, ChallengeKind.GUIDED_RHYTHM, ChallengeKind.WAVE_HAND,
+    ChallengeKind.NECK_ROTATION, ChallengeKind.JUMPING_JACKS, ChallengeKind.STRETCHING -> true
+    else -> false
+}
+
+private fun challengeCameraFraming(alarm: Alarm): Int = when (alarm.challenge) {
+    ChallengeKind.PUSH_UPS -> R.string.challenge_info_side_whole_body
+    ChallengeKind.WAVE_HAND -> R.string.challenge_info_front_hand
+    ChallengeKind.NECK_ROTATION -> R.string.challenge_info_front_face
+    ChallengeKind.STRETCHING -> R.string.challenge_info_front_upper_body
+    ChallengeKind.GUIDED_RHYTHM ->
+        if (alarm.seated) R.string.challenge_info_front_upper_body else R.string.challenge_info_side_whole_body
+    else -> R.string.challenge_info_front_whole_body
+}
+
+private fun challengeInfoInstruction(alarm: Alarm): Int = when (alarm.challenge) {
+    ChallengeKind.NONE -> R.string.requirement_none
+    ChallengeKind.PUSH_UPS -> R.string.challenge_info_pushups
+    ChallengeKind.WAVE_HAND -> R.string.challenge_info_wave
+    ChallengeKind.NECK_ROTATION -> R.string.challenge_info_neck
+    ChallengeKind.JUMPING_JACKS -> R.string.challenge_info_jacks
+    ChallengeKind.STRETCHING -> R.string.challenge_info_reach
+    ChallengeKind.GUIDED_RHYTHM -> if (alarm.seated) R.string.challenge_info_seated else R.string.challenge_info_standing
+    ChallengeKind.READ_ALOUD -> R.string.challenge_info_read_aloud
+    ChallengeKind.READ_AND_CHOOSE -> R.string.challenge_info_read_choose
+    ChallengeKind.RIDDLE -> R.string.challenge_info_riddle
 }
 
 @Composable private fun PushUpSettings(draft: AlarmEditorDraft, fullAccess: Boolean) {
@@ -372,6 +532,32 @@ private fun composerModeIcon(mode: WakeMode): ImageVector = when (mode) {
     WakeMode.GENTLE -> Icons.Outlined.Eco
     WakeMode.BALANCED -> Icons.Outlined.WbSunny
     WakeMode.FOCUSED -> Icons.Outlined.Bolt
+}
+
+@Composable
+internal fun ChallengeCheckingGuide(alarm: Alarm) {
+    val colors = MorningTheme.colors
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(stringResource(challengeCheckingGuide(alarm)), style = MaterialTheme.typography.bodyMedium, color = colors.ink)
+        when {
+            alarm.challenge == ChallengeKind.READ_ALOUD ->
+                Text(stringResource(R.string.composer_microphone), color = colors.muted, style = MaterialTheme.typography.labelMedium)
+            usesCamera(alarm.challenge) ->
+                Text(stringResource(R.string.challenge_guide_camera), color = colors.muted, style = MaterialTheme.typography.labelMedium)
+        }
+    }
+}
+
+private fun challengeCheckingGuide(alarm: Alarm): Int = when (alarm.challenge) {
+    ChallengeKind.PUSH_UPS -> R.string.challenge_guide_pushups
+    ChallengeKind.WAVE_HAND -> R.string.challenge_guide_wave
+    ChallengeKind.NECK_ROTATION -> R.string.challenge_guide_neck
+    ChallengeKind.JUMPING_JACKS -> R.string.challenge_guide_jacks
+    ChallengeKind.STRETCHING -> R.string.challenge_guide_reach
+    ChallengeKind.GUIDED_RHYTHM -> if (alarm.seated) R.string.challenge_guide_seated else R.string.challenge_guide_standing
+    ChallengeKind.READ_ALOUD -> R.string.challenge_guide_words
+    ChallengeKind.READ_AND_CHOOSE, ChallengeKind.RIDDLE -> R.string.challenge_guide_answer
+    ChallengeKind.NONE -> R.string.requirement_none
 }
 
 @Composable private fun RequirementList(alarm: Alarm) {
@@ -404,13 +590,13 @@ private fun composerModeIcon(mode: WakeMode): ImageVector = when (mode) {
     }
 }
 
-@Composable private fun MorningEmblem(kind: ChallengeKind) {
-    val tint = challengeColor(kind)
+@Composable private fun MorningEmblem(kind: ChallengeKind, seated: Boolean, mode: WakeMode) {
+    val tint = MorningTheme.modeAccent(mode)
     Box(Modifier.size(92.dp), contentAlignment = Alignment.Center) {
         Box(Modifier.size(88.dp).border(1.dp, tint.copy(alpha = .22f), CircleShape))
         Box(Modifier.size(72.dp).border(1.dp, tint.copy(alpha = .3f), CircleShape).background(tint.copy(alpha = .1f), CircleShape))
         Box(Modifier.size(54.dp).background(tint.copy(alpha = .14f), CircleShape), contentAlignment = Alignment.Center) {
-            Icon(challengeIcon(kind), null, tint = tint, modifier = Modifier.size(32.dp))
+            MovementChallengeIcon(kind, seated, tint = tint, size = 34.dp)
         }
         Icon(Icons.Outlined.AutoAwesome, null, tint = tint, modifier = Modifier.size(17.dp).align(Alignment.TopEnd))
         Icon(Icons.Outlined.AutoAwesome, null, tint = tint.copy(alpha = .6f), modifier = Modifier.size(10.dp).align(Alignment.BottomStart))

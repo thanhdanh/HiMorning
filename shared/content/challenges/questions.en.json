@@ -1,0 +1,398 @@
+[
+  {
+    "id": "library-v3-en-mercury-year",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "curiosity",
+    "text": "Which planet takes about 88 Earth days to go around the Sun?",
+    "choices": [
+      "Mercury",
+      "Venus",
+      "Mars"
+    ],
+    "answerIndex": 0,
+    "explanation": "Mercury is the closest planet to the Sun and has the shortest year.",
+    "source": "himorning",
+    "license": "original",
+    "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/mercury/facts/"
+  },
+  {
+    "id": "library-v3-en-venus-heat",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "curiosity",
+    "text": "Which planet has the hottest surface in the solar system?",
+    "choices": [
+      "Mercury",
+      "Venus",
+      "Mars"
+    ],
+    "answerIndex": 1,
+    "explanation": "Venus has a thick atmosphere that traps heat.",
+    "source": "himorning",
+    "license": "original",
+    "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/resource/solar-system-temperatures/"
+  },
+  {
+    "id": "library-v3-en-jupiter-day",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "curiosity",
+    "text": "Jupiter spins once in about 10 hours. Earth takes 24 hours. Where is a day shorter?",
+    "choices": [
+      "On Jupiter",
+      "On Earth",
+      "They are the same"
+    ],
+    "answerIndex": 0,
+    "explanation": "A day here means one full spin. Jupiter takes less than half as long as Earth.",
+    "source": "himorning",
+    "license": "original",
+    "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/jupiter/jupiter-facts/"
+  },
+  {
+    "id": "library-v3-en-ganymede",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "curiosity",
+    "text": "Which of these moons is bigger than the planet Mercury?",
+    "choices": [
+      "Europa",
+      "Ganymede",
+      "The Moon"
+    ],
+    "answerIndex": 1,
+    "explanation": "Ganymede, which orbits Jupiter, is the largest moon in the solar system.",
+    "source": "himorning",
+    "license": "original",
+    "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/jupiter/jupiter-moons/ganymede/facts/"
+  },
+  {
+    "id": "library-v3-en-uranus-tilt",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "curiosity",
+    "text": "Which planet spins almost on its side as it orbits the Sun?",
+    "choices": [
+      "Earth",
+      "Neptune",
+      "Uranus"
+    ],
+    "answerIndex": 2,
+    "explanation": "Uranus’s axis is tilted so far that the planet appears to roll around the Sun.",
+    "source": "himorning",
+    "license": "original",
+    "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/uranus/facts/"
+  },
+  {
+    "id": "library-v3-en-outer-order",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "curiosity",
+    "text": "A model shows Jupiter, Saturn, Uranus and Neptune in order from the Sun. Which sits between Saturn and Neptune?",
+    "choices": [
+      "Jupiter",
+      "Uranus",
+      "Earth"
+    ],
+    "answerIndex": 1,
+    "explanation": "Uranus is one place farther from the Sun than Saturn and one closer than Neptune.",
+    "source": "himorning",
+    "license": "original",
+    "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/solar-system/planets/"
+  },
+  {
+    "id": "library-v3-en-titan",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "curiosity",
+    "text": "Titan has lakes of liquid methane. Which planet does it orbit?",
+    "choices": [
+      "Saturn",
+      "Mars",
+      "Jupiter"
+    ],
+    "answerIndex": 0,
+    "explanation": "Titan is a moon of Saturn, and its lakes are made of hydrocarbons.",
+    "source": "himorning",
+    "license": "original",
+    "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/saturn/facts/"
+  },
+  {
+    "id": "library-v3-en-rocky-planet",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "curiosity",
+    "text": "Which of these is a rocky planet?",
+    "choices": [
+      "Neptune",
+      "Mars",
+      "Saturn"
+    ],
+    "answerIndex": 1,
+    "explanation": "Mars is one of the four rocky planets closest to the Sun.",
+    "source": "himorning",
+    "license": "original",
+    "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/solar-system/solar-system-facts/"
+  },
+  {
+    "id": "library-v3-en-pacific",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "cityAndTravel",
+    "text": "Which ocean is both the largest and the deepest?",
+    "choices": [
+      "Atlantic",
+      "Indian",
+      "Pacific"
+    ],
+    "answerIndex": 2,
+    "explanation": "The Pacific is larger and deeper than any other ocean basin.",
+    "source": "himorning",
+    "license": "original",
+    "attribution": "Original wording by HiMorning. Factual reference: NOAA · https://oceanservice.noaa.gov/facts/biggestocean.html"
+  },
+  {
+    "id": "library-v3-en-octopus-hearts",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "curiosity",
+    "text": "How many hearts does an octopus have?",
+    "choices": [
+      "One",
+      "Two",
+      "Three"
+    ],
+    "answerIndex": 2,
+    "explanation": "Two send blood to the gills. The third sends it around the body.",
+    "source": "himorning",
+    "license": "original",
+    "attribution": "Original wording by HiMorning. Factual reference: NOAA · https://www.noaa.gov/stories/love-is-in-air-and-sea-5-facts-about-affections-of-marine-creatures"
+  },
+  {
+    "id": "library-v3-en-coral",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "curiosity",
+    "text": "A coral reef looks like a garden. What are the corals themselves?",
+    "choices": [
+      "Animals",
+      "Plants",
+      "Rocks"
+    ],
+    "answerIndex": 0,
+    "explanation": "Corals are made up of tiny animals called polyps.",
+    "source": "himorning",
+    "license": "original",
+    "attribution": "Original wording by HiMorning. Factual reference: NOAA · https://oceanexplorer.noaa.gov/ocean-fact/coral-animal/"
+  },
+  {
+    "id": "library-v3-en-tide-pull",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "curiosity",
+    "text": "A tide chart follows the pull of the Moon and the Sun. What force is it tracking?",
+    "choices": [
+      "Magnetism",
+      "Gravity",
+      "Wind"
+    ],
+    "answerIndex": 1,
+    "explanation": "The gravitational pull of the Moon and Sun sets the tides in motion.",
+    "source": "himorning",
+    "license": "original",
+    "attribution": "Original wording by HiMorning. Factual reference: NOAA · https://www.noaa.gov/education/resource-collections/ocean-coasts/tides"
+  },
+  {
+    "id": "library-v3-en-train",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "cityAndTravel",
+    "text": "The 7:40 train skips Hill Street. The 7:48 stops there. Your meeting is on Hill Street. Which train should you take?",
+    "choices": [
+      "The 7:40",
+      "The 7:48",
+      "Either train"
+    ],
+    "answerIndex": 1,
+    "explanation": "The later train is the only one that stops at Hill Street.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "library-v3-en-library-return",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "workAndStudy",
+    "text": "Your library book is due on Tuesday. The library will be closed on Tuesday, but its return slot stays open. Can you return it that day?",
+    "choices": [
+      "Yes, through the slot",
+      "No, it must be Monday",
+      "Only if you borrow it again"
+    ],
+    "answerIndex": 0,
+    "explanation": "The return slot is open even while the library is closed.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "library-v3-en-drop-off",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "peopleAndPlans",
+    "text": "Minh says, “Leave the bag with reception unless I text you.” Minh hasn’t sent a text. Where should the bag go?",
+    "choices": [
+      "At reception",
+      "Outside the building",
+      "Back home"
+    ],
+    "answerIndex": 0,
+    "explanation": "The exception applies only if Minh texts.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "library-v3-en-recipe",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "everydayLife",
+    "text": "A recipe serves four and uses two eggs. You’re making half the recipe. How many eggs do you need?",
+    "choices": [
+      "One",
+      "Two",
+      "Four"
+    ],
+    "answerIndex": 0,
+    "explanation": "Half of two eggs is one egg.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "library-v3-en-cinema",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "creativeBreaks",
+    "text": "The cinema says, “Please use Door B after 8 p.m.” You arrive at 8:10 p.m. Which door should you use?",
+    "choices": [
+      "Door A",
+      "Door B",
+      "Either door"
+    ],
+    "answerIndex": 1,
+    "explanation": "8:10 p.m. is after 8 p.m., so use Door B.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "library-v3-en-park",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "cityAndTravel",
+    "text": "Two paths end at the same park. One is open to bikes, the other is for walking only. Which path can you ride on?",
+    "choices": [
+      "Both paths",
+      "The walking path",
+      "The path open to bikes"
+    ],
+    "answerIndex": 2,
+    "explanation": "Only one sign allows bikes.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "library-v3-en-shirts",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "everydayLife",
+    "text": "A drawer holds only black and white socks. In the dark, how many must you take to guarantee a matching pair?",
+    "choices": [
+      "Two",
+      "Three",
+      "Four"
+    ],
+    "answerIndex": 1,
+    "explanation": "The first two could be different. The third must match one of them.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "library-v3-en-ticket-number",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "cityAndTravel",
+    "text": "My ticket number is an even number between 35 and 41. Its digits add up to 11. What number is it?",
+    "choices": [
+      "36",
+      "38",
+      "40"
+    ],
+    "answerIndex": 1,
+    "explanation": "Of the even numbers in that range, only 38 has digits that add to 11.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "library-v3-en-race",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "peopleAndPlans",
+    "text": "You pass the runner in second place. What place are you in now?",
+    "choices": [
+      "First",
+      "Second",
+      "Third"
+    ],
+    "answerIndex": 1,
+    "explanation": "You take second place. The leader is still ahead.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "library-v3-en-clock",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "everydayLife",
+    "text": "A clock loses one minute each hour. It is correct at noon. What will it show at 4 p.m.?",
+    "choices": [
+      "3:56",
+      "4:00",
+      "4:04"
+    ],
+    "answerIndex": 0,
+    "explanation": "Four hours have passed, so the clock is four minutes slow.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "library-v3-en-tiles",
+    "kind": "riddle",
+    "language": "en",
+    "theme": "creativeBreaks",
+    "text": "A border repeats the colors blue, yellow, white. What color is tile 11?",
+    "choices": [
+      "Blue",
+      "Yellow",
+      "White"
+    ],
+    "answerIndex": 1,
+    "explanation": "Tile 9 ends the third set. Tiles 10 and 11 start with blue and yellow.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "library-v3-en-shelter",
+    "kind": "readAndChoose",
+    "language": "en",
+    "theme": "peopleAndPlans",
+    "text": "A shelter asks for clean towels and says it has enough blankets. You can bring only one item. What would help?",
+    "choices": [
+      "A clean towel",
+      "A blanket",
+      "A towel that needs washing"
+    ],
+    "answerIndex": 0,
+    "explanation": "Clean towels are on the request list.",
+    "source": "himorning",
+    "license": "original"
+  }
+]

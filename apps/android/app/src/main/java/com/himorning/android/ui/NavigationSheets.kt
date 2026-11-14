@@ -33,7 +33,6 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import kotlin.math.roundToInt
 
 @Composable internal fun MorningSystemBars() {
     val dark = isSystemInDarkTheme()
@@ -80,28 +79,36 @@ private tailrec fun Context.activity(): Activity? = when (this) {
 @Composable internal fun PracticePicker(onChoose: (ChallengeKind) -> Unit) {
     val colors = MorningTheme.colors
     Text(stringResource(R.string.practice_note), color = colors.muted, style = MaterialTheme.typography.bodyMedium)
-    ChallengeKind.entries.filter { it != ChallengeKind.NONE }.forEach { kind ->
+    val exercises = listOf(
+        ChallengeKind.READ_AND_CHOOSE, ChallengeKind.RIDDLE, ChallengeKind.READ_ALOUD,
+        ChallengeKind.WAVE_HAND, ChallengeKind.NECK_ROTATION, ChallengeKind.STRETCHING,
+        ChallengeKind.GUIDED_RHYTHM, ChallengeKind.JUMPING_JACKS, ChallengeKind.PUSH_UPS,
+    )
+    exercises.forEach { kind ->
         val interactions = remember(kind) { MutableInteractionSource() }
         Surface(onClick = { onChoose(kind) }, interactionSource = interactions, color = Color.Transparent, contentColor = colors.ink,
             shape = RoundedCornerShape(20.dp), modifier = Modifier.fillMaxWidth()
-                .morningPress(interactions).morningSurface(colors.surface, radius = 20.dp, tint = challengeColor(kind), elevated = false)) {
+                .morningPress(interactions).morningSurface(colors.surface, radius = 20.dp, elevated = false)) {
             Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                Icon(challengeIcon(kind), null, tint = challengeColor(kind), modifier = Modifier.size(28.dp))
-                Text(stringResource(challengeText(kind)), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+                Icon(challengeIcon(kind), null, tint = MorningTheme.modeAccent(preferredMode(kind)), modifier = Modifier.size(28.dp))
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                    Text(stringResource(challengeText(kind)), style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(practiceMethod(kind)), style = MaterialTheme.typography.bodySmall, color = colors.muted)
+                }
                 Icon(Icons.Outlined.PlayCircleOutline, null, tint = colors.accent)
             }
         }
     }
 }
 
-@Composable internal fun PurposePicker(current: MorningFocus, full: Boolean, onChoose: (MorningFocus) -> Unit, onPro: () -> Unit) {
+@Composable internal fun PurposePicker(current: MorningFocus, onChoose: (MorningFocus) -> Unit) {
     val colors = MorningTheme.colors
     Text(stringResource(R.string.nav_purpose_question), style = MaterialTheme.typography.headlineSmall, fontFamily = quicksandFont, fontWeight = FontWeight.SemiBold)
     Text(stringResource(R.string.nav_purpose_note), color = colors.muted)
     MorningFocus.entries.forEach { focus ->
         val selected = current == focus
         val interactions = remember(focus) { MutableInteractionSource() }
-        Surface(onClick = { if (focus == MorningFocus.ENERGIZE && !full) onPro() else onChoose(focus) },
+        Surface(onClick = { onChoose(focus) },
             interactionSource = interactions, color = Color.Transparent, contentColor = colors.ink,
             shape = RoundedCornerShape(22.dp), border = androidx.compose.foundation.BorderStroke(1.dp, if (selected) colors.accent else colors.line),
             modifier = Modifier.morningPress(interactions).morningSurface(if (selected) colors.yellow.copy(alpha = .22f) else colors.surface,
@@ -112,7 +119,7 @@ private tailrec fun Context.activity(): Activity? = when (this) {
                     Text(stringResource(focusText(focus)), style = MaterialTheme.typography.titleMedium)
                     Text(stringResource(when (focus) { MorningFocus.CLEAR_START -> R.string.nav_focus_clear; MorningFocus.GENTLE_MOVEMENT -> R.string.nav_focus_gentle; MorningFocus.FIND_YOUR_VOICE -> R.string.nav_focus_voice; MorningFocus.ENERGIZE -> R.string.nav_focus_energy }), style = MaterialTheme.typography.bodySmall, color = colors.muted)
                 }
-                Icon(if (selected) Icons.Outlined.CheckCircle else if (focus == MorningFocus.ENERGIZE && !full) Icons.Outlined.Lock else Icons.Outlined.RadioButtonUnchecked, null, tint = colors.accent)
+                Icon(if (selected) Icons.Outlined.CheckCircle else Icons.Outlined.RadioButtonUnchecked, null, tint = colors.accent)
             }
         }
     }
@@ -133,86 +140,49 @@ private tailrec fun Context.activity(): Activity? = when (this) {
     }
 }
 
-@Composable internal fun ProPreview(previewDays: Int, started: Boolean) {
-    val colors = MorningTheme.colors
-    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) { MorningSun(size = 120.dp) }
-    Text(stringResource(R.string.nav_pro_title), style = MaterialTheme.typography.headlineMedium, fontFamily = quicksandFont, fontWeight = FontWeight.SemiBold)
-    Text(if (!started) stringResource(R.string.preview_not_started) else if (previewDays > 0) stringResource(R.string.preview, previewDays) else stringResource(R.string.basic_access), color = colors.muted)
-    Surface(color = Color.Transparent, contentColor = colors.ink, shape = RoundedCornerShape(24.dp),
-        modifier = Modifier.fillMaxWidth().morningSurface(colors.soft, radius = 24.dp, tint = colors.yellow, elevated = false)) {
-        Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(18.dp)) {
-            listOf(R.string.nav_pro_challenges, R.string.nav_pro_sounds, R.string.nav_pro_history).forEach { text ->
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Outlined.CheckCircle, null, tint = colors.accent)
-                    Text(stringResource(text), modifier = Modifier.weight(1f))
-                }
-            }
-        }
-    }
-    Text(stringResource(R.string.billing_unavailable), style = MaterialTheme.typography.bodySmall, color = colors.muted)
-}
-
-@Composable internal fun MorningProgress(state: AppState, full: Boolean, onGoal: (Int) -> Unit, onPro: () -> Unit) {
+@Composable internal fun MorningProgress(state: AppState, onGoal: (Int) -> Unit) {
     val colors = MorningTheme.colors
     val context = LocalContext.current
     val locale = LocalConfiguration.current.locales[0]
     val zone = ZoneId.systemDefault()
     val today = LocalDate.now(zone)
-    val successful = setOf(WakeOutcome.LOCAL_COMPLETED, WakeOutcome.AI_VERIFIED)
     val week = (6 downTo 0).map { today.minusDays(it.toLong()) }
     val byDay = state.entries.groupBy { Instant.ofEpochMilli(it.date).atZone(zone).toLocalDate() }
-    val days = week.count { day -> byDay[day].orEmpty().any { it.outcome in successful } }
-    val month = state.entries.filter { Instant.ofEpochMilli(it.date).atZone(zone).toLocalDate().withDayOfMonth(1) == today.withDayOfMonth(1) }
-    val monthlyScore = if (month.isEmpty()) null else (100.0 * month.count { it.outcome in successful } / month.size).roundToInt()
+    val days = week.count { day -> byDay[day].orEmpty().any { it.completedChallenge } }
+    val weekStart = today.with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.temporal.WeekFields.of(locale).firstDayOfWeek))
+    val daysThisWeek = week.count { day -> day >= weekStart && byDay[day].orEmpty().any { it.completedChallenge } }
     var selectedDay by remember { mutableStateOf(today) }
-    if (!full) {
-        Surface(color = Color.Transparent, shape = RoundedCornerShape(24.dp),
-            modifier = Modifier.fillMaxWidth().morningSurface(colors.surface, radius = 24.dp, tint = colors.yellow, elevated = false)) {
-            Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Text(stringResource(R.string.basic_access), color = colors.ink)
-                MorningButton(stringResource(R.string.nav_explore_pro), onPro)
+    Surface(color = Color.Transparent, contentColor = colors.ink, shape = RoundedCornerShape(24.dp),
+        modifier = Modifier.fillMaxWidth().morningSurface(colors.soft, radius = 24.dp, tint = colors.yellow, elevated = false)) {
+        Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Text(stringResource(R.string.home_week_goal, daysThisWeek, state.weeklyGoal), style = MaterialTheme.typography.titleMedium)
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+                MorningIconButton(Icons.Outlined.Remove, stringResource(R.string.nav_decrease_goal), { onGoal(state.weeklyGoal - 1) }, Modifier, enabled = state.weeklyGoal > 1)
+                Text(state.weeklyGoal.toString(), style = MaterialTheme.typography.headlineMedium)
+                MorningIconButton(Icons.Outlined.Add, stringResource(R.string.nav_increase_goal), { onGoal(state.weeklyGoal + 1) }, Modifier, enabled = state.weeklyGoal < 7)
             }
-        }
-        return
-    }
-    Surface(color = Color.Transparent, contentColor = colors.ink, shape = RoundedCornerShape(24.dp), border = androidx.compose.foundation.BorderStroke(1.dp, colors.line),
-        modifier = Modifier.fillMaxWidth().morningSurface(colors.surface, radius = 24.dp, tint = colors.yellow, elevated = false)) {
-        Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(stringResource(R.string.nav_this_month), style = MaterialTheme.typography.titleMedium)
-                Text(today.format(DateTimeFormatter.ofPattern("MMMM yyyy", locale)), style = MaterialTheme.typography.bodySmall, color = colors.muted)
-            }
-            Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(monthlyScore?.toString() ?: "—", style = MaterialTheme.typography.displayMedium, fontWeight = FontWeight.Bold)
-                Text(stringResource(R.string.nav_points), color = colors.muted, modifier = Modifier.padding(bottom = 10.dp))
-            }
-            LinearProgressIndicator(progress = { (monthlyScore ?: 0) / 100f }, color = colors.success, trackColor = colors.soft, modifier = Modifier.fillMaxWidth())
-            Text(if (month.isEmpty()) stringResource(R.string.no_history) else stringResource(R.string.nav_month_completed, month.count { it.outcome in successful }, month.size), style = MaterialTheme.typography.bodyMedium)
         }
     }
     Surface(color = Color.Transparent, contentColor = colors.ink, shape = RoundedCornerShape(24.dp), border = androidx.compose.foundation.BorderStroke(1.dp, colors.line),
         modifier = Modifier.fillMaxWidth().morningSurface(colors.surface, radius = 24.dp, tint = colors.yellow, elevated = false)) {
         Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Text(stringResource(R.string.nav_past_week), style = MaterialTheme.typography.titleMedium)
-            if (LocalConfiguration.current.fontScale >= 1.3f) {
+            val largeText = LocalConfiguration.current.fontScale >= 1.3f
+            if (largeText) {
                 week.forEach { date ->
-                    val entries = byDay[date].orEmpty()
-                    val score = if (entries.isEmpty()) null else (100.0 * entries.count { it.outcome in successful } / entries.size).roundToInt()
+                    val done = byDay[date].orEmpty().any { it.completedChallenge }
                     TextButton(onClick = { selectedDay = date }, modifier = Modifier.fillMaxWidth()) {
                         Text(date.format(DateTimeFormatter.ofPattern("EEE d MMM", locale)), modifier = Modifier.weight(1f))
-                        Text(score?.let { "$it/100" } ?: "—")
+                        if (done) Icon(Icons.Outlined.CheckCircle, stringResource(R.string.completed), tint = colors.success)
                     }
                 }
             } else Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 week.forEach { date ->
-                    val entries = byDay[date].orEmpty()
-                    val score = if (entries.isEmpty()) null else (100.0 * entries.count { it.outcome in successful } / entries.size).roundToInt()
+                    val done = byDay[date].orEmpty().any { it.completedChallenge }
                     TextButton(onClick = { selectedDay = date }, contentPadding = PaddingValues(0.dp), modifier = Modifier.weight(1f)) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(7.dp)) {
-                            Text(score?.toString() ?: "—", style = MaterialTheme.typography.labelSmall)
-                            Box(Modifier.height(56.dp).width(12.dp).background(colors.line, RoundedCornerShape(6.dp)), contentAlignment = Alignment.BottomCenter) {
-                                if (score != null) Box(Modifier.height(maxOf(4f, score * .56f).dp).fillMaxWidth().background(if (score == 100) colors.success else colors.accent, RoundedCornerShape(6.dp)))
-                            }
+                            if (done) Icon(Icons.Outlined.CheckCircle, stringResource(R.string.completed), tint = colors.success, modifier = Modifier.size(18.dp))
+                            else Box(Modifier.size(18.dp), contentAlignment = Alignment.Center) { Text("–", color = colors.muted) }
                             Text(date.format(DateTimeFormatter.ofPattern("EEE", locale)), style = MaterialTheme.typography.labelSmall)
                         }
                     }
@@ -222,18 +192,6 @@ private tailrec fun Context.activity(): Activity? = when (this) {
             Text(selectedDay.format(DateTimeFormatter.ofPattern("EEEE, d MMM", locale)), style = MaterialTheme.typography.titleMedium)
             if (byDay[selectedDay].isNullOrEmpty()) Text(stringResource(R.string.no_history), color = colors.muted, style = MaterialTheme.typography.bodyMedium)
             else byDay[selectedDay].orEmpty().forEach { entry -> ProgressEntry(entry) }
-        }
-    }
-    Surface(color = Color.Transparent, contentColor = colors.ink, shape = RoundedCornerShape(24.dp),
-        modifier = Modifier.fillMaxWidth().morningSurface(colors.soft, radius = 24.dp, tint = colors.yellow, elevated = false)) {
-        Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(stringResource(R.string.weekly_goal, state.weeklyGoal), style = MaterialTheme.typography.titleMedium)
-            Text(stringResource(R.string.home_recent_count, days), color = colors.muted)
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
-                MorningIconButton(Icons.Outlined.Remove, stringResource(R.string.nav_decrease_goal), { onGoal(state.weeklyGoal - 1) }, Modifier, enabled = state.weeklyGoal > 1)
-                Text(state.weeklyGoal.toString(), style = MaterialTheme.typography.headlineMedium)
-                MorningIconButton(Icons.Outlined.Add, stringResource(R.string.nav_increase_goal), { onGoal(state.weeklyGoal + 1) }, Modifier, enabled = state.weeklyGoal < 7)
-            }
         }
     }
     var expanded by remember { mutableStateOf(false) }
@@ -258,8 +216,11 @@ private tailrec fun Context.activity(): Activity? = when (this) {
     val colors = MorningTheme.colors
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            entry.challenge?.let { Icon(challengeIcon(it), null, tint = challengeColor(it), modifier = Modifier.size(20.dp)); Text(stringResource(challengeText(it)), modifier = Modifier.weight(1f)) }
-            Text(Instant.ofEpochMilli(entry.date).atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("HH:mm")), style = MaterialTheme.typography.labelMedium, color = colors.muted)
+            entry.challenge?.let {
+                Icon(challengeIcon(it), null, tint = MorningTheme.modeAccent(entry.mode ?: preferredMode(it)), modifier = Modifier.size(20.dp))
+                Text(stringResource(challengeText(it)), modifier = Modifier.weight(1f))
+            }
+            Text(occurrenceTimeText(LocalContext.current, Instant.ofEpochMilli(entry.date)), style = MaterialTheme.typography.labelMedium, color = colors.muted)
         }
         Text(stringResource(when (entry.outcome) { WakeOutcome.LOCAL_COMPLETED -> R.string.local_completed; WakeOutcome.AI_VERIFIED -> R.string.ai_verified; WakeOutcome.SELF_CONFIRMED -> R.string.self_confirmed; WakeOutcome.DISMISSED -> R.string.dismissed }), style = MaterialTheme.typography.bodySmall, color = colors.muted)
     }

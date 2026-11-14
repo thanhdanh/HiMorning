@@ -17,10 +17,11 @@ describe('challenge content pack', () => {
   expect(result.valid).toHaveLength(12);
   expect(result.valid.find((i: any) => i.id === 'en-rc-window')?.explanation).toContain('open window');
  });
- it('rejects a 17-token readAloud', () => {
+ it('accepts legacy and longer read-aloud passages within the supported range', () => {
   expect(validatePack(pack([readAloud('short', words(17))])).errors).toHaveLength(1);
   expect(validatePack(pack([readAloud('ok', words(18))])).errors).toEqual([]);
-  expect(validatePack(pack([readAloud('long', words(31))])).errors).toHaveLength(1);
+  expect(validatePack(pack([readAloud('new', words(36))])).errors).toEqual([]);
+  expect(validatePack(pack([readAloud('long', words(37))])).errors).toHaveLength(1);
  });
  it('rejects a duplicate id', () => {
   const result = validatePack(pack([choice('dup'), choice('dup', { text: 'Another one?' })]));
@@ -73,22 +74,32 @@ describe('challenge content pack', () => {
  it('curated bilingual pool has balanced themes, explanations and matching puzzles', () => {
   const bundled = read('../apps/ios/Resources/challenge-content.json');
   expect(validatePack(bundled).errors).toEqual([]);
-  expect(bundled.version).toBe(2);
+  expect(bundled.version).toBe(4);
+  expect(bundled.items).toHaveLength(204);
   for (const kind of ['readAloud', 'readAndChoose', 'riddle']) {
    const perTheme = kind === 'riddle' ? 3 : kind === 'readAndChoose' ? 4 : 6;
    for (const language of ['en', 'vi']) {
     const items = bundled.items.filter((i: any) => i.kind === kind && i.language === language);
-    expect(items).toHaveLength(perTheme * contentThemes.length);
-    for (const theme of contentThemes) expect(items.filter((i: any) => i.theme === theme)).toHaveLength(perTheme);
+    const base = items.filter((i: any) => !i.id.startsWith("library-v3-"));
+    expect(base).toHaveLength(perTheme * contentThemes.length);
+    for (const theme of contentThemes) expect(base.filter((i: any) => i.theme === theme)).toHaveLength(perTheme);
     for (const item of items) {
-     expect(item.source).toBe('himorning'); expect(item.license).toBe('original');
+     expect(item.source).toBe('himorning');
+     if (item.attribution) expect(item.attribution).toMatch(/https:\/\/[^/]+\.(nasa|noaa)\.gov\//);
+     expect(item.license).toBe('original');
+     if (kind === 'readAloud') {
+      if (language === 'en') {
+       expect(tokenCount(item.text)).toBeGreaterThanOrEqual(28);
+       expect(tokenCount(item.text)).toBeLessThanOrEqual(36);
+       expect(item.text.match(/[.!?]/g)).toHaveLength(2);
+      }
+      continue;
+     }
      const pair = bundled.items.find((other: any) => other.id === item.id.replace(`-${language}-`, `-${language === 'en' ? 'vi' : 'en'}-`));
      expect(pair?.theme).toBe(item.theme); expect(pair?.kind).toBe(item.kind);
-     if (kind !== 'readAloud') {
-      expect(item.explanation?.trim().length).toBeGreaterThan(10);
-      expect(item.explanation).not.toMatch(/(?:first|second|third) (?:option|choice)|option [ABC]|lựa chọn (?:thứ|[ABC])/iu);
-      expect(pair?.answerIndex).toBe(item.answerIndex);
-     }
+     expect(item.explanation?.trim().length).toBeGreaterThan(10);
+     expect(item.explanation).not.toMatch(/(?:first|second|third) (?:option|choice)|option [ABC]|lựa chọn (?:thứ|[ABC])/iu);
+     expect(pair?.answerIndex).toBe(item.answerIndex);
     }
    }
   }

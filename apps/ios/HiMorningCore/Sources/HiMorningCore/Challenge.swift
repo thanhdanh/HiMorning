@@ -155,7 +155,15 @@ public enum RecognizedWordMatch {
    }
   }
   var words=expected.map {Word(text:$0,status:.pending)},extras:[String]=[]
+  // Partial results align to a prefix so early words do not light up later repetitions.
   var i=expected.count,j=actual.count,hasLaterSpeech=false
+  if !finished {
+   i=0
+   for end in 1...expected.count {
+    let best=distance[i][j],candidate=distance[end][j]
+    if candidate<best || (candidate == best && abs(end-j)<abs(i-j)) {i=end}
+   }
+  }
   while i>0 || j>0 {
    if i>0,j>0,expected[i-1] == actual[j-1],distance[i][j] == distance[i-1][j-1] {
     words[i-1]=Word(text:expected[i-1],status:.correct)

@@ -1,7 +1,39 @@
+import java.net.URI
+import java.security.MessageDigest
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
+}
+
+val handModelUrl = "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task"
+val handModelSha256 = "fbc2a30080c3c557093b5ddfc334698132eb341044ccee322ccf8bcf3607cde1"
+val handModelAssets = layout.buildDirectory.dir("generated/hand-model")
+
+val prepareHandModel by tasks.registering {
+    inputs.property("url", handModelUrl)
+    inputs.property("sha256", handModelSha256)
+    outputs.file(handModelAssets.map { it.file("hand_landmarker.task") })
+    doLast {
+        val output = handModelAssets.get().file("hand_landmarker.task").asFile
+        val bytes = URI(handModelUrl).toURL().openConnection().apply {
+            connectTimeout = 15_000
+            readTimeout = 30_000
+        }.getInputStream().use { it.readNBytes(8_000_001) }
+        val sha256 = MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it) }
+        check(sha256 == handModelSha256) { "Unexpected checksum for the MediaPipe hand model." }
+        output.parentFile.mkdirs()
+        output.writeBytes(bytes)
+    }
+}
+
+val contentOrigin = providers.gradleProperty("himorningContentOrigin").orElse("").get()
+if (contentOrigin.isNotEmpty()) {
+    val origin = URI(contentOrigin)
+    require(origin.scheme == "https" && origin.host?.endsWith(".workers.dev") == true &&
+        origin.userInfo == null && origin.port == -1 && origin.rawQuery == null && origin.rawFragment == null &&
+        (origin.rawPath == "" || origin.rawPath == "/")) { "Use the same HTTPS Workers origin as iOS." }
 }
 
 android {
@@ -13,9 +45,12 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "0.1.0"
+        buildConfigField("String", "CONTENT_ORIGIN", "\"$contentOrigin\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-    buildFeatures { compose = true }
+    buildFeatures { compose = true; buildConfig = true }
+    androidResources { noCompress += "task" }
+    sourceSets.getByName("main").assets.srcDir(handModelAssets)
     bundle { language { enableSplit = false } }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -26,6 +61,8 @@ android {
 }
 
 kotlin { compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17) } }
+
+tasks.named("preBuild").configure { dependsOn(prepareHandModel) }
 
 dependencies {
     implementation(platform("androidx.compose:compose-bom:2025.09.01"))
@@ -39,7 +76,8 @@ dependencies {
     implementation("androidx.camera:camera-camera2:1.5.0")
     implementation("androidx.camera:camera-lifecycle:1.5.0")
     implementation("androidx.camera:camera-view:1.5.0")
-    implementation("com.google.mlkit:pose-detection-accurate:18.0.0-beta5")
+    implementation("com.google.mlkit:pose-detection:18.0.0-beta5")
+    implementation("com.google.mediapipe:tasks-vision:0.10.33")
     implementation("com.google.mlkit:face-detection:16.1.7")
     debugImplementation("androidx.compose.ui:ui-tooling")
     androidTestImplementation("androidx.test:runner:1.7.0")

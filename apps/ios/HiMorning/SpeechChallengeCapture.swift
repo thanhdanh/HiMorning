@@ -217,7 +217,7 @@ private actor SpeechAudioSession {
   }
   audioEngine.prepare()
   try audioEngine.start()
-  publish(token:token,message:"Listening… Read the sentence aloud.")
+  publish(token:token,message:"Listening… Read the English passage aloud.")
   guard isCurrent(token) else {return}
   timeoutTask=Task {[weak self] in
    guard let duration=self?.reading.listeningDuration else {return}

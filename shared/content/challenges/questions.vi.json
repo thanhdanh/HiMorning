@@ -1,0 +1,398 @@
+[
+  {
+    "id": "library-v3-vi-mercury-year",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "curiosity",
+    "text": "Hành tinh nào chỉ mất khoảng 88 ngày để đi một vòng quanh Mặt Trời?",
+    "choices": [
+      "Sao Thủy",
+      "Sao Kim",
+      "Sao Hỏa"
+    ],
+    "answerIndex": 0,
+    "explanation": "Sao Thủy ở gần Mặt Trời nhất và có năm ngắn nhất.",
+    "source": "himorning",
+    "license": "original",
+    "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/mercury/facts/"
+  },
+  {
+    "id": "library-v3-vi-venus-heat",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "curiosity",
+    "text": "Hành tinh nào có bề mặt nóng nhất Hệ Mặt Trời?",
+    "choices": [
+      "Sao Thủy",
+      "Sao Kim",
+      "Sao Hỏa"
+    ],
+    "answerIndex": 1,
+    "explanation": "Khí quyển dày của Sao Kim giữ nhiệt gần bề mặt.",
+    "source": "himorning",
+    "license": "original",
+    "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/resource/solar-system-temperatures/"
+  },
+  {
+    "id": "library-v3-vi-jupiter-day",
+    "kind": "readAndChoose",
+    "language": "vi",
+    "theme": "curiosity",
+    "text": "Sao Mộc tự quay một vòng trong khoảng 10 giờ. Trái Đất mất 24 giờ. Ngày trên hành tinh nào ngắn hơn?",
+    "choices": [
+      "Sao Mộc",
+      "Trái Đất",
+      "Dài bằng nhau"
+    ],
+    "answerIndex": 0,
+    "explanation": "Một ngày ở đây tính theo một vòng tự quay. Sao Mộc quay hết một vòng nhanh hơn Trái Đất.",
+    "source": "himorning",
+    "license": "original",
+    "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/jupiter/jupiter-facts/"
+  },
+  {
+    "id": "library-v3-vi-ganymede",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "curiosity",
+    "text": "Trong ba vệ tinh này, vệ tinh nào lớn hơn cả Sao Thủy?",
+    "choices": [
+      "Europa",
+      "Ganymede",
+      "Mặt Trăng"
+    ],
+    "answerIndex": 1,
+    "explanation": "Ganymede quay quanh Sao Mộc và là vệ tinh lớn nhất Hệ Mặt Trời.",
+    "source": "himorning",
+    "license": "original",
+    "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/jupiter/jupiter-moons/ganymede/facts/"
+  },
+  {
+    "id": "library-v3-vi-uranus-tilt",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "curiosity",
+    "text": "Hành tinh nào gần như nằm nghiêng sang một bên khi quay quanh Mặt Trời?",
+    "choices": [
+      "Trái Đất",
+      "Sao Hải Vương",
+      "Sao Thiên Vương"
+    ],
+    "answerIndex": 2,
+    "explanation": "Trục quay của Sao Thiên Vương nghiêng đến mức hành tinh trông như đang lăn quanh Mặt Trời.",
+    "source": "himorning",
+    "license": "original",
+    "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/uranus/facts/"
+  },
+  {
+    "id": "library-v3-vi-outer-order",
+    "kind": "readAndChoose",
+    "language": "vi",
+    "theme": "curiosity",
+    "text": "Mô hình xếp Sao Mộc, Sao Thổ, Sao Thiên Vương và Sao Hải Vương theo thứ tự xa dần Mặt Trời. Hành tinh nào nằm giữa Sao Thổ và Sao Hải Vương?",
+    "choices": [
+      "Sao Mộc",
+      "Sao Thiên Vương",
+      "Trái Đất"
+    ],
+    "answerIndex": 1,
+    "explanation": "Sao Thiên Vương đứng ngay sau Sao Thổ và ngay trước Sao Hải Vương.",
+    "source": "himorning",
+    "license": "original",
+    "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/solar-system/planets/"
+  },
+  {
+    "id": "library-v3-vi-titan",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "curiosity",
+    "text": "Titan có các hồ mê-tan lỏng. Vệ tinh này quay quanh hành tinh nào?",
+    "choices": [
+      "Sao Thổ",
+      "Sao Hỏa",
+      "Sao Mộc"
+    ],
+    "answerIndex": 0,
+    "explanation": "Titan là vệ tinh của Sao Thổ. Các hồ trên đó chứa mê-tan và các hydrocarbon khác.",
+    "source": "himorning",
+    "license": "original",
+    "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/saturn/facts/"
+  },
+  {
+    "id": "library-v3-vi-rocky-planet",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "curiosity",
+    "text": "Trong ba hành tinh sau, hành tinh nào thuộc nhóm hành tinh đá?",
+    "choices": [
+      "Sao Hải Vương",
+      "Sao Hỏa",
+      "Sao Thổ"
+    ],
+    "answerIndex": 1,
+    "explanation": "Sao Hỏa là một trong bốn hành tinh đá nằm gần Mặt Trời nhất.",
+    "source": "himorning",
+    "license": "original",
+    "attribution": "Original wording by HiMorning. Factual reference: NASA Science · https://science.nasa.gov/solar-system/solar-system-facts/"
+  },
+  {
+    "id": "library-v3-vi-pacific",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "cityAndTravel",
+    "text": "Đại dương nào vừa rộng nhất vừa sâu nhất?",
+    "choices": [
+      "Đại Tây Dương",
+      "Ấn Độ Dương",
+      "Thái Bình Dương"
+    ],
+    "answerIndex": 2,
+    "explanation": "Thái Bình Dương đứng đầu cả về diện tích lẫn độ sâu.",
+    "source": "himorning",
+    "license": "original",
+    "attribution": "Original wording by HiMorning. Factual reference: NOAA · https://oceanservice.noaa.gov/facts/biggestocean.html"
+  },
+  {
+    "id": "library-v3-vi-octopus-hearts",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "curiosity",
+    "text": "Bạch tuộc có mấy trái tim?",
+    "choices": [
+      "Một",
+      "Hai",
+      "Ba"
+    ],
+    "answerIndex": 2,
+    "explanation": "Hai tim bơm máu tới mang. Tim còn lại đưa máu đi khắp cơ thể.",
+    "source": "himorning",
+    "license": "original",
+    "attribution": "Original wording by HiMorning. Factual reference: NOAA · https://www.noaa.gov/stories/love-is-in-air-and-sea-5-facts-about-affections-of-marine-creatures"
+  },
+  {
+    "id": "library-v3-vi-coral",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "curiosity",
+    "text": "Rạn san hô trông như một khu vườn. Bản thân san hô thuộc nhóm nào?",
+    "choices": [
+      "Động vật",
+      "Thực vật",
+      "Đá"
+    ],
+    "answerIndex": 0,
+    "explanation": "Mỗi cụm san hô gồm nhiều động vật nhỏ gọi là polyp.",
+    "source": "himorning",
+    "license": "original",
+    "attribution": "Original wording by HiMorning. Factual reference: NOAA · https://oceanexplorer.noaa.gov/ocean-fact/coral-animal/"
+  },
+  {
+    "id": "library-v3-vi-tide-pull",
+    "kind": "readAndChoose",
+    "language": "vi",
+    "theme": "curiosity",
+    "text": "Biểu đồ thủy triều tính đến sức hút của Mặt Trăng và Mặt Trời. Đó là lực gì?",
+    "choices": [
+      "Lực từ",
+      "Lực hấp dẫn",
+      "Sức gió"
+    ],
+    "answerIndex": 1,
+    "explanation": "Lực hấp dẫn của Mặt Trăng và Mặt Trời góp phần tạo ra thủy triều.",
+    "source": "himorning",
+    "license": "original",
+    "attribution": "Original wording by HiMorning. Factual reference: NOAA · https://www.noaa.gov/education/resource-collections/ocean-coasts/tides"
+  },
+  {
+    "id": "library-v3-vi-train",
+    "kind": "readAndChoose",
+    "language": "vi",
+    "theme": "cityAndTravel",
+    "text": "Chuyến tàu 7:40 bỏ qua ga Đồi. Chuyến 7:48 có dừng. Bạn có hẹn gần ga Đồi. Nên đi chuyến nào?",
+    "choices": [
+      "7:40",
+      "7:48",
+      "Chuyến nào cũng được"
+    ],
+    "answerIndex": 1,
+    "explanation": "Trong hai chuyến, chỉ chuyến 7:48 dừng ở ga Đồi.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "library-v3-vi-library-return",
+    "kind": "readAndChoose",
+    "language": "vi",
+    "theme": "workAndStudy",
+    "text": "Sách đến hạn trả vào thứ Ba. Hôm đó thư viện đóng cửa, nhưng khe trả sách vẫn mở. Bạn có trả được vào thứ Ba không?",
+    "choices": [
+      "Có, bỏ vào khe trả sách",
+      "Không, phải trả thứ Hai",
+      "Chỉ khi mượn lại sách"
+    ],
+    "answerIndex": 0,
+    "explanation": "Khe trả sách vẫn mở dù thư viện đóng cửa.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "library-v3-vi-drop-off",
+    "kind": "readAndChoose",
+    "language": "vi",
+    "theme": "peopleAndPlans",
+    "text": "Minh nhắn: “Cứ gửi túi ở quầy lễ tân. Có gì đổi mình nhắn sau.” Minh chưa nhắn thêm. Bạn gửi túi ở đâu?",
+    "choices": [
+      "Quầy lễ tân",
+      "Bên ngoài tòa nhà",
+      "Mang về nhà"
+    ],
+    "answerIndex": 0,
+    "explanation": "Chưa có gì thay đổi nên bạn vẫn gửi túi ở quầy lễ tân.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "library-v3-vi-recipe",
+    "kind": "readAndChoose",
+    "language": "vi",
+    "theme": "everydayLife",
+    "text": "Công thức cho bốn người dùng hai quả trứng. Bạn làm nửa phần. Cần mấy quả trứng?",
+    "choices": [
+      "Một",
+      "Hai",
+      "Bốn"
+    ],
+    "answerIndex": 0,
+    "explanation": "Làm nửa phần thì dùng nửa số trứng, tức một quả.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "library-v3-vi-cinema",
+    "kind": "readAndChoose",
+    "language": "vi",
+    "theme": "creativeBreaks",
+    "text": "Rạp phim ghi: “Sau 8 giờ tối, vui lòng đi cửa B.” Bạn tới lúc 8:10 tối. Bạn đi cửa nào?",
+    "choices": [
+      "Cửa A",
+      "Cửa B",
+      "Cửa nào cũng được"
+    ],
+    "answerIndex": 1,
+    "explanation": "8:10 tối đã qua mốc 8 giờ nên bạn đi cửa B.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "library-v3-vi-park",
+    "kind": "readAndChoose",
+    "language": "vi",
+    "theme": "cityAndTravel",
+    "text": "Hai lối đi đều dẫn tới công viên. Một lối cho xe đạp, lối kia chỉ dành cho người đi bộ. Bạn được đạp xe ở lối nào?",
+    "choices": [
+      "Cả hai lối",
+      "Lối đi bộ",
+      "Lối cho xe đạp"
+    ],
+    "answerIndex": 2,
+    "explanation": "Chỉ một lối có biển cho phép xe đạp.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "library-v3-vi-shirts",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "everydayLife",
+    "text": "Ngăn kéo chỉ có tất đen và tất trắng. Trong bóng tối, bạn phải lấy ít nhất mấy chiếc để chắc chắn có một đôi cùng màu?",
+    "choices": [
+      "Hai",
+      "Ba",
+      "Bốn"
+    ],
+    "answerIndex": 1,
+    "explanation": "Hai chiếc đầu có thể khác màu. Chiếc thứ ba chắc chắn trùng màu với một chiếc đã lấy.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "library-v3-vi-ticket-number",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "cityAndTravel",
+    "text": "Số vé của mình là số chẵn lớn hơn 35 và nhỏ hơn 41. Tổng hai chữ số là 11. Số vé là bao nhiêu?",
+    "choices": [
+      "36",
+      "38",
+      "40"
+    ],
+    "answerIndex": 1,
+    "explanation": "Trong ba số chẵn này, chỉ 38 có hai chữ số cộng lại bằng 11.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "library-v3-vi-race",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "peopleAndPlans",
+    "text": "Bạn vượt qua người đang chạy thứ hai. Giờ bạn đứng thứ mấy?",
+    "choices": [
+      "Thứ nhất",
+      "Thứ hai",
+      "Thứ ba"
+    ],
+    "answerIndex": 1,
+    "explanation": "Bạn chiếm vị trí thứ hai. Người dẫn đầu vẫn ở phía trước.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "library-v3-vi-clock",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "everydayLife",
+    "text": "Một chiếc đồng hồ chạy chậm một phút mỗi giờ. Lúc 12 giờ trưa, nó chỉ đúng giờ. Đến 4 giờ chiều, nó chỉ mấy giờ?",
+    "choices": [
+      "3:56",
+      "4:00",
+      "4:04"
+    ],
+    "answerIndex": 0,
+    "explanation": "Sau bốn giờ, đồng hồ chậm bốn phút.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "library-v3-vi-tiles",
+    "kind": "riddle",
+    "language": "vi",
+    "theme": "creativeBreaks",
+    "text": "Một hàng gạch lặp theo thứ tự xanh, vàng, trắng. Viên thứ 11 màu gì?",
+    "choices": [
+      "Xanh",
+      "Vàng",
+      "Trắng"
+    ],
+    "answerIndex": 1,
+    "explanation": "Viên 9 khép lại nhóm thứ ba. Viên 10 màu xanh, viên 11 màu vàng.",
+    "source": "himorning",
+    "license": "original"
+  },
+  {
+    "id": "library-v3-vi-shelter",
+    "kind": "readAndChoose",
+    "language": "vi",
+    "theme": "peopleAndPlans",
+    "text": "Trạm cứu hộ đang xin khăn sạch và đã có đủ chăn. Nếu chỉ mang được một món, bạn nên mang gì?",
+    "choices": [
+      "Một chiếc khăn sạch",
+      "Một chiếc chăn",
+      "Một chiếc khăn chưa giặt"
+    ],
+    "answerIndex": 0,
+    "explanation": "Trạm đang cần khăn sạch.",
+    "source": "himorning",
+    "license": "original"
+  }
+]

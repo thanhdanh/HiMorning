@@ -21,7 +21,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.BarChart
 import androidx.compose.material.icons.outlined.DeleteOutline
@@ -47,6 +46,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -58,9 +58,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -82,19 +84,17 @@ import com.himorning.android.core.MorningEntry
 import com.himorning.android.core.MorningFocus
 import com.himorning.android.core.ScheduleState
 import com.himorning.android.core.WakeMode
-import com.himorning.android.core.WakeOutcome
+import com.himorning.android.core.completedChallenge
 import com.himorning.android.core.mission
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.Date
 import java.util.Locale
 import kotlin.math.min
 
 @Composable
 internal fun MorningHomeScreen(
     state: AppState,
-    previewDays: Int,
     purposeChosen: Boolean,
     suggestedMission: Alarm,
     onAdd: () -> Unit,
@@ -104,9 +104,9 @@ internal fun MorningHomeScreen(
     onPractice: (Alarm) -> Unit,
     onExplore: () -> Unit,
     onProgress: () -> Unit,
-    onPro: () -> Unit,
     onLanguage: () -> Unit,
     onPurpose: () -> Unit,
+    onQuickPractice: () -> Unit,
     onMissionPractice: () -> Unit,
     onMissionPlan: () -> Unit,
     onRestartJourney: () -> Unit,
@@ -120,8 +120,7 @@ internal fun MorningHomeScreen(
         verticalArrangement = Arrangement.spacedBy(18.dp),
     ) {
         val locale = homeLocale()
-        HomeHeader(onProgress, onPro, onLanguage)
-        JourneyCard(state, previewDays, suggestedMission, purposeChosen, onPurpose, onMissionPractice, onMissionPlan, onRestartJourney, onProgress, onPro)
+        HomeHeader(onProgress, onLanguage)
         Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(stringResource(R.string.home_alarms), style = MaterialTheme.typography.headlineMedium, fontFamily = quicksandFont, color = colors.ink)
@@ -129,27 +128,32 @@ internal fun MorningHomeScreen(
                 Text(DateTimeFormatter.ofPattern("EEE, MMM d", locale).format(java.time.LocalDate.now()),
                     style = MaterialTheme.typography.bodySmall, color = colors.muted)
             }
-            if (state.alarms.isEmpty() && !purposeChosen) FirstMorningCard(onPractice = onMissionPractice)
-            errorContent()
-            readiness()
-            state.alarms.sortedWith(compareBy<Alarm> { it.hour }.thenBy { it.minute }).forEach { alarm ->
+            val now = Instant.now()
+            state.alarms.sortedWith(compareBy<Alarm> { alarm ->
+                if (alarm.enabled && alarm.state == ScheduleState.CONFIRMED)
+                    alarm.scheduledAt?.let(Instant::ofEpochMilli)?.takeIf { it > now } ?: Instant.MAX
+                else Instant.MAX
+            }.thenBy { it.hour }.thenBy { it.minute }).forEach { alarm ->
                 AlarmCard(alarm, state.entries, onEdit, onToggle, onDelete, onPractice)
             }
             MorningButton(
-                text = stringResource(R.string.home_add_alarm), onClick = onAdd, leadingIcon = Icons.Outlined.Add,
+                text = stringResource(if (state.alarms.isEmpty()) R.string.set_an_alarm else R.string.home_add_alarm), onClick = onAdd, leadingIcon = Icons.Outlined.Add,
             )
+            if (state.alarms.isEmpty()) FirstMorningCard(onPractice = onQuickPractice)
+            errorContent()
+            readiness()
             MorningButton(
                 text = stringResource(R.string.home_explore), onClick = onExplore, primary = false,
                 leadingIcon = challengeIcon(ChallengeKind.READ_AND_CHOOSE),
             )
         }
+        JourneyCard(state, suggestedMission, purposeChosen, onPurpose, onMissionPractice, onMissionPlan, onRestartJourney, onProgress)
         if (state.alarms.isNotEmpty() || state.entries.isNotEmpty()) RecentWinsCard(state.entries, onProgress)
-        PreviewFooter(state, previewDays, onPro)
     }
 }
 
 @Composable
-private fun HomeHeader(onProgress: () -> Unit, onPro: () -> Unit, onLanguage: () -> Unit) {
+private fun HomeHeader(onProgress: () -> Unit, onLanguage: () -> Unit) {
     val stack = LocalDensity.current.fontScale >= 1.3f
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -158,19 +162,18 @@ private fun HomeHeader(onProgress: () -> Unit, onPro: () -> Unit, onLanguage: ()
                 color = MorningTheme.colors.ink, maxLines = 1)
             if (!stack) {
                 Spacer(Modifier.weight(1f))
-                HomeHeaderActions(onProgress, onPro, onLanguage)
+                HomeHeaderActions(onProgress, onLanguage)
             }
         }
         if (stack) Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically) { HomeHeaderActions(onProgress, onPro, onLanguage) }
+            verticalAlignment = Alignment.CenterVertically) { HomeHeaderActions(onProgress, onLanguage) }
     }
 }
 
 @Composable
-private fun HomeHeaderActions(onProgress: () -> Unit, onPro: () -> Unit, onLanguage: () -> Unit) {
+private fun HomeHeaderActions(onProgress: () -> Unit, onLanguage: () -> Unit) {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
         MorningIconButton(Icons.Outlined.BarChart, stringResource(R.string.home_progress), onProgress)
-        MorningIconButton(Icons.Outlined.WbSunny, stringResource(R.string.home_pro), onPro)
         MorningIconButton(Icons.Outlined.Language, stringResource(R.string.language), onLanguage)
     }
 }
@@ -178,7 +181,6 @@ private fun HomeHeaderActions(onProgress: () -> Unit, onPro: () -> Unit, onLangu
 @Composable
 private fun JourneyCard(
     state: AppState,
-    previewDays: Int,
     suggestedMission: Alarm,
     purposeChosen: Boolean,
     onPurpose: () -> Unit,
@@ -186,15 +188,13 @@ private fun JourneyCard(
     onPlan: () -> Unit,
     onRestartJourney: () -> Unit,
     onProgress: () -> Unit,
-    onPro: () -> Unit,
 ) {
     val journey = state.journey
     val colors = MorningTheme.colors
     val completed = journey.completions.size.coerceIn(0, 7)
     val todayComplete = journey.completedToday()
     val missionIndex = journey.missionIndex()
-    val hasFullAccess = previewDays > 0
-    val mission = if (todayComplete || journey.complete) journey.focus.mission(missionIndex, hasFullAccess) else suggestedMission.challenge
+    val mission = if (todayComplete || journey.complete) journey.focus.mission(missionIndex, true) else suggestedMission.challenge
     var reflectionOpen by remember { mutableStateOf(false) }
 
     Column(
@@ -206,57 +206,30 @@ private fun JourneyCard(
                 Icon(focusIcon(journey.focus), contentDescription = null, tint = colors.ink, modifier = Modifier.size(28.dp))
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     Text(stringResource(focusText(journey.focus)), style = MaterialTheme.typography.titleLarge, color = colors.ink)
-                    Text(stringResource(R.string.home_journey_count, completed), style = MaterialTheme.typography.bodyLarge, color = colors.ink)
+                    Text(stringResource(R.string.morning_round, completed), style = MaterialTheme.typography.bodyLarge, color = colors.ink)
                 }
-                MorningIconButton(Icons.Outlined.Edit, stringResource(R.string.home_change_purpose), onPurpose)
-            }
-            val journeyDescription = stringResource(R.string.home_journey_count, completed)
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.semantics { contentDescription = journeyDescription }) {
-                (0 until 7).forEach { day ->
-                    Box(Modifier.size(28.dp).clip(CircleShape).background(if (day < completed) colors.success else Color.Transparent)
-                        .border(if (day < completed) 0.dp else 1.5.dp, if (day < completed) colors.success else colors.muted, CircleShape),
-                        contentAlignment = Alignment.Center) {
-                        if (day < completed) Icon(Icons.Outlined.CheckCircle, contentDescription = null, tint = Color.White, modifier = Modifier.size(20.dp))
-                    }
-                }
+                TextButton(onClick = onPurpose) { Text(stringResource(R.string.home_change_purpose)) }
             }
         }
         if (!purposeChosen) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                MorningSun(size = 48.dp)
-                Text(stringResource(R.string.home_give_tomorrow_reason), style = MaterialTheme.typography.headlineSmall, color = colors.ink)
-            }
-            Text(stringResource(R.string.home_choose_purpose_intro), style = MaterialTheme.typography.bodyLarge, color = colors.ink)
-            MorningButton(stringResource(R.string.home_choose_purpose), onPurpose, primary = true)
+            Text(stringResource(R.string.home_choose_purpose_intro), style = MaterialTheme.typography.bodyMedium, color = colors.muted)
+            TextButton(onClick = onPurpose) { Text(stringResource(R.string.home_choose_purpose)) }
         } else if (journey.complete) {
             Text(stringResource(R.string.home_journey_complete), style = MaterialTheme.typography.headlineSmall, color = colors.ink)
             Text(stringResource(R.string.home_journey_complete_detail), style = MaterialTheme.typography.bodyMedium, color = colors.muted)
             MorningButton(stringResource(R.string.home_restart_journey), onRestartJourney, primary = true)
         } else if (todayComplete) {
-            Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                Icon(Icons.Outlined.CheckCircle, contentDescription = null, tint = colors.success, modifier = Modifier.size(30.dp))
-                Text(stringResource(R.string.home_journey_today), style = MaterialTheme.typography.headlineSmall, color = colors.ink)
-            }
-            if (completed == 3) Text(stringResource(R.string.home_journey_three), style = MaterialTheme.typography.bodyLarge, color = colors.ink)
-            Text(stringResource(R.string.home_tomorrow_mission, stringResource(challengeText(journey.focus.mission(completed, hasFullAccess)))),
-                style = MaterialTheme.typography.bodyLarge, color = colors.ink)
-            MorningButton(stringResource(R.string.home_prepare_mission), onPlan, primary = true)
-            Text(stringResource(R.string.home_current_alarm_kept), style = MaterialTheme.typography.bodySmall, color = colors.muted)
+            Text(stringResource(R.string.home_journey_today), style = MaterialTheme.typography.titleSmall, color = colors.success)
+            MorningButton(stringResource(R.string.home_prepare_mission), onPlan, primary = false)
         } else {
             Text(stringResource(R.string.home_suggested_mission), style = MaterialTheme.typography.labelLarge, color = colors.muted)
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                Icon(challengeIcon(mission), contentDescription = null, tint = challengeColor(mission), modifier = Modifier.size(25.dp))
+                Icon(challengeIcon(mission), contentDescription = null, tint = MorningTheme.modeAccent(preferredMode(mission)), modifier = Modifier.size(25.dp))
                 Text(stringResource(challengeText(mission)), style = MaterialTheme.typography.titleLarge, color = colors.ink)
-            }
-            Text(missionReason(mission, journey), style = MaterialTheme.typography.bodyMedium, color = colors.ink)
-            if (journey.focus == MorningFocus.ENERGIZE && !hasFullAccess) {
-                Text(stringResource(R.string.home_path_preview_ended), style = MaterialTheme.typography.bodySmall, color = colors.muted)
             }
             MorningButton(stringResource(R.string.home_try_mission), onPractice, primary = false,
                 leadingIcon = Icons.Outlined.PlayArrow)
-            MorningButton(stringResource(R.string.home_plan_mission), onPlan, primary = true)
-            Text(stringResource(R.string.home_no_streak), style = MaterialTheme.typography.bodySmall, color = colors.muted)
+            MorningButton(stringResource(R.string.home_plan_mission), onPlan, primary = false)
         }
         if (purposeChosen) {
             val reflectionLabel = stringResource(R.string.home_reflection)
@@ -270,16 +243,11 @@ private fun JourneyCard(
             }
             if (reflectionOpen) {
                 val days = completedDays(state.entries, 30)
-                if (hasFullAccess) {
-                    Text(stringResource(R.string.home_reflection_days, days), style = MaterialTheme.typography.bodyMedium, color = colors.ink)
-                    val kind = favoriteChallenge(state.entries)
-                    if (kind != null) Text(stringResource(R.string.home_reflection_pattern, stringResource(challengeText(kind))), style = MaterialTheme.typography.bodyMedium, color = colors.ink)
-                    Text(stringResource(R.string.home_reflection_scope), style = MaterialTheme.typography.bodySmall, color = colors.muted)
-                    TextButton(onClick = onProgress) { Text(stringResource(R.string.home_30day_progress)) }
-                } else {
-                    Text(stringResource(R.string.home_pro_explainer), style = MaterialTheme.typography.bodySmall, color = colors.muted)
-                    TextButton(onClick = onPro) { Text(stringResource(R.string.home_explore_pro)) }
+                Text(stringResource(R.string.home_reflection_days, days), style = MaterialTheme.typography.bodyMedium, color = colors.ink)
+                favoriteChallenge(state.entries)?.let { kind ->
+                    Text(stringResource(R.string.home_reflection_pattern, stringResource(challengeText(kind))), style = MaterialTheme.typography.bodyMedium, color = colors.ink)
                 }
+                TextButton(onClick = onProgress) { Text(stringResource(R.string.home_30day_progress)) }
             }
         }
     }
@@ -287,21 +255,16 @@ private fun JourneyCard(
 
 @Composable
 private fun FirstMorningCard(onPractice: () -> Unit) {
-    Column(Modifier.fillMaxWidth().morningSurface(MorningTheme.colors.hero, radius = 24.dp, tint = MorningTheme.colors.yellow).padding(20.dp),
-        verticalArrangement = Arrangement.spacedBy(13.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            MorningSun(size = 64.dp)
-            Text(stringResource(R.string.home_first_title), style = MaterialTheme.typography.headlineSmall, color = MorningTheme.colors.onYellow)
-        }
-        Text(stringResource(R.string.home_first_subtitle), style = MaterialTheme.typography.bodyLarge, color = MorningTheme.colors.onYellow)
-        Column(verticalArrangement = Arrangement.spacedBy(7.dp)) {
-            Text(stringResource(R.string.home_first_step1), color = MorningTheme.colors.onYellow, style = MaterialTheme.typography.bodyMedium)
-            Text(stringResource(R.string.home_first_step2), color = MorningTheme.colors.onYellow, style = MaterialTheme.typography.bodyMedium)
-            Text(stringResource(R.string.home_first_step3), color = MorningTheme.colors.onYellow, style = MaterialTheme.typography.bodyMedium)
-        }
-        MorningButton(stringResource(R.string.home_try_reading), onPractice, primary = false, leadingIcon = Icons.Outlined.PlayArrow)
-        Text(stringResource(R.string.home_no_permissions_practice), style = MaterialTheme.typography.bodySmall, color = MorningTheme.colors.onYellow.copy(alpha = .75f))
+    val colors = MorningTheme.colors
+    Column(
+        Modifier.fillMaxWidth().morningSurface(colors.soft, radius = 24.dp, tint = colors.yellow, elevated = false).padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(stringResource(R.string.home_first_title), style = MaterialTheme.typography.titleMedium, color = colors.ink)
+        Text(stringResource(R.string.home_first_subtitle), style = MaterialTheme.typography.bodyMedium, color = colors.muted)
+        TextButton(onClick = onPractice) { Text(stringResource(R.string.home_try_reading)) }
     }
+
 }
 
 @Composable
@@ -315,14 +278,20 @@ private fun AlarmCard(
 ) {
     val colors = MorningTheme.colors
     val tryLabel = stringResource(R.string.home_try_challenge)
-    val toggleLabel = stringResource(if (alarm.enabled) R.string.home_turn_off else R.string.home_turn_on)
+    val now = System.currentTimeMillis()
+    val confirmedAt = alarm.scheduledAt?.takeIf { it > now }?.let(Instant::ofEpochMilli)
+    val armed = alarm.enabled && alarm.state == ScheduleState.CONFIRMED && confirmedAt != null
+    val needsReview = alarm.state == ScheduleState.NEEDS_REVIEW ||
+        (alarm.state == ScheduleState.CONFIRMED && alarm.enabled && confirmedAt == null)
+    val toggleLabel = stringResource(if (armed) R.string.home_turn_off else R.string.home_turn_on)
     val optionsLabel = stringResource(R.string.home_alarm_options)
     val density = LocalDensity.current
     val stack = density.fontScale >= 1.3f || LocalConfiguration.current.screenWidthDp < 380
-    val card = if (alarm.enabled) colors.alarmCard else colors.soft
-    val ink = if (alarm.enabled) colors.onYellow else colors.muted
-    val now = System.currentTimeMillis()
-    val completeToday = entries.any { it.alarmId == alarm.id && isSuccessful(it.outcome) && sameLocalDay(it.date, now) }
+    val ink = if (armed) colors.onYellow else colors.ink
+    val detailInk = if (armed) MorningTheme.alarmDetailOnYellow else colors.muted
+    val clockInk = if (alarm.enabled) ink else colors.alarmClockOff
+    val shape = RoundedCornerShape(26.dp)
+    val completeToday = entries.any { it.alarmId == alarm.id && it.completedChallenge && sameLocalDay(it.date, now) }
     var menuExpanded by remember { mutableStateOf(false) }
     val cardInteractions = remember { MutableInteractionSource() }
     val playInteractions = remember { MutableInteractionSource() }
@@ -331,35 +300,40 @@ private fun AlarmCard(
     Column(
         Modifier.fillMaxWidth()
             .morningPress(cardInteractions)
-            .morningSurface(card, radius = 26.dp, tint = colors.yellow, elevated = alarm.enabled)
+            .clip(shape)
+            .then(if (armed) Modifier.background(Brush.linearGradient(listOf(MorningTheme.alarmCardHighlight, colors.yellow)))
+                else Modifier.background(colors.surface))
+            .border(1.dp, if (armed) MorningTheme.alarmCardEdge else colors.line, shape)
             .clickable(interactionSource = cardInteractions, indication = LocalIndication.current) { onEdit(alarm, AlarmEditorScope.ALL) }
             .padding(18.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         if (stack) {
-            AlarmScheduleContent(alarm, ink, onEdit)
-            ChallengeSummary(alarm, ink, onEdit, stacked = true)
+            AlarmTimeColumn(alarm, ink, clockInk, detailInk, onEdit)
+            ChallengeSummary(alarm, ink, onEdit, stacked = true, onYellow = armed)
         } else {
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.Top) {
-                Box(Modifier.weight(1f)) { AlarmScheduleContent(alarm, ink, onEdit) }
-                ChallengeSummary(alarm, ink, onEdit, stacked = false, modifier = Modifier.widthIn(max = 138.dp))
+                Box(Modifier.weight(1f)) { AlarmTimeColumn(alarm, ink, clockInk, detailInk, onEdit) }
+                ChallengeSummary(alarm, ink, onEdit, stacked = false, onYellow = armed, modifier = Modifier.widthIn(max = 138.dp))
             }
         }
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Icon(Icons.Outlined.VolumeUp, contentDescription = null, tint = ink, modifier = Modifier.size(18.dp))
-            Text(stringResource(soundText(alarm.sound)), style = MaterialTheme.typography.bodySmall, color = ink)
+        val status = when {
+            needsReview -> stringResource(stateText(ScheduleState.NEEDS_REVIEW))
+            alarm.state == ScheduleState.PENDING -> stringResource(stateText(ScheduleState.PENDING))
+            armed -> nextOccurrence(confirmedAt)
+            else -> stringResource(stateText(ScheduleState.OFF))
         }
-        Divider(color = colors.onYellow.copy(alpha = if (alarm.enabled) .12f else 0f), thickness = 1.dp)
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                when {
-                    alarm.state == ScheduleState.NEEDS_REVIEW -> Text(stringResource(stateText(ScheduleState.NEEDS_REVIEW)), style = MaterialTheme.typography.labelMedium, color = ink)
-                    alarm.state == ScheduleState.PENDING -> Text(stringResource(stateText(ScheduleState.PENDING)), style = MaterialTheme.typography.labelMedium, color = ink)
-                    alarm.enabled -> Text(nextOccurrence(alarm), style = MaterialTheme.typography.bodySmall, color = ink.copy(alpha = .8f))
-                    else -> Text(stringResource(stateText(ScheduleState.OFF)), style = MaterialTheme.typography.bodySmall, color = ink)
-                }
-                if (completeToday) Text(stringResource(R.string.home_completed_today), style = MaterialTheme.typography.bodySmall, color = ink)
+        Divider(color = ink.copy(alpha = .14f), thickness = 1.dp)
+        val statusLabels: @Composable () -> Unit = {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(status, style = MaterialTheme.typography.bodySmall, color = if (needsReview) ink else detailInk)
+                if (completeToday) Text(stringResource(R.string.home_completed_today), style = MaterialTheme.typography.bodySmall,
+                    color = if (armed) MorningTheme.successOnYellow else colors.success)
             }
+        }
+        if (stack) statusLabels()
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            if (stack) Spacer(Modifier.weight(1f)) else Box(Modifier.weight(1f)) { statusLabels() }
             if (alarm.enabled && alarm.challenge != ChallengeKind.NONE) {
                 IconButton(onClick = { onPractice(alarm) }, interactionSource = playInteractions,
                     modifier = Modifier.size(48.dp).morningPress(playInteractions)
@@ -367,8 +341,12 @@ private fun AlarmCard(
                     Icon(Icons.Outlined.PlayArrow, contentDescription = null, tint = ink, modifier = Modifier.size(26.dp))
                 }
             }
-            Switch(checked = alarm.enabled, onCheckedChange = { onToggle(alarm, it) }, colors = androidx.compose.material3.SwitchDefaults.colors(
-                checkedThumbColor = Color.White, checkedTrackColor = Color(0xFF44634A), checkedBorderColor = Color.Transparent,
+            if (needsReview) {
+                TextButton(onClick = { onToggle(alarm, alarm.enabled) }) {
+                    Text(stringResource(if (alarm.enabled) R.string.retry_alarm_schedule else R.string.retry_alarm_off))
+                }
+            } else Switch(checked = armed, enabled = alarm.state != ScheduleState.PENDING, onCheckedChange = { onToggle(alarm, it) }, colors = SwitchDefaults.colors(
+                checkedThumbColor = Color.White, checkedTrackColor = MorningTheme.alarmSwitchOn, checkedBorderColor = Color.Transparent,
                 uncheckedThumbColor = colors.muted, uncheckedTrackColor = colors.surface, uncheckedBorderColor = colors.muted), modifier = Modifier.semantics {
                 contentDescription = toggleLabel
             })
@@ -381,6 +359,10 @@ private fun AlarmCard(
                 DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
                     DropdownMenuItem(text = { Text(stringResource(R.string.home_edit_alarm)) }, leadingIcon = { Icon(Icons.Outlined.Edit, null) },
                         onClick = { menuExpanded = false; onEdit(alarm, AlarmEditorScope.ALL) })
+                    if (alarm.enabled && needsReview) {
+                        DropdownMenuItem(text = { Text(stringResource(R.string.home_turn_off)) },
+                            onClick = { menuExpanded = false; onToggle(alarm, false) })
+                    }
                     DropdownMenuItem(text = { Text(stringResource(R.string.home_delete_alarm)) }, leadingIcon = { Icon(Icons.Outlined.DeleteOutline, null) },
                         onClick = { menuExpanded = false; onDelete(alarm) })
                 }
@@ -390,7 +372,18 @@ private fun AlarmCard(
 }
 
 @Composable
-private fun AlarmScheduleContent(alarm: Alarm, ink: Color, onEdit: (Alarm, AlarmEditorScope) -> Unit) {
+private fun AlarmTimeColumn(alarm: Alarm, ink: Color, clockInk: Color, detailInk: Color, onEdit: (Alarm, AlarmEditorScope) -> Unit) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        AlarmScheduleContent(alarm, ink, clockInk, detailInk, onEdit)
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            Icon(Icons.Outlined.VolumeUp, contentDescription = null, tint = detailInk, modifier = Modifier.size(16.dp))
+            Text(stringResource(soundText(alarm.sound)), style = MaterialTheme.typography.bodySmall, color = detailInk)
+        }
+    }
+}
+
+@Composable
+private fun AlarmScheduleContent(alarm: Alarm, ink: Color, clockInk: Color, detailInk: Color, onEdit: (Alarm, AlarmEditorScope) -> Unit) {
     val scheduleLabel = stringResource(R.string.home_edit_schedule)
     val interactions = remember { MutableInteractionSource() }
     Column(Modifier.fillMaxWidth().morningPress(interactions)
@@ -399,35 +392,38 @@ private fun AlarmScheduleContent(alarm: Alarm, ink: Color, onEdit: (Alarm, Alarm
         .padding(vertical = 3.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         if (alarm.label.isNotBlank()) Text(alarm.label, style = MaterialTheme.typography.titleSmall, color = ink, maxLines = 2, overflow = TextOverflow.Ellipsis)
         Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            val hour = alarm.hour % 12
-            val displayHour = if (hour == 0) 12 else hour
-            Text("%02d:%02d".format(displayHour, alarm.minute), style = MaterialTheme.typography.displaySmall.copy(fontSize = 48.sp, fontWeight = FontWeight.Medium, fontFeatureSettings = "tnum"), color = ink, maxLines = 1)
-            Text(if (alarm.hour < 12) stringResource(R.string.home_am) else stringResource(R.string.home_pm), style = MaterialTheme.typography.labelMedium, color = ink, modifier = Modifier.padding(bottom = 5.dp))
+            Text(alarmTimeText(LocalContext.current, alarm),
+                style = MaterialTheme.typography.displaySmall.copy(fontSize = 42.sp, fontWeight = FontWeight.Medium, fontFeatureSettings = "tnum"),
+                color = clockInk, maxLines = 1)
+
         }
         if (alarm.enabled) {
             Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-                Icon(if (alarm.weekdays.isEmpty()) Icons.Outlined.Event else Icons.Outlined.Repeat, null, tint = ink.copy(alpha = .8f), modifier = Modifier.size(16.dp))
-                Text(repeatSummary(alarm), style = MaterialTheme.typography.bodySmall, color = ink.copy(alpha = .82f))
+                Icon(if (alarm.weekdays.isEmpty()) Icons.Outlined.Event else Icons.Outlined.Repeat, null, tint = detailInk, modifier = Modifier.size(16.dp))
+                Text(repeatSummary(alarm), style = MaterialTheme.typography.bodySmall, color = detailInk)
             }
         }
     }
 }
 
 @Composable
-private fun ChallengeSummary(alarm: Alarm, ink: Color, onEdit: (Alarm, AlarmEditorScope) -> Unit, stacked: Boolean, modifier: Modifier = Modifier) {
+private fun ChallengeSummary(alarm: Alarm, ink: Color, onEdit: (Alarm, AlarmEditorScope) -> Unit, stacked: Boolean, onYellow: Boolean, modifier: Modifier = Modifier) {
     val editChallengeLabel = stringResource(R.string.home_edit_challenge)
     val interactions = remember { MutableInteractionSource() }
+    val tint = MorningTheme.modeAccent(alarm.mode, onYellow)
     Column(modifier.widthIn(min = if (stacked) 0.dp else 100.dp).morningPress(interactions)
         .clickable(interactionSource = interactions, indication = LocalIndication.current) { onEdit(alarm, AlarmEditorScope.CHALLENGE) }
         .semantics { role = Role.Button; contentDescription = editChallengeLabel }
         .padding(2.dp), horizontalAlignment = if (stacked) Alignment.Start else Alignment.End,
         verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Icon(challengeIcon(alarm.challenge), contentDescription = null, tint = if (alarm.enabled) challengeColor(alarm.challenge, onYellow = true) else ink, modifier = Modifier.size(28.dp))
+        Box(Modifier.size(40.dp).background(tint.copy(alpha = .13f), CircleShape), contentAlignment = Alignment.Center) {
+            MovementChallengeIcon(alarm.challenge, alarm.seated, tint = tint, size = 28.dp)
+        }
         Text(stringResource(challengeText(alarm.challenge)), style = MaterialTheme.typography.titleSmall, color = ink, maxLines = 2,
             overflow = TextOverflow.Ellipsis, textAlign = if (stacked) TextAlign.Start else TextAlign.End)
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-            Icon(modeIcon(alarm.mode), contentDescription = null, tint = modeTint(alarm.mode, alarm.enabled), modifier = Modifier.size(17.dp))
-            Text(stringResource(modeText(alarm.mode)), style = MaterialTheme.typography.labelMedium, color = modeTint(alarm.mode, alarm.enabled))
+            Icon(modeIcon(alarm.mode), contentDescription = null, tint = tint, modifier = Modifier.size(17.dp))
+            Text(stringResource(modeText(alarm.mode)), style = MaterialTheme.typography.labelMedium, color = tint)
         }
     }
 }
@@ -438,25 +434,14 @@ private fun RecentWinsCard(entries: List<MorningEntry>, onProgress: () -> Unit) 
     Column(Modifier.fillMaxWidth().morningSurface(MorningTheme.colors.soft, radius = 22.dp, tint = MorningTheme.colors.yellow, elevated = false).padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(stringResource(R.string.home_recent_wins), style = MaterialTheme.typography.titleMedium, color = MorningTheme.colors.ink)
-        Text(stringResource(R.string.home_recent_count, days), style = MaterialTheme.typography.bodyLarge, color = MorningTheme.colors.ink)
+        Text(if (days == 0) stringResource(R.string.no_recent_challenges) else stringResource(R.string.home_recent_count, days), style = MaterialTheme.typography.bodyLarge, color = MorningTheme.colors.ink)
         Text(stringResource(R.string.home_recent_note), style = MaterialTheme.typography.bodySmall, color = MorningTheme.colors.muted)
         if (days == 0) Text(stringResource(R.string.home_first_win), style = MaterialTheme.typography.bodyMedium, color = MorningTheme.colors.ink)
         TextButton(onClick = onProgress) { Text(stringResource(R.string.home_progress)) }
     }
 }
 
-@Composable
-private fun PreviewFooter(state: AppState, days: Int, onPro: () -> Unit) {
-    if (state.previewStartedAt == null && state.alarms.isEmpty()) return
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        when {
-            state.previewStartedAt == null && days > 0 -> Text(stringResource(R.string.preview_not_started), color = MorningTheme.colors.muted, style = MaterialTheme.typography.bodySmall)
-            days > 0 -> Text(stringResource(R.string.home_preview_days, days), color = MorningTheme.colors.muted, style = MaterialTheme.typography.bodySmall)
-            else -> Text(stringResource(R.string.basic_access), color = MorningTheme.colors.muted, style = MaterialTheme.typography.bodySmall)
-        }
-        if (days > 0 && completedDays(state.entries, 30) >= 3) TextButton(onClick = onPro) { Text(stringResource(R.string.home_explore_pro)) }
-    }
-}
+
 
 @Composable
 private fun focusIcon(focus: MorningFocus): ImageVector = when (focus) {
@@ -484,19 +469,15 @@ private fun repeatSummary(alarm: Alarm): String {
 }
 
 @Composable
-private fun nextOccurrence(alarm: Alarm): String {
-    val instant = runCatching {
-        if (alarm.weekdays.isEmpty()) alarm.scheduledAt?.let(Instant::ofEpochMilli) ?: alarm.nextAfter(Instant.now(), ZoneId.systemDefault())
-        else alarm.nextAfter(Instant.now(), ZoneId.systemDefault())
-    }.getOrNull() ?: return ""
+internal fun nextOccurrence(instant: Instant): String {
     val date = instant.atZone(ZoneId.systemDefault()).toLocalDate()
     val today = java.time.LocalDate.now()
-    val label = when (date) {
-        today -> stringResource(R.string.home_today)
-        today.plusDays(1) -> stringResource(R.string.home_tomorrow)
-        else -> DateTimeFormatter.ofPattern("EEE, MMM d", homeLocale()).format(date)
+    val time = occurrenceTimeText(LocalContext.current, instant)
+    return when (date) {
+        today -> stringResource(R.string.alarm_rings_today, time)
+        today.plusDays(1) -> stringResource(R.string.alarm_rings_tomorrow, time)
+        else -> stringResource(R.string.home_rings_at, time, DateTimeFormatter.ofPattern("EEE, MMM d", homeLocale()).format(date))
     }
-    return stringResource(R.string.home_next, label)
 }
 
 @Composable
@@ -505,7 +486,6 @@ private fun homeLocale(): Locale {
     return if (locales.size() == 0) Locale.US else locales[0]
 }
 
-private fun isSuccessful(outcome: WakeOutcome) = outcome == WakeOutcome.LOCAL_COMPLETED || outcome == WakeOutcome.AI_VERIFIED
 private fun sameLocalDay(a: Long, b: Long): Boolean {
     val zone = ZoneId.systemDefault()
     return Instant.ofEpochMilli(a).atZone(zone).toLocalDate() == Instant.ofEpochMilli(b).atZone(zone).toLocalDate()
@@ -514,27 +494,7 @@ private fun completedDays(entries: List<MorningEntry>, days: Int): Int {
     val zone = ZoneId.systemDefault()
     val now = java.time.LocalDate.now(zone)
     val start = now.minusDays((days - 1).toLong())
-    return entries.asSequence().filter { isSuccessful(it.outcome) }
+    return entries.asSequence().filter { it.completedChallenge }
         .map { Instant.ofEpochMilli(it.date).atZone(zone).toLocalDate() }
         .filter { it >= start && it <= now }.distinct().count().toInt()
 }
-@Composable
-private fun modeTint(mode: WakeMode, enabled: Boolean): Color {
-    val darkSurface = androidx.compose.foundation.isSystemInDarkTheme() && !enabled
-    return when (mode) {
-        WakeMode.GENTLE -> if (darkSurface) Color(0xFF7BD4A3) else Color(0xFF1F5738)
-        WakeMode.BALANCED -> if (darkSurface) Color(0xFFC7A8F0) else Color(0xFF5C387A)
-        WakeMode.FOCUSED -> if (darkSurface) Color(0xFFFFA66B) else Color(0xFF85331A)
-    }
-}
-
-@Composable
-private fun missionReason(kind: ChallengeKind, journey: Journey): String = stringResource(when (kind) {
-    ChallengeKind.READ_AND_CHOOSE -> R.string.home_reason_attention
-    ChallengeKind.RIDDLE -> R.string.home_reason_curiosity
-    ChallengeKind.READ_ALOUD -> R.string.home_reason_voice
-    ChallengeKind.WAVE_HAND -> R.string.home_reason_hello
-    ChallengeKind.NECK_ROTATION -> R.string.home_reason_gentle
-    ChallengeKind.GUIDED_RHYTHM -> if (journey.focus == MorningFocus.GENTLE_MOVEMENT) R.string.home_reason_seated else R.string.home_reason_standing
-    else -> R.string.home_reason_move
-})

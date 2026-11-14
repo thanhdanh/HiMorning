@@ -98,3 +98,23 @@ No subjective audition, phone-speaker quality, locked-screen looping, perceptual
 loudness, Bluetooth route, or AlarmKit delivery result is claimed by signal checks.
 Audition these on an iPhone before release; the titles are catalog names, not
 measured acoustic or wake-up guarantees. See the [implementation plan](../../../docs/archive/design/AUDIO-AND-SPEECH-PLAN.md).
+
+## Additional alarm tones and answer feedback
+
+These files use recordings from two CC0 1.0 Kenney packs. The selectable
+alarm tones are mono 44.1 kHz PCM WAVs with roughly eight seconds of repeated
+motifs, quiet gaps and short fades. The short confirmation chime plays on
+correct answers in practice.
+
+| App asset | Pack | Original file |
+| --- | --- | --- |
+| `brightKeys.wav` | [Music Jingles](https://kenney.nl/assets/music-jingles) | `Audio/Pizzicato jingles/jingles_PIZZI10.ogg` |
+| `pixelMorning.wav` | Music Jingles | `Audio/8-Bit jingles/jingles_NES05.ogg` |
+| `brassRise.wav` | Music Jingles | `Audio/Sax jingles/jingles_SAX04.ogg` |
+| `answerChime.wav` | [Interface Sounds](https://opengameart.org/content/interface-sounds) | `Audio/confirmation_001.ogg` |
+| `glassChime.wav` | Interface Sounds | `Audio/glass_001.ogg`, `Audio/glass_004.ogg` |
+| `woodPluck.wav` | Interface Sounds | `Audio/pluck_001.ogg`, `Audio/pluck_002.ogg` |
+| `softBong.wav` | Interface Sounds | `Audio/bong_001.ogg` |
+
+The original Interface Sounds license is included in
+`Kenney-Interface-Sounds-License.txt`.

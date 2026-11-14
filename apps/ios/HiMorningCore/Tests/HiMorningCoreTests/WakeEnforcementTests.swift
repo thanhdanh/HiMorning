@@ -57,7 +57,7 @@ final class WakeEnforcementTests:XCTestCase {
  }
  private let base=Date(timeIntervalSince1970:1_792_000_000)
  private func alarm(_ hour:Int,_ minute:Int) throws->SavedAlarm {
-  var a=SavedAlarm(time:try AlarmTime(hour:hour,minute:minute,weekdays:[]))
+  var a=SavedAlarm(time:try AlarmTime(hour:hour,minute:minute,weekdays:[]),mode:.balanced,challenge:.readAndChoose)
   a.state = .confirmed
   a.scheduledOccurrence=a.time.next(after:base,calendar:calendar)
   return a
@@ -65,6 +65,19 @@ final class WakeEnforcementTests:XCTestCase {
  private func occurrence(_ alarm:SavedAlarm) throws->Date {try XCTUnwrap(alarm.time.next(after:base,calendar:calendar))}
  private func live(_ alarm:SavedAlarm,_ entries:[MorningEntry]=[],at now:Date)->Date? {
   WakePlanner.liveOccurrence(of:alarm,entries:entries,now:now,calendar:calendar)
+ }
+
+ func testTrialOnOrdinaryAlarmPlansBackupsOnlyForItsOwnRing() throws {
+  var alarm=SavedAlarm(time:try AlarmTime(hour:6,minute:30,weekdays:Set(1...7)))
+  alarm.state = .confirmed
+  let next=try occurrence(alarm)
+  alarm.challengeTrial=AlarmChallengeTrial(id:UUID(),challenge:ChallengeSelection(kind:.jumpingJacks),occurrence:next)
+  XCTAssertEqual(WakePlanner.plannedOccurrence(of:alarm,entries:[],now:base,calendar:calendar),next)
+  XCTAssertEqual(live(alarm,at:next+1),next)
+  XCTAssertNil(WakePlanner.plannedOccurrence(of:alarm,entries:[],now:next+3600,calendar:calendar))
+  XCTAssertNil(live(alarm,at:next+86400))
+  alarm.enabled=false
+  XCTAssertNil(live(alarm,at:next+1))
  }
 
  func testFireDatesAreFifteenRingsTwoMinutesApart() throws {
@@ -169,6 +182,20 @@ final class WakeEnforcementTests:XCTestCase {
   await restarted.resolve(alarmID:a.id)
   let after=await restarted.rings();XCTAssertTrue(after.isEmpty)
  }
+ func testOrdinaryAlarmDoesNotScheduleChallengeRecovery() async throws {
+  let file=tempFile();defer {try? FileManager.default.removeItem(at:file.deletingLastPathComponent())}
+  let spy=RingSchedulerSpy();let enforcer=try makeEnforcer(spy,file:file)
+  let challenge=try confirmed(6,30)
+  _=await enforcer.plan(alarms:[challenge],entries:[],now:base,calendar:calendar)
+  var ordinary=SavedAlarm(id:challenge.id,time:challenge.time,challenge:ChallengeSelection.none,scheduledOccurrence:challenge.scheduledOccurrence)
+  ordinary.state = .confirmed
+  let result=await enforcer.plan(alarms:[ordinary],entries:[],now:base,calendar:calendar)
+  XCTAssertEqual(result,WakePlanResult(scheduled:0,limited:false))
+  let rings=await enforcer.rings()
+  XCTAssertTrue(rings.isEmpty)
+  XCTAssertNil(live(ordinary,at:try occurrence(ordinary)+10))
+ }
+
  func testPlanIsIdempotentAcrossRestart() async throws {
   let file=tempFile();defer {try? FileManager.default.removeItem(at:file.deletingLastPathComponent())}
   let spy=RingSchedulerSpy();let alarms=[try confirmed(6,30)]
@@ -248,7 +275,7 @@ final class WakeEnforcementTests:XCTestCase {
   let spy=RingSchedulerSpy();let enforcer=try makeEnforcer(spy,file:file)
   let a=try confirmed(6,30)
   await enforcer.plan(alarms:[a],entries:[],now:base,calendar:calendar)
-  var edited=SavedAlarm(id:a.id,time:a.time,sound:.sunrise,scheduledOccurrence:a.scheduledOccurrence);edited.state = .confirmed
+  var edited=SavedAlarm(id:a.id,time:a.time,mode:a.mode,sound:.sunrise,challenge:a.challenge,scheduledOccurrence:a.scheduledOccurrence);edited.state = .confirmed
   let changed=await enforcer.plan(alarms:[edited],entries:[],now:base,calendar:calendar)
   XCTAssertEqual(changed.scheduled,15)
   let cancelled=await spy.cancelled;XCTAssertEqual(cancelled.count,15)

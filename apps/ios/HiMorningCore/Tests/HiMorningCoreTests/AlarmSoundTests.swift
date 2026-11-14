@@ -5,10 +5,10 @@ import XCTest
 #endif
 
 final class AlarmSoundTests:XCTestCase {
- func testCatalogKeepsLegacyIDsAndAddsTwelveDistinctChoices() {
-  XCTAssertEqual(AlarmSound.allCases.count,15)
-  XCTAssertEqual(Set(AlarmSound.allCases.map(\.rawValue)).count,15)
-  for raw in ["system","sunrise","softChime","pizzicatoDawn","pizzicatoSteps","pizzicatoRise","pizzicatoBloom","steelShimmer","steelBreeze","steelMorning","steelSparkle","saxHello","saxStroll","saxGlow","saxDaybreak"] {
+ func testCatalogKeepsLegacyIDsAndAddsDistinctChoices() {
+  XCTAssertEqual(AlarmSound.allCases.count,21)
+  XCTAssertEqual(Set(AlarmSound.allCases.map(\.rawValue)).count,21)
+  for raw in ["system","sunrise","softChime","pizzicatoDawn","pizzicatoSteps","pizzicatoRise","pizzicatoBloom","steelShimmer","steelBreeze","steelMorning","steelSparkle","saxHello","saxStroll","saxGlow","saxDaybreak","brightKeys","pixelMorning","brassRise","glassChime","woodPluck","softBong"] {
    XCTAssertNotNil(AlarmSound(rawValue:raw),raw)
   }
  }
@@ -31,7 +31,7 @@ final class AlarmSoundTests:XCTestCase {
   for _ in 0..<4 {resources.deleteLastPathComponent()}
   resources.appendPathComponent("Resources")
   let custom=AlarmSound.allCases.filter {$0 != .system}
-  XCTAssertEqual(custom.count,14)
+  XCTAssertEqual(custom.count,20)
   for sound in custom {
    let data=try Data(contentsOf:resources.appendingPathComponent(sound.rawValue+".wav"))
    XCTAssertGreaterThan(data.count,44)

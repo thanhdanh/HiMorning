@@ -20,7 +20,7 @@ inspected during this documentation review.
 | Challenges | Pure counter tests, native adapter/overlay tests and iterative iPhone use | Reviewed valid/invalid real movements across distances, lighting and people; measure false counts/rejections and delay |
 | Camera and speech | Foreground consent/lifecycle, local processing and availability fallback | Actual permissions, microphone/voice quality, interruptions and fallback on supported/unsupported locales |
 | UI/accessibility | EN/VI journeys, card/draft/sound interactions and selected large-text checks | Complete VoiceOver, narrow/accessibility text, dark appearance and reduced-motion/transparency review |
-| Billing | Preview and two-plan source; many local lifecycle checks | Resolve the known expiry test failure, configure real products and validate sandbox/TestFlight lifecycle |
+| Billing | Preview and two-plan StoreKit checkout; [local follow-up checks](plans/ios-subscription.md) | Verify both products in App Store Connect and validate the sandbox/TestFlight lifecycle |
 | Distribution/privacy | App icon and development signing implemented | Release archive, TestFlight, support/privacy links, SDK/privacy inventory and applicable account/data deletion |
 | Optional services | Bundled content; source for refresh and separate synthetic/paid backend paths | Check deployed content separately; deploy/benchmark a real verifier only if it is intentionally part of release scope |
 
@@ -55,10 +55,10 @@ Do not mark an untried row passed.
 ## Billing and service gates
 
 The [subscription guide](SUBSCRIPTIONS.md) owns access behavior and setup.
-The currently failing signed-expired-purchase test reproduces on the prior source
-revision too; it remains an open gate, not a green billing result. Verify real
-products, restore, renewal, cancellation, pending approval, refund/revocation,
-grace and expiry before selling Pro.
+The 8 November follow-up passed the signed-expiry test on iOS 27.0. The cause of
+the October failure remains unverified. Verify real products, restore, renewal,
+cancellation, pending approval, refund/revocation, grace and expiry before selling
+Pro. See the [subscription plan](plans/ios-subscription.md) for local evidence.
 
 The normal camera path does not upload video. The synthetic Gemini demo cannot
 verify real movement. A paid Functions/Modal launch would need separate provider

@@ -1,0 +1,19 @@
+Font Awesome Free 5.15.4 by Fonticons, Inc.
+https://fontawesome.com
+
+These HiMorning challenge icons use artwork from the Font Awesome Free solid set:
+https://github.com/FortAwesome/Font-Awesome/tree/5.15.4/svgs/solid
+
+- Guided Rhythm (standing): male and arrows-alt-v
+- Guided Rhythm (seated): chair and arrows-alt-v
+- Wave hello: hand-paper
+- Neck turns: user and arrows-alt-h
+- Reach up: child
+
+The source artwork is licensed under Creative Commons Attribution 4.0 International.
+https://creativecommons.org/licenses/by/4.0/
+
+HiMorning scales and positions the original paths, combines them where indicated,
+and uses the app palette to tint the artwork. Android uses the same paths in
+VectorDrawable format. The push-up and jumping jack icons are static poses from
+HiMorning’s existing movement guide.

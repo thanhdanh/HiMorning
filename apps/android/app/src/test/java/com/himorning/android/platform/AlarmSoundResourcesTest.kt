@@ -8,7 +8,7 @@ import java.nio.ByteOrder
 
 class AlarmSoundResourcesTest {
     @Test fun customSoundsHaveStableAndroidResourceNamesAndPlayableWaveHeaders() {
-        val ids = listOf("sunrise", "soft_chime", "pizzicato_dawn", "pizzicato_steps", "pizzicato_rise", "pizzicato_bloom", "steel_shimmer", "steel_breeze", "steel_morning", "steel_sparkle", "sax_hello", "sax_stroll", "sax_glow", "sax_daybreak")
+        val ids = listOf("sunrise", "soft_chime", "pizzicato_dawn", "pizzicato_steps", "pizzicato_rise", "pizzicato_bloom", "steel_shimmer", "steel_breeze", "steel_morning", "steel_sparkle", "sax_hello", "sax_stroll", "sax_glow", "sax_daybreak", "bright_keys", "pixel_morning", "brass_rise", "glass_chime", "wood_pluck", "soft_bong", "answer_chime")
         val directory = File("src/main/res/raw")
         ids.forEach { id ->
             val bytes = File(directory, "$id.wav").readBytes()

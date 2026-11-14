@@ -72,6 +72,8 @@ fun AlarmSoundPicker(
     val groups = sounds.groupBy { sound ->
         when {
             sound in listOf(AlarmSound.SYSTEM, AlarmSound.SUNRISE, AlarmSound.SOFT_CHIME) -> R.string.composer_sound_classic
+            sound in listOf(AlarmSound.BRIGHT_KEYS, AlarmSound.PIXEL_MORNING, AlarmSound.BRASS_RISE) -> R.string.composer_sound_short
+            sound in listOf(AlarmSound.GLASS_CHIME, AlarmSound.WOOD_PLUCK, AlarmSound.SOFT_BONG) -> R.string.composer_sound_effects
             sound.name.startsWith("PIZZICATO") -> R.string.composer_sound_piano
             sound.name.startsWith("STEEL") -> R.string.composer_sound_bells
             else -> R.string.composer_sound_sax
@@ -99,17 +101,23 @@ fun AlarmSoundPicker(
                             Row(Modifier.weight(1f).morningPress(selectInteractions, enabled = !locked)
                                 .clickable(interactionSource = selectInteractions, indication = null, enabled = !locked) { stop(); onSelect(sound) }
                                 .padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                                Box(Modifier.size(42.dp).clip(RoundedCornerShape(14.dp)), contentAlignment = Alignment.Center) { Icon(Icons.Outlined.MusicNote, null, tint = colors.accent) }
-                                Column(Modifier.weight(1f).padding(start = 10.dp)) {
-                                    Text(stringResource(soundText(sound)), style = MaterialTheme.typography.bodyLarge)
-                                    if (locked) Text(stringResource(R.string.preview_locked), color = colors.muted, style = MaterialTheme.typography.bodySmall)
+                                if (!locked) {
+                                    Box(Modifier.size(42.dp).clip(RoundedCornerShape(14.dp)), contentAlignment = Alignment.Center) { Icon(Icons.Outlined.MusicNote, null, tint = colors.accent) }
                                 }
-                                if (active) Icon(Icons.Outlined.Check, null, tint = colors.accent, modifier = Modifier.padding(start = 5.dp))
+                                Column(Modifier.weight(1f).padding(start = if (locked) 0.dp else 10.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                                    if (locked) ProLockBadge()
+                                    Text(stringResource(soundText(sound)), style = MaterialTheme.typography.bodyLarge)
+                                }
+                                if (active && !locked) Icon(Icons.Outlined.Check, null, tint = colors.accent, modifier = Modifier.padding(start = 5.dp))
                             }
                             val previewInteractions = remember(sound) { MutableInteractionSource() }
-                            IconButton(onClick = { if (playing == sound) stop() else if (!locked) preview(sound) }, enabled = !locked,
-                                interactionSource = previewInteractions, modifier = Modifier.morningPress(previewInteractions, enabled = !locked)) {
-                                Icon(if (playing == sound) Icons.Outlined.Stop else Icons.Outlined.PlayArrow, stringResource(R.string.preview_sound), tint = colors.accent)
+                            IconButton(onClick = { if (playing == sound) stop() else preview(sound) },
+                                interactionSource = previewInteractions, modifier = Modifier.morningPress(previewInteractions)) {
+                                Icon(
+                                    if (playing == sound) Icons.Outlined.Stop else Icons.Outlined.PlayArrow,
+                                    stringResource(if (playing == sound) R.string.stop_preview_sound else R.string.preview_sound),
+                                    tint = colors.accent,
+                                )
                             }
                         }
                     }

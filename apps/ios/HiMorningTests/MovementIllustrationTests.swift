@@ -11,9 +11,11 @@ final class MovementIllustrationTests:XCTestCase {
   for selection in selections {
    for rect in [CGRect(x:0,y:0,width:32,height:30),CGRect(x:12,y:8,width:126,height:114)] {
     for phase in stride(from:0.0,through:1.0,by:0.025) {
-     let path=MovementFigure(selection:selection,phase:phase).path(in:rect)
-     XCTAssertFalse(path.isEmpty)
-     XCTAssertTrue(rect.contains(path.boundingRect),"Clipped \(selection.kind) at phase \(phase)")
+     for icon in [false,true] {
+      let path=MovementFigure(selection:selection,phase:phase,icon:icon).path(in:rect)
+      XCTAssertFalse(path.isEmpty)
+      XCTAssertTrue(rect.contains(path.boundingRect),"Clipped \(selection.kind) at phase \(phase), icon: \(icon)")
+     }
     }
    }
   }

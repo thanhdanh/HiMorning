@@ -22,6 +22,28 @@ class PoseCycleCounterTest {
         assertEquals(0, counter.completed)
     }
 
+    @Test fun visibleMotionAcrossIntermediatePosesKeepsJumpingJackProgress() {
+        val counter = PoseCycleCounter(listOf(listOf(0, 1, 0)))
+        counter.observe(0, 0)
+        counter.observe(0, 220)
+        for (time in 300L..1_100L step 100) counter.observe(null, time, visible = true)
+        counter.observe(1, 1_200)
+        counter.observe(1, 1_420)
+        counter.observe(0, 1_500)
+        assertEquals(1, counter.observe(0, 1_720))
+    }
+
+    @Test fun guidedRhythmExpiresAnIncompleteSequence() {
+        val counter = PoseCycleCounter(listOf(listOf(0, 1, 0)), maxSequenceMillis = 8_000, maxSampleGapMillis = 600)
+        counter.observe(0, 0, 120)
+        counter.observe(0, 130, 120)
+        counter.observe(1, 300, 120)
+        counter.observe(1, 430, 120)
+        for (time in 600L..9_000L step 300) counter.observe(null, time, 120, visible = true)
+        counter.observe(0, 9_200, 120)
+        assertEquals(0, counter.observe(0, 9_400, 120))
+    }
+
     @Test fun bothNeckTurnDirectionsCountOneFullRoundTrip() {
         val counter = PoseCycleCounter(listOf(listOf(-1, 0, 1, 0), listOf(1, 0, -1, 0)))
         var t = 0L

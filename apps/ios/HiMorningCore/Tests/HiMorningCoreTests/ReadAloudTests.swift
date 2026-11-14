@@ -56,6 +56,8 @@ final class ReadAloudTests:XCTestCase {
   let feedback=RecognizedWordMatch.feedback(target:"Small steps create steady progress.",recognized:"small stops",finished:false)
   XCTAssertEqual(feedback.words.map(\.text),["small","steps","create","steady","progress"])
   XCTAssertEqual(feedback.words.map(\.status),[.correct,.incorrect,.pending,.pending,.pending])
+  let repeated=RecognizedWordMatch.feedback(target:"The rain crossed the valley.",recognized:"the",finished:false)
+  XCTAssertEqual(repeated.words.map(\.status),[.correct,.pending,.pending,.pending,.pending])
   XCTAssertEqual(feedback.score,0.2,accuracy:0.0001)
  }
 

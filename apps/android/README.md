@@ -14,7 +14,8 @@ validation/configuration gates. See [implementation evidence](../../docs/ANDROID
 - One application module; local JSON state uses atomic writes.
 - Custom iOS-aligned yellow cards, inline wheel composer and home-to-sheet navigation.
 - The reviewed English/Vietnamese content and 14 sounds match iOS bundled assets.
-- Local alarms/challenges work without Firebase credentials or a network request.
+- Local alarms/challenges work offline. Camera exercises show live hand, face, or body tracking.
+- Reading and riddle prompts rotate across sessions, including after an app restart.
 
 ## Try it
 
@@ -31,6 +32,11 @@ From this directory:
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 adb shell am start -n com.himorning.android/.MainActivity
 ```
+
+The first build downloads a versioned MediaPipe hand model, verifies its checksum and
+packages it into the APK. For optional content refresh, set the same HTTPS Workers
+origin as iOS with `-PhimorningContentOrigin=https://<worker>.workers.dev`. The endpoint
+must serve `/content/v1/challenge-content.json`. The bundled pack is available offline.
 
 Allow exact alarms, notifications and full-screen alarm access on the setup card.
 The app requests camera/microphone access only when the matching challenge starts.
@@ -57,3 +63,7 @@ signed Play release remain required. Build/test evidence is maintained in the
 ## Read next
 
 [Android architecture](../../docs/ANDROID.md) · [Shared contracts](../../shared/contracts/README.md)
+
+The v3 challenge bundle runs offline and contains 204 localized entries. The
+additional alarm tones and practice confirmation chime come from Kenney Music
+Jingles and Interface Sounds (CC0 1.0). The notices are included in the app.

@@ -3,8 +3,9 @@
 A successfully saved first alarm starts a no-card preview. StoreKit purchases are
 optional and separate from basic alarm delivery and recovery.
 
-**Status:** Local implementation; production products and sandbox/TestFlight
-billing acceptance remain pending. Reviewed on 22 October 2026.
+**Status:** StoreKit was included in internal TestFlight builds. The revised Pro screen and challenge trials are in development.
+On 10 November 2026, App Store Connect showed no subscription groups and
+the Paid Apps Agreement was **New**. Sandbox billing verification is pending.
 **Audience:** iOS developers and release reviewers.
 
 ## At a glance
@@ -14,7 +15,7 @@ billing acceptance remain pending. Reviewed on 22 October 2026.
 | Before first save | Explore and create a draft; preview time has not started |
 | Preview | 30 elapsed days from the first confirmed alarm save; no purchase or automatic charge |
 | Preview / Pro | All catalog levels, bundled sounds, 30-day progress view and custom weekly goal; an optional energetic mission path and 30-day challenge reflection |
-| Free after expiry | Alarm scheduling and recovery; Gentle/Balanced editor levels, system sound for new choices; effective saved push-up target capped at 5; three starter purposes, seven-morning journeys and recent completed-day summary |
+| Free after expiry | Alarm scheduling and recovery; Gentle and Balanced choices, Reach up in the Challenging category, and system sound for new choices; three starter purposes, seven-morning journeys and recent completed-day summary |
 | Monthly Pro | `com.himorning.pro.monthly`, local target price US $2/month |
 | Annual Pro | `com.himorning.pro.annual`, local target price US $20/year, same subscription group |
 
@@ -32,14 +33,13 @@ cross-device entitlement or a guarantee against reinstall/device changes.
 
 `SubscriptionStore` reads verified StoreKit entitlements, subscription status and
 transaction updates. The two products grant the same local Pro access. The source
-handles signed expiry, revocation, supersession and grace periods; see the
-[known failing expiry integration test](VALIDATION.md#known-failure) before treating
-that lifecycle as release-validated.
+handles signed expiry, revocation, supersession and grace periods. The
+[subscription plan](plans/ios-subscription.md) records the current local evidence.
 
 Expiration does not cancel alarms, rewrite their saved settings or remove
-remaining backup rings. A saved `focused` mode is presented as an effective
-Balanced fallback when Free, and push-ups are capped at 5 for execution. Other
-explicit challenge kinds remain as saved. Existing native sound registrations are
+remaining backup rings. Locked Challenging tasks use Reach up on Free unless an
+earned trial applies to the ringing occurrence. Legacy Gentle and Balanced
+push-ups are capped at five repetitions on Free. Existing native sound registrations are
 preserved; choosing a new restricted sound still requires full access.
 The [catalog guide](MODE-CHALLENGES.md) distinguishes display labels from storage IDs.
 
@@ -72,29 +72,68 @@ saved challenge. Journey progress is stored separately from the journal so its
 
 ## Configure and test
 
-Generate the Xcode project and use the checked-in
-[`HiMorning.storekit`](../apps/ios/StoreKit/HiMorning.storekit) configuration.
+The Pro screen shows StoreKit’s localized full monthly and yearly prices,
+the renewal terms, and a single Subscribe to Pro button. Apple confirms the
+selected plan. Retry and restore are available when the catalog fails.
+Restore asks the App Store to sync and reports whether active Pro access was
+found. Active subscribers can open Apple's management sheet.
+
+Use the checked-in [`HiMorning.storekit`](../apps/ios/StoreKit/HiMorning.storekit)
+configuration for local tests. Pick a simulator UDID from `make doctor`.
 
 ```sh
-xcodegen generate --spec apps/ios/project.yml
-xcodebuild -project apps/ios/HiMorning.xcodeproj -scheme HiMorning   -destination 'platform=iOS Simulator,id=YOUR_SIMULATOR_UDID'   -only-testing:HiMorningTests/SubscriptionTests   -collect-test-diagnostics never CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- test
+make ios-uitest IOS_SIM=YOUR_SIMULATOR_UDID ONLY=HiMorningTests/SubscriptionTests
+make ios-uitest IOS_SIM=YOUR_SIMULATOR_UDID ONLY=HiMorningUITests/SubscriptionUITests
 ```
 
-StoreKitTest creates local transactions without charging a card. Keep the
-ad-hoc signature for Keychain-backed preview tests. The workflow pins iOS 26.2,
-but the signed-expired-purchase test also failed there in the latest local run.
-Do not dismiss that result as only a newer-runtime issue.
+StoreKitTest creates local transactions without charging a card. The Make target
+keeps ad-hoc signing for Keychain-backed preview tests. The workflow pins iOS 26.2.
 
-For production, configure both IDs in one App Store Connect subscription group,
-verify localized product display, restore and management, then exercise purchase,
-renewal, cancellation, pending approval, refund/revocation, grace and expiry in
-sandbox/TestFlight. Recheck current Apple submission requirements at release.
-Paid cloud benefits would additionally need server-side signed transaction
-verification and durable purchase ownership; a client `isPro` flag is insufficient.
+### One alarm challenge trial
+
+On iOS Free, the info sheet for a locked challenge offers an optional rewarded
+ad when configured. AdMob's earned callback saves a local credit. The user
+applies that credit and saves the editor to schedule the challenge on that
+alarm’s next occurrence. Its regular challenge resumes afterward. Draft
+cancellation leaves the credit available. Rehearsal never uses a credit.
+
+Debug builds use Google's demo ad unit. An internal-only TestFlight archive
+can use the same Google demo app and rewarded-unit identifiers with the
+`TESTFLIGHT_DEMO_ADS` Swift compilation condition. Keep that override out of
+App Store archives.
+
+For production, add HiMorning under **Apps** in AdMob, and create a **Rewarded**
+ad unit with one challenge trial as its reward. Set `ADMOB_APPLICATION_ID` and
+`ADMOB_REWARDED_AD_UNIT_ID` to the matching iOS identifiers in Release. Configure
+privacy messages under **Privacy & messaging**. After publishing to the App
+Store, link the listing in AdMob, put Google's `app-ads.txt` entry at the root
+of the developer website in the listing’s Marketing URL, and verify the app
+and its readiness status in AdMob. See the [AdMob rewarded guide](https://developers.google.com/admob/ios/rewarded)
+and its [privacy setup](https://developers.google.com/admob/ios/privacy).
+
+## App Store Connect and TestFlight
+
+1. In **Business → Agreements**, the Account Holder updates their legal
+   entity information, signs the Paid Apps Agreement and completes the
+   banking and tax information. Verify the agreement is active. [Apple setup](https://developer.apple.com/help/app-store-connect/configure-in-app-purchase-settings/overview-for-configuring-in-app-purchases/)
+2. Under **Monetization → Subscriptions**, verify or create one `HiMorning Pro`
+   group. Configure `com.himorning.pro.monthly` for one month and
+   `com.himorning.pro.annual` for one year at the same service level. Set the
+   approved storefront prices, availability, English/Vietnamese metadata and
+   review screenshot. [Apple subscription setup](https://developer.apple.com/app-store/subscriptions/)
+3. Use internal TestFlight build 1.0 (2) to verify the configured products.
+   Archive and upload a new build when the app code changes. On an iPhone
+   using TestFlight, verify both plans, localized price and terms,
+   restore after reinstall, management, renewal, cancellation, pending approval,
+   refund, grace if enabled, and expiry back to preview or Free. Verify basic
+   alarm delivery and recovery after losing paid access. [Apple sandbox testing](https://developer.apple.com/help/app-store-connect/test-in-app-purchases/overview-of-testing-in-sandbox)
+4. Add the first subscription group and both products to the same App Review
+   submission as the app version. [Apple submission steps](https://developer.apple.com/help/app-store-connect/manage-submissions-to-app-review/submit-an-in-app-purchase)
 
 ## What we checked
 
-[Validation](VALIDATION.md) owns the latest recorded results and known failure.
+[Validation](VALIDATION.md) documents the October test failure. The
+[subscription plan](plans/ios-subscription.md) records the follow-up checks.
 Earlier [monthly](tdd/monthly-pro.tdd.md) and [preview](tdd/no-card-preview.tdd.md)
 reports remain historical checkpoints. Simulator fixtures do not prove live billing,
 actual renewal delivery or migration across App Store accounts/devices.

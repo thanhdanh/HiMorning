@@ -20,4 +20,13 @@ private func localizedValue(_ key:String,identifier:String)->String {
  return NSLocalizedString(key,bundle:bundle,value:key,comment:"")
 }
 
+func alarmTimeText(_ date:Date)->String {
+ date.formatted(.dateTime.hour().minute())
+}
+
+func alarmTimeText(_ time:AlarmTime)->String {
+ let date=Calendar.current.date(from:DateComponents(hour:time.hour,minute:time.minute))
+ return date.map {alarmTimeText($0)} ?? String(format:"%02d:%02d",time.hour,time.minute)
+}
+
 func morningCountText(_ count:Int)->String {appText(count == 1 ? "%lld morning" : "%lld mornings",count:count)}

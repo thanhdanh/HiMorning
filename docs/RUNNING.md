@@ -66,12 +66,12 @@ Select the existing Apple development team in Xcode, enable automatic signing,
 and choose the connected device. Build and Run, then unlock the iPhone if launch
 is blocked. Basic local features work without Firebase plist files.
 
-An equivalent command uses your actual device ID and team:
+Use the connected device's UDID and the existing development team to build,
+install, and open a development-signed Release build:
 
 ```sh
-xcodebuild -project apps/ios/HiMorning.xcodeproj -scheme HiMorning   -configuration Debug -destination 'platform=iOS,id=YOUR_DEVICE_UDID'   -derivedDataPath /tmp/himorning-device-build -allowProvisioningUpdates   CODE_SIGNING_ALLOWED=YES CODE_SIGNING_REQUIRED=YES CODE_SIGN_STYLE=Automatic   DEVELOPMENT_TEAM=YOUR_TEAM_ID CODE_SIGN_IDENTITY='Apple Development' build
-xcrun devicectl device install app --device YOUR_DEVICE_UDID   /tmp/himorning-device-build/Build/Products/Debug-iphoneos/HiMorning.app
-xcrun devicectl device process launch --device YOUR_DEVICE_UDID   --activate --terminate-existing com.himorning.HiMorning
+make ios-devices
+make ios-device DEVICE_ID=YOUR_DEVICE_UDID TEAM_ID=YOUR_TEAM_ID BUILD_NUMBER=2
 ```
 
 Install over the existing app to preserve alarms and local history. If iOS says

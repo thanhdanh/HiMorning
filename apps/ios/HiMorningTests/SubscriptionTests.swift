@@ -18,14 +18,39 @@ import StoreKitTest
   await store.complete(try await product.purchase())
  }
  func testBothPlansAreAvailableWithoutAnIntroductoryOffer() async throws {
-  let session=try session()
+  let session=try session(),store=SubscriptionStore()
   defer {session.clearTransactions()}
-  let products=try await Product.products(for:SubscriptionStore.productIDs)
+  await store.loadProducts()
+  guard case .available(let products)=store.catalog else {return XCTFail("Expected an available Pro catalog")}
   XCTAssertEqual(Set(products.map(\.id)),Set([SubscriptionStore.monthlyProductID,SubscriptionStore.annualProductID]))
   for product in products {XCTAssertNil(product.subscription?.introductoryOffer)}
   XCTAssertEqual(products.first {$0.id == SubscriptionStore.monthlyProductID}?.price,Decimal(2))
   XCTAssertEqual(products.first {$0.id == SubscriptionStore.annualProductID}?.price,Decimal(20))
   XCTAssertEqual(Set(products.compactMap {$0.subscription?.subscriptionGroupID}).count,1)
+ }
+ func testCatalogCanRetryAfterStoreKitNetworkFailure() async throws {
+  let session=try session(),store=SubscriptionStore()
+  defer {session.resetToDefaultState()}
+  try await session.setSimulatedError(.generic(.networkError(URLError(.notConnectedToInternet))),forAPI:.loadProducts)
+  await store.loadProducts()
+  guard case .failed=store.catalog else {return XCTFail("Expected a StoreKit catalog error")}
+  try await session.setSimulatedError(nil,forAPI:.loadProducts)
+  await store.loadProducts()
+  guard case .available(let products)=store.catalog else {return XCTFail("Expected retry to load the Pro catalog")}
+  XCTAssertEqual(Set(products.map(\.id)),Set(SubscriptionStore.productIDs))
+ }
+ func testRestoreReportsFailureAndNoActiveSubscription() async throws {
+  let session=try session(),store=SubscriptionStore()
+  defer {session.resetToDefaultState()}
+  try await session.setSimulatedError(.generic(.networkError(URLError(.notConnectedToInternet))),forAPI:.appStoreSync)
+  await store.restorePurchases()
+  XCTAssertEqual(store.message,appText("Could not restore purchases. Try again."))
+  XCTAssertFalse(store.isRestoring)
+
+  try await session.setSimulatedError(nil,forAPI:.appStoreSync)
+  await store.restorePurchases()
+  XCTAssertEqual(store.message,appText("No active Pro subscription was found."))
+  XCTAssertFalse(store.isPro)
  }
  func testAnnualPurchaseRestoresAndRefundUpdateRemovesAccess() async throws {
   let session=try session(),store=SubscriptionStore()
@@ -34,9 +59,9 @@ import StoreKitTest
   XCTAssertTrue(store.isPro)
   let restored=SubscriptionStore()
   restored.start()
-  try await AppStore.sync()
-  await restored.refresh()
+  await restored.restorePurchases()
   XCTAssertTrue(restored.isPro)
+  XCTAssertEqual(restored.message,appText("Your Pro subscription is restored."))
   let refunded=expectation(description:"Annual refund revokes restored access")
   let observer=restored.$access.dropFirst().filter {$0 == .free}.prefix(1).sink {_ in refunded.fulfill()}
   defer {observer.cancel()}
@@ -44,6 +69,7 @@ import StoreKitTest
   try session.refundTransaction(identifier:transaction.identifier)
   await fulfillment(of:[refunded],timeout:15)
   XCTAssertFalse(restored.isPro)
+  XCTAssertNil(restored.message,"Refund must clear feedback from the earlier restore")
  }
  func testAnnualCancellationKeepsAccessUntilSignedExpiry() async throws {
   var now=Date()
@@ -129,9 +155,9 @@ import StoreKitTest
   XCTAssertTrue(store.isPro)
   let restored=SubscriptionStore()
   restored.start()
-  try await AppStore.sync()
-  await restored.refresh()
+  await restored.restorePurchases()
   XCTAssertTrue(restored.isPro)
+  XCTAssertEqual(restored.message,appText("Your Pro subscription is restored."))
   let refunded=expectation(description:"Restored access is revoked")
   let observer=restored.$access.dropFirst().filter {$0 == .free}.prefix(1).sink {_ in refunded.fulfill()}
   defer {observer.cancel()}

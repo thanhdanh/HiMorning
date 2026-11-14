@@ -13,7 +13,7 @@ final class AlarmSoundResourceTests:XCTestCase {
   XCTAssertEqual(grouped,AlarmSound.allCases)
  }
  func testEveryCustomSoundDecodesFromTheSameBundleUsedByAlarmKit() throws {
-  XCTAssertEqual(AlarmSound.allCases.count,15)
+  XCTAssertEqual(AlarmSound.allCases.count,21)
   for sound in AlarmSound.allCases where sound != .system {
    let url=try XCTUnwrap(Bundle.main.url(forResource:sound.rawValue,withExtension:"wav"),sound.rawValue)
    let audio=try AVAudioFile(forReading:url)

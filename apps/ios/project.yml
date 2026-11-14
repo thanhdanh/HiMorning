@@ -10,13 +10,20 @@ packages:
   Firebase:
     url: https://github.com/firebase/firebase-ios-sdk.git
     exactVersion: 13.0.1
+  GoogleMobileAds:
+    url: https://github.com/googleads/swift-package-manager-google-mobile-ads.git
+    exactVersion: 13.11.0
+  GoogleUserMessagingPlatform:
+    url: https://github.com/googleads/swift-package-manager-google-user-messaging-platform.git
+    exactVersion: 3.1.0
 settings:
   base:
     SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
     CODE_SIGNING_ALLOWED: NO
     "CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]": YES
     "CODE_SIGN_IDENTITY[sdk=iphonesimulator*]": "-"
-    TARGETED_DEVICE_FAMILY: "1"
 targets:
   HiMorning:
     type: application
@@ -27,18 +34,37 @@ targets:
       - path: ../../shared/contracts/v1/free-demo-frames.json
         buildPhase: resources
     settings:
-      CODE_SIGN_ENTITLEMENTS: HiMorning/HiMorning.entitlements
-      ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+      base:
+        CODE_SIGN_ENTITLEMENTS: HiMorning/HiMorning.entitlements
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        TARGETED_DEVICE_FAMILY: "1"
+        OTHER_LDFLAGS: ["$(inherited)", "-ObjC"]
+      configs:
+        Debug:
+          ADMOB_APPLICATION_ID: ca-app-pub-3940256099942544~1458002511
+          ADMOB_REWARDED_AD_UNIT_ID: ca-app-pub-3940256099942544/1712485313
+        Release:
+          ADMOB_APPLICATION_ID: ca-app-pub-4827308502344057~7706900820
+          ADMOB_REWARDED_AD_UNIT_ID: ca-app-pub-4827308502344057/1141492478
     info:
       path: HiMorning/Info.plist
       properties:
         CFBundleDisplayName: HiMorning
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         NSAlarmKitUsageDescription: HiMorning needs access to set your morning alarms.
         NSCameraUsageDescription: Movement challenges use the camera to check your motion. On-device checks do not save or upload images. Cloud checks ask for separate consent.
         NSMicrophoneUsageDescription: Read Aloud uses your microphone to recognize words on this device. Audio is not saved or uploaded.
+        GADApplicationIdentifier: $(ADMOB_APPLICATION_ID)
+        HiMorningRewardedAdUnitID: $(ADMOB_REWARDED_AD_UNIT_ID)
+        GADDelayAppMeasurementInit: true
+        SKAdNetworkItems:
+          - SKAdNetworkIdentifier: cstr6suwn9.skadnetwork
     dependencies:
+      - package: GoogleMobileAds
+      - package: GoogleUserMessagingPlatform
       - package: HiMorningCore
       - package: Firebase
         product: FirebaseCore
@@ -62,7 +88,10 @@ targets:
   HiMorningUITests:
     type: bundle.ui-testing
     platform: iOS
-    sources: [HiMorningUITests]
+    sources:
+      - HiMorningUITests
+      - path: StoreKit/HiMorning.storekit
+        buildPhase: resources
     dependencies:
       - target: HiMorning
     settings:

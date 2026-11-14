@@ -32,7 +32,11 @@ struct CameraPreview: UIViewRepresentable {
 struct ChallengeView: View {
  let alarm: SavedAlarm
  @State private var sessionAlarm: SavedAlarm?
- private var effectiveAlarm: SavedAlarm { sessionAlarm ?? model.access.effectiveAlarm(alarm) }
+ private var trialOccurrence:Date? {
+  guard !practicing,let wake=model.activeWake,wake.alarmID == alarm.id else {return nil}
+  return wake.occurrence
+ }
+ private var effectiveAlarm: SavedAlarm { sessionAlarm ?? model.access.effectiveAlarm(alarm,occurrence:trialOccurrence,rehearsal:practicing) }
  @State private var readAloudFallback = false
  private var challenge: ChallengeSelection { readAloudFallback ? .readAndChoose : effectiveAlarm.challenge }
  private var performedAlarm: SavedAlarm {
@@ -44,6 +48,7 @@ struct ChallengeView: View {
  @ObservedObject var model: PilotModel
  var rehearsal=false
  @Environment(\.dismiss) private var dismiss
+ @State private var answerSound=SoundPreview()
  @Environment(\.scenePhase) private var scene
  @State private var coordinator: ChallengeCoordinator?
  @State private var camera: CameraCapture?
@@ -76,7 +81,7 @@ struct ChallengeView: View {
  private var practicing: Bool { rehearsal || model.rehearsal || retrying }
  private var finished: Bool { completion != nil }
  private var isContentChallenge:Bool {[ChallengeKind.readAndChoose,.riddle,.readAloud].contains(challenge.kind)}
- private var scrollCompletionActions:Bool {isContentChallenge && dynamicTypeSize.isAccessibilitySize}
+ private var scrollCompletionActions:Bool {isContentChallenge}
  private var celebrates: Bool { completion == .localCompleted || completion == .openaiVerified || completion == .aiVerified }
  @State private var historyID = UUID()
  @State private var stopping = false
@@ -87,7 +92,7 @@ struct ChallengeView: View {
    ScrollView {
     VStack(spacing: isContentChallenge ? 14 : 20) {
      if celebrates {
-      ChallengeCelebrationView()
+      ChallengeCelebrationView(isQuestion:challenge.kind == .readAndChoose || challenge.kind == .riddle)
      } else {
       Text(practicing ? appText("Try a challenge") : appText("Good morning ☀️")).font(.headline)
       if practicing { Text(appText("Practice only. Your alarms stay as they are, and this does not count toward progress.")).font(.footnote).foregroundStyle(MorningTheme.muted) }
@@ -102,43 +107,56 @@ struct ChallengeView: View {
       } else if let rhythmCamera {
        cameraBlock(rhythmCamera.session, counter: "\(rhythmCycles) / 3")
       } else if challenge.kind.hasMovementIllustration {
-       MovementGuide(selection:challenge)
+       MovementGuide(selection:challenge,mode:effectiveAlarm.mode)
       } else if !practicing || !isContentChallenge {
        HStack(spacing: 16) {
         MorningSun(size: isContentChallenge ? 32 : 64)
-        Text(String(format: "%02d:%02d", alarm.time.hour, alarm.time.minute)).font(.system(isContentChallenge ? .title3 : .largeTitle, design: .rounded).weight(.regular)).monospacedDigit()
+        Text(alarmTimeText(alarm.time)).font(.system(isContentChallenge ? .title3 : .largeTitle, design: .rounded).weight(.regular)).monospacedDigit()
        }
       }
      }
-     if celebrates && practicing {
-      Text(appText("Practice complete. A real morning win counts when you complete a challenge after your alarm."))
-       .font(.subheadline).multilineTextAlignment(.center).fixedSize(horizontal:false,vertical:true)
-       .accessibilityIdentifier("practiceCompleteExplanation")
-     }
-     Text(challenge.displayTitle).modifier(MorningTypography.heading(size:15,relativeTo:.subheadline)).padding(.horizontal, 14).padding(.vertical, 8).background(MorningTheme.soft, in: Capsule())
+     Label {
+      Text(challenge.displayTitle).modifier(MorningTypography.heading(size:15,relativeTo:.subheadline))
+     } icon: {
+      ChallengeIcon(kind:challenge.kind,seated:challenge.rhythmVariant == .seated,size:19)
+       .foregroundStyle(MorningTheme.modeAccent(effectiveAlarm.mode))
+     }.font(.subheadline.weight(.medium)).padding(.horizontal,14).padding(.vertical,8).background(MorningTheme.soft,in:Capsule())
      if let theme = contentTheme {
       Text(ChallengePrompts.themeTitle(theme)).font(.caption.weight(.semibold)).foregroundStyle(MorningTheme.muted)
        .accessibilityIdentifier("contentTheme")
      }
-     if celebrates && practicing,let explanation = contentExplanation {
+     if celebrates,let explanation = contentExplanation {
       VStack(alignment:.leading,spacing:8) {
-       Text(appText("The small discovery")).font(.headline)
+       if let prompt=challenge.kind == .riddle ? riddlePrompt : readPrompt {
+        Text(prompt.text).font(.subheadline).foregroundStyle(MorningTheme.muted)
+       }
+       Text(appText("Why it’s right")).font(.headline)
        Text(explanation).font(.body).fixedSize(horizontal:false,vertical:true).accessibilityIdentifier("contentExplanation")
       }.padding(16).frame(maxWidth:.infinity,alignment:.leading).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:18))
      }
-     if effectiveAlarm.mode != alarm.mode || effectiveAlarm.challenge != alarm.challenge {
-      Text(appText("Your preview has ended. This morning uses the basic challenge. Your saved choice stays the same.")).font(.footnote).foregroundStyle(MorningTheme.muted)
+     if !practicing,trialOccurrence == nil || trialOccurrence != alarm.challengeTrial?.occurrence, effectiveAlarm.challenge != alarm.challenge {
+      Text(appText("This alarm is using a free challenge.")).font(.footnote).foregroundStyle(MorningTheme.muted)
      }
      if !finished,challenge.kind.hasMovementIllustration,camera != nil || movementCamera != nil || rhythmCamera != nil {
-      MovementGuide(selection:challenge,compact:true)
+      MovementGuide(selection:challenge,mode:effectiveAlarm.mode,compact:true)
      }
-     if !finished && message == challengeInstructions {
+     if celebrates && practicing {
+      Text(appText("Practice complete. A real morning win counts when you complete a challenge after your alarm."))
+       .font(.footnote).foregroundStyle(MorningTheme.muted).multilineTextAlignment(.center)
+       .accessibilityIdentifier("practiceCompleteExplanation")
+     } else if !finished && message == challengeInstructions {
       ChallengeRequirementsView(selection:challenge)
-     } else {
+     } else if !celebrates {
      Text(result ?? message)
       .font(distanceLayout ? .system(size: 34, weight: .semibold) : .title3.weight(.medium))
       .minimumScaleFactor(distanceLayout ? 0.6 : 1)
       .multilineTextAlignment(.center).accessibilityIdentifier("challengeMessage")
+     }
+     if !finished,challenge.kind != .none,camera == nil,movementCamera == nil,rhythmCamera == nil,!speechListening {
+      DisclosureGroup(appText("challenge_guide_scoring_title")) {
+       ChallengeCheckingGuide(selection:challenge).padding(.top,8)
+      }.font(.footnote.weight(.semibold)).frame(maxWidth:.infinity,alignment:.leading)
+       .accessibilityIdentifier("showChallengeCheckingGuide")
      }
      if !finished && (busy || stopping || speechFinishing || preparingExample) {
       ProgressView().accessibilityLabel(message)
@@ -155,10 +173,11 @@ struct ChallengeView: View {
         .symbolEffect(.pulse, isActive: !reduceMotion).accessibilityIdentifier("listeningIndicator")
       }
       ReadingFeedbackView(target: item.text, language: item.language, transcript: transcript, ended: speechEnded)
+       .id(item.id)
       if !finished {
        Text(String(format: appText("You have about %d seconds. Read at your own pace."), Int(ReadAloudAttempt(target: item.text, language: item.language).listeningDuration))).font(.footnote).foregroundStyle(MorningTheme.muted)
        Button { Task { await playExample() } } label: {
-        Label(appText(spokenExample.isSpeaking ? "Stop example" : "Hear sentence"), systemImage: spokenExample.isSpeaking ? "stop.fill" : "speaker.wave.2.fill")
+        Label(appText(spokenExample.isSpeaking ? "Stop example" : "Hear an example"), systemImage: spokenExample.isSpeaking ? "stop.fill" : "speaker.wave.2.fill")
        }.buttonStyle(MorningButtonStyle(primary: false)).disabled(busy || stopping || preparingExample || speech != nil).accessibilityIdentifier("hearSentence")
       }
      }
@@ -174,7 +193,9 @@ struct ChallengeView: View {
     VStack(spacing: 12) {
      if finished {
       if !scrollCompletionActions { completionActions }
-      Button(appText(rehearsal ? "Back to alarm" : "Back to home")) { dismiss() }.buttonStyle(MorningButtonStyle()).accessibilityIdentifier("backToHome")
+      Button(appText(rehearsal ? "Back to alarm" : "Back to home")) { dismiss() }
+       .buttonStyle(.plain).font(.subheadline).underline().foregroundStyle(MorningTheme.muted)
+       .frame(maxWidth:.infinity,minHeight:44).accessibilityIdentifier("backToHome")
      } else {
       if challenge.kind == .pushUps && camera == nil {
        Button { consentDialog = true } label: { ChallengeStartLabel(title: "Start challenge") }.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startChallenge")
@@ -192,12 +213,12 @@ struct ChallengeView: View {
         Button { Task { await startSpeech() } } label: { ChallengeStartLabel(title: "Start reading", symbol: "mic.fill") }.buttonStyle(MorningButtonStyle()).disabled(busy || stopping || preparingExample || spokenExample.isSpeaking).accessibilityIdentifier("startReadAloud")
        }
       }
-      if !rehearsal && (!practicing || !isContentChallenge) {
+      if !practicing {
       TimelineView(.periodic(from: .now, by: 1)) { context in
-       let remaining = max(0, Int(ceil(awakeAvailableAt.timeIntervalSince(context.date))))
+       let remaining = challenge.kind == .none ? 0 : max(0, Int(ceil(awakeAvailableAt.timeIntervalSince(context.date))))
        Button { finish(.selfConfirmed) } label: {
         VStack(spacing: 4) {
-         Text(appText("I’m awake"))
+         Text(appText(challenge.kind == .none ? "Stop alarm" : "I’m awake"))
          if remaining > 0 { Text(String(format: appText("Available in %d:%02d"), remaining / 60, remaining % 60)).font(.footnote).monospacedDigit() }
         }
        }.buttonStyle(MorningButtonStyle(primary: challenge.kind == .none)).disabled(remaining > 0 || stopping).accessibilityIdentifier("confirmAwake")
@@ -218,7 +239,7 @@ struct ChallengeView: View {
    .task {
     guard coordinator == nil else { return }
     model.preview.refresh()
-    sessionAlarm = model.access.effectiveAlarm(alarm)
+    sessionAlarm = model.access.effectiveAlarm(alarm,occurrence:trialOccurrence,rehearsal:practicing)
     if let wake = model.activeWake, wake.alarmID == alarm.id, !model.rehearsal { awakeAvailableAt = wake.selfConfirmAvailableAt }
     coordinator = ChallengeCoordinator(alarm: effectiveAlarm, cloud: model.cloud, scheduler: model.scheduler, rehearsal: practicing)
     preparePrompt()
@@ -234,11 +255,11 @@ struct ChallengeView: View {
      else if arguments.contains("--ui-awake-countdown-near-end") { awakeAvailableAt = Date().addingTimeInterval(5) }
     }
     if arguments.contains("--ui-testing"), let index = arguments.firstIndex(of: "--ui-reading-transcript"), arguments.indices.contains(index + 1) {
-     readAloudItem = ChallengeContentItem(id: "ui-reading", kind: .readAloud, language: appLocale().identifier, text: appText("Small steps create steady progress."), choices: nil, answerIndex: nil, source: "ui-test", license: "original", attribution: nil)
+     readAloudItem = ChallengeContentItem(id: "ui-reading", kind: .readAloud, language: "en", text: "Small steps create steady progress.", choices: nil, answerIndex: nil, source: "ui-test", license: "original", attribution: nil)
      transcript = arguments[index + 1]; speechEnded = arguments.contains("--ui-reading-finished")
     }
     if arguments.contains("--ui-testing"), practicing, arguments.contains("--ui-reading-listening") {
-     speechListening = true; message = appText("Listening… Read the sentence aloud.")
+     speechListening = true; message = appText("Listening… Read the English passage aloud.")
     }
     if arguments.contains("--ui-testing"), practicing, arguments.contains("--ui-complete-challenge") {
      switch challenge.kind {
@@ -333,7 +354,7 @@ struct ChallengeView: View {
 
  private func finish(_ outcome: WakeOutcome, success: String? = nil) {
   guard !finished, !stopping, let coordinator else { return }
-  guard outcome != .selfConfirmed || Date() >= awakeAvailableAt else { return }
+  guard outcome != .selfConfirmed || challenge.kind == .none || Date() >= awakeAvailableAt else { return }
   stopping = true; message = appText("Finishing your challenge…")
   pauseResources()
   Task { @MainActor in
@@ -346,11 +367,13 @@ struct ChallengeView: View {
  private func complete(_ outcome: WakeOutcome, success: String? = nil) {
   guard !finished else { return }
   pauseResources(); completion = outcome
-  model.recordMorning(id: historyID, alarm: performedAlarm, outcome: outcome, rehearsal: practicing)
-  if !practicing,celebrates,let explanation=contentExplanation {
-   model.contentTakeaway=CompletedContentTakeaway(theme:contentTheme,explanation:explanation,date:Date())
+  if practicing,outcome == .localCompleted,
+     challenge.kind == .readAndChoose || challenge.kind == .riddle,
+     let chime=Bundle.main.url(forResource:"answerChime",withExtension:"wav") {
+   answerSound.play(url:chime,volume:0.25)
   }
-  if !practicing, celebrates { model.celebrationID = reduceMotion ? nil : UUID(); dismiss(); return }
+  model.recordMorning(id: historyID, alarm: performedAlarm, outcome: outcome, rehearsal: practicing)
+  if !practicing, celebrates, contentExplanation == nil { model.celebrationID = reduceMotion ? nil : UUID(); dismiss(); return }
   switch outcome {
   case .localCompleted: result = success ?? appText("Challenge completed")
   case .openaiVerified, .aiVerified: result = appText("Movement checked.")
@@ -361,11 +384,11 @@ struct ChallengeView: View {
  }
 
  @ViewBuilder private var completionActions:some View {
-      if celebrates && practicing && !rehearsal && model.alarms.isEmpty {
-       Button(appText("Set your first alarm")) {model.createAlarmAfterPractice=true;dismiss()}
+      if celebrates && practicing && !rehearsal {
+       Button(appText("Set an alarm with this challenge")) {model.challengeAfterPractice=performedAlarm.challenge;dismiss()}
         .buttonStyle(MorningButtonStyle()).accessibilityIdentifier("setFirstAlarmAfterPractice")
       }
-      if celebrates {
+      if celebrates && practicing {
        Button(appText("Try again")) { retryChallenge() }.buttonStyle(MorningButtonStyle(primary: false))
         .disabled(busy || stopping || preparingExample).accessibilityIdentifier("retryChallenge")
       }
@@ -482,7 +505,7 @@ struct ChallengeView: View {
   guard captureGeneration == generation, !finished, !stopping, scene == .active else { return }
   transcript = ""; speechEnded = false; speechFinishing = false
   guard let item = readAloudItem else { return }
-  message = spokenExample.play(item.text, language: item.language) ? appText("Listen to the example, then tap Start reading.") : appText("This voice is not available. You can still read the sentence.")
+  message = spokenExample.play(item.text, language: item.language) ? appText("Listen to the example, then tap Start reading.") : appText("The sample voice is unavailable. You can still read the passage.")
  }
 
  private func pauseResources() {
@@ -505,6 +528,7 @@ struct ChallengeView: View {
   }
 
   @MainActor private func handleDisappear() {
+   answerSound.stop()
    pauseResources()
    guard !finished else { return }
    Task { @MainActor in await coordinator?.suspend() }
@@ -545,8 +569,16 @@ struct ReadingFeedbackView: View {
  var body: some View {
   let feedback = feedback
   VStack(spacing: 12) {
-   Text(highlightedPrompt(feedback)).font(.title2.weight(.semibold)).multilineTextAlignment(.center)
-    .accessibilityIdentifier("readingPrompt").accessibilityLabel(target).accessibilityValue(wordSummary(feedback))
+   ReadingWordLayout {
+    ForEach(Array(displayWords(feedback).enumerated()), id: \.offset) { _, word in
+     ReadingPromptWord(text: word.text, status: word.status, attemptCleared: transcript.isEmpty)
+    }
+   }
+   .font(.title2.weight(.semibold))
+   .padding(.top, 5)
+   .accessibilityElement(children: .ignore)
+   .accessibilityAddTraits(.isStaticText)
+   .accessibilityIdentifier("readingPrompt").accessibilityLabel(target).accessibilityValue(wordSummary(feedback))
    Text(String(format: appText("Word match: %d/100"), Int((feedback.score * 100).rounded())))
     .font(.headline).accessibilityIdentifier("readingScore")
    ProgressView(value: feedback.score, total: 1).accessibilityLabel(appText("Word match score"))
@@ -564,7 +596,7 @@ struct ReadingFeedbackView: View {
    if !transcript.isEmpty {
     Text(String(format: appText("Heard: %@"), transcript)).foregroundStyle(MorningTheme.muted).accessibilityIdentifier("speechTranscript")
    }
-   Text(appText("The score compares recognized words with the sentence; it does not measure accent or pronunciation quality."))
+   Text(appText("Your score reflects how closely the words the app hears match the passage."))
     .font(.footnote).foregroundStyle(MorningTheme.muted)
   }
  }
@@ -576,18 +608,112 @@ struct ReadingFeedbackView: View {
   }.joined(separator: "; ")
  }
 
- private func highlightedPrompt(_ feedback: RecognizedWordMatch.Feedback) -> AttributedString {
-  var result = AttributedString(), index = 0
-  for (position, part) in target.split(whereSeparator: \.isWhitespace).enumerated() {
-   if position > 0 { result += AttributedString(" ") }
-   var word = AttributedString(String(part))
-   let count = RecognizedWordMatch.tokens(in: String(part), language: language).count
+ private func displayWords(_ feedback: RecognizedWordMatch.Feedback) -> [(text: String, status: RecognizedWordMatch.WordStatus)] {
+  var index = 0
+  return target.split(whereSeparator: \.isWhitespace).map { part in
+   let text = String(part)
+   let count = RecognizedWordMatch.tokens(in: text, language: language).count
    let statuses = feedback.words.dropFirst(index).prefix(count).map(\.status)
-   if statuses.contains(.incorrect) { word.foregroundColor = .red; word.underlineStyle = .single }
-   else if !statuses.isEmpty, statuses.allSatisfy({ $0 == .correct }) { word.foregroundColor = MorningTheme.correctWord; word.inlinePresentationIntent = .stronglyEmphasized }
-   else { word.foregroundColor = MorningTheme.muted }
-   result += word; index += count
+   index += count
+   let status: RecognizedWordMatch.WordStatus
+   if statuses.contains(.incorrect) { status = .incorrect }
+   else if !statuses.isEmpty, statuses.allSatisfy({ $0 == .correct }) { status = .correct }
+   else { status = .pending }
+   return (text, status)
   }
-  return result
+ }
+}
+
+private struct ReadingPromptWord: View {
+ let text: String
+ let status: RecognizedWordMatch.WordStatus
+ let attemptCleared: Bool
+ @Environment(\.accessibilityReduceMotion) private var reduceMotion
+ @State private var bounced = false
+ @State private var bounceCount = 0
+
+ private var color: Color {
+  switch status {
+  case .correct: MorningTheme.correctWord
+  case .incorrect: .red
+  case .pending: MorningTheme.muted
+  }
+ }
+
+ var body: some View {
+  let showMotion = !reduceMotion && !attemptCleared
+  Text(text)
+   .underline(status == .incorrect)
+   .foregroundStyle(color)
+   .keyframeAnimator(initialValue: CGFloat.zero, trigger: bounceCount) { content, offset in
+    content.offset(y: showMotion ? offset : 0)
+   } keyframes: { _ in
+    CubicKeyframe(-4, duration: 0.09)
+    CubicKeyframe(0, duration: 0.17)
+   }
+   .onChange(of: attemptCleared) { _, cleared in
+    if cleared { bounced = false }
+   }
+   .onChange(of: status, initial: true) { _, newStatus in
+    guard newStatus == .correct, !reduceMotion, !bounced else { return }
+    bounced = true
+    bounceCount += 1
+   }
+ }
+}
+
+private struct ReadingWordLayout: Layout {
+ @ScaledMetric(relativeTo: .title2) private var wordSpacing = 5
+ @ScaledMetric(relativeTo: .title2) private var lineSpacing = 6
+
+ private struct Line {
+  var indices: [Int] = []
+  var width: CGFloat = 0
+  var height: CGFloat = 0
+ }
+
+ func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+  let width = proposal.width ?? .infinity
+  let lines = lines(for: sizes(of: subviews, within: width), width: width)
+  let height = lines.reduce(0) { $0 + $1.height } + CGFloat(max(0, lines.count - 1)) * lineSpacing
+  return CGSize(width: proposal.width ?? lines.map(\.width).max() ?? 0, height: height)
+ }
+
+ func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+  let sizes = sizes(of: subviews, within: bounds.width)
+  var y = bounds.minY
+  for line in lines(for: sizes, width: bounds.width) {
+   var x = bounds.midX - line.width / 2
+   for index in line.indices {
+    let size = sizes[index]
+    subviews[index].place(at: CGPoint(x: x, y: y + (line.height - size.height) / 2),
+                          anchor: .topLeading, proposal: ProposedViewSize(size))
+    x += size.width + wordSpacing
+   }
+   y += line.height + lineSpacing
+  }
+ }
+
+ private func sizes(of subviews: Subviews, within width: CGFloat) -> [CGSize] {
+  subviews.map { view in
+   let ideal = view.sizeThatFits(.unspecified)
+   return ideal.width <= width ? ideal : view.sizeThatFits(ProposedViewSize(width: width, height: nil))
+  }
+ }
+
+ private func lines(for sizes: [CGSize], width: CGFloat) -> [Line] {
+  var lines: [Line] = []
+  var line = Line()
+  for (index, size) in sizes.enumerated() {
+   if !line.indices.isEmpty, line.width + wordSpacing + size.width > width {
+    lines.append(line)
+    line = Line()
+   }
+   line.width += (line.indices.isEmpty ? 0 : wordSpacing) + size.width
+   line.height = max(line.height, size.height)
+   line.indices.append(index)
+  }
+  if !line.indices.isEmpty { lines.append(line) }
+  return lines
  }
 }

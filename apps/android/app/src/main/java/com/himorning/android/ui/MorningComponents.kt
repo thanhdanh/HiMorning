@@ -4,9 +4,11 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -15,21 +17,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.FitnessCenter
-import androidx.compose.material.icons.outlined.AccessibilityNew
 import androidx.compose.material.icons.outlined.Bolt
 import androidx.compose.material.icons.outlined.Book
-import androidx.compose.material.icons.outlined.DirectionsRun
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.Lightbulb
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Mic
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.PlayCircleOutline
-import androidx.compose.material.icons.outlined.SelfImprovement
 import androidx.compose.material.icons.outlined.Spa
-import androidx.compose.material.icons.outlined.WavingHand
 import androidx.compose.material.icons.outlined.WbSunny
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -43,9 +40,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
@@ -53,9 +54,26 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.himorning.android.core.Alarm
+import androidx.compose.ui.text.font.FontWeight
+import com.himorning.android.R
 import com.himorning.android.core.ChallengeKind
 import com.himorning.android.core.WakeMode
+
+@Composable
+internal fun ProLockBadge(modifier: Modifier = Modifier, compact: Boolean = false) {
+    val shape = RoundedCornerShape(50)
+    Row(
+        modifier.background(Brush.linearGradient(listOf(Color(0xFFFFF2CF), Color(0xFFECCA82))), shape)
+            .border(0.75.dp, Color(0xFFC09A50), shape)
+            .padding(horizontal = if (compact) 7.dp else 9.dp, vertical = if (compact) 3.dp else 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(5.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        val ink = Color(0xFF4E3516)
+        Icon(Icons.Outlined.Lock, null, tint = ink, modifier = Modifier.size(12.dp))
+        Text(stringResource(R.string.pro_badge), style = MaterialTheme.typography.labelSmall, color = ink, fontWeight = FontWeight.Bold, letterSpacing = 0.45.sp)
+    }
+}
 
 @Composable
 internal fun MorningButton(
@@ -165,32 +183,24 @@ internal fun MorningSun(size: Dp = 68.dp, modifier: Modifier = Modifier) {
     }
 }
 
-internal fun challengeIcon(kind: ChallengeKind) = when (kind) {
+@Composable
+internal fun challengeIcon(kind: ChallengeKind, seated: Boolean = false): ImageVector = when (kind) {
     ChallengeKind.NONE -> Icons.Outlined.WbSunny
-    ChallengeKind.PUSH_UPS -> Icons.Outlined.FitnessCenter
+    ChallengeKind.PUSH_UPS -> ImageVector.vectorResource(R.drawable.challenge_push_ups)
     ChallengeKind.READ_AND_CHOOSE -> Icons.Outlined.Book
-    ChallengeKind.GUIDED_RHYTHM -> Icons.Outlined.SelfImprovement
+    ChallengeKind.GUIDED_RHYTHM -> ImageVector.vectorResource(
+        if (seated) R.drawable.challenge_rhythm_seated else R.drawable.challenge_rhythm_standing
+    )
     ChallengeKind.READ_ALOUD -> Icons.Outlined.Mic
-    ChallengeKind.WAVE_HAND -> Icons.Outlined.WavingHand
-    ChallengeKind.NECK_ROTATION -> Icons.Outlined.AccessibilityNew
+    ChallengeKind.WAVE_HAND -> ImageVector.vectorResource(R.drawable.challenge_wave_hand)
+    ChallengeKind.NECK_ROTATION -> ImageVector.vectorResource(R.drawable.challenge_neck_rotation)
     ChallengeKind.RIDDLE -> Icons.Outlined.Lightbulb
-    ChallengeKind.JUMPING_JACKS -> Icons.Outlined.DirectionsRun
-    ChallengeKind.STRETCHING -> Icons.Outlined.Spa
+    ChallengeKind.JUMPING_JACKS -> ImageVector.vectorResource(R.drawable.challenge_jumping_jacks)
+    ChallengeKind.STRETCHING -> ImageVector.vectorResource(R.drawable.challenge_stretching)
 }
 
 internal fun modeIcon(mode: WakeMode) = when (mode) {
     WakeMode.GENTLE -> Icons.Outlined.Spa
     WakeMode.BALANCED -> Icons.Outlined.WbSunny
     WakeMode.FOCUSED -> Icons.Outlined.Bolt
-}
-
-@Composable
-internal fun challengeColor(kind: ChallengeKind, onYellow: Boolean = false): Color {
-    val dark = isSystemInDarkTheme() && !onYellow
-    return when (kind) {
-        ChallengeKind.NONE -> if (onYellow) Color(0xFF967211) else MorningTheme.colors.accent
-        ChallengeKind.PUSH_UPS, ChallengeKind.JUMPING_JACKS -> if (dark) Color(0xFFFF9166) else Color(0xFFBF472E)
-        ChallengeKind.READ_ALOUD, ChallengeKind.READ_AND_CHOOSE, ChallengeKind.RIDDLE -> if (dark) Color(0xFFBDA6FF) else Color(0xFF6652AD)
-        ChallengeKind.GUIDED_RHYTHM, ChallengeKind.WAVE_HAND, ChallengeKind.NECK_ROTATION, ChallengeKind.STRETCHING -> if (dark) Color(0xFF66D4BA) else Color(0xFF1F7A70)
-    }
 }

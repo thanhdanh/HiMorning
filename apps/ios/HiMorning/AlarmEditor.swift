@@ -1,6 +1,7 @@
 import SwiftUI
 import AVFoundation
 import UIKit
+import AlarmKit
 import HiMorningCore
 enum AlarmEditorScope {case all,schedule,challenge}
 
@@ -12,21 +13,26 @@ struct AlarmEditor:View {
  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
  @State private var choosingSound=false
  @State private var soundPro=false
- @State private var time=Date()
+ @State private var time=Calendar.current.date(bySettingHour:7,minute:0,second:0,of:Date()) ?? Date()
  @State private var mode:WakeMode = .gentle
  @State private var sound:AlarmSound = .system
  @State private var challenge:ChallengeSelection = .none
  @State private var pushUpTarget=10
  @State private var rhythmVariant:GuidedRhythmVariant = .standing
- @State private var choseChallenge=false
+ @State private var filter:WakeMode = .gentle
  @State private var days:Set<Int>=[]
  @State private var label=""
  @FocusState private var labelFocused:Bool
  @State private var volume:Double=0.3
  @State private var soundPreview=SoundPreview()
- @State private var pro=false
+ @State private var playingSound:AlarmSound?
+ @State private var previewID=UUID()
  @State private var practiceAlarm:SavedAlarm?
- @State private var confirmingPractice=false
+ @State private var detail:ChallengeInfo?
+ @State private var trialCredit:ChallengeCredit?
+ @State private var removeTrial=false
+ @ObservedObject private var ads:RewardedAdStore
+ private let original:SavedAlarm?
  @State private var saving=false
  @State private var saveError:String?
  @State private var alarmAccessDenied=false
@@ -37,9 +43,8 @@ struct AlarmEditor:View {
  let practiceModel:PilotModel
  let editing:Bool
  @State private var scope:AlarmEditorScope
- let save:(SavedAlarm) async throws ->Void
- init(alarm:SavedAlarm?=nil,scope:AlarmEditorScope = .all,suggestedChallenge:ChallengeSelection?=nil,store:SubscriptionStore,preview:PreviewStore,practiceModel:PilotModel,save:@escaping (SavedAlarm) async throws ->Void) {
-  _scope=State(initialValue:scope);self.store=store;self.preview=preview;self.practiceModel=practiceModel;self.save=save;_alarmID=State(initialValue:alarm?.id ?? UUID());editing=alarm != nil
+ init(alarm:SavedAlarm?=nil,scope:AlarmEditorScope = .all,suggestedChallenge:ChallengeSelection?=nil,store:SubscriptionStore,preview:PreviewStore,practiceModel:PilotModel) {
+  _scope=State(initialValue:scope);self.store=store;self.preview=preview;self.practiceModel=practiceModel;self.original=alarm;_ads=ObservedObject(wrappedValue:practiceModel.rewardedAds);_alarmID=State(initialValue:alarm?.id ?? UUID());editing=alarm != nil
   if let alarm {
    _time=State(initialValue:Calendar.current.date(from:DateComponents(hour:alarm.time.hour,minute:alarm.time.minute)) ?? Date())
    _mode=State(initialValue:alarm.mode);_sound=State(initialValue:alarm.sound)
@@ -47,16 +52,17 @@ struct AlarmEditor:View {
    _label=State(initialValue:alarm.label)
    _pushUpTarget=State(initialValue:alarm.challenge.repetitions ?? 5)
    _rhythmVariant=State(initialValue:alarm.challenge.rhythmVariant ?? .standing)
-   _choseChallenge=State(initialValue:true)
+   _filter=State(initialValue:alarm.mode)
   }
   if let suggestedChallenge {
    _challenge=State(initialValue:suggestedChallenge)
    _mode=State(initialValue:suggestedChallenge.kind.preferredMode)
    _pushUpTarget=State(initialValue:suggestedChallenge.repetitions ?? 5)
    _rhythmVariant=State(initialValue:suggestedChallenge.rhythmVariant ?? .seated)
-   _choseChallenge=State(initialValue:true)
+   _filter=State(initialValue:suggestedChallenge.kind.preferredMode)
   }
  }
+ @Environment(\.scenePhase) private var scenePhase
  private let weekdays=[2,3,4,5,6,7,1]
  private var dayNames:[String] {[appText("Sun"),appText("Mon"),appText("Tue"),appText("Wed"),appText("Thu"),appText("Fri"),appText("Sat")]}
  private var motionReduced:Bool {
@@ -80,40 +86,52 @@ struct AlarmEditor:View {
   nil
   #endif
  }
- private var challengeColor:Color {AlarmComposerPalette.color(for:challenge.kind)}
+ private var challengeColor:Color {MorningTheme.modeAccent(mode)}
  var body:some View {
   NavigationStack {
    ZStack {
-    AlarmComposerBackdrop(tint:challengeColor)
+    AlarmComposerBackdrop()
     ScrollView {
      VStack(alignment:.leading,spacing:24) {
-      challengeHero
-      if scope != .schedule {
-      VStack(alignment:.leading,spacing:12) {
-       Text(appText("Challenge level")).font(.headline)
-       GlassEffectContainer(spacing:8) {
-        HStack(spacing:8) {ForEach(WakeMode.allCases,id:\.self) {modeButton($0)}}
-       }
-      }
-      VStack(alignment:.leading,spacing:14) {
-       HStack {
-        Text(appText("Pick your first win")).modifier(MorningTypography.heading(size:20,relativeTo:.title3))
-        Spacer()
-        Image(systemName:"sparkles").foregroundStyle(challengeColor).accessibilityHidden(true)
-       }
-       LazyVGrid(columns:dynamicTypeSize.isAccessibilitySize ? [GridItem(.flexible())] : [GridItem(.flexible(),spacing:12),GridItem(.flexible(),spacing:12)],spacing:12) {
-        if !ChallengeKind.available(in:mode).contains(challenge.kind) {challengeButton(challenge.kind,legacy:true)}
-        ForEach(ChallengeKind.available(in:mode),id:\.self) {challengeButton($0)}
-       }
-       if challenge.kind == .pushUps || challenge.kind == .guidedRhythm {challengeSettings}
-      }
-      }
+      if scope != .challenge {challengeHero}
       if scope != .challenge {
       VStack(alignment:.leading,spacing:12) {
-       Text(appText("The little details")).font(.headline)
        settingsGroup
-       Text(days.isEmpty ? appText("Rings once") : appText("Uses your phone’s local time"))
-        .font(.footnote).foregroundStyle(MorningTheme.muted).padding(.horizontal,4)
+      }
+      }
+      if scope != .schedule {
+      VStack(alignment:.leading,spacing:12) {
+       Text(appText("When the alarm rings")).font(.headline)
+       HStack {
+        ChallengeIcon(kind:challenge.kind,seated:challenge.rhythmVariant == .seated,size:20)
+         .foregroundStyle(challengeColor)
+        let title=Text(challenge.displayTitle).font(.subheadline.weight(.semibold))
+         .accessibilityIdentifier("composerChallengeTitle")
+        if dynamicTypeSize.isAccessibilitySize {title}
+        else {title.lineLimit(2,reservesSpace:true)}
+        Spacer()
+        Button(appText("Try")) {startPractice()}
+         .buttonStyle(.bordered).frame(minHeight:44).accessibilityIdentifier("trySelectedChallenge")
+         .opacity(challenge.kind == .none ? 0 : 1)
+         .disabled(challenge.kind == .none).accessibilityHidden(challenge.kind == .none)
+       }
+       if let trialSelection {
+        HStack {
+         Label(String(format:appText("Next ring only: %@"),locale:appLocale(),trialSelection.displayTitle),systemImage:"ticket")
+          .font(.footnote.weight(.semibold)).foregroundStyle(MorningTheme.accent)
+         Spacer(minLength:8)
+         Button(appText("Remove")) {trialCredit=nil;removeTrial=true}
+          .font(.footnote.weight(.semibold)).frame(minHeight:44)
+        }.accessibilityIdentifier("selectedChallengeTrial")
+       }
+       Text(appText("Choose a challenge type")).font(.caption.weight(.semibold)).foregroundStyle(MorningTheme.muted)
+       HStack(spacing:8) {ForEach(WakeMode.allCases,id:\.self) {modeButton($0)}}
+      }
+      VStack(alignment:.leading,spacing:14) {
+       Text(appText("Choose a challenge")).modifier(MorningTypography.heading(size:20,relativeTo:.title3))
+       challengeGrid
+       if challenge.kind == .pushUps || challenge.kind == .guidedRhythm {challengeSettings}
+       ChallengeRequirementsView(selection:challenge).accessibilityIdentifier("modeExplanation")
       }
       }
      }.padding(.horizontal,20).padding(.top,12).padding(.bottom,24)
@@ -127,30 +145,52 @@ struct AlarmEditor:View {
     }
     .disabled(saving).interactiveDismissDisabled(saving)
     .tint(MorningTheme.accent).preferredColorScheme(testingColorScheme).onDisappear {soundPreview.stop()}
+    .onChange(of:scenePhase) {_,phase in
+     if phase == .active,alarmAccessDenied,AlarmManager.shared.authorizationState == .authorized {
+      alarmAccessDenied=false;saveError=nil
+     }
+    }
     .onChange(of:volume) {_,value in soundPreview.setVolume(value)}
-    .onChange(of:preview.access) {_,_ in soundPreview.stop()}
     .sensoryFeedback(.selection,trigger:challenge.kind)
-    .sensoryFeedback(.selection,trigger:mode)
-    .animation(motionReduced ? nil : .spring(response:0.4,dampingFraction:0.82),value:challenge.kind)
+    .sensoryFeedback(.selection,trigger:filter)
     .environment(\.composerReduceMotion,motionReduced)
     .environment(\.composerReduceTransparency,transparencyReduced)
-    .sheet(isPresented:$pro) {ProView(store:store,preview:preview)}
     .sheet(isPresented:$choosingSound) {soundPicker}
-    .alert(appText("Try this challenge?"),isPresented:$confirmingPractice) {
-     Button(appText("Try")) {startPractice()}.accessibilityIdentifier("confirmDraftPractice")
-     Button(appText("Cancel"),role:.cancel) {}.accessibilityIdentifier("cancelDraftPractice")
-    } message: {Text(challenge.displayTitle)}
+    .sheet(item:$detail) {info in
+     ChallengeInfoSheet(info:info,store:store,preview:preview,
+                        trialAlreadySelected:trialSelection?.kind == info.selection.kind,
+                        trialPossible:trialPossible,credit:practiceModel.challengeCredit(for:info.selection.kind),
+                        ads:ads,model:practiceModel,onTrial:{credit in
+      trialCredit=credit;removeTrial=false;detail=nil
+     })
+    }
     .fullScreenCover(item:$practiceAlarm) {alarm in
      ChallengeView(alarm:alarm,model:practiceModel,rehearsal:true)
     }
   }
  }
- private func requestPractice(_ kind:ChallengeKind) {
-  guard kind != .none else {return}
-  selectChallenge(kind)
-  labelFocused=false;soundPreview.stop();confirmingPractice=true
+ private var trialSelection:ChallengeSelection? {
+  if let trialCredit {return trialCredit.challenge}
+  guard !removeTrial,let trial=original?.challengeTrial,trial.occurrence>Date() else {return nil}
+  return trial.challenge
+ }
+ private var trialPossible:Bool {
+  guard let original else {return true}
+  guard original.enabled,let time=try? draftTime() else {return false}
+  return !(time == original.time && time.weekdays.isEmpty && original.scheduledOccurrence.map {$0<=Date()} == true)
+ }
+ private func draftTime() throws ->AlarmTime {
+  let components=Calendar.current.dateComponents([.hour,.minute],from:time)
+  return try AlarmTime(hour:components.hour ?? 6,minute:components.minute ?? 30,weekdays:days)
+ }
+ private func info(for kind:ChallengeKind) {
+  labelFocused=false;soundPreview.stop()
+  let selection=challenge.kind == kind ? challenge : ChallengeSelection(
+   kind:kind,repetitions:kind == .pushUps ? max(kind.preferredMode.policy.reps,pushUpTarget) : nil,rhythmVariant:rhythmVariant)
+  detail=ChallengeInfo(selection:selection,mode:ChallengeKind.available(in:filter).contains(kind) ? filter : mode)
  }
  private func startPractice() {
+  labelFocused=false;soundPreview.stop()
   let components=Calendar.current.dateComponents([.hour,.minute],from:time)
   guard challenge.kind != .none,
         let alarmTime=try? AlarmTime(hour:components.hour ?? 0,minute:components.minute ?? 0,weekdays:days) else {return}
@@ -173,43 +213,26 @@ struct AlarmEditor:View {
      .multilineTextAlignment(.trailing).accessibilityIdentifier("alarmOccurrence")
    }
    DatePicker(appText("Wake-up time"),selection:$time,displayedComponents:.hourAndMinute)
-    .datePickerStyle(.wheel).labelsHidden().frame(height:180).clipped()
+    .datePickerStyle(.wheel).environment(\.locale,Locale.autoupdatingCurrent).labelsHidden().frame(height:180).clipped()
     .frame(maxWidth:.infinity)
     .accessibilityIdentifier("alarmTimePicker")
-    .accessibilityValue(DateFormatter.localizedString(from:time,dateStyle:.none,timeStyle:.short))
-   }
-   if scope == .all {Divider().overlay(challengeColor.opacity(0.16))}
-   if scope != .schedule {
-   HStack(alignment:.center,spacing:12) {
-    VStack(alignment:.leading,spacing:8) {
-     Text(appText("Your morning")).font(.caption.weight(.semibold)).foregroundStyle(MorningTheme.muted)
-     Text(challenge.kind == .none ? appText("A gentle start") : challenge.displayTitle)
-      .font(.system(.title2,design:.rounded,weight:.bold)).fixedSize(horizontal:false,vertical:true)
-      .accessibilityIdentifier("composerChallengeTitle")
-     ChallengeRequirementsView(selection:challenge)
-      .accessibilityIdentifier("modeExplanation")
-    }.frame(maxWidth:.infinity,alignment:.leading)
-    if !dynamicTypeSize.isAccessibilitySize {
-     AlarmComposerEmblem(symbol:AlarmComposerPalette.symbol(for:challenge.kind),tint:challengeColor)
-      .scaleEffect(0.75).frame(width:80,height:90).accessibilityHidden(true)
-    }
-   }
+    .accessibilityValue(alarmTimeText(time))
    }
   }.padding(24).frame(maxWidth:.infinity,alignment:.leading)
-   .composerGlass(tint:challengeColor.opacity(0.12),cornerRadius:32)
+   .composerGlass(tint:.clear,cornerRadius:32)
  }
  private var soundPicker:some View {
   NavigationStack {
    ScrollView {
     VStack(alignment:.leading,spacing:24) {
      Label(appText("Set the mood"),systemImage:"waveform").font(.title2.bold()).fontDesign(.rounded)
-     SoundSelection(sound:$sound,volume:$volume,access:preview.access,unlock:{soundPro=true},preview:playPreview,stopPreview:{soundPreview.stop()},onSelection:{choosingSound=false})
+     SoundSelection(sound:$sound,volume:$volume,access:preview.access,playing:playingSound,unlock:{soundPro=true},preview:playPreview,stopPreview:stopSoundPreview,onSelection:{choosingSound=false})
     }.padding(20)
    }.background(MorningTheme.canvas).foregroundStyle(MorningTheme.ink)
     .navigationTitle(appText("Sound")).navigationBarTitleDisplayMode(.inline)
-    .toolbar {ToolbarItem(placement:.confirmationAction) {Button(appText("Done")) {soundPreview.stop();choosingSound=false}.accessibilityIdentifier("doneSound")}}
-  }.tint(MorningTheme.accent).presentationDragIndicator(.visible).onDisappear {soundPreview.stop()}
-   .sheet(isPresented:$soundPro) {ProView(store:store,preview:preview)}
+    .toolbar {ToolbarItem(placement:.confirmationAction) {Button(appText("Done")) {stopSoundPreview();choosingSound=false}.accessibilityIdentifier("doneSound")}}
+  }.tint(MorningTheme.accent).presentationDragIndicator(.visible).onDisappear(perform:stopSoundPreview)
+   .sheet(isPresented:$soundPro) {ProView(store:store,preview:preview,ads:ads)}
  }
  private var repeatSummary:String {
   if days.isEmpty {return appText("Never")}
@@ -218,12 +241,6 @@ struct AlarmEditor:View {
  }
  private var settingsGroup:some View {
   VStack(spacing:0) {
-   if scope == .all {
-   Button {labelFocused=false;soundPreview.stop();choosingSound=true} label: {
-    settingsRow(title:appText("Sound"),summary:sound.title)
-   }.buttonStyle(.plain).accessibilityIdentifier("chooseSound")
-   settingsDivider
-   }
    VStack(alignment:.leading,spacing:14) {
     HStack(alignment:.firstTextBaseline) {
      Text(appText("Repeat")).accessibilityIdentifier("alarmRepeat")
@@ -250,6 +267,12 @@ struct AlarmEditor:View {
    }.padding(.horizontal,12).padding(.vertical,16)
     .sensoryFeedback(.selection,trigger:days)
    settingsDivider
+   if scope == .all {
+    Button {labelFocused=false;soundPreview.stop();choosingSound=true} label: {
+     settingsRow(title:appText("Sound"),summary:sound.title)
+    }.buttonStyle(.plain).accessibilityIdentifier("chooseSound")
+    settingsDivider
+   }
    HStack(spacing:16) {
     Text(appText("Label")).foregroundStyle(MorningTheme.ink)
     TextField(appText("Optional label"),text:$label)
@@ -296,19 +319,22 @@ struct AlarmEditor:View {
       labelFocused=false;saving=true;saveError=nil;alarmAccessDenied=false;offeringAllSettings=false;soundPreview.stop()
       Task { @MainActor in
        do {
-        let c=Calendar.current.dateComponents([.hour,.minute],from:time)
-        let value=try AlarmTime(hour:c.hour ?? 6,minute:c.minute ?? 30,weekdays:days)
-        try await save(SavedAlarm(id:alarmID,time:value,mode:mode,sound:sound,challenge:challenge,label:label))
+        let value=try draftTime()
+        try await practiceModel.save(SavedAlarm(id:alarmID,time:value,mode:mode,sound:sound,challenge:challenge,label:label),credit:trialCredit,removeTrial:removeTrial)
         dismiss()
-       } catch NativeAlarmError.denied {
-        saveError=appText("Alarm access is off. Allow alarms for HiMorning in Settings, then try again.")
+       } catch AlarmScheduleError.accessDenied {
+        saveError=appText("Alarm wasn’t scheduled. Allow alarms for HiMorning in Settings.")
         alarmAccessDenied=true;saving=false
        } catch AlarmSaveError.soundUnavailable {
         saveError=appText(scope == .all ? "This sound is no longer available. Choose System sound or unlock Pro." : "Some settings are no longer available. Open all settings to update them.");offeringAllSettings=scope != .all;saving=false
+       } catch AlarmSaveError.trialAlarmOff {
+        saveError=appText("Turn on this alarm to use a trial.");saving=false
+       } catch AlarmSaveError.trialUnavailable {
+        saveError=appText("Choose a future ring time to use this trial.");saving=false
        } catch AlarmSaveError.challengeUnavailable {
         saveError=appText(scope == .all ? "These challenge settings require Pro. Choose another challenge or unlock Pro." : "Some settings are no longer available. Open all settings to update them.");offeringAllSettings=scope != .all;saving=false
        } catch {
-        saveError=appText("This alarm could not be confirmed. Please check your system alarms before relying on it.")
+        saveError=appText("Alarm schedule unconfirmed")
         #if DEBUG
         if ProcessInfo.processInfo.arguments.contains("--ui-testing") {
          let native=error as NSError
@@ -323,51 +349,87 @@ struct AlarmEditor:View {
        if saving {ProgressView()} else {Image(systemName:"checkmark")}
        Text(appText(saving ? "Saving…" : "Save"))
        Spacer(minLength:12)
-       if scope != .challenge {Text(time,style:.time).monospacedDigit()}
+       if scope != .challenge {Text(alarmTimeText(time)).monospacedDigit()}
       }.font(.headline).padding(.horizontal,18).frame(maxWidth:.infinity,minHeight:56)
      }.buttonStyle(.glassProminent).tint(MorningTheme.yellow).foregroundStyle(MorningTheme.onYellow)
       .disabled(saving).accessibilityIdentifier("saveAlarm")
       .accessibilityLabel(appText(saving ? "Saving…" : "Save"))
     }.padding(.horizontal,20).padding(.top,12).padding(.bottom,labelFocused ? 32 : 8)
-     .background {LinearGradient(colors:[MorningTheme.canvas.opacity(0),MorningTheme.canvas.opacity(0.96)],startPoint:.top,endPoint:.bottom).ignoresSafeArea(edges:.bottom)}
+     .background {MorningTheme.canvas.ignoresSafeArea(edges:.bottom)}
 
  }
- private func challengeButton(_ kind:ChallengeKind,legacy:Bool=false)->some View {
+ private var challengeGrid:some View {
+  let available=ChallengeKind.available(in:filter)
+  let last=available.count.isMultiple(of:2) ? nil : available.last
+  let oneColumn=dynamicTypeSize.isAccessibilitySize
+  return VStack(spacing:12) {
+   LazyVGrid(columns:oneColumn ? [GridItem(.flexible())] : [GridItem(.flexible(),spacing:12),GridItem(.flexible(),spacing:12)],spacing:12) {
+    ForEach(available.filter {$0 != last},id:\.self) {challengeButton($0,wide:oneColumn)}
+   }
+   if let last {challengeButton(last,wide:true).id(last)}
+   if !available.contains(challenge.kind) {challengeButton(challenge.kind,legacy:true,wide:true)}
+  }
+ }
+ private func challengeButton(_ kind:ChallengeKind,legacy:Bool=false,wide:Bool=false)->some View {
   let selected=challenge.kind == kind
-  let tint=AlarmComposerPalette.color(for:kind)
-  return Button {
-    selectChallenge(kind)
+  let tint=MorningTheme.modeAccent(legacy ? mode : filter)
+  let locked = !preview.access.allows(challenge:kind)
+  let usesCamera=kind == .pushUps || kind == .guidedRhythm || kind.usesLocalMovement
+  let layout=wide ? AnyLayout(HStackLayout(alignment:.center,spacing:12)) : AnyLayout(VStackLayout(alignment:.leading,spacing:8))
+  let reserveTitleLines = !wide && dynamicTypeSize <= .large && !legacy
+  let infoAlignment:Alignment = wide ? .trailing : .topTrailing
+  let shape=RoundedRectangle(cornerRadius:24)
+  return ZStack(alignment:infoAlignment) {
+   Button {
+    if locked {info(for:kind)} else {selectChallenge(kind)}
    } label: {
-    VStack(alignment:.leading,spacing:18) {
-     HStack {
-      Image(systemName:AlarmComposerPalette.symbol(for:kind))
-       .font(.system(size:25,weight:.medium)).foregroundStyle(tint)
-       .frame(width:50,height:50).background(tint.opacity(0.13),in:RoundedRectangle(cornerRadius:17))
-      Spacer(minLength:0)
-      if selected {Image(systemName:"checkmark.circle.fill").font(.title3).foregroundStyle(tint).accessibilityHidden(true)}
+    layout {
+     HStack(spacing:5) {
+      ChallengeIcon(kind:kind,seated:rhythmVariant == .seated,size:26)
+      .foregroundStyle(tint)
+      .frame(width:40,height:40).background(tint.opacity(0.13),in:RoundedRectangle(cornerRadius:13))
+      if locked && !wide {ProLockBadge(compact:true).accessibilityHidden(true)}
      }
-     Text(legacy ? String(format:appText("%@ · saved choice"),kind.title) : kind.title)
+     VStack(alignment:.leading,spacing:wide ? 4 : 8) {
+     let title=Text(legacy ? String(format:appText("%@ · saved choice"),kind.title) : kind.title)
       .font(.subheadline.weight(.bold)).multilineTextAlignment(.leading).fixedSize(horizontal:false,vertical:true)
-     if kind == .pushUps || kind == .guidedRhythm || kind.usesLocalMovement {
-      HStack(alignment:.top,spacing:5) {
-       Image(systemName:"camera.fill").accessibilityHidden(true)
-       Text(appText("Camera")).fixedSize(horizontal:false,vertical:true)
-      }.font(.caption2).foregroundStyle(MorningTheme.muted)
+     if reserveTitleLines {title.lineLimit(2,reservesSpace:true)} else {title}
+     ZStack(alignment:.leading) {
+      Text(verbatim:" ").accessibilityHidden(true)
+      if locked && wide {
+       ProLockBadge(compact:true).accessibilityHidden(true)
+      } else if selected && !locked {
+       Label(appText("Selected"),systemImage:"checkmark.circle.fill").foregroundStyle(tint)
+      } else if kind == .stretching {
+       Text(appText("Free"))
+      } else if usesCamera {
+       Label(appText("Camera"),systemImage:"camera.fill")
+      } else if kind == .readAloud {
+       Label(appText("Microphone"),systemImage:"mic.fill")
+      }
+     }.font(.caption2).foregroundStyle(MorningTheme.muted)
      }
-    }.padding(16).frame(minWidth:0,maxWidth:.infinity,minHeight:142,alignment:.topLeading)
-     .background(selected ? tint.opacity(0.12) : MorningTheme.surface.opacity(0.8),in:RoundedRectangle(cornerRadius:24))
-     .overlay {RoundedRectangle(cornerRadius:24).strokeBorder(selected ? tint.opacity(0.85) : MorningTheme.line.opacity(0.7),lineWidth:selected ? 2 : 1)}
-     .contentShape(RoundedRectangle(cornerRadius:24))
+    }.padding(.leading,14).padding(.trailing,wide ? 48 : 14)
+     .padding(.vertical,12)
+     .frame(minWidth:0,maxWidth:.infinity,minHeight:wide ? 70 : 124,alignment:wide ? .leading : .topLeading)
+     .background(MorningTheme.surface,in:shape)
+     .overlay {shape.strokeBorder(selected ? tint : locked ? MorningTheme.proOutline : MorningTheme.line,lineWidth:selected ? 2 : 1)}
+     .contentShape(shape)
+     .accessibilityElement(children:.combine)
+     .accessibilityValue(locked ? appText("Requires Pro") : "")
    }.buttonStyle(AlarmComposerPressStyle()).accessibilityIdentifier("challenge-"+kind.editorIdentifier)
-    .simultaneousGesture(TapGesture(count:2).onEnded {requestPractice(kind)})
     .accessibilityAddTraits(selected ? .isSelected : [])
-    .accessibilityHint(kind == .none ? "" : appText("Tap twice quickly to try."))
-    .accessibilityActions {
-     if kind != .none {Button(appText("Try this challenge")) {requestPractice(kind)}}
-    }
+   Button {info(for:kind)} label: {
+    Image(systemName:"info.circle").font(.system(size:17,weight:.medium))
+     .foregroundStyle(MorningTheme.muted).frame(width:44,height:44).contentShape(Rectangle())
+   }.buttonStyle(.plain).padding(5)
+    .accessibilityLabel(String(format:appText("About %@"),locale:appLocale(),kind.title))
+    .accessibilityIdentifier("challengeInfo-"+kind.editorIdentifier)
+  }
  }
  private func selectChallenge(_ kind:ChallengeKind) {
-    choseChallenge=true
+    guard challenge.kind != kind else {return}
+    mode=filter
     switch kind {
     case .none:challenge = .none
     case .pushUps:
@@ -412,36 +474,37 @@ struct AlarmEditor:View {
    .accessibilityElement(children:.contain).accessibilityIdentifier("challenge-settings-"+kind.editorIdentifier)
  }
  private func modeButton(_ value:WakeMode)->some View {
-  Button {
+  let selected=filter == value
+  let tint=MorningTheme.modeAccent(value)
+  return Button {
    preview.refresh()
-   if preview.access.allows(mode:value) {
-     guard value != mode else {return}
-     let oldMode=mode
-     mode=value
-    if value != oldMode && !ChallengeKind.available(in:value).contains(challenge.kind) {
-     challenge=value == .gentle ? .none : value == .balanced ? .readAndChoose : .pushUps(repetitions:10)
-     pushUpTarget=challenge.repetitions ?? pushUpTarget
-    } else if !choseChallenge {challenge=value == .gentle ? .none : value == .balanced ? .readAndChoose : .pushUps(repetitions:10);pushUpTarget=challenge.repetitions ?? pushUpTarget}
-     if challenge.kind == .pushUps {pushUpTarget=min(ChallengeSelection.maximumPushUps,max(value == .focused ? 10 : 5,pushUpTarget));challenge = .pushUps(repetitions:pushUpTarget)}
-   } else {pro=true}
+   filter=value
   } label: {
    VStack(spacing:6) {
     HStack(spacing:5) {
      Image(systemName:value == .gentle ? "leaf.fill" : value == .balanced ? "sun.max.fill" : "bolt.fill")
-     if !preview.access.allows(mode:value) {Image(systemName:"lock.fill").font(.caption2)}
-    }.font(.body.weight(.semibold))
+    }.font(.body.weight(.semibold)).foregroundStyle(selected ? tint : MorningTheme.muted)
     Text(value.title).font(.caption.weight(.semibold)).multilineTextAlignment(.center).fixedSize(horizontal:false,vertical:true)
-   }.padding(.vertical,13).padding(.horizontal,4).frame(maxWidth:.infinity,minHeight:70)
-    .foregroundStyle(mode == value ? MorningTheme.ink : MorningTheme.muted)
-    .composerGlass(tint:mode == value ? MorningTheme.yellow.opacity(0.3) : .clear,cornerRadius:23,interactive:true)
+   }.padding(.vertical,8).padding(.horizontal,4).frame(maxWidth:.infinity,minHeight:58)
+    .contentShape(Rectangle())
+    .foregroundStyle(selected ? MorningTheme.ink : MorningTheme.muted)
+    .background(MorningTheme.surface,in:RoundedRectangle(cornerRadius:23))
+    .overlay {RoundedRectangle(cornerRadius:23).strokeBorder(selected ? tint : MorningTheme.line,lineWidth:selected ? 2 : 1)}
   }.buttonStyle(.plain).accessibilityIdentifier("mode-"+value.rawValue)
-   .accessibilityAddTraits(mode == value ? .isSelected : [])
+   .accessibilityAddTraits(selected ? .isSelected : [])
  }
  private func playPreview(_ value:AlarmSound) {
-  preview.refresh()
-  guard preview.access.allows(sound:value) else {soundPreview.stop();if choosingSound {soundPro=true} else {pro=true};return}
-  guard value != .system,let url=Bundle.main.url(forResource:value.rawValue,withExtension:"wav") else {soundPreview.stop();return}
-  soundPreview.play(url:url,volume:volume)
+  if playingSound == value {stopSoundPreview();return}
+  guard value != .system,let url=Bundle.main.url(forResource:value.rawValue,withExtension:"wav") else {stopSoundPreview();return}
+  let id=UUID()
+  previewID=id;playingSound=value
+  soundPreview.play(url:url,volume:volume,onEnd:{
+   if previewID == id {playingSound=nil}
+  })
+ }
+ private func stopSoundPreview() {
+  previewID=UUID();playingSound=nil
+  soundPreview.stop()
  }
 }
 private struct SoundSelection:View {
@@ -449,6 +512,7 @@ private struct SoundSelection:View {
  @Binding var sound:AlarmSound
  @Binding var volume:Double
  let access:MorningAccess
+ let playing:AlarmSound?
  let unlock:()->Void
  let preview:(AlarmSound)->Void
  let stopPreview:()->Void
@@ -459,21 +523,28 @@ private struct SoundSelection:View {
      VStack(alignment:.leading,spacing:0) {
       Text(group.title).font(.subheadline.weight(.semibold)).foregroundStyle(MorningTheme.muted).padding(.bottom,4)
       ForEach(group.sounds,id:\.self) {value in
+       let locked = !access.allows(sound:value)
        HStack(spacing:8) {
-        Button {stopPreview();if access.allows(sound:value) {sound=value;onSelection()} else {unlock()}} label: {
+        Button {stopPreview();if locked {unlock()} else {sound=value;onSelection()}} label: {
          HStack(spacing:14) {
-          Image(systemName:value == .system ? "alarm" : value == .sunrise ? "sunrise" : "music.note")
-           .frame(width:44,height:44).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:12))
-          Text(value.title).font(.body.weight(.medium))
-          if !access.allows(sound:value) {Image(systemName:"lock.fill").font(.caption)}
+          if locked {
+           VStack(alignment:.leading,spacing:6) {
+            ProLockBadge()
+            Text(value.title).font(.body.weight(.medium))
+           }
+          } else {
+           Image(systemName:value == .system ? "alarm" : value == .sunrise ? "sunrise" : "music.note")
+            .frame(width:44,height:44).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:12))
+           Text(value.title).font(.body.weight(.medium))
+          }
           Spacer()
-          Image(systemName:sound == value ? "checkmark.circle.fill" : "circle").foregroundStyle(MorningTheme.accent)
+          if !locked {Image(systemName:sound == value ? "checkmark.circle.fill" : "circle").foregroundStyle(MorningTheme.accent)}
          }.padding(.vertical,14).contentShape(Rectangle())
         }.buttonStyle(.plain).accessibilityIdentifier("sound-"+value.rawValue).accessibilityAddTraits(sound == value ? .isSelected : [])
         if value != .system {
-         Button {stopPreview();if access.allows(sound:value) {preview(value)} else {unlock()}} label: {Image(systemName:"play.fill").frame(width:44,height:44)}
+         Button {preview(value)} label: {Image(systemName:playing == value ? "stop.fill" : "play.fill").frame(width:44,height:44)}
           .buttonStyle(.plain).foregroundStyle(MorningTheme.accent)
-          .accessibilityLabel(String(format:appText("Preview %@"),locale:appLocale(),value.title))
+          .accessibilityLabel(playing == value ? appText("Stop preview") : String(format:appText("Preview %@"),locale:appLocale(),value.title))
           .accessibilityIdentifier("preview-"+value.rawValue)
         }
        }
@@ -481,13 +552,13 @@ private struct SoundSelection:View {
       }
      }
     }
-    if sound != .system {
+    if sound != .system || !access.hasFullAccess {
      VStack(alignment:.leading,spacing:12) {
       Text(appText("Preview volume")).font(.subheadline.weight(.semibold))
       Slider(value:$volume,in:0...0.7).accessibilityLabel(appText("Preview volume")).accessibilityIdentifier("previewVolume")
+      Text(appText("Preview volume only. Alarms use your phone’s alarm volume.")).font(.footnote).foregroundStyle(MorningTheme.muted)
      }
     }
-    Text(appText("This slider changes the preview only. The alarm uses system volume. Please check it on your phone.")).font(.footnote).foregroundStyle(MorningTheme.muted)
    }.tint(MorningTheme.accent)
    .onDisappear(perform:stopPreview)
    .onChange(of:scenePhase) {_,phase in if phase != .active {stopPreview()}}

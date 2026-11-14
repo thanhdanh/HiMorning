@@ -28,3 +28,19 @@ Vietnamese items need a native-speaker review by the project owner before releas
 - [ ] `riddles.vi.json`
 
 See [the implementation plan](../../../docs/CHALLENGE-CONTENT-PLAN.md) for behavior, checks and limits.
+
+## Revision 3
+
+The v3 pack adds 24 paired questions in English and Vietnamese. Twelve are
+original puzzles or reading scenarios. Twelve use factual references from
+NASA Science or NOAA, with original prompting, choices, explanations and
+Vietnamese wording. Each fact-based item identifies its reference URL in
+`attribution`. The pack keeps the same data contract and can run offline.
+
+## Revision 4
+
+Read Aloud selects English passages in both app languages. The 36 new passages
+each have two connected sentences and 28–33 words, with familiar vocabulary
+that exercises clusters, final consonants and sounds such as /θ/, /ð/ and /ʃ/.
+Decoders accept 18–36 tokens. The pack retains Vietnamese voice items for
+earlier clients. Other challenges still use the app language.

@@ -23,17 +23,7 @@ extension MorningFocus {
   case .energize:return appText("A standing workout mix with 5 push-ups, stretches and 10 jumping jacks. Choose what fits you.")
  }}
  var icon:String {switch self {case .clearStart:return "lightbulb";case .gentleMovement:return "hand.wave";case .findYourVoice:return "text.bubble";case .energize:return "figure.strengthtraining.traditional"}}
- func missionReason(_ selection:ChallengeSelection)->String {
-  switch selection.kind {
-  case .readAndChoose:return appText("Give your attention one small place to land.")
-  case .riddle:return appText("A little curiosity can be a reason to get going.")
-  case .readAloud:return appText("Let one short sentence be your first sound of the day.")
-  case .waveHand:return appText("A small hello is enough to begin moving.")
-  case .neckRotation:return appText("Take a moment to move gently, at your own pace.")
-  case .guidedRhythm:return selection.rhythmVariant == .seated ? appText("Follow an easy rhythm. Seated movement counts too.") : appText("Follow an easy rhythm while standing.")
-  default:return appText("Make time for a little movement before the day gets busy.")
-  }
- }
+
 }
 
 struct MorningJourneyCard:View {
@@ -41,20 +31,18 @@ struct MorningJourneyCard:View {
  @ObservedObject var store:JourneyStore
  let choosePurpose:()->Void
  let plan:(ChallengeSelection,SavedAlarm?)->Void
- let showProgress:()->Void
- let showPro:()->Void
  @State private var restarting=false
  var body:some View {
   TimelineView(.everyMinute) {context in
-   VStack(alignment:.leading,spacing:16) {
+   VStack(alignment:.leading,spacing:12) {
     if let journey=store.journey {
      journeyContent(journey,now:context.date)
     } else {
-     Label(appText("Give tomorrow a reason."),systemImage:"sunrise.fill").font(.title2.weight(.semibold))
-     Text(appText("Choose a purpose. Try a different small mission over seven successful mornings. No streak to lose."))
+     Label(appText("Morning goal"),systemImage:"sunrise.fill").font(.headline)
+     Text(appText("Complete 7 mornings at your own pace."))
       .font(.subheadline).fixedSize(horizontal:false,vertical:true)
      Button(appText("Choose my morning purpose"),action:choosePurpose)
-      .buttonStyle(MorningButtonStyle()).accessibilityIdentifier("chooseMorningPurpose")
+      .buttonStyle(MorningButtonStyle(primary:false)).accessibilityIdentifier("chooseMorningPurpose")
     }
     if let message=store.message {Text(message).font(.footnote).foregroundStyle(MorningTheme.muted).accessibilityIdentifier("journeyError")}
    }.padding(20).frame(maxWidth:.infinity,alignment:.leading)
@@ -72,48 +60,40 @@ struct MorningJourneyCard:View {
    Image(systemName:journey.focus.icon).font(.title2).accessibilityHidden(true)
    VStack(alignment:.leading,spacing:4) {
     Text(journey.focus.title).font(.headline).fixedSize(horizontal:false,vertical:true).accessibilityIdentifier("journeyPurpose")
-    Text(appText("%lld of 7 mornings earned",count:journey.completedCount)).font(.subheadline).accessibilityIdentifier("journeyProgress")
    }
    Spacer(minLength:0)
-   Button(action:choosePurpose) {Image(systemName:"slider.horizontal.3").frame(width:44,height:44)}
+   Button(action:choosePurpose) {Text(appText("Change goal")).font(.subheadline).frame(minHeight:44)}
     .accessibilityLabel(appText("Change my purpose")).accessibilityIdentifier("changeMorningPurpose")
   }
-  HStack(spacing:8) {ForEach(0..<7,id:\.self) {step in
-   Image(systemName:step<journey.completedCount ? "checkmark.circle.fill" : "circle")
-    .font(.system(size:22)).foregroundStyle(step<journey.completedCount ? MorningTheme.success : MorningTheme.muted)
-  }}.accessibilityHidden(true)
+  ViewThatFits(in:.horizontal) {
+   HStack(spacing:12) {journeyCount(journey);journeyDots(journey)}
+   VStack(alignment:.leading,spacing:8) {journeyCount(journey);journeyDots(journey)}
+  }
   if journey.completedJourneys>0 && !journey.isComplete {
    Text(appText("Completed rounds on this device: %lld",count:journey.completedJourneys)).font(.footnote).foregroundStyle(MorningTheme.muted).accessibilityIdentifier("journeyRounds")
   }
   if journey.isComplete {
    Label(appText("Seven mornings. You made room for yourself."),systemImage:"star.circle.fill")
     .font(.title3.weight(.semibold)).fixedSize(horizontal:false,vertical:true).accessibilityIdentifier("journeyMilestone")
-   Text(appText("You finished this path without needing a perfect streak. Keep the purpose, or try a different one next round."))
-    .font(.subheadline).fixedSize(horizontal:false,vertical:true)
    Button(appText("Begin another seven mornings")) {restarting=true}.buttonStyle(MorningButtonStyle()).accessibilityIdentifier("restartJourney")
    Text(appText("Completed rounds on this device: %lld",count:journey.completedJourneys+1)).font(.footnote).foregroundStyle(MorningTheme.muted).accessibilityIdentifier("journeyRounds")
   } else if today {
-   if journey.completedCount == 0 {
-    Text(appText("Your next round begins tomorrow. Today’s win stays in your finished round.")).font(.subheadline.weight(.medium))
-   }
-   Label(appText("You showed up for your morning."),systemImage:"checkmark.seal.fill")
-    .font(.title3.weight(.semibold)).accessibilityIdentifier("journeyTodayWin")
-   if journey.completedCount == 3 {
-    Text(appText("Three mornings earned. Coming back matters more than a perfect streak."))
-     .font(.subheadline.weight(.medium)).accessibilityIdentifier("journeyMilestone")
-   }
-   teaser(journey,at:journey.completedCount,prefix:"Tomorrow’s small mission: %@")
-   missionPlan(journey.focus.mission(at:journey.completedCount,access:model.access),title:appText("Prepare tomorrow’s mission"))
-   Text(appText("Your alarm keeps its current challenge until you save a change.")).font(.footnote).foregroundStyle(MorningTheme.muted)
+   Label(appText(journey.completedCount == 0 ? "Next round starts tomorrow" : "Done for today"),systemImage:"checkmark.circle.fill")
+    .font(.subheadline.weight(.medium)).accessibilityIdentifier("journeyTodayWin")
+   missionPlan(journey.focus.mission(at:journey.completedCount,access:model.access),title:appText("Choose a challenge for tomorrow"),forTomorrow:true)
   } else {
    if let last=journey.completions.last,let gap=Calendar.current.dateComponents([.day],from:Calendar.current.startOfDay(for:last),to:Calendar.current.startOfDay(for:now)).day,gap>1 {
     Text(appText("Welcome back. Your wins are still here. Continue with one small morning."))
      .font(.subheadline.weight(.medium)).accessibilityIdentifier("journeyWelcomeBack")
    }
    Text(appText("Suggested for this morning")).font(.caption.weight(.semibold)).foregroundStyle(MorningTheme.muted)
-   Label(mission.displayTitle,systemImage:mission.kind.icon).font(.title3.weight(.semibold))
+   Label {
+    Text(mission.displayTitle)
+   } icon: {
+    ChallengeIcon(kind:mission.kind,seated:mission.rhythmVariant == .seated,size:22)
+     .foregroundStyle(MorningTheme.modeAccent(mission.kind.preferredMode))
+   }.font(.title3.weight(.semibold))
     .fixedSize(horizontal:false,vertical:true).accessibilityIdentifier("journeyMission")
-   Text(journey.focus.missionReason(mission)).font(.subheadline).fixedSize(horizontal:false,vertical:true)
    if journey.focus.requiresFullAccess && !model.access.hasFullAccess {
     Text(appText("Your preview has ended. Your path continues with gentle movement, and your earned mornings stay."))
      .font(.footnote).foregroundStyle(MorningTheme.muted)
@@ -121,56 +101,39 @@ struct MorningJourneyCard:View {
    Button {model.practiceMission(mission)} label:{Label(appText("Try today’s mission"),systemImage:"play.circle")}
     .buttonStyle(MorningButtonStyle(primary:false)).accessibilityIdentifier("tryJourneyMission")
    missionPlan(mission,title:appText("Plan this mission with an alarm"))
-   Text(appText("You review the alarm before saving. Any completed real challenge earns one step; practice does not."))
-    .font(.footnote).foregroundStyle(MorningTheme.muted).fixedSize(horizontal:false,vertical:true)
-   teaser(journey,at:min(6,journey.completedCount+1),prefix:"Coming next: %@")
   }
-  DisclosureGroup(appText("What’s working for me?")) {reflection.padding(.top,12)}
-   .font(.subheadline.weight(.medium))
  }
- @ViewBuilder private func missionPlan(_ mission:ChallengeSelection,title:String)->some View {
-  let upcoming=model.alarms.filter {$0.canPrepareJourney()}
+ @ViewBuilder private func missionPlan(_ mission:ChallengeSelection,title:String,forTomorrow:Bool=false)->some View {
+  let calendar=Calendar.current
+  let threshold=forTomorrow ? (calendar.dateInterval(of:.day,for:Date())?.end ?? Date()).addingTimeInterval(-1) : Date()
+  let upcoming=model.alarms.filter {$0.canPrepareJourney(now:threshold)}
   if upcoming.isEmpty {
-   Button(title) {plan(mission,nil)}.buttonStyle(MorningButtonStyle()).accessibilityIdentifier("planJourneyMission")
+   Button(forTomorrow ? title : appText("Set an alarm with this challenge")) {plan(mission,nil)}.buttonStyle(MorningButtonStyle(primary:false)).accessibilityIdentifier("planJourneyMission")
+  } else if upcoming.count == 1,let alarm=upcoming.first {
+   Button(forTomorrow ? title : String(format:appText("Add to the %@ alarm"),locale:appLocale(),alarmTimeText(alarm.time))) {plan(mission,alarm)}
+    .buttonStyle(MorningButtonStyle(primary:false)).accessibilityIdentifier("planJourneyMission")
   } else {
    Menu {
     ForEach(upcoming) {alarm in
-     Button(String(format:"%02d:%02d",alarm.time.hour,alarm.time.minute)+(alarm.label.isEmpty ? "" : " · "+alarm.label)) {plan(mission,alarm)}
+     Button(alarmTimeText(alarm.time)+(alarm.label.isEmpty ? "" : " · "+alarm.label)) {plan(mission,alarm)}
       .accessibilityIdentifier("journeyAlarm-"+alarm.id.uuidString)
     }
     Button(appText("New alarm")) {plan(mission,nil)}.accessibilityIdentifier("journeyNewAlarm")
    } label:{Text(title).frame(maxWidth:.infinity)}
-    .buttonStyle(MorningButtonStyle()).accessibilityIdentifier("planJourneyMission")
+    .buttonStyle(MorningButtonStyle(primary:false)).accessibilityIdentifier("planJourneyMission")
   }
  }
- private func teaser(_ journey:MorningJourney,at index:Int,prefix:String)->some View {
-  Text(String(format:appText(prefix),locale:appLocale(),journey.focus.mission(at:index,access:model.access).displayTitle))
-   .font(.subheadline).fixedSize(horizontal:false,vertical:true).accessibilityIdentifier("journeyNextMission")
+ private func journeyCount(_ journey:MorningJourney)->some View {
+  Text(appText("%lld/7 mornings",count:journey.completedCount)).font(.subheadline.weight(.medium))
+   .accessibilityIdentifier("journeyProgress")
  }
- @ViewBuilder private var reflection:some View {
-  if model.access.hasFullAccess {
-   let reflection=MorningReflection(entries:model.journal?.entries ?? [])
-   Text(appText("%lld of the past 30 days with a completed challenge",count:reflection.completedDays))
-    .fixedSize(horizontal:false,vertical:true).accessibilityIdentifier("journeyReflectionDays")
-   if let kind=reflection.goToChallenge {
-    Text(String(format:appText("You returned to %@ on %lld days."),locale:appLocale(),kind.title,Int64(reflection.goToDays)))
-     .fixedSize(horizontal:false,vertical:true)
-    Text(appText("Repeat what felt useful, or choose a new purpose for your next round. This describes your completions, not your sleep quality."))
-     .font(.footnote).foregroundStyle(MorningTheme.muted).fixedSize(horizontal:false,vertical:true)
-   } else if reflection.completedDays>=3 {
-    Text(appText("No repeated pattern yet. Keep trying the missions and notice what feels useful."))
-     .font(.footnote).foregroundStyle(MorningTheme.muted).fixedSize(horizontal:false,vertical:true)
-   } else {
-    Text(appText("After three completed mornings, look here for the challenges you return to most."))
-     .font(.footnote).foregroundStyle(MorningTheme.muted).fixedSize(horizontal:false,vertical:true)
-   }
-   Button(appText("See my 30-day progress"),action:showProgress).frame(minHeight:44)
-  } else {
-   Text(appText("Your starter paths and earned mornings stay free. Pro adds the energetic workout path and 30-day patterns to help you choose your next routine."))
-    .font(.footnote).foregroundStyle(MorningTheme.muted).fixedSize(horizontal:false,vertical:true)
-   Button(appText("Explore deeper routines"),action:showPro).frame(minHeight:44)
-  }
+ private func journeyDots(_ journey:MorningJourney)->some View {
+  HStack(spacing:6) {ForEach(0..<7,id:\.self) {step in
+   Image(systemName:step<journey.completedCount ? "checkmark.circle.fill" : "circle")
+    .font(.system(size:16)).foregroundStyle(step<journey.completedCount ? MorningTheme.success : MorningTheme.muted)
+  }}.accessibilityHidden(true)
  }
+
 }
 
 struct MorningPurposePicker:View {

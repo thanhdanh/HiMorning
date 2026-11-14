@@ -12,15 +12,34 @@ public enum MorningAccess:Equatable,Sendable {
  public func weeklyGoal(stored:Int)->Int {hasFullAccess ? stored : 3}
  public func allows(mode:WakeMode)->Bool {hasFullAccess || mode != .focused}
  public func allows(sound:AlarmSound)->Bool {hasFullAccess || sound == .system}
+ public func allows(challenge kind:ChallengeKind)->Bool {
+  hasFullAccess || kind == .stretching || kind.preferredMode != .focused
+ }
+ public func allows(challenge selection:ChallengeSelection)->Bool {
+  allows(challenge:selection.kind) && (hasFullAccess || (selection.repetitions ?? 0)<=WakeMode.balanced.policy.reps)
+ }
  public func effectiveMode(_ saved:WakeMode)->WakeMode {allows(mode:saved) ? saved : .balanced}
  public func effectiveSound(_ saved:AlarmSound)->AlarmSound {allows(sound:saved) ? saved : .system}
  public func effectiveChallenge(_ saved:ChallengeSelection)->ChallengeSelection {
   guard !hasFullAccess,saved.kind == .pushUps else {return saved}
   return .pushUps(repetitions:min(saved.repetitions ?? 5,WakeMode.balanced.policy.reps))
  }
- public func effectiveAlarm(_ saved:SavedAlarm)->SavedAlarm {
-  var effective=SavedAlarm(id:saved.id,time:saved.time,mode:effectiveMode(saved.mode),sound:effectiveSound(saved.sound),challenge:effectiveChallenge(saved.challenge),label:saved.label,scheduledOccurrence:saved.scheduledOccurrence)
-  effective.enabled=saved.enabled;effective.state=saved.state
+ public func effectiveAlarm(_ saved:SavedAlarm,occurrence:Date?=nil,rehearsal:Bool=false)->SavedAlarm {
+  let trial=rehearsal ? nil : saved.challengeTrial.flatMap {occurrence == $0.occurrence ? $0 : nil}
+  let selection:ChallengeSelection
+  let mode:WakeMode
+  if let trial {
+   selection=trial.challenge
+   mode=trial.challenge.kind.preferredMode
+  } else if !rehearsal,!hasFullAccess,saved.mode == .focused,!allows(challenge:saved.challenge.kind) {
+   selection=ChallengeSelection(kind:.stretching)
+   mode = .focused
+  } else {
+   selection=effectiveChallenge(saved.challenge)
+   mode=saved.challenge.kind == .stretching ? saved.mode : effectiveMode(saved.mode)
+  }
+  var effective=SavedAlarm(id:saved.id,time:saved.time,mode:mode,sound:effectiveSound(saved.sound),challenge:selection,label:saved.label,scheduledOccurrence:saved.scheduledOccurrence)
+  effective.enabled=saved.enabled;effective.state=saved.state;effective.challengeTrial=saved.challengeTrial
   return effective
  }
 }
@@ -84,8 +103,10 @@ public struct MorningScore:Identifiable,Sendable {
   }
  }
  init(date:Date,entries:[MorningEntry]) {
-  self.date=date;self.entries=entries;attempts=entries.count
-  completed=entries.filter { [.localCompleted,.openaiVerified,.aiVerified].contains($0.outcome) }.count
+  let successes:[WakeOutcome]=[.localCompleted,.openaiVerified,.aiVerified]
+  self.date=date;self.entries=entries
+  attempts=entries.filter {entry in entry.challenge.map { $0.kind != .none } ?? true}.count
+  completed=entries.filter {successes.contains($0.outcome) && ($0.challenge.map { $0.kind != .none } ?? true)}.count
  }
 }
 

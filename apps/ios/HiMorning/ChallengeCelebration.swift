@@ -1,20 +1,17 @@
 import SwiftUI
 
 struct ChallengeCelebrationView:View {
+ var isQuestion=false
  var body:some View {
   VStack(spacing:12) {
    ZStack {
     Circle().fill(MorningTheme.yellow).frame(width:88,height:88)
     Image(systemName:"checkmark")
      .font(.system(size:38,weight:.bold)).foregroundStyle(MorningTheme.onYellow)
-   }.frame(height:160).accessibilityHidden(true)
-   Text(appText("Hooray!"))
+   }.frame(height:100).accessibilityHidden(true)
+   Text(appText(isQuestion ? "That’s right!" : "Challenge complete!"))
     .font(.system(.largeTitle,design:.rounded).bold())
     .accessibilityAddTraits(.isHeader)
-   Text(appText("Challenge complete!"))
-    .font(.title3.weight(.semibold))
-   Text(appText("Try again, or head home when you’re ready."))
-    .font(.body).foregroundStyle(MorningTheme.muted)
   }
   .multilineTextAlignment(.center)
   .fixedSize(horizontal:false,vertical:true)

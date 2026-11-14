@@ -1,40 +1,12 @@
 import SwiftUI
-import UIKit
-import HiMorningCore
-
-enum AlarmComposerPalette {
- static func symbol(for kind:ChallengeKind)->String {
-  switch kind {
-  case .none:return "sun.max.fill"
-  case .jumpingJacks:return "figure.highintensity.intervaltraining"
-  default:return kind.icon
-  }
- }
- static func color(for kind:ChallengeKind)->Color {
-  switch kind {
-  case .none:return MorningTheme.accent
-  case .pushUps,.jumpingJacks:return color(0xBF472E,0xFF9166)
-  case .readAndChoose,.readAloud,.riddle:return color(0x6652AD,0xBDA6FF)
-  case .guidedRhythm,.waveHand,.neckRotation,.stretching:return color(0x1F7A70,0x66D4BA)
-  }
- }
- private static func color(_ light:UInt32,_ dark:UInt32)->Color {
-  Color(uiColor:UIColor {traits in
-   let hex=traits.userInterfaceStyle == .dark ? dark : light
-   return UIColor(red:CGFloat((hex>>16)&255)/255,green:CGFloat((hex>>8)&255)/255,blue:CGFloat(hex&255)/255,alpha:1)
-  })
- }
-}
 
 struct AlarmComposerBackdrop:View {
  @Environment(\.composerReduceTransparency) private var reduceTransparency
- let tint:Color
  var body:some View {
   ZStack(alignment:.topTrailing) {
    MorningTheme.canvas
    if !reduceTransparency {
-    Ellipse().fill(MorningTheme.yellow.opacity(0.24)).frame(width:320,height:370).blur(radius:65).offset(x:120,y:-160)
-    Ellipse().fill(tint.opacity(0.14)).frame(width:270,height:420).blur(radius:70).offset(x:-210,y:180)
+    Ellipse().fill(MorningTheme.yellow.opacity(0.14)).frame(width:320,height:370).blur(radius:65).offset(x:120,y:-160)
    }
   }.ignoresSafeArea().accessibilityHidden(true)
  }

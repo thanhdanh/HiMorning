@@ -41,6 +41,7 @@ class RingingService : Service() {
         if (wake == null) { if (current == null) stopSelf(); return START_NOT_STICKY }
         when (intent.action) {
             START -> begin(wake)
+            SILENCE -> if (current?.sessionId == session) { player?.release(); player = null }
             STOP -> finish(wake, WakeOutcome.DISMISSED)
             COMPLETE -> finish(wake, WakeOutcome.LOCAL_COMPLETED)
             CONFIRM -> if (System.currentTimeMillis() >= wake.occurrence + 300_000) finish(wake, WakeOutcome.SELF_CONFIRMED)
@@ -51,10 +52,6 @@ class RingingService : Service() {
         return START_NOT_STICKY
     }
 
-    private fun effective(alarm: Alarm, repo: AppRepository): Alarm = if (repo.remainingPreviewDays() > 0) alarm else alarm.copy(
-        mode = if (alarm.mode == WakeMode.FOCUSED) WakeMode.BALANCED else alarm.mode,
-        sound = AlarmSound.SYSTEM, repetitions = if (alarm.challenge == ChallengeKind.PUSH_UPS) minOf(5, alarm.repetitions) else alarm.repetitions)
-
     private fun begin(wake: PendingWake) {
         if (!wake.inWindow(System.currentTimeMillis())) return
         val repo = AppRepository(this)
@@ -62,7 +59,7 @@ class RingingService : Service() {
         if (current?.sessionId == wake.sessionId && player?.isPlaying == true) return
         player?.release(); player = null
         current = wake
-        val alarm = effective(saved, repo)
+        val alarm = saved
         publish(wake)
         startForeground(NOTIFICATION_ID, notification(wake, alarm))
         player = createPlayer(alarm.sound)
@@ -88,7 +85,7 @@ class RingingService : Service() {
         val repo = AppRepository(this)
         val alarm = repo.state.alarms.firstOrNull { it.id == wake.alarmId } ?: return
         runCatching {
-            if (WakeRecovery.snooze(this, wake, effective(alarm, repo).mode.snoozes)) stopCurrent(wake)
+            if (WakeRecovery.snooze(this, wake, alarm.mode.snoozes)) stopCurrent(wake)
         }.onFailure { android.util.Log.e("HiMorning", "Snooze could not be scheduled", it) }
         stopIfIdle()
     }
@@ -97,10 +94,11 @@ class RingingService : Service() {
         // Sound stops before storage operations, including corrupted/full local storage.
         stopCurrent(wake)
         val repo = runCatching { AppRepository(this) }.getOrNull()
-        if (outcome != WakeOutcome.DISMISSED) runCatching { WakeRecovery.resolve(this, wake.alarmId, wake.sessionId) }
+        val saved = runCatching { repo?.state?.alarms?.firstOrNull { it.id == wake.alarmId } }.getOrNull()
+        if (outcome != WakeOutcome.DISMISSED || saved?.challenge == ChallengeKind.NONE) runCatching { WakeRecovery.resolve(this, wake.alarmId, wake.sessionId) }
         runCatching {
-            val alarm = repo?.state?.alarms?.firstOrNull { it.id == wake.alarmId }
-            if (alarm != null) {
+            val alarm = saved
+            if (repo != null && alarm != null) {
                 if (alarm.weekdays.isEmpty()) {
                     repo.setAlarmEnabled(alarm.id, false); repo.updateAlarmState(alarm.id, ScheduleState.OFF)
                 }
@@ -139,6 +137,7 @@ class RingingService : Service() {
     override fun onDestroy() { player?.release(); player = null; super.onDestroy() }
     companion object {
         private const val START = "start"
+        private const val SILENCE = "silence"
         private const val STOP = "stop"
         private const val COMPLETE = "complete"
         private const val CONFIRM = "confirm"
@@ -161,6 +160,7 @@ class RingingService : Service() {
         fun restoreState(context: Context) { if (activeId.value == null) runCatching { WakeRecovery.oldest(context)?.let(::publish) } }
         private fun command(context: Context, action: String, id: String?, session: String?) = Intent(context, RingingService::class.java).setAction(action).putExtra(EXTRA_ID, id).putExtra(EXTRA_SESSION, session)
         fun start(context: Context, id: String, session: String) { context.startForegroundService(command(context, START, id, session)) }
+        fun silence(context: Context, id: String, session: String?) { context.startService(command(context, SILENCE, id, session)) }
         fun stop(context: Context, id: String? = activeId.value, session: String? = activeSession.value) { context.startService(command(context, STOP, id, session)) }
         fun snooze(context: Context, id: String? = activeId.value, session: String? = activeSession.value) { context.startService(command(context, SNOOZE, id, session)) }
         fun complete(context: Context, id: String? = activeId.value, session: String? = activeSession.value) { context.startService(command(context, COMPLETE, id, session)) }

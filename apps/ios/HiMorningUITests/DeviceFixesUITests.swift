@@ -236,14 +236,11 @@ final class DeviceFixesUITests:XCTestCase {
   reveal(app.buttons["alarmRepeatDay-3"],in:app);app.buttons["alarmRepeatDay-3"].tap()
   let selectedTime=app.datePickers["alarmTimePicker"].value as? String
   XCTAssertFalse(app.buttons["tryDraftChallenge"].exists)
-  reveal(app.buttons["challenge-readAndChoose"],in:app);app.buttons["challenge-readAndChoose"].doubleTap()
-  XCTAssertTrue(app.alerts.buttons["confirmDraftPractice"].firstMatch.waitForExistence(timeout:3))
-  XCTAssertFalse(app.buttons["backToHome"].exists)
-  app.alerts.buttons["confirmDraftPractice"].firstMatch.tap()
+  let tryButton=app.buttons["trySelectedChallenge"];reveal(tryButton,in:app);tryButton.tap()
   XCTAssertTrue(app.buttons["backToHome"].waitForExistence(timeout:5))
   XCTAssertEqual(app.buttons["backToHome"].label,"Back to alarm")
   XCTAssertFalse(app.buttons["confirmAwake"].exists)
-  XCTAssertTrue(app.staticTexts["Practice only. Your alarms stay as they are, and this does not count toward progress."].exists)
+  XCTAssertTrue(app.staticTexts["Practice doesn’t count toward your goal."].exists)
   let demo=XCTAttachment(screenshot:app.screenshot());demo.name="draft-challenge-practice";demo.lifetime = .keepAlways;add(demo)
   app.buttons["readChoice-0"].tap()
   XCTAssertTrue(app.buttons["retryChallenge"].waitForExistence(timeout:5))
@@ -473,7 +470,7 @@ final class DeviceFixesUITests:XCTestCase {
   let audits:XCUIAccessibilityAuditType=[.hitRegion,.sufficientElementDescription,.textClipped,.trait]
   try app.performAccessibilityAudit(for:audits)
   app.buttons["morningProgress"].tap()
-  XCTAssertTrue(app.staticTexts["monthlyScore"].waitForExistence(timeout:5))
+  XCTAssertTrue(app.staticTexts["Tuần này"].waitForExistence(timeout:5))
   try app.performAccessibilityAudit(for:audits)
   app.buttons["closeProgress"].tap()
   XCTAssertTrue(app.buttons["morningProgress"].waitForExistence(timeout:5))
@@ -568,7 +565,7 @@ final class DeviceFixesUITests:XCTestCase {
    XCTAssertTrue(start.isHittable,"Start reading must be available before scrolling")
    XCTAssertTrue(app.windows.firstMatch.frame.contains(start.frame),"The entire reading button must be on screen")
    let awake=app.buttons["confirmAwake"]
-   XCTAssertLessThanOrEqual(start.frame.maxY,awake.frame.minY,"The fixed footer must not cover Start reading")
+   XCTAssertFalse(awake.exists, "Practice must only show reading and navigation actions")
    app.swipeUp()
    XCTAssertTrue(start.isHittable,"Reading controls must remain reachable while reviewing feedback")
    app.swipeDown()
@@ -584,10 +581,10 @@ final class DeviceFixesUITests:XCTestCase {
    app.buttons["practiceChallenges"].tap();app.buttons["practice-readAloud"].tap()
    let score=app.staticTexts["readingScore"]
    XCTAssertTrue(score.waitForExistence(timeout:5))
-   XCTAssertEqual(score.label,vietnamese ? "Điểm khớp từ: 20/100" : "Word match: 20/100")
+   XCTAssertEqual(score.label,vietnamese ? "Trùng khớp từ: 20/100" : "Word match: 20/100")
    XCTAssertTrue(app.staticTexts["readingIncorrectWords"].label.contains("steps"))
    let summary=app.staticTexts["readingPrompt"].value as? String ?? ""
-   XCTAssertTrue(summary.contains(vietnamese ? "Đọc khớp: small" : "Correct: small"))
+   XCTAssertTrue(summary.contains(vietnamese ? "Đúng: small" : "Correct: small"))
    XCTAssertTrue(summary.contains(vietnamese ? "Chưa đọc: create, steady, progress" : "Not read yet: create, steady, progress"))
    XCTAssertEqual(app.alerts.count,0,"Feedback rendering must not request microphone access")
    app.terminate()

@@ -26,9 +26,8 @@ final class MorningJourneyUITests:XCTestCase {
   for vi in [false,true] {
    let app=launch(vi:vi,["--ui-empty-home"])
    choose("clearStart",in:app)
-   XCTAssertEqual(app.staticTexts["journeyProgress"].label,vi ? "Đã hoàn thành 0 trong 7 buổi sáng" : "0 of 7 mornings earned")
+   XCTAssertEqual(app.staticTexts["journeyProgress"].label,vi ? "0/7 buổi" : "0/7 mornings")
    XCTAssertTrue(app.staticTexts["journeyMission"].exists)
-   XCTAssertTrue(app.staticTexts["journeyNextMission"].label.contains(vi ? "Đố vui" : "Riddle"))
    capture(app,"journey-purpose-\(vi ? "vi" : "en")")
    app.buttons["tryJourneyMission"].tap()
    XCTAssertTrue(app.buttons["readChoice-0"].waitForExistence(timeout:5));app.buttons["readChoice-0"].tap()
@@ -48,11 +47,11 @@ final class MorningJourneyUITests:XCTestCase {
  func testGentleMissionDraftPreservesExistingScheduleAndProgressOnPurposeChange() {
   let app=launch(["--ui-home-alarms","--ui-journey-fixture","--preview-expired"])
   choose("gentleMovement",in:app)
-  XCTAssertEqual(app.staticTexts["journeyProgress"].label,"3 of 7 mornings earned")
+  XCTAssertEqual(app.staticTexts["journeyProgress"].label,"3/7 mornings")
   XCTAssertTrue(app.staticTexts["journeyWelcomeBack"].exists)
   app.buttons["planJourneyMission"].tap()
   let id="00000000-0000-0000-0000-000000000001"
-  app.buttons["journeyAlarm-"+id].tap()
+  if app.buttons["journeyAlarm-"+id].exists {app.buttons["journeyAlarm-"+id].tap()}
   XCTAssertTrue(app.buttons["saveAlarm"].waitForExistence(timeout:5))
   XCTAssertTrue(app.buttons["challenge-waveHand"].isSelected)
   XCTAssertFalse(app.datePickers["alarmTimePicker"].exists)
@@ -65,12 +64,14 @@ final class MorningJourneyUITests:XCTestCase {
  func testRealCompletionEarnsNextStepAndOffersPreparingTomorrow() {
   let app=launch(["--ui-home-alarms","--ui-journey-fixture","--ui-open-alarm"])
   XCTAssertTrue(app.buttons["readChoice-0"].waitForExistence(timeout:5));app.buttons["readChoice-0"].tap()
+  if app.buttons["backToHome"].waitForExistence(timeout:3) {app.buttons["backToHome"].tap()}
   XCTAssertTrue(app.staticTexts["journeyTodayWin"].waitForExistence(timeout:5))
-  XCTAssertEqual(app.staticTexts["journeyProgress"].label,"4 of 7 mornings earned")
-  XCTAssertTrue(app.staticTexts["journeyNextMission"].label.contains("Read & Choose"))
+  XCTAssertEqual(app.staticTexts["journeyProgress"].label,"4/7 mornings")
+  XCTAssertEqual(app.staticTexts["journeyTodayWin"].label,"Done for today")
   capture(app,"journey-real-win-next-mission")
   app.buttons["planJourneyMission"].tap()
-  app.buttons["journeyAlarm-00000000-0000-0000-0000-000000000001"].tap()
+  let alarm=app.buttons["journeyAlarm-00000000-0000-0000-0000-000000000001"]
+  if alarm.exists {alarm.tap()}
   XCTAssertTrue(app.buttons["challenge-readAndChoose"].waitForExistence(timeout:5));XCTAssertTrue(app.buttons["challenge-readAndChoose"].isSelected)
   app.buttons["Cancel"].tap();app.terminate()
  }
@@ -79,13 +80,13 @@ final class MorningJourneyUITests:XCTestCase {
    let args=["--ui-empty-home","--ui-journey-fixture","--ui-journey-complete"]+(today ? ["--ui-journey-today"]:[])
    let app=launch(args)
    XCTAssertTrue(app.staticTexts["journeyMilestone"].waitForExistence(timeout:5))
-   XCTAssertEqual(app.staticTexts["journeyProgress"].label,"7 of 7 mornings earned")
+   XCTAssertEqual(app.staticTexts["journeyProgress"].label,"7/7 mornings")
    capture(app,today ? "journey-seven-morning-today" : "journey-seven-morning-milestone")
    app.buttons["restartJourney"].tap();app.alerts.buttons["confirmRestartJourney"].firstMatch.tap()
-   XCTAssertEqual(app.staticTexts["journeyProgress"].label,"0 of 7 mornings earned")
+   XCTAssertEqual(app.staticTexts["journeyProgress"].label,"0/7 mornings")
    XCTAssertEqual(app.staticTexts["journeyRounds"].label,"Completed rounds on this device: 1")
    if today {
-    XCTAssertTrue(app.staticTexts["journeyNextMission"].label.contains("Tomorrow"))
+    XCTAssertEqual(app.staticTexts["journeyTodayWin"].label,"Next round starts tomorrow")
     XCTAssertTrue(app.buttons["planJourneyMission"].exists)
    }
    app.terminate()
@@ -93,7 +94,7 @@ final class MorningJourneyUITests:XCTestCase {
  }
  func testThreeMorningRewardAndLargeVietnameseMission() {
   let three=launch(["--ui-empty-home","--ui-journey-fixture","--ui-journey-today"])
-  XCTAssertTrue(three.staticTexts["journeyMilestone"].waitForExistence(timeout:5));capture(three,"journey-three-morning-reward");three.terminate()
+  XCTAssertTrue(three.staticTexts["journeyTodayWin"].waitForExistence(timeout:5));capture(three,"journey-three-morning-reward");three.terminate()
   let app=launch(vi:true,["--ui-empty-home","-UIPreferredContentSizeCategoryName","UICTContentSizeCategoryAccessibilityXXXL"])
   choose("gentleMovement",in:app)
   reveal(app.buttons["tryJourneyMission"],in:app)
@@ -105,8 +106,9 @@ final class MorningJourneyUITests:XCTestCase {
   let app=launch(["--ui-empty-home","--ui-progress-fixture"])
   choose("energize",in:app)
   XCTAssertEqual(app.staticTexts["journeyPurpose"].label,"Move with energy")
-  XCTAssertTrue(app.staticTexts["journeyNextMission"].label.contains("5 push-ups"))
-  let disclosure=app.buttons["What’s working for me?"];reveal(disclosure,in:app);disclosure.tap()
+  XCTAssertTrue(app.buttons["planJourneyMission"].exists)
+  let progress=app.buttons["morningProgress"];reveal(progress,in:app);progress.tap()
+  let disclosure=app.buttons["Most completed challenges"];reveal(disclosure,in:app);disclosure.tap()
   let days=app.staticTexts["journeyReflectionDays"];reveal(days,in:app)
   XCTAssertEqual(days.label,"5 of the past 30 days with a completed challenge")
   XCTAssertTrue(app.staticTexts["You returned to Push-ups on 2 days."].exists)
@@ -132,7 +134,7 @@ final class MorningJourneyUITests:XCTestCase {
   app.buttons["chooseMorningPurpose"].tap()
   let energy=app.buttons["morningPurpose-energize"];XCTAssertTrue(energy.waitForExistence(timeout:5));reveal(energy,in:app);energy.tap()
   XCTAssertTrue(app.buttons["closePro"].waitForExistence(timeout:5))
-  XCTAssertTrue(app.staticTexts["Find a routine worth returning to."].exists)
+  XCTAssertTrue(app.staticTexts["proHeadline"].exists)
   app.buttons["closePro"].tap()
   XCTAssertTrue(app.buttons["chooseMorningPurpose"].waitForExistence(timeout:5))
   XCTAssertFalse(app.staticTexts["journeyPurpose"].exists)

@@ -1,225 +1,329 @@
 package com.himorning.android.platform
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
-import android.os.SystemClock
+import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
+import android.util.Log
+import android.util.Size
+import android.widget.FrameLayout
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
+import androidx.camera.core.Preview
+import androidx.camera.core.resolutionselector.AspectRatioStrategy
+import androidx.camera.core.resolutionselector.ResolutionSelector
+import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
-import androidx.camera.core.Preview
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.google.android.gms.tasks.Tasks
+import com.google.mediapipe.framework.image.BitmapImageBuilder
+import com.google.mediapipe.tasks.core.BaseOptions
+import com.google.mediapipe.tasks.vision.core.RunningMode
+import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarker
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
-import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetectorOptions
-import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseDetection
-import com.google.mlkit.vision.pose.accurate.AccuratePoseDetectorOptions
-import com.google.mlkit.vision.pose.PoseLandmark
+import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
+import com.himorning.android.R
 import com.himorning.android.core.ChallengeKind
+import kotlinx.coroutines.delay
 import java.util.concurrent.Executors
-import java.util.concurrent.atomic.AtomicReference
-import kotlin.math.abs
-import kotlin.math.acos
-import kotlin.math.hypot
-import kotlin.math.max
 
-/** Counts local pose changes from CameraX frames. It stores and uploads no images. */
+internal fun movementTarget(kind: ChallengeKind, repetitions: Int) = when (kind) {
+    ChallengeKind.PUSH_UPS -> repetitions.coerceIn(1, 50)
+    ChallengeKind.JUMPING_JACKS -> 10
+    else -> 3
+}
+
 @Composable
 fun MovementCapture(
     kind: ChallengeKind,
     repetitions: Int,
     seated: Boolean,
+    progress: Int,
     onProgress: (Int) -> Unit,
     onComplete: () -> Unit,
     onError: (CaptureError) -> Unit,
     modifier: Modifier = Modifier,
-) {
+) = key(kind, repetitions, seated) {
     val context = LocalContext.current
     val owner = LocalLifecycleOwner.current
-    val latestProgress = rememberUpdatedState(onProgress)
-    val latestComplete = rememberUpdatedState(onComplete)
-    val latestError = rememberUpdatedState(onError)
-    val executor = remember(kind, repetitions, seated, owner) { Executors.newSingleThreadExecutor() }
-    val previewView = remember { PreviewView(context).apply { scaleType = PreviewView.ScaleType.FIT_CENTER } }
-    DisposableEffect(kind, repetitions, seated, owner) {
-        if (context.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            onError(CaptureError.PERMISSION_REQUIRED)
-            onDispose { executor.shutdown() }
-        } else {
-            val providerFuture = ProcessCameraProvider.getInstance(context)
-            val target = when (kind) { ChallengeKind.PUSH_UPS -> repetitions.coerceIn(1, 50); ChallengeKind.JUMPING_JACKS -> 10; else -> 3 }
-            val cameraProvider = AtomicReference<ProcessCameraProvider?>()
-            val detector = MovementDetector(kind, target, seated, { latestProgress.value(it) }, { latestComplete.value() }, { failure ->
-                ContextCompat.getMainExecutor(context).execute { cameraProvider.get()?.unbindAll(); latestError.value(failure) }
-            })
-            val timeoutHandler = Handler(Looper.getMainLooper())
-            val timeout = Runnable { detector.timeout() }
-            timeoutHandler.postDelayed(timeout, 90_000L)
-            providerFuture.addListener({
-                runCatching {
-                    if (detector.isClosed) return@addListener
-                    val provider = providerFuture.get()
-                    cameraProvider.set(provider)
-                    val preview = Preview.Builder().build().also { it.surfaceProvider = previewView.surfaceProvider }
-                    val analysis = ImageAnalysis.Builder().setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST).build()
-                    analysis.setAnalyzer(executor, detector::analyze)
-                    provider.unbindAll()
-                    provider.bindToLifecycle(owner, CameraSelector.DEFAULT_FRONT_CAMERA, preview, analysis)
-                }.onFailure { if (!detector.isClosed) latestError.value(CaptureError.CAMERA_UNAVAILABLE) }
-            }, ContextCompat.getMainExecutor(context))
-            onDispose { timeoutHandler.removeCallbacks(timeout); detector.close(); cameraProvider.get()?.unbindAll(); executor.shutdown() }
+    val latestProgress by rememberUpdatedState(onProgress)
+    val latestComplete by rememberUpdatedState(onComplete)
+    val latestError by rememberUpdatedState(onError)
+    val preview = remember(context) {
+        PreviewView(context).apply {
+            implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+            scaleType = PreviewView.ScaleType.FIT_CENTER
         }
     }
-    Box(modifier) { AndroidView(factory = { previewView }, modifier = Modifier.fillMaxSize()) }
+    val overlay = remember(preview) { TrackingOverlay(context, preview) }
+    val target = movementTarget(kind, repetitions)
+    var hint by remember { mutableIntStateOf(R.string.tracking_waiting) }
+    var freshness by remember { mutableLongStateOf(0) }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(150)
+            if (SystemClock.elapsedRealtime() - freshness >= 500) hint = R.string.tracking_waiting
+        }
+    }
+    DisposableEffect(context, owner, preview) {
+        if (context.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            latestError(CaptureError.PERMISSION_REQUIRED)
+            onDispose {}
+        } else {
+            val executor = Executors.newSingleThreadExecutor()
+            val main = Handler(Looper.getMainLooper())
+            val providerFuture = ProcessCameraProvider.getInstance(context)
+            val cameraPreview = Preview.Builder()
+                .setResolutionSelector(ResolutionSelector.Builder()
+                    .setAspectRatioStrategy(AspectRatioStrategy.RATIO_4_3_FALLBACK_AUTO_STRATEGY).build())
+                .build().also { it.setSurfaceProvider(preview.surfaceProvider) }
+            val analysisBuilder = ImageAnalysis.Builder()
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .setResolutionSelector(ResolutionSelector.Builder()
+                    .setAspectRatioStrategy(AspectRatioStrategy.RATIO_4_3_FALLBACK_AUTO_STRATEGY)
+                    .setResolutionStrategy(ResolutionStrategy(Size(640, 480), ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER_THEN_LOWER))
+                    .build())
+            if (kind == ChallengeKind.WAVE_HAND) analysisBuilder.setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
+            val analysis = analysisBuilder.build()
+            var provider: ProcessCameraProvider? = null
+            var lastProgress = 0
+            var disposed = false
+            val detector = MovementDetector(context.applicationContext, kind, seated, onError = {
+                main.post { if (!disposed) latestError(CaptureError.CAMERA_UNAVAILABLE) }
+            }) { frame, sample, timestamp ->
+                main.post {
+                    if (!disposed && lastProgress < target) {
+                        if (SystemClock.elapsedRealtime() - timestamp < 500) {
+                            overlay.update(frame, sample.marks, timestamp)
+                            hint = sample.hint
+                            freshness = timestamp
+                        }
+                        if (sample.count != lastProgress) {
+                            lastProgress = sample.count
+                            latestProgress(lastProgress)
+                            if (lastProgress >= target) latestComplete()
+                        }
+                    }
+                }
+            }
+            val timeout = Runnable { if (!disposed && lastProgress < target) latestError(CaptureError.TIMEOUT) }
+            main.postDelayed(timeout, 90_000)
+            analysis.setAnalyzer(executor, detector::analyze)
+            providerFuture.addListener({
+                if (!disposed) {
+                    runCatching {
+                        val cameraProvider = providerFuture.get()
+                        provider = cameraProvider
+                        cameraProvider.bindToLifecycle(owner, CameraSelector.DEFAULT_FRONT_CAMERA, cameraPreview, analysis)
+                    }.onFailure {
+                        Log.w("MovementCapture", "Could not bind front camera", it)
+                        latestError(CaptureError.CAMERA_UNAVAILABLE)
+                    }
+                }
+            }, ContextCompat.getMainExecutor(context))
+
+            onDispose {
+                disposed = true
+                detector.stop()
+                main.removeCallbacks(timeout)
+                analysis.clearAnalyzer()
+                val boundProvider = provider
+                executor.execute {
+                    try { detector.close() } finally {
+                        main.post { boundProvider?.unbind(cameraPreview, analysis) }
+                    }
+                }
+                executor.shutdown()
+            }
+        }
+    }
+
+    Box(modifier.clip(RoundedCornerShape(24.dp)).background(Color.Black)) {
+        AndroidView(
+            factory = { viewContext ->
+                FrameLayout(viewContext).apply {
+                    addView(preview, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
+                    addView(overlay, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
+                }
+            },
+            modifier = Modifier.fillMaxSize(),
+        )
+        val badge = RoundedCornerShape(24.dp)
+        Text(
+            text = stringResource(R.string.movement_progress, progress, target),
+            modifier = Modifier.align(Alignment.TopEnd).padding(10.dp)
+                .background(Color.Black.copy(alpha = 0.72f), badge).padding(horizontal = 12.dp, vertical = 5.dp),
+            style = if (kind == ChallengeKind.JUMPING_JACKS || (kind == ChallengeKind.GUIDED_RHYTHM && !seated))
+                MaterialTheme.typography.headlineLarge else MaterialTheme.typography.headlineSmall,
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+        )
+        Text(
+            text = stringResource(hint),
+            modifier = Modifier.align(Alignment.BottomStart).padding(10.dp)
+                .background(Color.Black.copy(alpha = 0.72f), badge).padding(horizontal = 10.dp, vertical = 5.dp),
+            color = if (hint == R.string.tracking_active) Color(0xFF64DCC4) else Color(0xFFFFDD55),
+            style = MaterialTheme.typography.labelMedium,
+        )
+    }
 }
 
 private class MovementDetector(
+    private val context: Context,
     private val kind: ChallengeKind,
-    private val target: Int,
-    private val seated: Boolean,
-    private val progress: (Int) -> Unit,
-    private val complete: () -> Unit,
-    private val error: (CaptureError) -> Unit,
+    seated: Boolean,
+    private val onError: () -> Unit,
+    private val onSample: (CameraFrame, MovementSample, Long) -> Unit,
 ) {
-    private val poseDetector = PoseDetection.getClient(AccuratePoseDetectorOptions.Builder().setDetectorMode(AccuratePoseDetectorOptions.STREAM_MODE).build())
-    private val faceDetector: FaceDetector = FaceDetection.getClient(FaceDetectorOptions.Builder().setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE).build())
-    private val cycle = PoseCycleCounter(when (kind) {
-        ChallengeKind.NECK_ROTATION -> listOf(listOf(-1, 0, 1, 0), listOf(1, 0, -1, 0))
-        else -> listOf(listOf(0, 1, 0))
-    })
-    private var reps = 0
-    private var lastSample = 0L
-    private var waves = 0
-    private var lastHandX: Float? = null
-    private var waveDirection = 0
-    private var waveChangedAt = 0L
-    private var lostSince: Long? = null
-    private var closed = false
-    private var completed = false
-    val isClosed get() = closed
+    private val tracker = MovementTracker(kind, seated)
+    private var hand: HandLandmarker? = null
+    private var pose: com.google.mlkit.vision.pose.PoseDetector? = null
+    private var face: com.google.mlkit.vision.face.FaceDetector? = null
+    private var lastHandedness: String? = null
+    private val handRotation = Matrix()
+    private var lastTime = -1L
+    @Volatile private var stopped = false
 
     @androidx.annotation.OptIn(markerClass = [androidx.camera.core.ExperimentalGetImage::class])
     fun analyze(proxy: ImageProxy) {
-        val media = proxy.image
-        if (closed || completed || media == null) { proxy.close(); return }
-        val now = SystemClock.elapsedRealtime()
-        if (now - lastSample < 90) { proxy.close(); return }
-        lastSample = now
-        val input = InputImage.fromMediaImage(media, proxy.imageInfo.rotationDegrees)
-        val task = if (kind == ChallengeKind.NECK_ROTATION) {
-            faceDetector.process(input).addOnSuccessListener { faces ->
-                val face = faces.firstOrNull()
-                if (face == null || face.headEulerAngleY.isNaN()) lost(now) else observeNeck(face.headEulerAngleY, now)
-            }
-        } else {
-            poseDetector.process(input).addOnSuccessListener { pose -> observePose(pose, now) }
-        }
-        task.addOnFailureListener { lost(now) }.addOnCompleteListener { proxy.close() }
-    }
-
-    fun timeout() {
-        if (closed || completed) return
-        closed = true
-        error(CaptureError.TIMEOUT)
-    }
-
-    private fun observePose(pose: Pose, now: Long) {
-        if (closed || completed) return
-        val points = pose.allPoseLandmarks.associateBy { it.landmarkType }
-        fun p(type: Int) = points[type]?.takeIf { it.inFrameLikelihood >= .55f }?.position
-        var state: Int? = null
-        when (kind) {
-            ChallengeKind.WAVE_HAND -> {
-                val wrist = p(PoseLandmark.RIGHT_WRIST) ?: p(PoseLandmark.LEFT_WRIST)
-                if (wrist == null) { lost(now); return }
-                val leftShoulder = p(PoseLandmark.LEFT_SHOULDER); val rightShoulder = p(PoseLandmark.RIGHT_SHOULDER)
-                if (leftShoulder == null || rightShoulder == null) { lost(now); return }
-                lostSince = null
-                val prior = lastHandX; lastHandX = wrist.x
-                if (prior != null && abs(wrist.x - prior) > abs(leftShoulder.x - rightShoulder.x) * .25f && now - waveChangedAt >= 120) {
-                    val direction = if (wrist.x > prior) 1 else -1
-                    if (waveDirection != 0 && direction != waveDirection) waves++
-                    waveDirection = direction; waveChangedAt = now
-                    if (waves >= 2) { waves = 0; markRep() }
+        val timestamp = SystemClock.elapsedRealtime()
+        try {
+            if (stopped || timestamp <= lastTime) return
+            lastTime = timestamp
+            if (kind == ChallengeKind.WAVE_HAND && hand == null) {
+                try {
+                    hand = createHandDetector()
+                } catch (failure: Exception) {
+                    stop()
+                    Log.w("MovementCapture", "Could not start the hand detector", failure)
+                    onError()
+                    return
+                } catch (failure: LinkageError) {
+                    stop()
+                    Log.w("MovementCapture", "Hand detector is unavailable on this device", failure)
+                    onError()
+                    return
                 }
-                return
             }
-            ChallengeKind.STRETCHING -> {
-                val ls = p(com.google.mlkit.vision.pose.PoseLandmark.LEFT_SHOULDER); val rs = p(com.google.mlkit.vision.pose.PoseLandmark.RIGHT_SHOULDER)
-                val lw = p(com.google.mlkit.vision.pose.PoseLandmark.LEFT_WRIST); val rw = p(com.google.mlkit.vision.pose.PoseLandmark.RIGHT_WRIST)
-                if (ls == null || rs == null || lw == null || rw == null) { lost(now); return }
-                state = if (lw.y < ls.y - 24 && rw.y < rs.y - 24) 1 else if (lw.y > ls.y + 35 && rw.y > rs.y + 35) 0 else null
-            }
-            ChallengeKind.JUMPING_JACKS -> {
-                val ls = p(com.google.mlkit.vision.pose.PoseLandmark.LEFT_SHOULDER); val rs = p(com.google.mlkit.vision.pose.PoseLandmark.RIGHT_SHOULDER)
-                val lw = p(com.google.mlkit.vision.pose.PoseLandmark.LEFT_WRIST); val rw = p(com.google.mlkit.vision.pose.PoseLandmark.RIGHT_WRIST)
-                val la = p(com.google.mlkit.vision.pose.PoseLandmark.LEFT_ANKLE); val ra = p(com.google.mlkit.vision.pose.PoseLandmark.RIGHT_ANKLE)
-                if (ls == null || rs == null || lw == null || rw == null || la == null || ra == null) { lost(now); return }
-                val shoulderWidth = abs(ls.x - rs.x); val feet = abs(la.x - ra.x)
-                state = if (lw.y < ls.y - 20 && rw.y < rs.y - 20 && feet > shoulderWidth * 1.2) 1 else if (feet < shoulderWidth * 1.1 && lw.y > ls.y - 5 && rw.y > rs.y - 5) 0 else null
-            }
-            ChallengeKind.GUIDED_RHYTHM -> {
-                if (seated) {
-                    val ls = p(PoseLandmark.LEFT_SHOULDER); val rs = p(PoseLandmark.RIGHT_SHOULDER)
-                    val lw = p(PoseLandmark.LEFT_WRIST); val rw = p(PoseLandmark.RIGHT_WRIST)
-                    if (ls == null || rs == null || lw == null || rw == null) { lost(now); return }
-                    state = if (lw.y < ls.y - 22 && rw.y < rs.y - 22) 1 else if (lw.y > ls.y + 30 && rw.y > rs.y + 30) 0 else null
+            val frame = CameraFrame(proxy)
+            val sample = try {
+                if (kind == ChallengeKind.WAVE_HAND) {
+                    analyzeHand(proxy, frame, timestamp)
                 } else {
-                    val hip = p(PoseLandmark.LEFT_HIP); val knee = p(PoseLandmark.LEFT_KNEE); val ankle = p(PoseLandmark.LEFT_ANKLE)
-                    if (hip == null || knee == null || ankle == null) { lost(now); return }
-                    val kneeAngle = angle(hip.x - knee.x, hip.y - knee.y, ankle.x - knee.x, ankle.y - knee.y)
-                    state = if (kneeAngle >= 160) 0 else if (kneeAngle <= 120) 1 else null
+                    val media = proxy.image ?: return
+                    val input = InputImage.fromMediaImage(media, frame.rotation)
+                    if (kind == ChallengeKind.NECK_ROTATION) {
+                        val detector = face ?: FaceDetection.getClient(FaceDetectorOptions.Builder()
+                            .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
+                            .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL).build()).also { face = it }
+                        val faces = Tasks.await(detector.process(input))
+                        tracker.face(faces.maxByOrNull { it.boundingBox.width() * it.boundingBox.height() }, frame, timestamp)
+                    } else {
+                        val detector = pose ?: PoseDetection.getClient(PoseDetectorOptions.Builder()
+                            .setDetectorMode(PoseDetectorOptions.STREAM_MODE).build()).also { pose = it }
+                        tracker.body(Tasks.await(detector.process(input)), frame, timestamp)
+                    }
                 }
+            } catch (failure: Exception) {
+                if (!stopped) Log.w("MovementCapture", "Could not analyze camera frame", failure)
+                tracker.lost(timestamp)
             }
-            ChallengeKind.PUSH_UPS -> {
-                val shoulder = p(com.google.mlkit.vision.pose.PoseLandmark.LEFT_SHOULDER); val elbow = p(com.google.mlkit.vision.pose.PoseLandmark.LEFT_ELBOW); val wrist = p(com.google.mlkit.vision.pose.PoseLandmark.LEFT_WRIST)
-                val hip = p(com.google.mlkit.vision.pose.PoseLandmark.LEFT_HIP); val ankle = p(com.google.mlkit.vision.pose.PoseLandmark.LEFT_ANKLE)
-                if (shoulder == null || elbow == null || wrist == null || hip == null || ankle == null) { lost(now); return }
-                val angle = angle(shoulder.x - elbow.x, shoulder.y - elbow.y, wrist.x - elbow.x, wrist.y - elbow.y)
-                val body = angle(shoulder.x - hip.x, shoulder.y - hip.y, ankle.x - hip.x, ankle.y - hip.y)
-                if (body < 145) { lost(now); return }
-                state = if (angle <= 90) 1 else if (angle >= 160) 0 else null
-            }
-            else -> return
+            if (!stopped) onSample(frame, sample, timestamp)
+        } finally {
+            proxy.close()
         }
-        val count = cycle.observe(state, now, if (state == 1 && kind != ChallengeKind.JUMPING_JACKS) 120 else 220)
-        if (count > reps) markRep()
     }
 
-    private fun observeNeck(yaw: Float, now: Long) {
-        if (closed || completed) return
-        val state = when { yaw >= 20 -> 1; yaw <= -20 -> -1; abs(yaw) <= 8 -> 0; else -> return }
-        val count = cycle.observe(state, now, 120)
-        if (count > reps) markRep()
+    private fun createHandDetector(): HandLandmarker = HandLandmarker.createFromOptions(
+        context,
+        HandLandmarker.HandLandmarkerOptions.builder()
+            .setBaseOptions(BaseOptions.builder().setModelAssetPath("hand_landmarker.task").build())
+            .setRunningMode(RunningMode.VIDEO)
+            .setNumHands(1)
+            .setMinHandDetectionConfidence(0.6f)
+            .setMinHandPresenceConfidence(0.6f)
+            .setMinTrackingConfidence(0.5f)
+            .build(),
+    )
+
+    private fun analyzeHand(proxy: ImageProxy, frame: CameraFrame, time: Long): MovementSample {
+        val detector = checkNotNull(hand)
+        val raw = proxy.toBitmap()
+        try {
+            // MediaPipe owns the backing bitmap after wrapping it in MPImage.
+            handRotation.setRotate(frame.rotation.toFloat())
+            val bitmap = Bitmap.createBitmap(raw, 0, 0, raw.width, raw.height, handRotation, false)
+            val image = BitmapImageBuilder(bitmap).build()
+            try {
+                val result = detector.detectForVideo(image, time)
+                val points = result.landmarks().firstOrNull() ?: return tracker.lost(time)
+                if (points.size < 18) return tracker.lost(time)
+                val handedness = result.handedness().firstOrNull()?.firstOrNull()
+                val side = handedness?.takeIf { it.score() >= 0.8f }?.categoryName()
+                if (side != null) {
+                    if (lastHandedness != null && lastHandedness != side) tracker.handChanged()
+                    lastHandedness = side
+                }
+                val palm = PALM_JOINTS.map { index ->
+                    val point = points[index]
+                    MotionPoint(point.x().toDouble() * frame.uprightWidth, point.y().toDouble() * frame.uprightHeight)
+                }
+                return tracker.hand(palm, frame, time)
+            } finally {
+                image.close()
+            }
+        } finally {
+            if (!raw.isRecycled) raw.recycle()
+        }
     }
 
-    private fun lost(now: Long) {
-        cycle.observe(null, now)
-        val lost = lostSince ?: now
-        lostSince = lost
-        if (now - lost > 600) { lastHandX = null; waveDirection = 0; waves = 0 }
+    fun stop() { stopped = true }
+
+    fun close() {
+        hand?.close()
+        pose?.close()
+        face?.close()
     }
-    private fun markRep() { if (closed || completed) return; reps++; progress(reps); if (reps >= target) { completed = true; complete() } }
-    fun close() { closed = true; poseDetector.close(); faceDetector.close() }
-    private fun angle(ax: Float, ay: Float, bx: Float, by: Float): Double {
-        val dot = ax * bx + ay * by
-        val magnitude = hypot(ax.toDouble(), ay.toDouble()) * hypot(bx.toDouble(), by.toDouble())
-        if (magnitude == 0.0) return 0.0
-        return Math.toDegrees(acos((dot / magnitude).toDouble().coerceIn(-1.0, 1.0)))
+
+    private companion object {
+        val PALM_JOINTS = intArrayOf(0, 5, 9, 13, 17)
     }
 }

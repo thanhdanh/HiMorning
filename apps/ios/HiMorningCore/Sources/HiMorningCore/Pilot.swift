@@ -4,8 +4,20 @@ public enum AlarmSound: String, Codable, CaseIterable, Sendable {
  case pizzicatoDawn,pizzicatoSteps,pizzicatoRise,pizzicatoBloom
  case steelShimmer,steelBreeze,steelMorning,steelSparkle
  case saxHello,saxStroll,saxGlow,saxDaybreak
+ case brightKeys,pixelMorning,brassRise
+ case glassChime,woodPluck,softBong
 }
 public enum ScheduleState: String, Codable, Sendable {case pending,confirmed,off,needsReview}
+public struct AlarmChallengeTrial: Codable, Equatable, Sendable {
+ public let id:UUID
+ public let challenge:ChallengeSelection
+ public let occurrence:Date
+
+ public init(id:UUID,challenge:ChallengeSelection,occurrence:Date) {
+  self.id=id;self.challenge=challenge;self.occurrence=occurrence
+ }
+}
+
 public struct SavedAlarm: Codable, Equatable, Identifiable, Sendable {
  public let id:UUID
  public let time:AlarmTime
@@ -16,10 +28,11 @@ public struct SavedAlarm: Codable, Equatable, Identifiable, Sendable {
  public var state:ScheduleState
  public var label:String
  public var scheduledOccurrence:Date?
+ public var challengeTrial:AlarmChallengeTrial?
  public init(id:UUID=UUID(),time:AlarmTime,mode:WakeMode = .gentle,sound:AlarmSound = .system,challenge:ChallengeSelection?=nil,label:String="",scheduledOccurrence:Date?=nil) {
   self.id=id;self.time=time;self.mode=mode;self.sound=sound;self.challenge=challenge ?? .legacyDefault(for:mode);self.label=label.trimmingCharacters(in:.whitespacesAndNewlines);self.scheduledOccurrence=scheduledOccurrence;enabled=true;state = .pending
  }
- private enum CodingKeys:String,CodingKey {case id,time,mode,sound,challenge,enabled,state,label,scheduledOccurrence}
+ private enum CodingKeys:String,CodingKey {case id,time,mode,sound,challenge,enabled,state,label,scheduledOccurrence,challengeTrial}
  public init(from decoder:Decoder) throws {
   let values=try decoder.container(keyedBy:CodingKeys.self)
   id=try values.decode(UUID.self,forKey:.id)
@@ -35,14 +48,26 @@ public struct SavedAlarm: Codable, Equatable, Identifiable, Sendable {
   state=try values.decode(ScheduleState.self,forKey:.state)
   label=(try values.decodeIfPresent(String.self,forKey:.label) ?? "").trimmingCharacters(in:.whitespacesAndNewlines)
   scheduledOccurrence=try values.decodeIfPresent(Date.self,forKey:.scheduledOccurrence)
+  challengeTrial=try values.decodeIfPresent(AlarmChallengeTrial.self,forKey:.challengeTrial)
+ }
+ public var hasChallengeIntent:Bool {challenge.kind != .none || challengeTrial != nil}
+ public func hasChallenge(at occurrence:Date)->Bool {
+  challenge.kind != .none || challengeTrial?.occurrence == occurrence
  }
 }
+public enum AlarmScheduleError: Error {case accessDenied}
+
 public protocol AlarmScheduler: Sendable {
+ func authorizeScheduling() async throws
  func schedule(_ alarm:SavedAlarm) async throws
  func cancel(id:UUID) async throws
  func stop(id:UUID) async throws
  func scheduledIDs() async throws -> Set<UUID>
 }
+public extension AlarmScheduler {
+ func authorizeScheduling() async throws {}
+}
+
 public protocol AlarmPersistence: Sendable {
  func load() throws -> [SavedAlarm]
  func save(_ alarms:[SavedAlarm]) throws
@@ -73,6 +98,7 @@ public actor AlarmLibrary {
   guard !busy else {throw LibraryError.busy}
   guard !alarms.contains(where:{$0.id==alarm.id}) else {throw LibraryError.duplicate}
   busy=true;defer {busy=false}
+  try await scheduler.authorizeScheduling()
   var pending=alarm;pending.state = .pending;pending.enabled=true;pending.scheduledOccurrence=pending.time.weekdays.isEmpty ? pending.time.next(after:Date(),calendar:.current) : nil
   let before=alarms;alarms.append(pending)
   do {try persistence.save(alarms)} catch {alarms=before;throw error}
@@ -91,10 +117,22 @@ public actor AlarmLibrary {
   guard let index=alarms.firstIndex(where:{$0.id==alarm.id}) else {throw LibraryError.notFound}
   busy=true;defer {busy=false}
   let previous=alarms[index]
-  let nativeScheduleChanged=alarm.time != previous.time || alarm.sound != previous.sound
+  let nativeScheduleChanged=alarm.time != previous.time || alarm.sound != previous.sound || alarm.hasChallengeIntent != previous.hasChallengeIntent
+  if previous.enabled,nativeScheduleChanged {try await scheduler.authorizeScheduling()}
   var replacement=alarm;replacement.enabled=previous.enabled;replacement.state=previous.state
-  if nativeScheduleChanged {replacement.state=previous.enabled ? .pending : previous.state == .off ? .off : .needsReview;replacement.scheduledOccurrence=replacement.time.weekdays.isEmpty ? replacement.time.next(after:Date(),calendar:.current) : nil}
-  else {replacement.scheduledOccurrence=previous.scheduledOccurrence}
+  if nativeScheduleChanged {
+   replacement.state=previous.enabled ? .pending : previous.state == .off ? .off : .needsReview
+   let now=Date()
+   let previousFutureRing=previous.scheduledOccurrence.flatMap {$0>now ? $0 : nil}
+   if replacement.time.weekdays.isEmpty {
+    replacement.scheduledOccurrence=(replacement.time == previous.time ? previousFutureRing : nil)
+     ?? replacement.time.next(after:now,calendar:.current)
+   } else {
+    replacement.scheduledOccurrence=nil
+   }
+  } else {
+   replacement.scheduledOccurrence=previous.scheduledOccurrence
+  }
   alarms[index]=replacement
   do {try persistence.save(alarms)} catch {alarms[index]=previous;throw error}
   guard replacement.enabled,nativeScheduleChanged else {return}
@@ -121,9 +159,17 @@ public actor AlarmLibrary {
   guard !busy else {throw LibraryError.busy}
   guard let index=alarms.firstIndex(where:{$0.id==id}) else {throw LibraryError.notFound}
   busy=true;defer {busy=false}
+  try await scheduler.authorizeScheduling()
   let before=alarms;alarms[index].enabled=true;alarms[index].state = .pending;alarms[index].scheduledOccurrence=alarms[index].time.weekdays.isEmpty ? alarms[index].time.next(after:Date(),calendar:.current) : nil
   do {try persistence.save(alarms)} catch {alarms=before;throw error}
-  do {try await scheduler.schedule(alarms[index]);alarms[index].state = .confirmed;try persistence.save(alarms)}
+  do {
+   if before[index].state == .needsReview,try await scheduler.scheduledIDs().contains(id) {
+    try await scheduler.cancel(id:id)
+   }
+   try await scheduler.schedule(alarms[index])
+   alarms[index].state = .confirmed
+   try persistence.save(alarms)
+  }
   catch {alarms[index].state = .needsReview;try? persistence.save(alarms);throw error}
  }
  public func remove(id:UUID) async throws {
@@ -147,7 +193,13 @@ public actor AlarmLibrary {
   let ids=try await scheduler.scheduledIDs()
   let previous=alarms
   for i in alarms.indices {
-   if alarms[i].enabled {alarms[i].state=ids.contains(alarms[i].id) ? .confirmed : .needsReview}
+   if alarms[i].enabled {
+    if ids.contains(alarms[i].id) {alarms[i].state = .confirmed}
+    else if !alarms[i].hasChallengeIntent,alarms[i].state == .confirmed,
+            alarms[i].time.weekdays.isEmpty,let occurrence=alarms[i].scheduledOccurrence,occurrence<=Date() {
+     alarms[i].enabled=false;alarms[i].state = .off
+    } else {alarms[i].state = .needsReview}
+   }
    else {alarms[i].state=ids.contains(alarms[i].id) ? .needsReview : .off}
   }
   do {try persistence.save(alarms)} catch {alarms=previous;throw error}

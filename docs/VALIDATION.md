@@ -49,6 +49,9 @@ simulator-only failure or claim signed expiry is fully validated. Investigate
 StoreKit entitlement/status state and the test's seeding lifecycle before release.
 CI's iOS 26.2 pin does not eliminate this locally reproduced failure.
 
+The 8 November follow-up passed on iOS 27.0. See the [subscription plan](plans/ios-subscription.md)
+for the newer run and the remaining iOS 26.2 and TestFlight verification.
+
 ## Evidence boundaries
 
 - Synthetic joint tests can check thresholds, ordering, occlusion and duplicate

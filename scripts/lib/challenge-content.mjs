@@ -1,5 +1,5 @@
 import { z } from 'zod';
-export const readAloudTokenRange = [18, 30];
+export const readAloudTokenRange = [18, 36];
 export const contentThemes = ['workAndStudy', 'everydayLife', 'peopleAndPlans', 'creativeBreaks', 'cityAndTravel', 'curiosity'];
 const filled = z.string().refine(value => value.trim().length > 0, 'must not be blank');
 export const challengeContentItem = z.strictObject({

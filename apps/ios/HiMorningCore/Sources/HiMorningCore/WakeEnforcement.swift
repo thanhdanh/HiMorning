@@ -22,7 +22,7 @@ public struct UnresolvedWake: Equatable, Sendable {
 public enum WakePlanner {
  public static func resolves(_ outcome:WakeOutcome)->Bool {outcome != .dismissed}
  public static func liveOccurrence(of alarm:SavedAlarm,entries:[MorningEntry],now:Date,calendar:Calendar,rings:[BackupRing]=[])->Date? {
-  guard alarm.enabled,alarm.state != .pending,alarm.state != .off else {return nil}
+  guard alarm.hasChallengeIntent,alarm.enabled,alarm.state != .pending,alarm.state != .off else {return nil}
   let occurrence:Date?
   if alarm.time.weekdays.isEmpty {
    // A clock time alone cannot identify which day a one-time alarm was scheduled.
@@ -32,17 +32,16 @@ public enum WakePlanner {
    guard alarm.state == .confirmed else {return nil}
    occurrence=alarm.time.next(after:now-WakeEnforcementPolicy.window-1,calendar:calendar)
   }
-  guard let o=occurrence,o<=now,now<=o+WakeEnforcementPolicy.window else {return nil}
+  guard let o=occurrence,alarm.hasChallenge(at:o),o<=now,now<=o+WakeEnforcementPolicy.window else {return nil}
   return entries.contains {$0.alarmID==alarm.id && $0.date>=o && resolves($0.outcome)} ? nil : o
  }
  public static func plannedOccurrence(of alarm:SavedAlarm,entries:[MorningEntry],now:Date,calendar:Calendar,rings:[BackupRing]=[])->Date? {
   if let live=liveOccurrence(of:alarm,entries:entries,now:now,calendar:calendar,rings:rings) {return live}
   guard alarm.enabled,alarm.state == .confirmed else {return nil}
-  if alarm.time.weekdays.isEmpty {
-   let occurrence=alarm.scheduledOccurrence ?? rings.first {$0.alarmID==alarm.id}?.occurrence
-   return occurrence.flatMap {$0>now ? $0 : nil}
-  }
-  return alarm.time.next(after:now,calendar:calendar)
+  let next=alarm.time.weekdays.isEmpty
+   ? alarm.scheduledOccurrence ?? rings.first {$0.alarmID==alarm.id}?.occurrence
+   : alarm.time.next(after:now,calendar:calendar)
+  return next.flatMap {$0>now && alarm.hasChallenge(at:$0) ? $0 : nil}
  }
  public static func fireDates(for occurrence:Date)->[Date] {
   (1...WakeEnforcementPolicy.backupCount).map {occurrence+Double($0)*WakeEnforcementPolicy.backupInterval}
@@ -103,7 +102,7 @@ public actor WakeEnforcer {
  @discardableResult public func plan(alarms:[SavedAlarm],entries:[MorningEntry],now:Date,calendar:Calendar) async -> WakePlanResult {
   await acquire();defer {release()}
   var desired:[(alarm:SavedAlarm,key:Key)]=[]
-  for alarm in alarms {
+  for alarm in alarms where alarm.hasChallengeIntent {
    guard let occurrence=WakePlanner.plannedOccurrence(of:alarm,entries:entries,now:now,calendar:calendar,rings:stored) else {continue}
    for fireDate in WakePlanner.fireDates(for:occurrence) where fireDate>now {desired.append((alarm,Key(alarmID:alarm.id,occurrence:occurrence,fireDate:fireDate,sound:alarm.sound)))}
   }

@@ -5,7 +5,7 @@
     <string name="nav_language">Ngôn ngữ</string>
     <string name="nav_morning_purpose">Mục đích buổi sáng</string>
     <string name="nav_purpose_question">Điều gì khiến bạn muốn thức dậy mỗi sáng?</string>
-    <string name="nav_purpose_note">Bảy buổi sáng thành công, theo nhịp của bạn. Đổi mục đích vẫn giữ những buổi sáng bạn đã đạt được.</string>
+    <string name="nav_purpose_note">Bạn có thể đổi mục tiêu bất cứ lúc nào.</string>
     <string name="nav_focus_clear">Một lựa chọn nhỏ hoặc câu đố trước khi làm việc hay học tập.</string>
     <string name="nav_focus_gentle">Vẫy tay, xoay nhẹ và làm theo nhịp khi ngồi. Kiểm tra trên thiết bị.</string>
     <string name="nav_focus_voice">Bắt đầu bằng một câu ngắn, rồi thử đọc thành tiếng bằng ngôn ngữ ứng dụng.</string>
@@ -31,5 +31,5 @@
     <string name="nav_complete_guide">Một chiến thắng nhỏ để bắt đầu buổi sáng.</string>
     <string name="nav_return_to_alarm">Trở lại báo thức</string>
     <string name="nav_done">Xong</string>
-    <string name="nav_alarm_save_uncertain">Chưa xác nhận được báo thức này. Kiểm tra báo thức hệ thống trước khi sử dụng.</string>
+    <string name="nav_alarm_save_uncertain">Chưa xác nhận được báo thức.</string>
 </resources>

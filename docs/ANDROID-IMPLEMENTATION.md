@@ -114,20 +114,20 @@ Swift parsing; current source takes precedence over the stale graph.
 | iOS feature | Android result |
 |---|---|
 | Create/edit/delete, time/repeat, labels, on/off | Native Compose editor and AlarmManager adapter |
-| Three modes, system + 14 sounds | Ported rules, WAV resources and sound previews |
-| No challenge and delayed self-confirmation | Distinct self-confirmed outcome; five-minute delay |
-| Read and Choose / riddles / explanations | Same reviewed 156-item EN/VI pack; correct answers only |
+| Three modes and alarm sounds | System default and 17 bundled alarm tones with separate play and select actions |
+| No challenge and delayed self-confirmation | Stop a regular alarm immediately. The five-minute self-confirmation applies to challenge alarms. |
+| Read and Choose / riddles / explanations | Same reviewed 204-item EN/VI pack; correct answers only |
 | Read Aloud / spoken example | On-device SpeechRecognizer, token score and word-level correct/incorrect/pending feedback, TTS and reading fallback |
-| Push-ups, wave, neck, jacks, stretch, standing/seated rhythm | CameraX plus on-device ML Kit; debounced measured cycles |
-| Practice | Available for all nine challenge activities; excluded from progress |
-| Weekly goal/history/month score/seven-morning journey | Local records; one successful local day per journey day |
-| 30-day preview and saved configuration after expiry | Ported; effective basic rules preserve saved choices |
+| Push-ups, wave, neck, jacks, stretch, standing/seated rhythm | CameraX with MediaPipe hand landmarks and ML Kit body/face tracking; live camera overlay, framing hints, and measured local counts |
+| Practice | Nine activities, labeled by input method. A completed practice can preselect the challenge in a new alarm without advancing progress. |
+| Weekly goal, history and seven-morning journey | Count days with a completed challenge and show the wake history without a monthly score. |
+| iOS subscription preview | Android exposes its available challenges and sounds without an expiry or subscription screen. |
 | Stop/current sound, backup rings, recovery | Occurrence/session tokens; up to 15 two-minute reminders over 30 minutes |
 | Snooze | Android native five-minute snooze with mode budget; iOS currently lacks native snooze |
 | English/Vietnamese and accessibility | Resource-localized UI, TalkBack labels, scrollable large-text flows |
 | Google Play monthly/annual purchases | Deferred by user: no Play products/configuration; not implemented |
 | Firebase/remote AI verification | Deferred by user: Android registration/App Check/server allowlist missing; not implemented |
-| Optional remote content refresh | Bundled content works offline; no Android endpoint configured |
+| Optional remote content refresh | Bundled content works offline; configure the HTTPS Workers origin with `-PhimorningContentOrigin` to enable versioned refresh |
 
 The user confirmed that Firebase Android and Play configuration do not exist and
 asked to document later setup. To enable these integrations:
@@ -144,18 +144,26 @@ asked to document later setup. To enable these integrations:
 4. Create Play Console monthly/annual products and a Play Billing entitlement path
    with verified purchase state, pending purchases, expiry, restore and grace tests.
    StoreKit product verification cannot be reused as Android purchase evidence.
-5. If remote content refresh is desired, configure the reviewed endpoint and add
-   versioned/validated cache replacement while keeping the bundled offline pack.
+5. Configure the reviewed Workers endpoint to enable the existing Android versioned
+   content cache. The staging endpoint returned HTTP 404 during the camera parity work.
 
 ## Limits and next steps
 
-Android currently shows a fitted camera preview, guide text and measured counts;
-it does not reproduce the iOS joint/face overlay. The custom Compose design follows the current iOS palette, card hierarchy and
-home-to-sheet navigation. Android approximates Apple glass with layered native
-surfaces; its native spinner, Nunito headings/system body type and overflow delete menu
-remain platform adaptations. The content picker avoids an
-immediate repeat during a process; it does not port iOS's persisted 128-prompt and
-theme rotation history.
+Android draws hand, body, and face landmarks over the mirrored front-camera preview.
+Reach Up uses visible shoulders and elbows, and the counter advances on a stable
+raise. The selected pose model favors real-time input, and CameraX drops frames
+while inference is busy. The content picker keeps a recent prompt history per
+challenge and language, including across app restarts. The custom Compose design
+uses the iOS palette, card hierarchy and home-to-sheet navigation with Android's
+native spinner, Nunito headings and overflow delete menu.
+
+On 14 November 2026, the updated debug APK built successfully, all 25 JVM tests
+passed and Android lint reported zero errors. An API 35 emulator with sample
+camera frames verified that the wrist-to-knuckle lines and the visible shoulder,
+elbow, wrist and torso landmarks line up with the preview. The neck-turn
+challenge showed the face box and midline. Cropping the arm triggered the
+framing hint, and a stationary palm left the wave count at zero. A video with
+a slowly moving hand completed the three-wave practice through the camera pipeline.
 
 Physical-device alarm delivery, OEM battery behavior, camera calibration and Play
 billing require separate evidence. Implementation and build results do not establish
@@ -285,6 +293,31 @@ source manifest with SHA-256
 `a9acbe603d252b4d63536d1deee8fa59a384e6373bd1a73162940ffc1ec60a1c`.
 No device/OEM, physical camera or production billing claim follows from these
 emulator results.
+
+## Product audit follow-up
+
+The empty Home places the 07:00 alarm action above setup and the morning goal.
+Scheduled alarms show their actual native occurrence before the on/off controls.
+After permission denial, the composer keeps the draft and opens the exact-alarm
+settings page. Returning with access clears the error. Revocation moves existing
+alarms to the unconfirmed state until the schedule is restored.
+
+The composer shows time, repeat, sound and name before the challenge picker.
+Changing the challenge filter preserves the selected activity. Read & Pick
+practice explains the correct answer and can open a new alarm with the same
+challenge. Explore puts quiet activities first and identifies camera or microphone
+use before opening an activity. Weekly progress counts completed challenge days.
+The bundled content and new audio assets match the iOS content audit build.
+
+The Android 15 emulator verified the first alarm, denied permission without a
+new saved row, the exact-alarm settings round trip, revocation, the unconfirmed
+card, and re-registration. It also verified an incorrect answer followed by a
+correct answer and scheduling that activity. A one-time regular alarm rang and
+the immediate Stop action stopped its service, marked it off and cleared its
+wake recovery record. Vietnamese and English resources
+match. The confirmed occurrence remained visible in Vietnamese with dark theme
+and 130% text on the narrow emulator. All 25 JVM and 5 instrumentation tests
+passed. Lint found no errors. Physical-device and OEM behavior still need evidence.
 
 ## Visual softness revision
 

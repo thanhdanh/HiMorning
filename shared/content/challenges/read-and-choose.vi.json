@@ -292,14 +292,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "cityAndTravel",
-    "text": "Phòng tranh thường đóng lúc 6 giờ. Biển hôm nay ghi: “Đêm triển lãm mở đến 8 giờ; ngừng nhận khách trước khi đóng 30 phút.” Hôm nay nhận khách muộn nhất lúc nào?",
+    "text": "Phòng tranh hôm nay mở đến 8 giờ tối và ngừng nhận khách trước giờ đóng cửa 30 phút. Muộn nhất bạn có thể vào lúc mấy giờ?",
     "choices": [
-      "7 giờ rưỡi",
-      "5 giờ rưỡi",
-      "8 giờ"
+      "7 giờ rưỡi tối",
+      "8 giờ tối",
+      "5 giờ rưỡi chiều"
     ],
     "answerIndex": 0,
-    "explanation": "Hôm nay đóng muộn lúc 8 giờ, nên giờ nhận khách cuối cùng sớm hơn 30 phút, tức 7 giờ rưỡi.",
+    "explanation": "Trừ 30 phút từ 8 giờ tối, bạn có giờ vào cửa cuối cùng là 7 giờ rưỡi tối.",
     "source": "himorning",
     "license": "original"
   },

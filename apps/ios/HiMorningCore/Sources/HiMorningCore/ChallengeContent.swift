@@ -1,6 +1,12 @@
 import Foundation
 
-public enum ContentKind: String, Codable, Sendable {case readAloud,readAndChoose,riddle}
+public enum ContentKind: String, Codable, Sendable {
+ case readAloud,readAndChoose,riddle
+
+ public func promptLanguage(_ appLanguage:String) -> String {
+  self == .readAloud ? "en":appLanguage
+ }
+}
 
 public struct ChallengeContentItem: Codable, Equatable, Identifiable, Sendable {
  public var id:String
@@ -78,7 +84,7 @@ public struct ContentHistory: Codable, Equatable, Sendable {
 
 public struct ChallengeContentStore: Sendable {
  public static let supportedLanguages:Set<String>=["en","vi"]
- public static let readAloudTokenRange=18...30
+ public static let readAloudTokenRange=18...36
  public static let themes:Set<String>=["workAndStudy","everydayLife","peopleAndPlans","creativeBreaks","cityAndTravel","curiosity"]
  public let version:Int
  private let items:[ChallengeContentItem]
@@ -87,7 +93,13 @@ public struct ChallengeContentStore: Sendable {
   if let cached,cached.version>bundled.version {
    let valid=Self.validItems(cached)
    if !valid.isEmpty {
-    version=cached.version;items=valid
+    version=cached.version
+    if valid.contains(where: {$0.kind == .readAloud && $0.language == "en"}) {
+     items=valid
+    } else {
+     let englishPassages=bundled.items.filter {$0.kind == .readAloud && $0.language == "en"}
+     items=Self.validItems(ChallengeContentPack(version:cached.version,generatedAt:cached.generatedAt,items:valid+englishPassages))
+    }
     return
    }
   }
@@ -123,7 +135,8 @@ public struct ChallengeContentStore: Sendable {
   items.filter {$0.kind == kind && $0.language == language}
  }
 
- public func next(kind:ContentKind,language:String,history:inout ContentHistory) -> ChallengeContentItem? {
+ public func next(kind:ContentKind,language appLanguage:String,history:inout ContentHistory) -> ChallengeContentItem? {
+  let language=kind.promptLanguage(appLanguage)
   let pool=items(kind:kind,language:language)
   guard !pool.isEmpty else {return nil}
   let previousTheme=history.lastTheme(kind:kind,language:language)

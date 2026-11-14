@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.himorning.android.core.Alarm
+import com.himorning.android.core.AppRepository
+import com.himorning.android.core.ChallengeKind
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.UUID
@@ -45,7 +47,7 @@ internal object WakeRecovery {
         val before = read(context)
         before.filter { it.alarmId == alarm.id }.forEach { cancelPending(context, it) }
         write(context, before.filter { it.alarmId != alarm.id && it.inWindow(System.currentTimeMillis()) } + wake)
-        scheduleBackups(context, wake)
+        if (alarm.challenge != ChallengeKind.NONE) scheduleBackups(context, wake)
         wake
     }
 
@@ -80,6 +82,7 @@ internal object WakeRecovery {
             next
         } else {
             if (index !in 1..COUNT || at != occurrence + index * INTERVAL || (wake.snoozeAt ?: 0) > now) return null
+            if (AppRepository(context).state.alarms.firstOrNull { it.id == id }?.challenge == ChallengeKind.NONE) return null
             wake
         }
     }
@@ -87,13 +90,13 @@ internal object WakeRecovery {
     fun reschedule(context: Context) = synchronized(lock) {
         val now = System.currentTimeMillis()
         val before = read(context)
-        val alarms = com.himorning.android.core.AppRepository(context).state.alarms.map { it.id }.toSet()
+        val alarms = AppRepository(context).state.alarms.associateBy { it.id }
         val valid = before.filter { it.inWindow(now) && it.alarmId in alarms }
         write(context, valid)
         (before - valid.toSet()).forEach { cancelPending(context, it) }
         prefs(context).edit().putBoolean("limited", false).commit()
         valid.forEach { wake ->
-            scheduleBackups(context, wake)
+            if (alarms[wake.alarmId]?.challenge != ChallengeKind.NONE) scheduleBackups(context, wake)
             wake.snoozeAt?.takeIf { it > now }?.let { manager(context).setAlarmClock(AlarmManager.AlarmClockInfo(it, null), pending(context, wake, 0, it)) }
         }
     }

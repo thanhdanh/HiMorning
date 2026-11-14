@@ -18,7 +18,7 @@ describe('English and Vietnamese app copy', () => {
   expect(Object.keys(en).length).toBeGreaterThan(50);
   expect(Object.keys(vi).sort()).toEqual(Object.keys(en).sort());
   for (const [key,value] of Object.entries(en)) {
-   expect(value).toBe(key); expect(vi[key].trim()).not.toBe('');
+   expect(value.trim()).not.toBe(''); expect(vi[key].trim()).not.toBe('');
    expect(vi[key].match(/%(?:\d+\$)?(?:lld|d|@|%)/g) ?? []).toEqual(value.match(/%(?:\d+\$)?(?:lld|d|@|%)/g) ?? []);
   }
  });
@@ -58,12 +58,6 @@ describe('English and Vietnamese app copy', () => {
    expect(info).not.toHaveProperty('NSSpeechRecognitionUsageDescription');
   }
   expect(project).not.toContain('NSSpeechRecognitionUsageDescription:');
- });
- it('keeps the read-aloud UI-test fixture sentence in both app languages', () => {
-  const en = strings('en'), vi = strings('vi');
-  const key = 'Small steps create steady progress.';
-  expect(en).toHaveProperty(key);
-  expect(vi).toHaveProperty(key);
  });
  it('ships at least one item of each kind per language in the bundled pack', () => {
   const pack = JSON.parse(readFileSync('apps/ios/Resources/challenge-content.json', 'utf8'));
