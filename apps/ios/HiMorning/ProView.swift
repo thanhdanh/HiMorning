@@ -81,10 +81,11 @@ struct ProView:View {
   switch store.catalog {
   case .available(let products):
    if let selected=products.first(where:{$0.id == selectedID}) ?? products.first {
+    let monthly=products.first {$0.id == SubscriptionStore.monthlyProductID}
     VStack(alignment:.leading,spacing:10) {
      Text(appText("Choose a plan")).font(.headline).accessibilityAddTraits(.isHeader)
      ForEach(products) {product in
-      planRow(product,selected:product.id == selected.id)
+      planRow(product,selected:product.id == selected.id,monthly:monthly)
      }
      if products.count < SubscriptionStore.productIDs.count {
       Text(appText("One plan is unavailable right now.")).font(.footnote).foregroundStyle(MorningTheme.muted)
@@ -113,16 +114,35 @@ struct ProView:View {
   }
  }
 
- private func planRow(_ product:Product,selected:Bool)->some View {
+ private func planRow(_ product:Product,selected:Bool,monthly:Product?)->some View {
   let annual=product.id == SubscriptionStore.annualProductID
+  let savings=annual ? annualSavings(for:product,monthly:monthly) : nil
   return Button {
    selectedID=product.id
   } label: {
    HStack(alignment:.center,spacing:12) {
     VStack(alignment:.leading,spacing:4) {
-     Text(appText(annual ? "Yearly" : "Monthly")).font(.subheadline.weight(.semibold))
+     if let savings {
+      ViewThatFits(in:.horizontal) {
+       HStack(spacing:8) {
+        planTitle(annual:true).fixedSize()
+        savingsBadge(savings).fixedSize()
+       }
+       VStack(alignment:.leading,spacing:4) {
+        planTitle(annual:true)
+        savingsBadge(savings)
+       }
+      }
+     } else {
+      planTitle(annual:annual)
+     }
      Text(String(format:appText(annual ? "%@ per year" : "%@ per month"),locale:appLocale(),product.displayPrice))
       .font(.headline).monospacedDigit()
+     if annual,product.price > 0 {
+      let equivalent=(product.price/12).formatted(product.priceFormatStyle)
+      Text(String(format:appText("Equivalent to %@ per month"),locale:appLocale(),equivalent))
+       .font(.footnote).foregroundStyle(MorningTheme.muted)
+     }
     }.frame(maxWidth:.infinity,alignment:.leading)
     Image(systemName:selected ? "checkmark.circle.fill" : "circle")
      .foregroundStyle(selected ? MorningTheme.accent : MorningTheme.muted)
@@ -133,6 +153,28 @@ struct ProView:View {
     .contentShape(RoundedRectangle(cornerRadius:14))
   }.buttonStyle(.plain).disabled(purchasing).accessibilityAddTraits(selected ? .isSelected : [])
    .accessibilityIdentifier(annual ? "annualProPlan" : "monthlyProPlan")
+ }
+
+ private func planTitle(annual:Bool)->some View {
+  Text(appText(annual ? "Yearly" : "Monthly")).font(.subheadline.weight(.semibold))
+ }
+
+ private func savingsBadge(_ percentage:Decimal)->some View {
+  let formatted=percentage.formatted(.percent.precision(.fractionLength(0)).rounded(rule:.down).locale(appLocale()))
+  return Text(String(format:appText("Save %@"),locale:appLocale(),formatted))
+   .font(.caption2.weight(.semibold))
+   .padding(.horizontal,8).padding(.vertical,3)
+   .foregroundStyle(MorningTheme.proInk).background(MorningTheme.proGoldLight,in:Capsule())
+   .accessibilityLabel(String(format:appText("Save %@ compared with the monthly plan"),locale:appLocale(),formatted))
+ }
+
+ private func annualSavings(for annual:Product,monthly:Product?)->Decimal? {
+  guard let monthly,annual.price > 0,
+        annual.priceFormatStyle.currencyCode == monthly.priceFormatStyle.currencyCode else {return nil}
+  let monthlyTotal=monthly.price*12
+  guard monthlyTotal > annual.price else {return nil}
+  let savings=(monthlyTotal-annual.price)/monthlyTotal
+  return savings >= Decimal(sign:.plus,exponent:-2,significand:1) ? savings : nil
  }
 
  private func buy(_ product:Product) async {

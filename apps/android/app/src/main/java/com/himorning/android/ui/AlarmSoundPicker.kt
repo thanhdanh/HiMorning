@@ -101,13 +101,11 @@ fun AlarmSoundPicker(
                             Row(Modifier.weight(1f).morningPress(selectInteractions, enabled = !locked)
                                 .clickable(interactionSource = selectInteractions, indication = null, enabled = !locked) { stop(); onSelect(sound) }
                                 .padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                                if (!locked) {
-                                    Box(Modifier.size(42.dp).clip(RoundedCornerShape(14.dp)), contentAlignment = Alignment.Center) { Icon(Icons.Outlined.MusicNote, null, tint = colors.accent) }
+                                Box(Modifier.size(42.dp).clip(RoundedCornerShape(14.dp)), contentAlignment = Alignment.Center) {
+                                    Icon(Icons.Outlined.MusicNote, null, tint = colors.accent)
                                 }
-                                Column(Modifier.weight(1f).padding(start = if (locked) 0.dp else 10.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                                    if (locked) ProLockBadge()
-                                    Text(stringResource(soundText(sound)), style = MaterialTheme.typography.bodyLarge)
-                                }
+                                Text(stringResource(soundText(sound)), modifier = Modifier.weight(1f).padding(horizontal = 10.dp), style = MaterialTheme.typography.bodyLarge)
+                                if (locked) ProLockBadge(compact = true)
                                 if (active && !locked) Icon(Icons.Outlined.Check, null, tint = colors.accent, modifier = Modifier.padding(start = 5.dp))
                             }
                             val previewInteractions = remember(sound) { MutableInteractionSource() }

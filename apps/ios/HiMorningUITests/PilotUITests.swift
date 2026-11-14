@@ -49,7 +49,7 @@ final class PilotUITests:XCTestCase {
   capture(app,name:"sounds-"+language)
   toggleSound(in:app)
  }
- private func launch(language:String,expired:Bool=false,awakeReady:Bool=false,editorFixture:Bool=false)->XCUIApplication {
+ private func launch(language:String,expired:Bool=false,awakeReady:Bool=false,editorFixture:Bool=false,darkMode:Bool=false)->XCUIApplication {
   let app=XCUIApplication()
   app.terminate()
   app.launchArguments=["-AppleLanguages","(en)","-AppleLocale","en_US","--ui-testing","--ui-camera-denied"]
@@ -57,6 +57,7 @@ final class PilotUITests:XCTestCase {
   if expired {app.launchArguments.append("--preview-expired")}
   if editorFixture {app.launchArguments.append("--ui-disabled-alarm")}
   if awakeReady {app.launchArguments.append("--ui-awake-ready")}
+  if darkMode {app.launchArguments.append("--ui-dark-mode")}
   app.launch()
   for identifier in ["closeProgress","closePro"] {
    if app.buttons[identifier].exists {app.buttons[identifier].tap()}
@@ -596,9 +597,15 @@ final class PilotUITests:XCTestCase {
   XCTAssertFalse(pushUps.isSelected)
  }
  func testLockedEffectCanBePreviewedWithoutChangingAlarmSound() {
-  let app=launch(language:"vi",expired:true)
+  let app=launch(language:"vi",expired:true,darkMode:true)
   app.buttons["addAlarm"].tap()
   toggleSound(in:app)
+  let defaultSound=app.buttons["sound-system"]
+  let sunrise=app.buttons["sound-sunrise"]
+  XCTAssertTrue(defaultSound.waitForExistence(timeout:5))
+  XCTAssertEqual(sunrise.frame.height,defaultSound.frame.height,accuracy:1)
+  XCTAssertTrue(sunrise.label.contains("Pro"))
+  capture(app,name:"locked-sound-rows-dark-vi")
   let option=app.buttons["sound-glassChime"]
   let play=app.buttons["preview-glassChime"]
   for _ in 0..<10 where !play.isHittable {app.swipeUp()}

@@ -24,7 +24,8 @@ struct AlarmEditor:View {
  @State private var label=""
  @FocusState private var labelFocused:Bool
  @State private var volume:Double=0.3
- @State private var soundPreview=SoundPreview()
+ @State private var soundPreview=SoundPreview(playsInSilentMode:true)
+ @State private var soundPreviewFailed=false
  @State private var playingSound:AlarmSound?
  @State private var previewID=UUID()
  @State private var practiceAlarm:SavedAlarm?
@@ -233,6 +234,9 @@ struct AlarmEditor:View {
     .toolbar {ToolbarItem(placement:.confirmationAction) {Button(appText("Done")) {stopSoundPreview();choosingSound=false}.accessibilityIdentifier("doneSound")}}
   }.tint(MorningTheme.accent).presentationDragIndicator(.visible).onDisappear(perform:stopSoundPreview)
    .sheet(isPresented:$soundPro) {ProView(store:store,preview:preview,ads:ads)}
+   .alert(appText("Couldn’t play this sound"),isPresented:$soundPreviewFailed) {
+    Button(appText("Done"),role:.cancel) {}
+   }
  }
  private var repeatSummary:String {
   if days.isEmpty {return appText("Never")}
@@ -495,11 +499,16 @@ struct AlarmEditor:View {
  }
  private func playPreview(_ value:AlarmSound) {
   if playingSound == value {stopSoundPreview();return}
-  guard value != .system,let url=Bundle.main.url(forResource:value.rawValue,withExtension:"wav") else {stopSoundPreview();return}
+  guard value != .system else {return}
+  guard let url=Bundle.main.url(forResource:value.rawValue,withExtension:"wav") else {
+   stopSoundPreview();soundPreviewFailed=true;return
+  }
   let id=UUID()
   previewID=id;playingSound=value
-  soundPreview.play(url:url,volume:volume,onEnd:{
-   if previewID == id {playingSound=nil}
+  soundPreview.play(url:url,volume:volume,onEnd:{played in
+   guard previewID == id else {return}
+   playingSound=nil
+   soundPreviewFailed = !played
   })
  }
  private func stopSoundPreview() {
@@ -526,19 +535,19 @@ private struct SoundSelection:View {
        let locked = !access.allows(sound:value)
        HStack(spacing:8) {
         Button {stopPreview();if locked {unlock()} else {sound=value;onSelection()}} label: {
-         HStack(spacing:14) {
+         HStack(spacing:10) {
+          Image(systemName:value == .system ? "alarm" : value == .sunrise ? "sunrise" : "music.note")
+           .frame(width:44,height:44).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:12))
+           .accessibilityHidden(true)
+          Text(value.title).font(.body.weight(.medium))
+           .multilineTextAlignment(.leading).fixedSize(horizontal:false,vertical:true)
+           .frame(maxWidth:.infinity,alignment:.leading)
           if locked {
-           VStack(alignment:.leading,spacing:6) {
-            ProLockBadge()
-            Text(value.title).font(.body.weight(.medium))
-           }
+           ProLockBadge(compact:true).fixedSize()
           } else {
-           Image(systemName:value == .system ? "alarm" : value == .sunrise ? "sunrise" : "music.note")
-            .frame(width:44,height:44).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:12))
-           Text(value.title).font(.body.weight(.medium))
+           Image(systemName:sound == value ? "checkmark.circle.fill" : "circle")
+            .foregroundStyle(MorningTheme.accent).accessibilityHidden(true)
           }
-          Spacer()
-          if !locked {Image(systemName:sound == value ? "checkmark.circle.fill" : "circle").foregroundStyle(MorningTheme.accent)}
          }.padding(.vertical,14).contentShape(Rectangle())
         }.buttonStyle(.plain).accessibilityIdentifier("sound-"+value.rawValue).accessibilityAddTraits(sound == value ? .isSelected : [])
         if value != .system {

@@ -55,7 +55,11 @@ import StoreKitTest
   XCTAssertFalse(app.buttons.matching(NSPredicate(format:"label CONTAINS[c] %@","Redeem Code")).firstMatch.exists)
   let yearly=app.buttons["annualProPlan"]
   reveal(yearly,in:app)
+  XCTAssertTrue(app.buttons["monthlyProPlan"].isSelected)
+  XCTAssertFalse(yearly.isSelected)
+  XCTAssertTrue(yearly.label.contains("16%"))
   XCTAssertTrue(yearly.label.contains("per year"))
+  XCTAssertTrue(yearly.label.contains("Equivalent to"))
   yearly.tap()
   XCTAssertTrue(yearly.isSelected)
   reveal(checkout,in:app)
@@ -95,6 +99,12 @@ import StoreKitTest
   retry.tap()
   let checkout=checkout(in:app)
   guard checkout.waitForExistence(timeout:10) else {return XCTFail(app.debugDescription)}
+  let yearly=app.buttons["annualProPlan"]
+  reveal(yearly,in:app)
+  XCTAssertTrue(yearly.label.contains("Tiết kiệm"))
+  XCTAssertTrue(yearly.label.contains("mỗi năm"))
+  XCTAssertTrue(yearly.label.contains("Tương đương"))
+  capture(app,name:"pro-yearly-vi-accessibility")
   reveal(checkout,in:app)
   capture(app,name:"pro-checkout-vi-accessibility")
  }

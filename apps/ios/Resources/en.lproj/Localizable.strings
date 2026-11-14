@@ -636,6 +636,9 @@
 "Monthly" = "Monthly";
 "Yearly" = "Yearly";
 "%@ per year" = "%@ per year";
+"Save %@" = "Save %@";
+"Save %@ compared with the monthly plan" = "Save %@ compared with the monthly plan";
+"Equivalent to %@ per month" = "Equivalent to %@ per month";
 "%@ per month" = "%@ per month";
 "Renews automatically. Manage or cancel in App Store settings." = "Renews automatically. Manage or cancel in App Store settings.";
 "Subscribe to Pro" = "Subscribe to Pro";
@@ -669,3 +672,4 @@
 "challenge_info_riddle" = "Read the riddle and choose the answer that fits the clues.";
 "challenge_info_ai_count" = "AI counts reps · %lld to finish";
 "challenge_info_camera_required" = "Camera required";
+"Couldn’t play this sound" = "Couldn’t play this sound";

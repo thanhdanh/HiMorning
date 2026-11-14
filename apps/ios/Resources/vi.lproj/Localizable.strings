@@ -635,6 +635,9 @@
 "Monthly" = "Gói tháng";
 "Yearly" = "Gói năm";
 "%@ per year" = "%@ mỗi năm";
+"Save %@" = "Tiết kiệm %@";
+"Save %@ compared with the monthly plan" = "Tiết kiệm %@ so với gói tháng";
+"Equivalent to %@ per month" = "Tương đương %@/tháng";
 "%@ per month" = "%@ mỗi tháng";
 "Renews automatically. Manage or cancel in App Store settings." = "Gói tự gia hạn. Bạn có thể quản lý hoặc hủy trong cài đặt App Store.";
 "Subscribe to Pro" = "Đăng ký Pro";
@@ -668,3 +671,4 @@
 "challenge_info_riddle" = "Đọc câu đố rồi chọn đáp án khớp với gợi ý.";
 "challenge_info_ai_count" = "AI đếm động tác · %lld lần";
 "challenge_info_camera_required" = "Cần bật camera";
+"Couldn’t play this sound" = "Không phát được âm báo này";
