@@ -56,6 +56,12 @@ private val roundedMorningFont = FontFamily(
     },
 )
 
+@OptIn(ExperimentalTextApi::class)
+internal val quicksandFont = FontFamily(
+    Font(R.font.quicksand, weight = FontWeight.SemiBold, variationSettings = FontVariation.Settings(FontVariation.weight(600))),
+    Font(R.font.quicksand, weight = FontWeight.Bold, variationSettings = FontVariation.Settings(FontVariation.weight(700))),
+)
+
 private val LocalMorningColors = compositionLocalOf { lightMorningColors }
 
 internal object MorningTheme {

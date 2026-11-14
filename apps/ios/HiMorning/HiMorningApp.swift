@@ -373,7 +373,11 @@ struct HomeView:View {
    ScrollView {
     VStack(alignment:.leading,spacing:16) {
      HStack(spacing:12) {
-      Label("HiMorning.",systemImage:"sunrise").font(.system(size:20,weight:.bold)).labelStyle(.titleAndIcon)
+      Label {
+       Text("HiMorning.").modifier(MorningTypography.wordmark)
+      } icon: {
+       Image(systemName:"sunrise").font(.system(size:20,weight:.bold))
+      }.labelStyle(.titleAndIcon)
        .fixedSize(horizontal:false,vertical:true).accessibilityLabel("Hi Morning")
       Spacer()
       GlassEffectContainer(spacing:12) {
@@ -408,7 +412,7 @@ struct HomeView:View {
       }.padding(18).frame(maxWidth:.infinity,alignment:.leading).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:20))
      }
      HStack(alignment:.firstTextBaseline) {
-      Text(appText("Alarms")).font(.title2.weight(.semibold))
+      Text(appText("Alarms")).modifier(MorningTypography.heading())
       Spacer(minLength:12)
       Text(Date(),format:.dateTime.weekday(.abbreviated).day().month(.abbreviated).locale(appLocale())).font(.caption).foregroundStyle(MorningTheme.muted)
      }

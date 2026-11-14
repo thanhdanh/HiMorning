@@ -9,7 +9,7 @@ struct ProView:View {
   NavigationStack {
    VStack(spacing:12) {
     VStack(alignment:.leading,spacing:12) {
-     HStack {MorningSun(size:60);Text(appText("Find a routine worth returning to.")).font(.title2.bold()).fixedSize(horizontal:false,vertical:true)}
+     HStack {MorningSun(size:60);Text(appText("Find a routine worth returning to.")).modifier(MorningTypography.heading(size:24)).fixedSize(horizontal:false,vertical:true)}
      Label(appText("Your patterns over 30 days"),systemImage:"calendar")
      Label(appText("A weekly goal you choose"),systemImage:"sun.max")
      Label(appText("An energetic seven-morning workout path"),systemImage:"bolt")

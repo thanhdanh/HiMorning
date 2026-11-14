@@ -190,7 +190,10 @@ private enum class HomeSheet { PROGRESS, PRO, LANGUAGE, PURPOSE, EXPLORE, PLAN }
             HomeSheet.EXPLORE -> R.string.nav_explore_challenges
             HomeSheet.PLAN -> R.string.nav_select_alarm
         }
-        MorningSheet(stringResource(title), { sheet = null }) {
+        val titleStyle = MaterialTheme.typography.titleLarge.let {
+            if (current == HomeSheet.PROGRESS) it.copy(fontFamily = quicksandFont) else it
+        }
+        MorningSheet(stringResource(title), { sheet = null }, titleStyle) {
             when (current) {
                 HomeSheet.PROGRESS -> MorningProgress(state, full, { goal -> operation { repo.setGoal(goal) } }, { sheet = HomeSheet.PRO })
                 HomeSheet.PRO -> ProPreview(previewDays, state.previewStartedAt != null)
@@ -370,7 +373,7 @@ private enum class HomeSheet { PROGRESS, PRO, LANGUAGE, PURPOSE, EXPLORE, PLAN }
         Text(stringResource(if (practice) R.string.explore else R.string.good_morning), style = MaterialTheme.typography.headlineMedium)
         if (practice) Text(stringResource(R.string.practice_note))
         if (!practice && audioFailed) Text(stringResource(R.string.audio_error), color = MaterialTheme.colorScheme.error)
-        Text(stringResource(challengeText(kind)), style = MaterialTheme.typography.titleLarge)
+        Text(stringResource(challengeText(kind)), style = MaterialTheme.typography.titleLarge, fontFamily = quicksandFont)
         if (completed) {
             Text(stringResource(if (practice) R.string.practice_completed else if (completion == WakeOutcome.SELF_CONFIRMED) R.string.self_confirmed else R.string.completed), style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.primary)
             prompt?.explanation?.let { Text(it) }

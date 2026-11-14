@@ -124,7 +124,7 @@ internal fun MorningHomeScreen(
         JourneyCard(state, previewDays, suggestedMission, purposeChosen, onPurpose, onMissionPractice, onMissionPlan, onRestartJourney, onProgress, onPro)
         Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(stringResource(R.string.home_alarms), style = MaterialTheme.typography.headlineMedium, color = colors.ink)
+                Text(stringResource(R.string.home_alarms), style = MaterialTheme.typography.headlineMedium, fontFamily = quicksandFont, color = colors.ink)
                 Spacer(Modifier.weight(1f))
                 Text(DateTimeFormatter.ofPattern("EEE, MMM d", locale).format(java.time.LocalDate.now()),
                     style = MaterialTheme.typography.bodySmall, color = colors.muted)
@@ -154,7 +154,7 @@ private fun HomeHeader(onProgress: () -> Unit, onPro: () -> Unit, onLanguage: ()
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             MorningSunrise(size = 26.dp)
-            Text("HiMorning.", style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp), fontWeight = FontWeight.Bold,
+            Text("HiMorning.", style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp), fontFamily = quicksandFont, fontWeight = FontWeight.Bold,
                 color = MorningTheme.colors.ink, maxLines = 1)
             if (!stack) {
                 Spacer(Modifier.weight(1f))

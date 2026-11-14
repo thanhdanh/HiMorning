@@ -183,7 +183,7 @@ struct MorningPurposePicker:View {
    ScrollView {
     VStack(alignment:.leading,spacing:16) {
      Text(appText("What would make your morning worth getting up for?"))
-      .font(.title2.weight(.semibold)).fixedSize(horizontal:false,vertical:true)
+      .modifier(MorningTypography.heading()).fixedSize(horizontal:false,vertical:true)
      Text(appText("Seven successful mornings, at your pace. Changing purpose keeps the mornings you have already earned."))
       .font(.subheadline).foregroundStyle(MorningTheme.muted).fixedSize(horizontal:false,vertical:true)
      ForEach(MorningFocus.allCases,id:\.self) {focus in

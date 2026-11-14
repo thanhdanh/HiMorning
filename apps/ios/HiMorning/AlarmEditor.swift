@@ -97,7 +97,7 @@ struct AlarmEditor:View {
       }
       VStack(alignment:.leading,spacing:14) {
        HStack {
-        Text(appText("Pick your first win")).font(.title3.weight(.bold))
+        Text(appText("Pick your first win")).modifier(MorningTypography.heading(size:20,relativeTo:.title3))
         Spacer()
         Image(systemName:"sparkles").foregroundStyle(challengeColor).accessibilityHidden(true)
        }

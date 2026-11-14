@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindowProvider
@@ -57,14 +58,19 @@ private tailrec fun Context.activity(): Activity? = when (this) {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Composable internal fun MorningSheet(title: String, onDismiss: () -> Unit, content: @Composable ColumnScope.() -> Unit) {
+@Composable internal fun MorningSheet(
+    title: String,
+    onDismiss: () -> Unit,
+    titleStyle: TextStyle = MaterialTheme.typography.titleLarge,
+    content: @Composable ColumnScope.() -> Unit,
+) {
     val colors = MorningTheme.colors
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         containerColor = colors.canvas, contentColor = colors.ink, shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp),
         dragHandle = { BottomSheetDefaults.DragHandle(color = colors.muted.copy(alpha = .45f)) }) {
         MorningSystemBars()
         Row(Modifier.fillMaxWidth().padding(start = 20.dp, end = 12.dp, bottom = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
+            Text(title, style = titleStyle, fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
             MorningIconButton(Icons.Outlined.Close, stringResource(R.string.close), onDismiss)
         }
         Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp).padding(bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(16.dp), content = content)
@@ -90,7 +96,7 @@ private tailrec fun Context.activity(): Activity? = when (this) {
 
 @Composable internal fun PurposePicker(current: MorningFocus, full: Boolean, onChoose: (MorningFocus) -> Unit, onPro: () -> Unit) {
     val colors = MorningTheme.colors
-    Text(stringResource(R.string.nav_purpose_question), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
+    Text(stringResource(R.string.nav_purpose_question), style = MaterialTheme.typography.headlineSmall, fontFamily = quicksandFont, fontWeight = FontWeight.SemiBold)
     Text(stringResource(R.string.nav_purpose_note), color = colors.muted)
     MorningFocus.entries.forEach { focus ->
         val selected = current == focus
@@ -130,7 +136,7 @@ private tailrec fun Context.activity(): Activity? = when (this) {
 @Composable internal fun ProPreview(previewDays: Int, started: Boolean) {
     val colors = MorningTheme.colors
     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) { MorningSun(size = 120.dp) }
-    Text(stringResource(R.string.nav_pro_title), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+    Text(stringResource(R.string.nav_pro_title), style = MaterialTheme.typography.headlineMedium, fontFamily = quicksandFont, fontWeight = FontWeight.SemiBold)
     Text(if (!started) stringResource(R.string.preview_not_started) else if (previewDays > 0) stringResource(R.string.preview, previewDays) else stringResource(R.string.basic_access), color = colors.muted)
     Surface(color = Color.Transparent, contentColor = colors.ink, shape = RoundedCornerShape(24.dp),
         modifier = Modifier.fillMaxWidth().morningSurface(colors.soft, radius = 24.dp, tint = colors.yellow, elevated = false)) {

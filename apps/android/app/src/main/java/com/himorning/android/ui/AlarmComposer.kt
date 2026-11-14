@@ -166,7 +166,7 @@ fun AlarmComposer(
                         }
                         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(stringResource(R.string.composer_first_win), Modifier.weight(1f), color = colors.ink, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                Text(stringResource(R.string.composer_first_win), Modifier.weight(1f), color = colors.ink, style = MaterialTheme.typography.titleMedium, fontFamily = quicksandFont, fontWeight = FontWeight.SemiBold)
                                 Icon(Icons.Outlined.AutoAwesome, null, tint = colors.accent)
                             }
                             val oneColumn = LocalConfiguration.current.fontScale >= 1.3f

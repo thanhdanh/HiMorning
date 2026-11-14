@@ -115,7 +115,7 @@ struct ChallengeView: View {
        .font(.subheadline).multilineTextAlignment(.center).fixedSize(horizontal:false,vertical:true)
        .accessibilityIdentifier("practiceCompleteExplanation")
      }
-     Text(challenge.displayTitle).font(.subheadline.weight(.medium)).padding(.horizontal, 14).padding(.vertical, 8).background(MorningTheme.soft, in: Capsule())
+     Text(challenge.displayTitle).modifier(MorningTypography.heading(size:15,relativeTo:.subheadline)).padding(.horizontal, 14).padding(.vertical, 8).background(MorningTheme.soft, in: Capsule())
      if let theme = contentTheme {
       Text(ChallengePrompts.themeTitle(theme)).font(.caption.weight(.semibold)).foregroundStyle(MorningTheme.muted)
        .accessibilityIdentifier("contentTheme")
