@@ -145,13 +145,13 @@
 "No challenge" = "Không có thử thách";
 "Push-ups" = "Chống đẩy";
 "Read & Choose" = "Đọc và chọn";
-"Guided Rhythm" = "Vận động theo nhịp";
+"Guided Rhythm" = "Thay đổi tư thế";
 "Read Aloud" = "Đọc thành tiếng";
 "Rhythm style" = "Kiểu nhịp điệu";
 "Standing" = "Đứng";
 "Seated" = "Ngồi";
-"Guided Rhythm · Standing" = "Nhịp điệu hướng dẫn · Đứng";
-"Guided Rhythm · Seated" = "Nhịp điệu hướng dẫn · Ngồi";
+"Guided Rhythm · Standing" = "Thay đổi tư thế · Đứng";
+"Guided Rhythm · Seated" = "Thay đổi tư thế · Ngồi";
 "%lld push-ups" = "%lld lần chống đẩy";
 "Confirm you are awake when you are ready." = "Chạm để tắt chuông.";
 "Complete a short camera-checked movement challenge." = "Hoàn thành thử thách động tác ngắn được kiểm tra bằng camera.";
@@ -311,7 +311,7 @@
 "Wave hello" = "Vẫy tay";
 "Neck turns" = "Xoay cổ";
 "Riddle" = "Đố vui";
-"Jumping jacks" = "Bật nhảy dang tay chân";
+"Jumping jacks" = "Bật nhảy";
 "Reach up" = "Giơ hai tay";
 "Hold your hand in view and wave it side to side." = "Giơ tay trước camera rồi vẫy qua lại.";
 "Face the camera and turn your head left and right." = "Nhìn vào camera rồi quay đầu sang trái và phải.";
