@@ -163,8 +163,9 @@ struct ProView:View {
   let formatted=percentage.formatted(.percent.precision(.fractionLength(0)).rounded(rule:.down).locale(appLocale()))
   return Text(String(format:appText("Save %@"),locale:appLocale(),formatted))
    .font(.caption2.weight(.semibold))
+   .fixedSize(horizontal:false,vertical:true)
    .padding(.horizontal,8).padding(.vertical,3)
-   .foregroundStyle(MorningTheme.proInk).background(MorningTheme.proGoldLight,in:Capsule())
+   .foregroundStyle(MorningTheme.proInk).background(MorningTheme.proGoldLight,in:RoundedRectangle(cornerRadius:10))
    .accessibilityLabel(String(format:appText("Save %@ compared with the monthly plan"),locale:appLocale(),formatted))
  }
 
