@@ -222,9 +222,14 @@ struct ProView:View {
 struct MorningPrivacyView:View {
  @ObservedObject var ads:RewardedAdStore
  @State private var adPrivacyStatus:String?
+ private let privacyPolicyURL=URL(string:"https://himorning-support.onrender.com/#quyen-rieng-tu")!
+
  var body:some View {
   ScrollView {
    VStack(alignment:.leading,spacing:20) {
+    Link(destination:privacyPolicyURL) {
+     Text(appText("Read the full privacy policy")).underline().frame(minHeight:44)
+    }.accessibilityIdentifier("externalPrivacyPolicy")
     Text(appText("Your morning history is saved on this device. HiMorning keeps up to 31 days of entries."))
     Text(appText("Apple handles subscription payments. HiMorning uses verified purchases to unlock Pro and does not receive your card or wallet details."))
     Text(appText("Camera challenges are checked on this iPhone. Video and sound are not saved or uploaded."))
