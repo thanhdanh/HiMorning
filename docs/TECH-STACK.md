@@ -1,7 +1,7 @@
 # Tech stack
 
-Keep the local iPhone runtime separate from backend experiments and the future
-Android port.
+Keep the local iPhone runtime separate from backend experiments and the native
+Android app.
 
 **Status:** Source inventory reviewed on 22 October 2026. **Audience:** Developers.
 
@@ -19,7 +19,7 @@ Android port.
 | Retained paid verifier | Node 22 Functions v2, Firestore, Python Qwen/llama.cpp service on Modal |
 | Tests | Vitest, Firestore Emulator, SwiftPM/XCTest, portable Swift, native XCUITest and Python unittest |
 | Tooling | pnpm 10.34.6, XcodeGen, pinned dependency/artifact files |
-| Android | Reserved directory and contract plan only |
+| Android | Kotlin 2.3.21, Compose, AlarmManager, CameraX/ML Kit, on-device speech and atomic JSON; [evidence](ANDROID-IMPLEMENTATION.md) |
 
 ## How it works
 

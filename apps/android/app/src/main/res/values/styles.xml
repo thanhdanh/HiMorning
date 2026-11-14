@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- NumberPicker copies its input face during construction; configure it before inflation. -->
+    <style name="HiMorningWheelInput" parent="android:style/Widget.Material.EditText">
+        <item name="android:fontFamily">@font/nunito</item>
+        <item name="android:textFontWeight">600</item>
+        <item name="android:fontVariationSettings">"'wght' 600"</item>
+    </style>
+    <style name="HiMorningSpinnerWidget" parent="android:style/Widget.Material.TimePicker">
+        <item name="android:timePickerMode">spinner</item>
+    </style>
+    <style name="HiMorningSpinnerTimePicker" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:timePickerStyle">@style/HiMorningSpinnerWidget</item>
+        <item name="android:editTextStyle">@style/HiMorningWheelInput</item>
+        <item name="android:fontFamily">@font/nunito</item>
+        <item name="android:textFontWeight">600</item>
+        <item name="android:fontVariationSettings">"'wght' 600"</item>
+        <item name="android:colorAccent">#967211</item>
+        <item name="android:textColorPrimary">#29251D</item>
+        <item name="android:textColorSecondary">#756F63</item>
+    </style>
+    <style name="HiMorningSpinnerTimePickerDark" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:timePickerStyle">@style/HiMorningSpinnerWidget</item>
+        <item name="android:editTextStyle">@style/HiMorningWheelInput</item>
+        <item name="android:fontFamily">@font/nunito</item>
+        <item name="android:textFontWeight">600</item>
+        <item name="android:fontVariationSettings">"'wght' 600"</item>
+        <item name="android:colorAccent">#F5C842</item>
+        <item name="android:textColorPrimary">#F8F4EA</item>
+        <item name="android:textColorSecondary">#C2BBAE</item>
+    </style>
+</resources>
