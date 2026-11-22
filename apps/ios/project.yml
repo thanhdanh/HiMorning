@@ -67,6 +67,7 @@ targets:
         NSHealthShareUsageDescription: HiMorning optionally reads mindful history permission status on your iPhone.
         NSHealthUpdateUsageDescription: HiMorning optionally saves completed morning wins as mindful check-ins in Apple Health.
         NSSupportsLiveActivities: true
+        ITSAppUsesNonExemptEncryption: false
     dependencies:
       - target: HiMorningWidget
       - package: GoogleMobileAds
