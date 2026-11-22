@@ -43,13 +43,13 @@ android {
         applicationId = "com.himorning.android"
         minSdk = 31
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "1.0.0"
         buildConfigField("String", "CONTENT_ORIGIN", "\"$contentOrigin\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures { compose = true; buildConfig = true }
-    androidResources { noCompress += "task" }
+    androidResources { noCompress += listOf("task", "m4a") }
     sourceSets.getByName("main").assets.srcDir(handModelAssets)
     bundle { language { enableSplit = false } }
     compileOptions {

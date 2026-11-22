@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
 import { buildPack, challengeContentPack, validatePack } from './lib/challenge-content.mjs';
 const sourceDir = new URL('../shared/content/challenges/', import.meta.url);
-const outputs = ['../apps/ios/Resources/challenge-content.json', '../backend/worker/content/challenge-content.json'];
+const outputs = ['../apps/ios/Resources/challenge-content.json', '../backend/worker/content/challenge-content.json', '../apps/android/app/src/main/assets/challenge-content.json'];
 const schemaPath = new URL('../shared/contracts/v1/challenge-content.schema.json', import.meta.url);
 const fail = message => { console.error(message); process.exit(1); };
 const files = (await readdir(sourceDir).catch(() => [])).filter(name => name.endsWith('.json')).sort();

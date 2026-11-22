@@ -29,7 +29,7 @@
     <string name="read_aloud">Đọc thành tiếng</string>
     <string name="wave_hand">Vẫy tay</string>
     <string name="neck_rotation">Xoay cổ</string>
-    <string name="riddle">Câu đố</string>
+    <string name="riddle">Đố vui</string>
     <string name="jumping_jacks">Bật nhảy</string>
     <string name="stretching">Vươn tay</string>
     <string name="system">Âm báo mặc định</string>
@@ -88,7 +88,7 @@
     <string name="completed">Đã hoàn thành thử thách</string>
     <string name="practice_completed">Đã làm xong bài thử.</string>
     <string name="correct">Chính xác!</string>
-    <string name="wrong_answer">Chưa đúng. Thử đáp án khác.</string>
+    <string name="wrong_answer">Chưa trúng bẫy rồi! Nghĩ kỹ thêm chút nữa nhé.</string>
     <string name="next_prompt">Đổi câu hỏi</string>
     <string name="listen_example">Nghe đọc mẫu</string>
     <string name="start_listening">Bắt đầu đọc</string>

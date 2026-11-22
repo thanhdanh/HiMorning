@@ -357,6 +357,7 @@ private enum class HomeSheet { PROGRESS, LANGUAGE, PURPOSE, EXPLORE, PLAN }
     var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
     val startedAt = remember(saved.id) { System.currentTimeMillis() }
     val speech = remember { SpeechCapture(context) }
+    val neuralVoice = remember { NeuralVoicePlayer(context) }
     var tts by remember { mutableStateOf<TextToSpeech?>(null) }
     var ttsReady by remember { mutableStateOf(false) }
     val voiceLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted -> message = if (granted) null else R.string.microphone_permission }
@@ -374,18 +375,32 @@ private enum class HomeSheet { PROGRESS, LANGUAGE, PURPOSE, EXPLORE, PLAN }
     }
     val permission = { name: String -> ContextCompat.checkSelfPermission(context, name) == android.content.pm.PackageManager.PERMISSION_GRANTED }
     DisposableEffect(Unit) {
-        val engine = TextToSpeech(context) { status -> ttsReady = status == TextToSpeech.SUCCESS }
+        val engine = TextToSpeech(context) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                ttsReady = true
+            }
+        }
         tts = engine
-        onDispose { speech.destroy(); engine.stop(); engine.shutdown() }
+        onDispose { speech.destroy(); neuralVoice.stop(); engine.stop(); engine.shutdown() }
     }
     val instruction = stringResource(guideText(kind, effective.seated))
     val voice = tts
-    LaunchedEffect(capturing, voice, ttsReady) {
-        if (capturing && ttsReady && voice != null) {
-            val locale = if (actualLanguage == AppLanguage.VIETNAMESE) Locale.forLanguageTag("vi-VN") else Locale.US
-            if (voice.setLanguage(locale) >= TextToSpeech.LANG_AVAILABLE) {
-                voice.speak(instruction, TextToSpeech.QUEUE_FLUSH, null, "movement-guide")
+    val speakGuidance: (String, AppLanguage, String) -> Unit = { text, lang, utteranceId ->
+        val code = if (lang == AppLanguage.VIETNAMESE) "vi" else "en"
+        if (!neuralVoice.play(code, text)) {
+            if (ttsReady && voice != null) {
+                val locale = if (lang == AppLanguage.VIETNAMESE) Locale.forLanguageTag("vi-VN") else Locale.US
+                if (voice.setLanguage(locale) >= TextToSpeech.LANG_AVAILABLE) {
+                    voice.setSpeechRate(0.92f)
+                    voice.setPitch(1.03f)
+                    voice.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId)
+                }
             }
+        }
+    }
+    LaunchedEffect(capturing, voice, ttsReady) {
+        if (capturing) {
+            speakGuidance(instruction, actualLanguage, "movement-guide")
         }
     }
     var repTone by remember { mutableStateOf<ToneGenerator?>(null) }
@@ -394,12 +409,12 @@ private enum class HomeSheet { PROGRESS, LANGUAGE, PURPOSE, EXPLORE, PLAN }
         repTone = tone
         onDispose {
             tone?.release()
-            if (capturing) voice?.stop()
+            if (capturing) { neuralVoice.stop(); voice?.stop() }
         }
     }
     val lifecycle = LocalLifecycleOwner.current
     DisposableEffect(lifecycle) {
-        val observer = LifecycleEventObserver { _, event -> if (event == Lifecycle.Event.ON_STOP) { speech.stop(); tts?.stop(); listening = false; capturing = false } }
+        val observer = LifecycleEventObserver { _, event -> if (event == Lifecycle.Event.ON_STOP) { speech.stop(); neuralVoice.stop(); tts?.stop(); listening = false; capturing = false } }
         lifecycle.lifecycle.addObserver(observer); onDispose { lifecycle.lifecycle.removeObserver(observer) }
     }
     LaunchedEffect(Unit) { while (true) { kotlinx.coroutines.delay(1000); now = System.currentTimeMillis() } }
@@ -407,7 +422,7 @@ private enum class HomeSheet { PROGRESS, LANGUAGE, PURPOSE, EXPLORE, PLAN }
     DisposableEffect(Unit) { onDispose { answerChime?.release() } }
     val finish: (WakeOutcome) -> Unit = finish@{ outcome ->
         if (!completed) {
-            speech.stop(); tts?.stop(); listening = false; capturing = false
+            speech.stop(); neuralVoice.stop(); tts?.stop(); listening = false; capturing = false
             if (!practice && runCatching {
                 when (outcome) {
                     WakeOutcome.LOCAL_COMPLETED -> RingingService.complete(context, saved.id, wakeSession)
@@ -495,14 +510,13 @@ private enum class HomeSheet { PROGRESS, LANGUAGE, PURPOSE, EXPLORE, PLAN }
             val current = prompt
             if (current == null) Text(stringResource(R.string.data_error)) else {
                 if (kind == ChallengeKind.READ_ALOUD) {
-                    MorningButton(text = stringResource(R.string.listen_example), primary = false, enabled = ttsReady && !listening, onClick = {
-                        tts?.language = Locale.US
-                        tts?.speak(current.text, TextToSpeech.QUEUE_FLUSH, null, current.id)
+                    MorningButton(text = stringResource(R.string.listen_example), primary = false, enabled = !listening, onClick = {
+                        speakGuidance(current.text, AppLanguage.ENGLISH, current.id)
                     })
                     MorningButton(text = stringResource(if (listening) R.string.listening else R.string.start_listening), enabled = !listening, onClick = {
                         if (!permission(Manifest.permission.RECORD_AUDIO)) voiceLauncher.launch(Manifest.permission.RECORD_AUDIO)
                         else {
-                            tts?.stop(); if (!practice) RingingService.silence(context, saved.id, wakeSession); message = null; transcript = ""; listening = true
+                            neuralVoice.stop(); tts?.stop(); if (!practice) RingingService.silence(context, saved.id, wakeSession); message = null; transcript = ""; listening = true
                             speech.start("en-US", onTranscript = { transcript = it }, onFinal = { text ->
                                 transcript = text; listening = false
                                 if (RecognizedWordMatch.score(current.text, text, AppLanguage.ENGLISH) >= RecognizedWordMatch.PASSING_SCORE) finish(WakeOutcome.LOCAL_COMPLETED) else message = R.string.speech_error
@@ -517,7 +531,7 @@ private enum class HomeSheet { PROGRESS, LANGUAGE, PURPOSE, EXPLORE, PLAN }
                         }, primary = false)
                     }
                 }
-                TextButton(onClick = { speech.stop(); tts?.stop(); listening = false; transcript = ""; message = null; prompt = catalog.prompt(kind, actualLanguage) }) { Text(stringResource(R.string.next_prompt)) }
+                TextButton(onClick = { speech.stop(); neuralVoice.stop(); tts?.stop(); listening = false; transcript = ""; message = null; prompt = catalog.prompt(kind, actualLanguage) }) { Text(stringResource(R.string.next_prompt)) }
             }
         } else if (kind != ChallengeKind.NONE) {
             if (capturing) {
@@ -541,7 +555,7 @@ private enum class HomeSheet { PROGRESS, LANGUAGE, PURPOSE, EXPLORE, PLAN }
         }
         message?.let { Text(stringResource(it), color = MaterialTheme.colorScheme.error) }
         if (kind != ChallengeKind.NONE && kind != ChallengeKind.READ_AND_CHOOSE) TextButton(onClick = {
-            speech.stop(); tts?.stop(); capturing = false; listening = false; kind = ChallengeKind.READ_AND_CHOOSE; prompt = catalog.prompt(kind, actualLanguage); message = null
+            speech.stop(); neuralVoice.stop(); tts?.stop(); capturing = false; listening = false; kind = ChallengeKind.READ_AND_CHOOSE; prompt = catalog.prompt(kind, actualLanguage); message = null
         }) { Text(stringResource(R.string.try_reading)) }
         if (!practice && kind == ChallengeKind.NONE) {
             MorningButton(stringResource(R.string.stop), close)
