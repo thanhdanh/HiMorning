@@ -112,6 +112,7 @@ struct ChallengeInfoSheet:View {
   case .readAloud:return "challenge_info_read_aloud"
   case .readAndChoose:return "challenge_info_read_choose"
   case .riddle:return "challenge_info_riddle"
+  case .morningLight:return "challenge_info_morning_light"
   }
  }
 

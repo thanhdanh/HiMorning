@@ -24,6 +24,7 @@ struct ChallengeIcon:View {
   case .riddle:return .symbol("lightbulb")
   case .jumpingJacks:return .asset("ChallengeJumpingJacks")
   case .stretching:return .asset("ChallengeStretching")
+  case .morningLight:return .symbol("sun.horizon.fill")
   }
  }
 

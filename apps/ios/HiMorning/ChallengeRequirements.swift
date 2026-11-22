@@ -79,6 +79,7 @@ private extension ChallengeSelection {
   case .guidedRhythm:return rhythmVariant == .seated ? "challenge_guide_seated" : "challenge_guide_standing"
   case .readAloud:return "challenge_guide_words"
   case .readAndChoose,.riddle:return "challenge_guide_answer"
+  case .morningLight:return "challenge_guide_morning_light"
   case .none:return "Stop the alarm with one tap"
   }
  }

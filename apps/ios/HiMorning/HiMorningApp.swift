@@ -35,6 +35,7 @@ struct NoopBackupScheduler:BackupRingScheduler {
  private var challengeCredits:[ChallengeCredit]=[]
  private let creditDefaultsKey="rewardedChallengeCredits-v1"
  @Published var journey=JourneyStore()
+ let bedtime=BedtimeAnchorStore()
  private var journeyObserver:AnyCancellable?
  lazy var preview=PreviewStore(subscriptions:subscriptions)
  private var accessObserver:AnyCancellable?
@@ -210,6 +211,9 @@ struct NoopBackupScheduler:BackupRingScheduler {
    resolvedWakes.append(MorningEntry(alarmID:alarm.id,outcome:outcome))
    activeWake=nil
    Task {await enforcer?.resolve(alarmID:alarm.id);await clearExpiredChallengeTrials(completedAlarmID:alarm.id);await replanBackups()}
+   if outcome != .selfConfirmed,bedtime.settings.healthSyncEnabled {
+    Task {await MorningHealthSync.recordMorningWin(completedAt:Date())}
+   }
   }
   guard journal != nil else {return}
   do {
@@ -499,6 +503,7 @@ struct HomeView:View {
  @State private var choosingPurpose=false
  @State private var proAfterPurpose=false
  @State private var exploringChallenges=false
+ @State private var showingBedtime=false
  @AppStorage("appLanguage") private var language="system"
  @ScaledMetric(relativeTo:.largeTitle) private var clockSize=48
  var body:some View {
@@ -515,6 +520,9 @@ struct HomeView:View {
       Spacer()
       GlassEffectContainer(spacing:12) {
       HStack(spacing:8) {
+      Button {showingBedtime=true} label:{Image(systemName:"moon.stars").frame(width:44,height:44).glassEffect(.regular.interactive(),in:.circle).contentShape(Rectangle())}
+       .buttonStyle(.plain)
+       .accessibilityIdentifier("bedtimeAnchor").accessibilityLabel(appText("Evening & health"))
       Button {progress=true} label:{Image(systemName:"chart.bar").frame(width:44,height:44).glassEffect(.regular.interactive(),in:.circle).contentShape(Rectangle())}
        .buttonStyle(.plain)
        .accessibilityIdentifier("morningProgress").accessibilityLabel(appText("Your progress"))
@@ -584,6 +592,7 @@ struct HomeView:View {
    .sheet(isPresented:$progress) {MorningProgressView(model:model,store:model.subscriptions)}
    .sheet(isPresented:$pro) {ProView(store:model.subscriptions,preview:model.preview,ads:model.rewardedAds)}
    .sheet(isPresented:$exploringChallenges) {ExploreChallengesView {kind in model.practice(kind)}}
+   .sheet(isPresented:$showingBedtime) {BedtimeAnchorView(store:model.bedtime)}
    .fullScreenCover(item:$model.selected,onDismiss:{
     if let challenge=model.challengeAfterPractice {model.challengeAfterPractice=nil;editor=AlarmDraft(alarm:nil,suggestedChallenge:challenge)}
     Task {await model.refresh()}

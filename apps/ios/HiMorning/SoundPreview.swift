@@ -11,7 +11,7 @@ final class SoundPreview:@unchecked Sendable {
   self.playsInSilentMode=playsInSilentMode
  }
 
- func play(url:URL,volume:Double,onEnd:(@MainActor @Sendable (Bool)->Void)?=nil) {
+ func play(url:URL,volume:Double,rampDuration:TimeInterval=0,onEnd:(@MainActor @Sendable (Bool)->Void)?=nil) {
   queue.async { [self] in
    player?.stop();player=nil
    do {
@@ -22,15 +22,29 @@ final class SoundPreview:@unchecked Sendable {
      try session.setCategory(.playback,mode:.default,options:[.mixWithOthers])
      try session.setActive(true)
     }
-    audio.volume=Float(volume)
-    if audio.play() {
-     player=audio
-     queue.asyncAfter(deadline:.now()+audio.duration) { [weak self] in
-      guard let self,self.player === audio else {return}
-      self.finishPlayback()
-      if let onEnd {DispatchQueue.main.async {onEnd(true)}}
+    if rampDuration > 0 {
+     audio.volume=Float(volume * 0.15)
+     if audio.play() {
+      audio.setVolume(Float(volume),fadeDuration:rampDuration)
+      player=audio
+      queue.asyncAfter(deadline:.now()+audio.duration) { [weak self] in
+       guard let self,self.player === audio else {return}
+       self.finishPlayback()
+       if let onEnd {DispatchQueue.main.async {onEnd(true)}}
+      }
+      return
      }
-     return
+    } else {
+     audio.volume=Float(volume)
+     if audio.play() {
+      player=audio
+      queue.asyncAfter(deadline:.now()+audio.duration) { [weak self] in
+       guard let self,self.player === audio else {return}
+       self.finishPlayback()
+       if let onEnd {DispatchQueue.main.async {onEnd(true)}}
+      }
+      return
+     }
     }
    } catch {
     // Reset the session after a failed activation or decode.
