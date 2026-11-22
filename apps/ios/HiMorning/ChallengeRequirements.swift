@@ -23,6 +23,8 @@ enum ChallengeRequirements {
    return [appText("Keep your whole body in view"),appText("Open your arms and legs, then close them %lld times",count:selection.kind.localMovementTarget ?? 10)]
   case .stretching:
    return [appText("Keep both shoulders and elbows in view"),appText("Raise both arms, lower them, and repeat %lld times",count:selection.kind.localMovementTarget ?? 3)]
+  case .morningLight:
+   return [appText("Point your camera toward a bright window or lamp"),appText("Hold steady for two seconds")]
   case .guidedRhythm:
    if selection.rhythmVariant == .seated {
     return [appText("Stay seated"),appText("Lower your arms, raise them, then lower them for 3 cycles")]

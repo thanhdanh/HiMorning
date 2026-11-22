@@ -135,7 +135,7 @@ struct AlarmEditor:View {
        ChallengeRequirementsView(selection:challenge).accessibilityIdentifier("modeExplanation")
       }
       }
-     }.padding(.horizontal,20).padding(.top,12).padding(.bottom,24)
+     }.padding(.horizontal,20).padding(.top,12).padding(.bottom,96)
     }.scrollDismissesKeyboard(.interactively)
    }.foregroundStyle(MorningTheme.ink)
     .safeAreaInset(edge:.bottom,spacing:0) {saveBar}
@@ -441,7 +441,7 @@ struct AlarmEditor:View {
      challenge = .pushUps(repetitions:pushUpTarget)
     case .readAndChoose:challenge = .readAndChoose
     case .guidedRhythm:challenge = .guidedRhythm(variant:rhythmVariant)
-    case .waveHand,.neckRotation,.riddle,.jumpingJacks,.stretching:challenge=ChallengeSelection(kind:kind)
+    case .waveHand,.neckRotation,.riddle,.jumpingJacks,.stretching,.morningLight:challenge=ChallengeSelection(kind:kind)
     case .readAloud:challenge = .readAloud
     }
  }

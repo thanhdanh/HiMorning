@@ -4,5 +4,7 @@
 <dict>
  <key>keychain-access-groups</key>
  <array><string>$(AppIdentifierPrefix)$(PRODUCT_BUNDLE_IDENTIFIER)</string></array>
+ <key>com.apple.security.application-groups</key>
+ <array><string>group.com.himorning.shared</string></array>
 </dict>
 </plist>

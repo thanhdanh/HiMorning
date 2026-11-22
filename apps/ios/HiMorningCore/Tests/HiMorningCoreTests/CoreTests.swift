@@ -112,7 +112,7 @@ final class CoreTests: XCTestCase {
   }
  }
  func testModeChallengeCatalogAndPreferredDefaults() throws {
-  XCTAssertEqual(ChallengeKind.available(in:.gentle),[.none,.waveHand,.neckRotation])
+  XCTAssertEqual(ChallengeKind.available(in:.gentle),[.none,.waveHand,.neckRotation,.morningLight])
   XCTAssertEqual(ChallengeKind.available(in:.balanced),[.readAloud,.readAndChoose,.riddle])
   XCTAssertEqual(ChallengeKind.available(in:.focused),[.pushUps,.jumpingJacks,.stretching])
   XCTAssertEqual(ChallengeKind.waveHand.rawValue,"wave_hand")

@@ -62,7 +62,9 @@ targets:
         GADDelayAppMeasurementInit: true
         SKAdNetworkItems:
           - SKAdNetworkIdentifier: cstr6suwn9.skadnetwork
+        NSSupportsLiveActivities: true
     dependencies:
+      - target: HiMorningWidget
       - package: GoogleMobileAds
       - package: GoogleUserMessagingPlatform
       - package: HiMorningCore
@@ -74,6 +76,21 @@ targets:
         product: FirebaseFunctions
       - package: Firebase
         product: FirebaseAppCheck
+  HiMorningWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - HiMorningWidget
+      - path: HiMorning/MorningWidgetSnapshot.swift
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.himorning.HiMorning.Widget
+      CODE_SIGN_ENTITLEMENTS: HiMorningWidget/HiMorningWidget.entitlements
+    info:
+      path: HiMorningWidget/Info.plist
+      properties:
+        CFBundleDisplayName: HiMorning
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
   HiMorningTests:
     type: bundle.unit-test
     platform: iOS

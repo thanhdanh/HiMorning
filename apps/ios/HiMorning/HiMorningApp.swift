@@ -3,6 +3,8 @@ import Combine
 import FirebaseCore
 import FirebaseAppCheck
 import HiMorningCore
+import WidgetKit
+import ActivityKit
 @main struct HiMorningApp:App {
  @StateObject private var model=PilotModel()
  @AppStorage("appLanguage") private var language="system"
@@ -233,6 +235,42 @@ struct NoopBackupScheduler:BackupRingScheduler {
   do {try journal?.setWeeklyGoal(goal);progressError=nil}
   catch {progressError=appText("Your goal could not be saved. Please try again.")}
  }
+ func syncWidgetSnapshot(now:Date=Date()) {
+  let upcoming:(alarm:SavedAlarm,date:Date)? = alarms.filter(\.enabled).compactMap { alarm in
+   guard let next = alarm.time.next(after: now, calendar: .current) else { return nil }
+   return (alarm, next)
+  }.min { $0.date < $1.date }
+
+  let snapshot = MorningWidgetSnapshot(
+   nextAlarmTime: upcoming?.date,
+   challengeTitle: upcoming?.alarm.challenge.displayTitle,
+   modeTitle: upcoming?.alarm.mode.title,
+   journeyCompleted: journey.journey?.completedCount ?? 0,
+   journeyTotal: 7,
+   updatedAt: now
+  )
+  MorningWidgetStore.save(snapshot)
+  WidgetCenter.shared.reloadAllTimelines()
+  syncLiveActivity(upcoming: upcoming, now: now)
+ }
+ private func syncLiveActivity(upcoming:(alarm:SavedAlarm,date:Date)?,now:Date) {
+  guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
+  guard let upcoming, upcoming.date.timeIntervalSince(now) <= 12 * 3600 else {
+   Task {
+    for activity in Activity<MorningAlarmAttributes>.activities {
+     await activity.end(nil, dismissalPolicy: .immediate)
+    }
+   }
+   return
+  }
+  let state = MorningAlarmAttributes.ContentState(wakeTime: upcoming.date, completed: false)
+  if let existing = Activity<MorningAlarmAttributes>.activities.first {
+   Task { await existing.update(ActivityContent(state: state, staleDate: upcoming.date.addingTimeInterval(3600))) }
+  } else {
+   let attrs = MorningAlarmAttributes(challengeTitle: upcoming.alarm.challenge.displayTitle, modeTitle: upcoming.alarm.mode.title)
+   _ = try? Activity.request(attributes: attrs, content: ActivityContent(state: state, staleDate: upcoming.date.addingTimeInterval(3600)), pushType: nil)
+  }
+ }
  func refresh() async {
   guard let library else {return}
   #if DEBUG
@@ -253,6 +291,7 @@ struct NoopBackupScheduler:BackupRingScheduler {
   }
   await clearExpiredChallengeTrials()
   await replanBackups()
+  syncWidgetSnapshot()
   openPending()
   #if DEBUG
   if ProcessInfo.processInfo.arguments.contains("--ui-testing") {return}
@@ -331,6 +370,7 @@ struct NoopBackupScheduler:BackupRingScheduler {
    }
    alarms=await library.all()
    if alarms.contains(where:{$0.state == .confirmed}) {preview.start()}
+   syncWidgetSnapshot()
    await replanBackups()
   } catch {alarms=await library.all();throw error}
  }
@@ -414,11 +454,11 @@ extension AlarmSound {
 extension ChallengeKind {
  var practiceTitle:String {
   if self == .readAloud {return title + " · " + appText("Microphone")}
-  if self == .pushUps || self == .guidedRhythm || usesLocalMovement {return title + " · " + appText("Camera")}
+  if self == .pushUps || self == .guidedRhythm || self == .morningLight || usesLocalMovement {return title + " · " + appText("Camera")}
   return title
  }
- var editorIdentifier:String {switch self {case .none:return "none";case .pushUps:return "pushUps";case .readAndChoose:return "readAndChoose";case .guidedRhythm:return "guidedRhythm";case .readAloud:return "readAloud";case .waveHand:return "waveHand";case .neckRotation:return "neckRotation";case .riddle:return "riddle";case .jumpingJacks:return "jumpingJacks";case .stretching:return "stretching"}}
- var title:String {switch self {case .none:return appText("No challenge");case .pushUps:return appText("Push-ups");case .readAndChoose:return appText("Read & Choose");case .guidedRhythm:return appText("Guided Rhythm");case .readAloud:return appText("Read Aloud");case .waveHand:return appText("Wave hello");case .neckRotation:return appText("Neck turns");case .riddle:return appText("Riddle");case .jumpingJacks:return appText("Jumping jacks");case .stretching:return appText("Reach up")}}
+ var editorIdentifier:String {switch self {case .none:return "none";case .pushUps:return "pushUps";case .readAndChoose:return "readAndChoose";case .guidedRhythm:return "guidedRhythm";case .readAloud:return "readAloud";case .waveHand:return "waveHand";case .neckRotation:return "neckRotation";case .riddle:return "riddle";case .jumpingJacks:return "jumpingJacks";case .stretching:return "stretching";case .morningLight:return "morningLight"}}
+ var title:String {switch self {case .none:return appText("No challenge");case .pushUps:return appText("Push-ups");case .readAndChoose:return appText("Read & Choose");case .guidedRhythm:return appText("Guided Rhythm");case .readAloud:return appText("Read Aloud");case .waveHand:return appText("Wave hello");case .neckRotation:return appText("Neck turns");case .riddle:return appText("Riddle");case .jumpingJacks:return appText("Jumping jacks");case .stretching:return appText("Reach up");case .morningLight:return appText("Morning light")}}
  var summary:String {switch self {
   case .none:return appText("Confirm you are awake when you are ready.")
   case .pushUps:return appText("Complete a short camera-checked movement challenge.")
@@ -430,7 +470,9 @@ extension ChallengeKind {
   case .riddle:return appText("Solve a short riddle in your language.")
   case .jumpingJacks:return appText("Complete 10 gentle jumping jacks. Checked on this device.")
   case .stretching:return appText("Raise both hands above your shoulders, then lower them.")
+  case .morningLight:return appText("Point your camera toward a bright window or lamp.")
  }}
+ var icon:String {switch self {case .none:return "hand.tap";case .pushUps:return "figure.strengthtraining.traditional";case .readAndChoose:return "text.book.closed";case .guidedRhythm:return "figure.cooldown";case .readAloud:return "waveform";case .waveHand:return "hand.wave";case .neckRotation:return "person.crop.circle";case .riddle:return "lightbulb";case .jumpingJacks:return "figure.jumping";case .stretching:return "figure.cooldown";case .morningLight:return "sun.horizon.fill"}}
 }
 extension ChallengeSelection {
  var displayTitle:String {
@@ -456,12 +498,13 @@ struct HomeView:View {
  @State private var pro=false
  @State private var choosingPurpose=false
  @State private var proAfterPurpose=false
+ @State private var exploringChallenges=false
  @AppStorage("appLanguage") private var language="system"
  @ScaledMetric(relativeTo:.largeTitle) private var clockSize=48
  var body:some View {
   NavigationStack {
    ScrollView {
-    VStack(alignment:.leading,spacing:16) {
+    VStack(alignment:.leading,spacing:14) {
      HStack(spacing:12) {
       Label {
        Text("HiMorning.").modifier(MorningTypography.wordmark)
@@ -515,14 +558,10 @@ struct HomeView:View {
      Button {editor=AlarmDraft(alarm:nil)} label:{Label(appText(model.alarms.isEmpty ? "Set an alarm" : "Add alarm"),systemImage:"plus")}
       .buttonStyle(MorningButtonStyle()).accessibilityIdentifier("addAlarm")
      if model.alarms.isEmpty {firstMorningCard}
-      Menu {
-       ForEach([.readAndChoose,.riddle,.readAloud,.waveHand,.neckRotation,.guidedRhythm,.stretching,.pushUps,.jumpingJacks] as [ChallengeKind],id:\.self) {kind in
-        Button {model.practice(kind)} label:{
-         Label {Text(kind.practiceTitle)} icon: {ChallengeIcon(kind:kind).image}
-        }.accessibilityIdentifier("practice-"+kind.editorIdentifier)
-       }
-      } label: {Text(appText("Explore challenges")).frame(maxWidth:.infinity)}
-       .buttonStyle(MorningButtonStyle(primary:false)).accessibilityIdentifier("practiceChallenges")
+      Button {exploringChallenges=true} label: {
+       Text(appText("Explore challenges")).frame(maxWidth:.infinity)
+      }
+      .buttonStyle(MorningButtonStyle(primary:false)).accessibilityIdentifier("practiceChallenges")
      MorningJourneyCard(model:model,store:model.journey,choosePurpose:{choosingPurpose=true},plan:{selection,alarm in
       let upcoming=alarm.flatMap {$0.canPrepareJourney() ? $0 : nil}
       editor=AlarmDraft(alarm:upcoming,scope:upcoming == nil ? .all:.challenge,suggestedChallenge:selection)
@@ -536,7 +575,7 @@ struct HomeView:View {
        Button(appText("Enjoying your mornings? Explore Pro")) {pro=true}.buttonStyle(.plain).font(.subheadline)
       }
      }
-    }.padding(20)
+    }.padding(.horizontal,20).padding(.top,20).padding(.bottom,40)
    }.background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink).tint(MorningTheme.accent)
    .navigationTitle("HiMorning").toolbar(.hidden,for:.navigationBar)
    .preferredColorScheme(testingColorScheme)
@@ -544,6 +583,7 @@ struct HomeView:View {
    .sheet(isPresented:$choosingPurpose,onDismiss:{if proAfterPurpose {proAfterPurpose=false;pro=true}}) {MorningPurposePicker(model:model,store:model.journey,showPro:{proAfterPurpose=true;choosingPurpose=false})}
    .sheet(isPresented:$progress) {MorningProgressView(model:model,store:model.subscriptions)}
    .sheet(isPresented:$pro) {ProView(store:model.subscriptions,preview:model.preview,ads:model.rewardedAds)}
+   .sheet(isPresented:$exploringChallenges) {ExploreChallengesView {kind in model.practice(kind)}}
    .fullScreenCover(item:$model.selected,onDismiss:{
     if let challenge=model.challengeAfterPractice {model.challengeAfterPractice=nil;editor=AlarmDraft(alarm:nil,suggestedChallenge:challenge)}
     Task {await model.refresh()}
@@ -584,7 +624,7 @@ struct HomeView:View {
   }
  }
  private var firstMorningCard:some View {
-  VStack(alignment:.leading,spacing:14) {
+  VStack(alignment:.leading,spacing:10) {
    Text(appText("Start your morning with a small win.")).font(.title2.weight(.semibold))
     .fixedSize(horizontal:false,vertical:true).accessibilityIdentifier("firstMorningPromise")
    Text(appText("An alarm, a short challenge, a reason to get going.")).font(.subheadline)
@@ -594,7 +634,7 @@ struct HomeView:View {
    }.buttonStyle(MorningButtonStyle(primary:false)).accessibilityIdentifier("quickPractice")
    Text(appText("Practice now. No camera, microphone or alarm needed.")).font(.footnote)
     .fixedSize(horizontal:false,vertical:true)
-  }.padding(20).frame(maxWidth:.infinity,alignment:.leading).foregroundStyle(MorningTheme.onYellow)
+  }.padding(18).frame(maxWidth:.infinity,alignment:.leading).foregroundStyle(MorningTheme.onYellow)
    .background(MorningTheme.hero,in:RoundedRectangle(cornerRadius:24))
  }
  @ViewBuilder private var recentWinsCard:some View {

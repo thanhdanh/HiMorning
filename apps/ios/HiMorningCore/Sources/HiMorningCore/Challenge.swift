@@ -11,17 +11,18 @@ public enum ChallengeKind: String, Codable, CaseIterable, Sendable {
  case riddle
  case jumpingJacks = "jumping_jacks"
  case stretching
+ case morningLight = "morning_light"
 
  public static func available(in mode:WakeMode)->[ChallengeKind] {
   switch mode {
-  case .gentle:[.none,.waveHand,.neckRotation]
+  case .gentle:[.none,.waveHand,.neckRotation,.morningLight]
   case .balanced:[.readAloud,.readAndChoose,.riddle]
   case .focused:[.pushUps,.jumpingJacks,.stretching]
   }
  }
  public var preferredMode:WakeMode {
   switch self {
-  case .none,.waveHand,.neckRotation,.guidedRhythm:return .gentle
+  case .none,.waveHand,.neckRotation,.guidedRhythm,.morningLight:return .gentle
   case .readAloud,.readAndChoose,.riddle:return .balanced
   case .pushUps,.jumpingJacks,.stretching:return .focused
   }
