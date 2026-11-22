@@ -6,6 +6,7 @@ import AudioToolbox
  private let tick:()->Void
  private let isSpeaking:()->Bool
  private let synthesizer=AVSpeechSynthesizer()
+ private let neural=NeuralVoicePlayer()
  private var lastHint:String?
  private var lastSpeechAt:Date?
  private var pendingHint:String?
@@ -15,25 +16,26 @@ import AudioToolbox
 
  init(languageCode:String=appLocale().identifier,say:((String)->Void)?=nil,tick:(()->Void)?=nil,isSpeaking:(()->Bool)?=nil) {
   let synthesizer=self.synthesizer
+  let neural=self.neural
   if let say {self.say=say}
   else {
    let language=languageCode.hasPrefix("vi") ? "vi-VN":"en-US"
-   let preferred=AVSpeechSynthesisVoice(language:language)
-   let best=AVSpeechSynthesisVoice.speechVoices().filter {
-    $0.language==language && !$0.voiceTraits.contains(.isNoveltyVoice) && !$0.voiceTraits.contains(.isPersonalVoice)
-   }.max {$0.quality.rawValue<$1.quality.rawValue}
-   let voice=(best?.quality.rawValue ?? 0)>(preferred?.quality.rawValue ?? 0) ? best:preferred
-   self.say={text in synthesizer.speak(Self.utterance(text,voice:voice))}
+   let voice=NeuralVoicePlayer.naturalSystemVoice(language:language)
+   self.say={text in
+    if neural.play(language:language,text:text) {return}
+    synthesizer.speak(Self.utterance(text,voice:voice))
+   }
   }
   self.tick=tick ?? {AudioServicesPlaySystemSound(1057)}
-  self.isSpeaking=isSpeaking ?? {synthesizer.isSpeaking}
+  self.isSpeaking=isSpeaking ?? {neural.isPlaying || synthesizer.isSpeaking}
  }
 
  static func utterance(_ text:String,voice:AVSpeechSynthesisVoice?=nil)->AVSpeechUtterance {
   let utterance=AVSpeechUtterance(string:text)
   utterance.voice=voice
   utterance.rate=AVSpeechUtteranceDefaultSpeechRate*0.85
-  utterance.preUtteranceDelay=0.15
+  utterance.pitchMultiplier=1.04
+  utterance.preUtteranceDelay=0.12
   utterance.postUtteranceDelay=0.35
   return utterance
  }
@@ -66,6 +68,7 @@ import AudioToolbox
 
  func stop() {
   stopped=true;pendingHint=nil;pendingSince=nil
+  neural.stop()
   synthesizer.stopSpeaking(at:.immediate)
  }
 }

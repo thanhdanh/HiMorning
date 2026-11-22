@@ -4,14 +4,14 @@
     "kind": "riddle",
     "language": "vi",
     "theme": "workAndStudy",
-    "text": "Mai, Linh và Bảo mỗi người mang một món khác nhau: cốc, trái cây hoặc bánh mì. Mai không mang đồ ăn; Linh không mang bánh mì. Bảo mang gì?",
+    "text": "Một lỗi phần mềm cần 3 kỹ sư ngồi sửa trong 3 giờ. Nếu có thêm 3 người nữa vào cuộc gọi chỉ để hỏi “Xong chưa?”, nhưng vẫn chỉ có một bàn phím làm việc, thì phần việc gốc mất bao lâu?",
     "choices": [
-      "Bánh mì",
-      "Cốc",
-      "Trái cây"
+      "Vẫn mất 3 giờ",
+      "90 phút",
+      "6 giờ"
     ],
     "answerIndex": 0,
-    "explanation": "Mai mang cốc. Linh phải mang trái cây, nên bánh mì là của Bảo.",
+    "explanation": "Người vào hỏi thăm không chia sẻ được thao tác trên cùng một bàn phím, nên công việc thực tế vẫn cần đủ 3 giờ.",
     "source": "himorning",
     "license": "original"
   },
@@ -20,14 +20,14 @@
     "kind": "riddle",
     "language": "vi",
     "theme": "workAndStudy",
-    "text": "Lúc 9 giờ, một tệp bắt đầu tải trong 5 phút, đồng thời máy in bắt đầu việc mất 8 phút. Cả hai chạy liên tục. Khi nào cả hai xong?",
+    "text": "Trước giờ ôn thi, bạn có 3 viên kẹo bạc hà tỉnh ngủ với lời dặn: “Cứ cách 30 phút ngậm 1 viên.” Nếu bạn ngậm viên đầu tiên ngay bây giờ, sau bao nhiêu phút bạn dùng tới viên cuối cùng?",
     "choices": [
-      "9 giờ 05",
-      "9 giờ 08",
-      "9 giờ 13"
+      "90 phút",
+      "60 phút",
+      "45 phút"
     ],
     "answerIndex": 1,
-    "explanation": "Hai việc chạy cùng lúc. Tệp tải xong lúc 9 giờ 05; máy in chậm hơn, xong lúc 9 giờ 08.",
+    "explanation": "Viên đầu ở phút 0, viên thứ hai ở phút 30 và viên thứ ba ở phút 60. Ba viên chỉ có hai khoảng nghỉ 30 phút ở giữa.",
     "source": "himorning",
     "license": "original"
   },
@@ -36,14 +36,14 @@
     "kind": "riddle",
     "language": "vi",
     "theme": "workAndStudy",
-    "text": "Mọi bản nháp gắn nhãn đỏ đều cần xem lại. Một bản nháp cần xem lại, nhưng nhãn bị che. Nhãn đó có chắc là màu đỏ không?",
+    "text": "Thứ gì thuộc về riêng bạn trên thẻ nhân viên và chữ ký email, nhưng đồng nghiệp lại gọi và dùng nó nhiều hơn cả chính bạn?",
     "choices": [
-      "Chắc chắn màu đỏ",
-      "Chắc chắn không đỏ",
-      "Quy tắc chưa đủ để biết"
+      "Chiếc ghế xoay",
+      "Mật khẩu máy tính",
+      "Tên của bạn"
     ],
     "answerIndex": 2,
-    "explanation": "Quy tắc nói bản gắn nhãn đỏ cần xem lại, chứ không nói chỉ bản nhãn đỏ mới cần xem lại.",
+    "explanation": "Mọi người xung quanh gọi tên bạn suốt cả ngày, còn chính bạn lại hiếm khi tự gọi tên mình.",
     "source": "himorning",
     "license": "original"
   },
@@ -52,14 +52,14 @@
     "kind": "riddle",
     "language": "vi",
     "theme": "everydayLife",
-    "text": "Bạn cắt một dải ruy băng thẳng thành 4 đoạn rời, mỗi lần chỉ cắt một chỗ, không gấp hay chồng lên nhau. Cần mấy lần cắt?",
+    "text": "Trên bàn bếp có 5 quả táo giòn, bạn cầm lấy 3 quả để ăn sáng. Hỏi lúc này trong tay bạn có mấy quả táo?",
     "choices": [
-      "3",
-      "4",
-      "5"
+      "3 quả",
+      "2 quả",
+      "5 quả"
     ],
     "answerIndex": 0,
-    "explanation": "Từ một đoạn, mỗi lần cắt thêm được một đoạn. Vì vậy 3 lần cắt tạo ra 4 đoạn.",
+    "explanation": "Bạn lấy 3 quả nên bạn đang có đúng 3 quả đó. Hai quả còn lại là số táo nằm lại trên bàn.",
     "source": "himorning",
     "license": "original"
   },
@@ -68,14 +68,14 @@
     "kind": "riddle",
     "language": "vi",
     "theme": "everydayLife",
-    "text": "Hai hũ kín chứa trà hoặc cà phê, mỗi loại một hũ. Hai nhãn ghi trà và cà phê đều dán sai. Hũ ghi cà phê chứa gì?",
+    "text": "Sáng sớm mất điện, bạn bước vào căn bếp tối với đúng một que diêm. Trong bếp có cây nến, chiếc đèn dầu và bếp ga. Bạn phải đốt thứ gì đầu tiên?",
     "choices": [
-      "Cà phê",
-      "Trà",
-      "Không đủ thông tin"
+      "Cây nến",
+      "Que diêm",
+      "Bếp ga"
     ],
     "answerIndex": 1,
-    "explanation": "Cả hai nhãn đều sai và mỗi hũ chỉ có một loại. Hũ ghi cà phê vì thế phải chứa trà.",
+    "explanation": "Muốn châm nến, đèn dầu hay bếp ga thì trước hết bạn phải quẹt cháy que diêm trong tay đã.",
     "source": "himorning",
     "license": "original"
   },
@@ -84,14 +84,14 @@
     "kind": "riddle",
     "language": "vi",
     "theme": "everydayLife",
-    "text": "Túi nhỏ đựng tối đa 6 ký. Máy ảnh nặng 2 ký, sách 3 ký, loa 4 ký. Cặp nào vừa túi mà tận dụng hết mức cân?",
+    "text": "Thứ gì trong phòng tắm càng làm khô tay bạn sau khi rửa mặt buổi sáng thì chính nó lại càng ướt thêm?",
     "choices": [
-      "Sách và loa",
-      "Máy ảnh và sách",
-      "Máy ảnh và loa"
+      "Bánh xà phòng",
+      "Dòng nước ấm",
+      "Chiếc khăn lau"
     ],
     "answerIndex": 2,
-    "explanation": "Máy ảnh và loa đúng 6 ký. Sách với loa nặng 7 ký; máy ảnh với sách mới dùng 5 ký.",
+    "explanation": "Khăn thấm nước để làm khô tay và mặt bạn, nên lau càng nhiều thì khăn càng ướt.",
     "source": "himorning",
     "license": "original"
   },
@@ -100,14 +100,14 @@
     "kind": "riddle",
     "language": "vi",
     "theme": "peopleAndPlans",
-    "text": "Ba người bạn chỉ rảnh những ngày sau: An thứ Sáu hoặc thứ Bảy, Bảo thứ Bảy hoặc Chủ nhật, Chi thứ Sáu hoặc thứ Bảy. Ngày nào cả ba đều rảnh?",
+    "text": "Mẹ của Lan có 5 người con. Bốn người đầu tên là Xuân, Hạ, Thu, Đông. Hỏi người con thứ năm tên là gì?",
     "choices": [
-      "Thứ Bảy",
-      "Thứ Sáu",
-      "Chủ nhật"
+      "Lan",
+      "Mưa",
+      "Nắng"
     ],
     "answerIndex": 0,
-    "explanation": "Thứ Bảy có trong cả ba danh sách. Bảo không rảnh thứ Sáu; An và Chi không rảnh Chủ nhật.",
+    "explanation": "Ngay đầu câu đã nói “Mẹ của Lan”, nên người con thứ năm chính là Lan.",
     "source": "himorning",
     "license": "original"
   },
@@ -116,14 +116,14 @@
     "kind": "riddle",
     "language": "vi",
     "theme": "peopleAndPlans",
-    "text": "Chìa khóa nằm trong đúng một hộp: xanh dương, xanh lá hoặc vàng. Trong hai câu “Ở hộp xanh dương” và “Không ở hộp vàng”, đúng một câu đúng. Khóa ở đâu?",
+    "text": "Chìa khóa quán cà phê nằm trong đúng một chiếc hộp: hộp xanh dương, hộp xanh lá hoặc hộp vàng. Trên bàn có hai mẩu giấy: “Khóa ở hộp xanh dương” và “Khóa không ở hộp vàng”. Biết rằng chỉ đúng một mẩu giấy nói thật. Khóa nằm ở đâu?",
     "choices": [
       "Hộp xanh dương",
       "Hộp xanh lá",
       "Hộp vàng"
     ],
     "answerIndex": 1,
-    "explanation": "Hộp xanh dương khiến cả hai câu đúng; hộp vàng khiến cả hai sai. Hộp xanh lá chỉ khiến câu “không ở hộp vàng” đúng.",
+    "explanation": "Nếu ở hộp xanh dương thì cả hai câu đều đúng; nếu ở hộp vàng thì cả hai câu đều sai. Chỉ hộp xanh lá giúp đúng một câu là thật.",
     "source": "himorning",
     "license": "original"
   },
@@ -132,14 +132,14 @@
     "kind": "riddle",
     "language": "vi",
     "theme": "peopleAndPlans",
-    "text": "Bốn người bạn mỗi người gửi một lời chào riêng cho từng người còn lại. An gửi Bảo khác với Bảo gửi An. Có tất cả bao nhiêu lời chào?",
+    "text": "Khi lên lịch đi chơi cả năm, Minh đố cả nhóm: “Có tháng 30 ngày, có tháng 31 ngày. Vậy trong năm có bao nhiêu tháng có ngày 28?”",
     "choices": [
-      "6",
-      "8",
-      "12"
+      "Chỉ 1 tháng",
+      "4 tháng",
+      "Cả 12 tháng"
     ],
     "answerIndex": 2,
-    "explanation": "Mỗi người gửi 3 lời chào. Có 4 người nên tổng là 12; mỗi chiều gửi được tính riêng.",
+    "explanation": "Tháng Hai dừng ở 28 (hoặc 29) ngày, nhưng cả 12 tháng trong năm đều đi qua ngày 28.",
     "source": "himorning",
     "license": "original"
   },
@@ -148,14 +148,14 @@
     "kind": "riddle",
     "language": "vi",
     "theme": "creativeBreaks",
-    "text": "Làm một cuốn tạp chí nhỏ có ba bước: in, gấp, bấm ghim. Phải in trước khi gấp, gấp trước khi bấm ghim. Bước ngay trước bấm ghim là gì?",
+    "text": "Tôi có hàng chục phím nhưng chẳng mở được ổ khóa nào, chỉ cần đôi bàn tay chạm vào là vang lên giai điệu khắp quán nhỏ. Tôi là gì?",
     "choices": [
-      "Gấp",
-      "In",
-      "In hoặc gấp đều được"
+      "Đàn dương cầm (piano)",
+      "Chùm chìa khóa",
+      "Cuốn sổ vẽ"
     ],
     "answerIndex": 0,
-    "explanation": "Thứ tự bắt buộc là in, gấp, bấm ghim. Gấp là bước ngay trước bấm ghim.",
+    "explanation": "Đàn piano có nhiều phím đàn để ngân vang giai điệu chứ không dùng để mở cửa.",
     "source": "himorning",
     "license": "original"
   },
@@ -164,14 +164,14 @@
     "kind": "riddle",
     "language": "vi",
     "theme": "creativeBreaks",
-    "text": "Một nhịp lặp lại theo thứ tự: vỗ tay, gõ, gõ, nghỉ, bắt đầu từ nhịp 1. Đến nhịp 7 là gì?",
+    "text": "Người thợ chạm khắc gỗ nhận ra một nghịch lý thú vị: càng lấy bớt phần gỗ ở giữa ra thì thứ đó lại càng to hơn. Thứ đang lớn dần lên là gì?",
     "choices": [
-      "Vỗ tay",
-      "Gõ",
-      "Nghỉ"
+      "Mùn cưa",
+      "Cái lỗ hoặc hốc rỗng",
+      "Lưỡi đục"
     ],
     "answerIndex": 1,
-    "explanation": "Nhịp 5 đến 8 lặp lại vỗ tay, gõ, gõ, nghỉ. Nhịp 7 là lần gõ thứ hai trong nhóm này.",
+    "explanation": "Khoét bỏ càng nhiều vật liệu thì khoảng trống hay cái lỗ ở đó càng rộng ra.",
     "source": "himorning",
     "license": "original"
   },
@@ -180,14 +180,14 @@
     "kind": "riddle",
     "language": "vi",
     "theme": "creativeBreaks",
-    "text": "Ảnh rộng 12 đơn vị, cao 8 đơn vị. Bạn chỉ cắt bớt chiều rộng để thành hình vuông, giữ nguyên chiều cao. Tổng cộng phải bỏ bao nhiêu đơn vị chiều rộng?",
+    "text": "Trong từ điển tiếng Việt, từ nào dù bạn tra kỹ đến đâu vẫn luôn được viết là “sai”?",
     "choices": [
-      "2",
-      "8",
-      "4"
+      "Nghiêng",
+      "Trăn trở",
+      "Từ “sai”"
     ],
     "answerIndex": 2,
-    "explanation": "Hình vuông phải rộng 8 đơn vị để bằng chiều cao. Từ 12 xuống 8, tổng cộng cần bỏ 4 đơn vị.",
+    "explanation": "Đây là câu đố chữ vui: bản thân chữ “sai” đương nhiên lúc nào cũng được đánh vần và viết là “sai”.",
     "source": "himorning",
     "license": "original"
   },
@@ -196,14 +196,14 @@
     "kind": "riddle",
     "language": "vi",
     "theme": "cityAndTravel",
-    "text": "Có hai đường tới quán: xe buýt đi thẳng mất 12 phút; hoặc tàu điện 4 phút, chuyển tuyến 5 phút rồi đi bộ thêm 2 phút. Đường nào nhanh hơn?",
+    "text": "Một bác tài xế xe buýt đi ngược chiều trên đường một chiều ngay trước mặt hai cảnh sát giao thông mà không hề bị tuýt còi. Vì sao?",
     "choices": [
-      "Đường tàu điện nhanh hơn 1 phút",
-      "Đường xe buýt nhanh hơn 1 phút",
-      "Hai đường bằng nhau"
+      "Bác ấy đang đi bộ trên vỉa hè",
+      "Chiếc xe buýt tàng hình",
+      "Hôm đó là ngày 29 tháng 2"
     ],
     "answerIndex": 0,
-    "explanation": "Đường tàu điện mất 4 cộng 5 cộng 2, tổng 11 phút, ít hơn đường xe buýt 1 phút.",
+    "explanation": "Nghề của bác là tài xế xe buýt, nhưng lúc đó bác đang đi bộ trên vỉa hè chứ không lái xe.",
     "source": "himorning",
     "license": "original"
   },
@@ -212,14 +212,14 @@
     "kind": "riddle",
     "language": "vi",
     "theme": "cityAndTravel",
-    "text": "Tàu khởi hành lúc 8 giờ 50 và đến lúc 9 giờ 15 trong cùng buổi sáng. Chuyến đi kéo dài bao lâu?",
+    "text": "Một đoàn tàu điện chạy về hướng bắc với tốc độ 60 km/giờ, gió sớm thổi mạnh về hướng tây 30 km/giờ. Khói từ đầu tàu sẽ bay về hướng nào?",
     "choices": [
-      "35 phút",
-      "25 phút",
-      "65 phút"
+      "Tây nam",
+      "Không có khói nào cả",
+      "Đông nam"
     ],
     "answerIndex": 1,
-    "explanation": "Từ 8 giờ 50 đến 9 giờ là 10 phút, rồi thêm 15 phút nữa. Tổng cộng là 25 phút.",
+    "explanation": "Tàu điện chạy bằng điện nên hoàn toàn không xả khói.",
     "source": "himorning",
     "license": "original"
   },
@@ -228,14 +228,14 @@
     "kind": "riddle",
     "language": "vi",
     "theme": "cityAndTravel",
-    "text": "Xe đi qua A, B, C, D, E theo thứ tự. Bạn lên ở B, xuống ở E. Tính cả điểm đến E nhưng không tính điểm lên B, bạn tới mấy điểm dừng?",
+    "text": "Tôi có thành phố nhưng không có ngôi nhà nào, có sông dài nhưng chẳng có giọt nước, có núi cao mà không có hòn đá. Bạn gấp tôi gọn trong ba lô. Tôi là gì?",
     "choices": [
-      "2",
-      "4",
-      "3"
+      "Chiếc la bàn",
+      "Tấm vé tàu",
+      "Tấm bản đồ"
     ],
     "answerIndex": 2,
-    "explanation": "Sau khi lên ở B, bạn tới C, D rồi E: tổng cộng 3 điểm dừng.",
+    "explanation": "Tấm bản đồ vẽ thành phố, sông ngòi và núi non trên mặt giấy.",
     "source": "himorning",
     "license": "original"
   },
@@ -244,14 +244,14 @@
     "kind": "riddle",
     "language": "vi",
     "theme": "curiosity",
-    "text": "Dãy số lặp hai bước: cộng 3, rồi nhân 2. Bắt đầu từ 2 được 2, 5, 10, 13, 26. Số tiếp theo là gì?",
+    "text": "Đặt lên bàn cân thăng bằng giữa một ký bông gòn phồng to và một ký sắt đặc nhỏ gọn, bên nào nặng hơn?",
     "choices": [
-      "29",
-      "52",
-      "30"
+      "Hai bên nặng bằng nhau",
+      "Một ký sắt đặc",
+      "Một ký bông gòn"
     ],
     "answerIndex": 0,
-    "explanation": "Sau bước nhân 2 đến bước cộng 3. Vì vậy 26 cộng 3 bằng 29.",
+    "explanation": "Bông gòn chiếm nhiều diện tích hơn, nhưng đã cùng là một ký thì khối lượng hai bên bằng nhau.",
     "source": "himorning",
     "license": "original"
   },
@@ -260,14 +260,14 @@
     "kind": "riddle",
     "language": "vi",
     "theme": "curiosity",
-    "text": "Lọ có đúng 3 hạt xanh và 2 hạt trắng. Không nhìn và không bỏ lại hạt nào, bạn cần lấy ít nhất mấy hạt để chắc chắn có hai hạt cùng màu?",
+    "text": "Trước khi đỉnh Everest được các nhà địa lý đo đạc và đặt tên, ngọn núi nào cao nhất Trái Đất?",
     "choices": [
-      "2",
-      "3",
-      "4"
+      "Đỉnh K2",
+      "Vẫn là đỉnh Everest",
+      "Đỉnh Kilimanjaro"
     ],
     "answerIndex": 1,
-    "explanation": "Hai lần lấy có thể được mỗi màu một hạt. Hạt thứ ba chắc chắn trùng một trong hai màu đã lấy.",
+    "explanation": "Dù con người chưa đo hay đặt tên thì ngọn núi đó vẫn đã đứng sừng sững ở độ cao lớn nhất hành tinh.",
     "source": "himorning",
     "license": "original"
   },
@@ -276,14 +276,14 @@
     "kind": "riddle",
     "language": "vi",
     "theme": "curiosity",
-    "text": "Trong bộ thẻ này, mọi hình tam giác đều có sọc. Một thẻ không có sọc. Theo quy tắc đó, hình nào bị loại trừ?",
+    "text": "Tôi lặng lẽ bước theo bạn dưới nắng sớm, vươn dài ra lúc bình minh nhưng biến mất ngay khi bạn bước vào phòng tối. Tôi là gì?",
     "choices": [
-      "Hình tròn",
-      "Hình vuông",
-      "Hình tam giác"
+      "Chuông báo thức",
+      "Cơn gió sớm",
+      "Cái bóng của bạn"
     ],
     "answerIndex": 2,
-    "explanation": "Hình tam giác bắt buộc có sọc. Thẻ không sọc không thể là tam giác; quy tắc không nói gì về hình tròn hay vuông.",
+    "explanation": "Cái bóng chỉ xuất hiện khi có ánh sáng chiếu vào bạn và biến mất khi vào chỗ tối.",
     "source": "himorning",
     "license": "original"
   }

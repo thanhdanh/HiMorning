@@ -16,12 +16,12 @@ struct ChallengeIcon:View {
   switch kind {
   case .none:return .symbol("sun.max.fill")
   case .pushUps:return .asset("ChallengePushUps")
-  case .readAndChoose:return .symbol("text.book.closed")
+  case .readAndChoose:return .symbol("doc.text.magnifyingglass")
   case .guidedRhythm:return .asset(seated ? "ChallengeRhythmSeated" : "ChallengeRhythmStanding")
-  case .readAloud:return .symbol("waveform")
+  case .readAloud:return .symbol("waveform.badge.mic")
   case .waveHand:return .asset("ChallengeWaveHand")
   case .neckRotation:return .asset("ChallengeNeckRotation")
-  case .riddle:return .symbol("lightbulb")
+  case .riddle:return .symbol("puzzlepiece.extension.fill")
   case .jumpingJacks:return .asset("ChallengeJumpingJacks")
   case .stretching:return .asset("ChallengeStretching")
   case .morningLight:return .symbol("sun.horizon.fill")
@@ -42,7 +42,7 @@ struct ChallengeIcon:View {
    } else {
     switch artwork {
     case .asset:image.resizable().scaledToFit()
-    case .symbol:image.font(.system(size:size,weight:.medium))
+    case .symbol:image.symbolRenderingMode(.hierarchical).font(.system(size:size,weight:.medium))
     }
    }
   }.frame(width:size,height:size).accessibilityHidden(true)

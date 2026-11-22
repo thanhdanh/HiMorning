@@ -204,7 +204,11 @@ struct TrackedCameraPreview:View {
       .accessibilityIdentifier("cameraTrackingStatus")
     }
     .overlay(alignment:.topTrailing) {
-     Text(counter).font(.system(size:largeCounter ? 44 : 30,weight:.bold,design:.rounded)).monospacedDigit()
+     Text(counter)
+      .font(.system(size:largeCounter ? 44 : 30,weight:.bold,design:.rounded))
+      .monospacedDigit()
+      .contentTransition(.numericText())
+      .animation(.smooth(duration:0.2),value:counter)
       .padding(.horizontal,12).padding(.vertical,6).foregroundStyle(.white)
       .background(.black.opacity(0.7),in:Capsule()).padding(10).accessibilityIdentifier("cameraRepCounter")
     }

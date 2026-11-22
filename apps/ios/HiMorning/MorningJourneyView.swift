@@ -22,7 +22,7 @@ extension MorningFocus {
   case .findYourVoice:return appText("Start with a short sentence, then try reading aloud in your app language.")
   case .energize:return appText("A standing workout mix with 5 push-ups, stretches and 10 jumping jacks. Choose what fits you.")
  }}
- var icon:String {switch self {case .clearStart:return "lightbulb";case .gentleMovement:return "hand.wave";case .findYourVoice:return "text.bubble";case .energize:return "figure.strengthtraining.traditional"}}
+ var icon:String {switch self {case .clearStart:return "puzzlepiece.extension.fill";case .gentleMovement:return "hand.wave.fill";case .findYourVoice:return "waveform.badge.mic";case .energize:return "figure.strengthtraining.traditional"}}
 
 }
 

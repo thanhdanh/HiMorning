@@ -208,14 +208,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "cityAndTravel",
-    "text": "The 7:40 train skips Hill Street. The 7:48 stops there. Your meeting is on Hill Street. Which train should you take?",
+    "text": "The 7:40 express train zooms right past Hill Station without stopping, while the 7:48 commuter train stops at every platform, including Hill Station. Your morning coffee meetup is right outside Hill Station. Which train gets you to your coffee?",
     "choices": [
-      "The 7:40",
-      "The 7:48",
-      "Either train"
+      "The 7:40 express",
+      "The 7:48 commuter train",
+      "Either train works the same"
     ],
     "answerIndex": 1,
-    "explanation": "The later train is the only one that stops at Hill Street.",
+    "explanation": "A faster train does not help if it skips your stop; only the 7:48 train actually lets you off at Hill Station.",
     "source": "himorning",
     "license": "original"
   },
@@ -224,14 +224,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "workAndStudy",
-    "text": "Your library book is due on Tuesday. The library will be closed on Tuesday, but its return slot stays open. Can you return it that day?",
+    "text": "Your borrowed design book is due on Tuesday. A sign on the library door says: “Main reading room closed Tuesday for floor waxing; 24-hour outdoor return drop stays open.” Can you still return the book on time on Tuesday?",
     "choices": [
-      "Yes, through the slot",
-      "No, it must be Monday",
-      "Only if you borrow it again"
+      "Yes, by sliding it into the outdoor return drop",
+      "No, you must wait until Wednesday morning",
+      "Only if you bring a library staff key"
     ],
     "answerIndex": 0,
-    "explanation": "The return slot is open even while the library is closed.",
+    "explanation": "The outdoor return drop stays open 24 hours even while the reading room inside is closed.",
     "source": "himorning",
     "license": "original"
   },
@@ -240,14 +240,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "peopleAndPlans",
-    "text": "Minh says, “Leave the bag with reception unless I text you.” Minh hasn’t sent a text. Where should the bag go?",
+    "text": "Minh texts you: “Leave my gym bag at the front desk unless I message you a new plan before 8:00.” It is now 8:05 and your phone has zero new messages from Minh. Where does the bag go?",
     "choices": [
-      "At reception",
-      "Outside the building",
-      "Back home"
+      "At the front desk",
+      "On the sidewalk outside",
+      "Back in your closet at home"
     ],
     "answerIndex": 0,
-    "explanation": "The exception applies only if Minh texts.",
+    "explanation": "Since Minh never sent a new message before 8:00, the original plan to leave it at the front desk stands.",
     "source": "himorning",
     "license": "original"
   },
@@ -256,14 +256,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "everydayLife",
-    "text": "A recipe serves four and uses two eggs. You’re making half the recipe. How many eggs do you need?",
+    "text": "A French toast recipe says: “Whisk 2 eggs with milk to make 4 thick slices.” You are only cooking breakfast for yourself and want 2 slices. How many eggs do you whisk?",
     "choices": [
-      "One",
-      "Two",
-      "Four"
+      "One egg",
+      "Two eggs",
+      "Four eggs"
     ],
     "answerIndex": 0,
-    "explanation": "Half of two eggs is one egg.",
+    "explanation": "Making half the slices (2 instead of 4) uses half the eggs: one egg.",
     "source": "himorning",
     "license": "original"
   },
@@ -272,14 +272,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "creativeBreaks",
-    "text": "The cinema says, “Please use Door B after 8 p.m.” You arrive at 8:10 p.m. Which door should you use?",
+    "text": "The indie cinema ticket stub reads: “Before 8:00 p.m. enter through the lobby café (Door A). After 8:00 p.m. the café locks up—please use the courtyard gate (Door B).” You arrive at 8:10 p.m. Which entrance works?",
     "choices": [
-      "Door A",
-      "Door B",
-      "Either door"
+      "Door A through the café",
+      "Door B through the courtyard",
+      "Both doors are wide open"
     ],
     "answerIndex": 1,
-    "explanation": "8:10 p.m. is after 8 p.m., so use Door B.",
+    "explanation": "At 8:10 p.m. the café entrance is already locked, so you use Door B in the courtyard.",
     "source": "himorning",
     "license": "original"
   },
@@ -288,14 +288,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "cityAndTravel",
-    "text": "Two paths end at the same park. One is open to bikes, the other is for walking only. Which path can you ride on?",
+    "text": "Two shady trails wind up to the lakeside pavilion. The Lakeside Loop allows bicycles and joggers, while the Bamboo Footpath is strictly for walkers on foot. You are riding your bike this morning. Which trail can you take?",
     "choices": [
-      "Both paths",
-      "The walking path",
-      "The path open to bikes"
+      "Either trail",
+      "The Bamboo Footpath",
+      "The Lakeside Loop"
     ],
     "answerIndex": 2,
-    "explanation": "Only one sign allows bikes.",
+    "explanation": "Only the Lakeside Loop permits bicycles; the Bamboo Footpath is foot-traffic only.",
     "source": "himorning",
     "license": "original"
   },
@@ -304,14 +304,14 @@
     "kind": "riddle",
     "language": "en",
     "theme": "everydayLife",
-    "text": "A drawer holds only black and white socks. In the dark, how many must you take to guarantee a matching pair?",
+    "text": "Your sock drawer holds 10 black socks and 10 white socks mixed together. In the pitch-dark bedroom at 6:00 a.m., what is the smallest number of socks you must grab to be 100% sure you have a matching pair?",
     "choices": [
-      "Two",
-      "Three",
-      "Four"
+      "2 socks",
+      "3 socks",
+      "11 socks"
     ],
     "answerIndex": 1,
-    "explanation": "The first two could be different. The third must match one of them.",
+    "explanation": "With only two colors, the first two socks might be one black and one white, so the third sock is guaranteed to match one of them.",
     "source": "himorning",
     "license": "original"
   },
@@ -320,14 +320,14 @@
     "kind": "riddle",
     "language": "en",
     "theme": "cityAndTravel",
-    "text": "My ticket number is an even number between 35 and 41. Its digits add up to 11. What number is it?",
+    "text": "A rooster perches right on the sharp peak of a barn roof facing north. If it lays an egg at sunrise, which side of the roof does the egg roll down?",
     "choices": [
-      "36",
-      "38",
-      "40"
+      "The east side",
+      "Roosters do not lay eggs",
+      "The west side"
     ],
     "answerIndex": 1,
-    "explanation": "Of the even numbers in that range, only 38 has digits that add to 11.",
+    "explanation": "Hens lay eggs; roosters never lay eggs no matter which way the roof slopes.",
     "source": "himorning",
     "license": "original"
   },
@@ -336,14 +336,14 @@
     "kind": "riddle",
     "language": "en",
     "theme": "peopleAndPlans",
-    "text": "You pass the runner in second place. What place are you in now?",
+    "text": "In a morning park sprint, you put on a burst of speed and overtake the runner in second place. What place are you in right now?",
     "choices": [
-      "First",
-      "Second",
-      "Third"
+      "First place",
+      "Second place",
+      "Third place"
     ],
     "answerIndex": 1,
-    "explanation": "You take second place. The leader is still ahead.",
+    "explanation": "When you pass the person in second place, you take their second-place spot—the first-place leader is still ahead of you.",
     "source": "himorning",
     "license": "original"
   },
@@ -352,14 +352,14 @@
     "kind": "riddle",
     "language": "en",
     "theme": "everydayLife",
-    "text": "A clock loses one minute each hour. It is correct at noon. What will it show at 4 p.m.?",
+    "text": "You boil one ostrich egg in a big pot of water, and it takes 40 minutes to cook through. If you put two ostrich eggs into the same big pot of boiling water at the same time, how long do they take?",
     "choices": [
-      "3:56",
-      "4:00",
-      "4:04"
+      "Still 40 minutes",
+      "80 minutes",
+      "20 minutes"
     ],
     "answerIndex": 0,
-    "explanation": "Four hours have passed, so the clock is four minutes slow.",
+    "explanation": "Both eggs boil together in the pot at the same time, so they finish in 40 minutes.",
     "source": "himorning",
     "license": "original"
   },
@@ -368,14 +368,14 @@
     "kind": "riddle",
     "language": "en",
     "theme": "creativeBreaks",
-    "text": "A border repeats the colors blue, yellow, white. What color is tile 11?",
+    "text": "You speak my name out loud in a quiet library, and the very instant you say it, I am broken. What am I?",
     "choices": [
-      "Blue",
-      "Yellow",
-      "White"
+      "A whisper",
+      "Silence",
+      "An echo"
     ],
     "answerIndex": 1,
-    "explanation": "Tile 9 ends the third set. Tiles 10 and 11 start with blue and yellow.",
+    "explanation": "The moment you make a sound to say “silence,” the silence itself is broken.",
     "source": "himorning",
     "license": "original"
   },
@@ -384,14 +384,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "peopleAndPlans",
-    "text": "A shelter asks for clean towels and says it has enough blankets. You can bring only one item. What would help?",
+    "text": "A community animal shelter posts: “We are overflowing with warm blankets, but we urgently need clean cotton towels for bath day.” You have room in your tote bag for one donation. What helps them today?",
     "choices": [
-      "A clean towel",
-      "A blanket",
-      "A towel that needs washing"
+      "A freshly washed cotton towel",
+      "A thick winter blanket",
+      "A muddy beach towel"
     ],
     "answerIndex": 0,
-    "explanation": "Clean towels are on the request list.",
+    "explanation": "They already have plenty of blankets and specifically asked for clean towels.",
     "source": "himorning",
     "license": "original"
   }

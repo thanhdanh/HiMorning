@@ -476,7 +476,7 @@ extension ChallengeKind {
   case .stretching:return appText("Raise both hands above your shoulders, then lower them.")
   case .morningLight:return appText("Point your camera toward a bright window or lamp.")
  }}
- var icon:String {switch self {case .none:return "hand.tap";case .pushUps:return "figure.strengthtraining.traditional";case .readAndChoose:return "text.book.closed";case .guidedRhythm:return "figure.cooldown";case .readAloud:return "waveform";case .waveHand:return "hand.wave";case .neckRotation:return "person.crop.circle";case .riddle:return "lightbulb";case .jumpingJacks:return "figure.jumping";case .stretching:return "figure.cooldown";case .morningLight:return "sun.horizon.fill"}}
+ var icon:String {switch self {case .none:return "bell.badge.slash.fill";case .pushUps:return "figure.strengthtraining.traditional";case .readAndChoose:return "doc.text.magnifyingglass";case .guidedRhythm:return "figure.mind.and.body";case .readAloud:return "waveform.badge.mic";case .waveHand:return "hand.wave.fill";case .neckRotation:return "person.crop.circle.badge.checkmark";case .riddle:return "puzzlepiece.extension.fill";case .jumpingJacks:return "figure.mixed.cardio";case .stretching:return "figure.flexibility";case .morningLight:return "sun.horizon.fill"}}
 }
 extension ChallengeSelection {
  var displayTitle:String {
@@ -510,16 +510,17 @@ struct HomeView:View {
   NavigationStack {
    ScrollView {
     VStack(alignment:.leading,spacing:14) {
-     HStack(spacing:12) {
+     HStack(spacing:8) {
       Label {
        Text("HiMorning.").modifier(MorningTypography.wordmark)
+        .lineLimit(1).minimumScaleFactor(0.75)
       } icon: {
        Image(systemName:"sunrise").font(.system(size:20,weight:.bold))
       }.labelStyle(.titleAndIcon)
-       .fixedSize(horizontal:false,vertical:true).accessibilityLabel("Hi Morning")
-      Spacer()
-      GlassEffectContainer(spacing:12) {
-      HStack(spacing:8) {
+       .fixedSize(horizontal:true,vertical:true).accessibilityLabel("Hi Morning")
+      Spacer(minLength:4)
+      GlassEffectContainer(spacing:8) {
+      HStack(spacing:6) {
       Button {showingBedtime=true} label:{Image(systemName:"moon.stars").frame(width:44,height:44).glassEffect(.regular.interactive(),in:.circle).contentShape(Rectangle())}
        .buttonStyle(.plain)
        .accessibilityIdentifier("bedtimeAnchor").accessibilityLabel(appText("Evening & health"))

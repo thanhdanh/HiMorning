@@ -52,11 +52,22 @@ import XCTest
  }
 
  func testExamplePrefersTheBestInstalledEnglishVoice() throws {
-  let installed=AVSpeechSynthesisVoice.speechVoices().filter {$0.language.hasPrefix("en-")}
+  let installed=AVSpeechSynthesisVoice.speechVoices().filter {voice in
+   guard voice.language.hasPrefix("en-") else {return false}
+   guard !voice.voiceTraits.contains(.isNoveltyVoice),!voice.voiceTraits.contains(.isPersonalVoice) else {return false}
+   let id=voice.identifier.lowercased()
+   return !id.contains("eloquence") && !id.contains("compact")
+  }
   let preferred=try XCTUnwrap(SpokenExample.preferredVoice())
   XCTAssertTrue(preferred.language.hasPrefix("en-"))
   for voice in installed {XCTAssertGreaterThanOrEqual(preferred.quality.rawValue,voice.quality.rawValue)}
-  if installed.contains(where:{$0.quality == preferred.quality && $0.language == "en-US"}) {XCTAssertEqual(preferred.language,"en-US")}
+ }
+
+ func testNeuralVoicePlayerMapsBundledClipsDeterministically() {
+  let name=NeuralVoicePlayer.clipResourceName(language:"vi-VN",text:"Hạ người xuống, rồi đẩy lên.")
+  XCTAssertTrue(name.hasPrefix("voice_vi_"))
+  XCTAssertNotNil(NeuralVoicePlayer.bundledClipURL(language:"vi-VN",text:"Hạ người xuống, rồi đẩy lên."))
+  XCTAssertNotNil(NeuralVoicePlayer.bundledClipURL(language:"en-US",text:"Lower yourself, then push up."))
  }
 }
 

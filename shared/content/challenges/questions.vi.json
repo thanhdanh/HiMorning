@@ -208,14 +208,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "cityAndTravel",
-    "text": "Chuyến tàu 7:40 bỏ qua ga Đồi. Chuyến 7:48 có dừng. Bạn có hẹn gần ga Đồi. Nên đi chuyến nào?",
+    "text": "Chuyến tàu nhanh 7:40 lướt thẳng qua ga Đồi không dừng, còn chuyến tàu thường 7:48 ghé từng trạm, trong đó có ga Đồi. Quán cà phê bạn hẹn nằm ngay sát cổng ga Đồi. Bạn nên lên chuyến nào?",
     "choices": [
-      "7:40",
-      "7:48",
-      "Chuyến nào cũng được"
+      "Chuyến tàu nhanh 7:40",
+      "Chuyến tàu thường 7:48",
+      "Chuyến nào cũng xuống ga Đồi được"
     ],
     "answerIndex": 1,
-    "explanation": "Trong hai chuyến, chỉ chuyến 7:48 dừng ở ga Đồi.",
+    "explanation": "Tàu chạy nhanh đến mấy mà bỏ qua trạm cần xuống thì cũng không giúp được bạn; chỉ chuyến 7:48 mới dừng ở ga Đồi.",
     "source": "himorning",
     "license": "original"
   },
@@ -224,14 +224,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "workAndStudy",
-    "text": "Sách đến hạn trả vào thứ Ba. Hôm đó thư viện đóng cửa, nhưng khe trả sách vẫn mở. Bạn có trả được vào thứ Ba không?",
+    "text": "Cuốn sách thiết kế bạn mượn đến hạn trả vào thứ Ba. Biển trước cửa ghi: “Thứ Ba phòng đọc đóng cửa để đánh bóng sàn; hộp nhận trả sách tự động ngoài hiên vẫn mở 24/24.” Bạn có trả sách đúng hạn vào thứ Ba được không?",
     "choices": [
-      "Có, bỏ vào khe trả sách",
-      "Không, phải trả thứ Hai",
-      "Chỉ khi mượn lại sách"
+      "Được, chỉ cần thả sách vào hộp trả ngoài hiên",
+      "Không, phải đợi sáng thứ Tư phòng đọc mở cửa",
+      "Chỉ trả được nếu mượn chìa khóa của bảo vệ"
     ],
     "answerIndex": 0,
-    "explanation": "Khe trả sách vẫn mở dù thư viện đóng cửa.",
+    "explanation": "Hộp trả sách tự động ngoài hiên vẫn mở 24/24 ngay cả khi phòng đọc bên trong đóng cửa.",
     "source": "himorning",
     "license": "original"
   },
@@ -240,14 +240,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "peopleAndPlans",
-    "text": "Minh nhắn: “Cứ gửi túi ở quầy lễ tân. Có gì đổi mình nhắn sau.” Minh chưa nhắn thêm. Bạn gửi túi ở đâu?",
+    "text": "Minh dặn: “Cứ gửi túi đồ tập ở quầy lễ tân giúp mình, trừ khi trước 8 giờ mình nhắn đổi chỗ.” Bây giờ đã 8 giờ 05 và điện thoại bạn không có tin nhắn mới nào từ Minh. Túi đồ nên gửi ở đâu?",
     "choices": [
-      "Quầy lễ tân",
-      "Bên ngoài tòa nhà",
-      "Mang về nhà"
+      "Ở quầy lễ tân",
+      "Đặt trên ghế đá ngoài sân",
+      "Cầm luôn về nhà cất tủ"
     ],
     "answerIndex": 0,
-    "explanation": "Chưa có gì thay đổi nên bạn vẫn gửi túi ở quầy lễ tân.",
+    "explanation": "Vì Minh không nhắn đổi kế hoạch trước 8 giờ nên cứ làm đúng lời hẹn ban đầu là gửi ở quầy lễ tân.",
     "source": "himorning",
     "license": "original"
   },
@@ -256,14 +256,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "everydayLife",
-    "text": "Công thức cho bốn người dùng hai quả trứng. Bạn làm nửa phần. Cần mấy quả trứng?",
+    "text": "Công thức bánh mì áp chảo ghi: “Đánh tan 2 quả trứng với sữa tươi cho 4 lát bánh dày.” Sáng nay bạn chỉ làm điểm tâm cho riêng mình với 2 lát bánh. Bạn cần dùng mấy quả trứng?",
     "choices": [
-      "Một",
-      "Hai",
-      "Bốn"
+      "Một quả trứng",
+      "Hai quả trứng",
+      "Bốn quả trứng"
     ],
     "answerIndex": 0,
-    "explanation": "Làm nửa phần thì dùng nửa số trứng, tức một quả.",
+    "explanation": "Làm nửa số lát bánh (2 lát thay vì 4 lát) thì dùng một nửa lượng trứng, tức 1 quả.",
     "source": "himorning",
     "license": "original"
   },
@@ -272,14 +272,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "creativeBreaks",
-    "text": "Rạp phim ghi: “Sau 8 giờ tối, vui lòng đi cửa B.” Bạn tới lúc 8:10 tối. Bạn đi cửa nào?",
+    "text": "Cuống vé rạp phim ghi: “Trước 8 giờ tối, mời đi lối quán cà phê sảnh (Cửa A). Sau 8 giờ tối quán đóng cửa, vui lòng đi lối cổng sân trong (Cửa B).” Bạn tới rạp lúc 8 giờ 10 tối. Bạn vào bằng lối nào?",
     "choices": [
-      "Cửa A",
-      "Cửa B",
-      "Cửa nào cũng được"
+      "Cửa A qua quán cà phê",
+      "Cửa B qua cổng sân trong",
+      "Cả hai cửa đều đang mở"
     ],
     "answerIndex": 1,
-    "explanation": "8:10 tối đã qua mốc 8 giờ nên bạn đi cửa B.",
+    "explanation": "8 giờ 10 tối đã qua mốc 8 giờ, quán cà phê đã khóa nên bạn đi lối Cửa B ở sân trong.",
     "source": "himorning",
     "license": "original"
   },
@@ -288,14 +288,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "cityAndTravel",
-    "text": "Hai lối đi đều dẫn tới công viên. Một lối cho xe đạp, lối kia chỉ dành cho người đi bộ. Bạn được đạp xe ở lối nào?",
+    "text": "Hai con đường rợp bóng cây cùng dẫn ra hồ. Đường Vòng Hồ dành cho cả xe đạp và người chạy bộ, còn Đường Trúc chỉ dành riêng cho người đi bộ. Sáng nay bạn đang đạp xe. Bạn được đi đường nào?",
     "choices": [
-      "Cả hai lối",
-      "Lối đi bộ",
-      "Lối cho xe đạp"
+      "Đi đường nào cũng được",
+      "Đường Trúc",
+      "Đường Vòng Hồ"
     ],
     "answerIndex": 2,
-    "explanation": "Chỉ một lối có biển cho phép xe đạp.",
+    "explanation": "Chỉ Đường Vòng Hồ mới cho phép xe đạp lưu thông.",
     "source": "himorning",
     "license": "original"
   },
@@ -304,14 +304,14 @@
     "kind": "riddle",
     "language": "vi",
     "theme": "everydayLife",
-    "text": "Ngăn kéo chỉ có tất đen và tất trắng. Trong bóng tối, bạn phải lấy ít nhất mấy chiếc để chắc chắn có một đôi cùng màu?",
+    "text": "Ngăn kéo có 10 chiếc tất đen và 10 chiếc tất trắng để lẫn vào nhau. Sáng sớm chưa bật đèn, bạn phải lấy ngẫu nhiên ít nhất mấy chiếc để chắc chắn 100% có một đôi tất cùng màu?",
     "choices": [
-      "Hai",
-      "Ba",
-      "Bốn"
+      "2 chiếc",
+      "3 chiếc",
+      "11 chiếc"
     ],
     "answerIndex": 1,
-    "explanation": "Hai chiếc đầu có thể khác màu. Chiếc thứ ba chắc chắn trùng màu với một chiếc đã lấy.",
+    "explanation": "Vì chỉ có hai màu đen và trắng nên 2 chiếc đầu có thể lệch màu nhau; lấy tới chiếc thứ 3 thì chắc chắn trùng màu với một trong hai chiếc kia.",
     "source": "himorning",
     "license": "original"
   },
@@ -320,14 +320,14 @@
     "kind": "riddle",
     "language": "vi",
     "theme": "cityAndTravel",
-    "text": "Số vé của mình là số chẵn lớn hơn 35 và nhỏ hơn 41. Tổng hai chữ số là 11. Số vé là bao nhiêu?",
+    "text": "Một chú gà trống đứng ngay chính giữa sống mái nhà dốc đều sang hai bên đông và tây. Nếu lúc bình minh chú đẻ một quả trứng thì trứng sẽ lăn xuống phía nào?",
     "choices": [
-      "36",
-      "38",
-      "40"
+      "Lăn về phía đông",
+      "Gà trống không đẻ trứng",
+      "Lăn về phía tây"
     ],
     "answerIndex": 1,
-    "explanation": "Trong ba số chẵn này, chỉ 38 có hai chữ số cộng lại bằng 11.",
+    "explanation": "Chỉ có gà mái mới đẻ trứng, còn gà trống chỉ gáy báo thức chứ không bao giờ đẻ trứng.",
     "source": "himorning",
     "license": "original"
   },
@@ -336,14 +336,14 @@
     "kind": "riddle",
     "language": "vi",
     "theme": "peopleAndPlans",
-    "text": "Bạn vượt qua người đang chạy thứ hai. Giờ bạn đứng thứ mấy?",
+    "text": "Trong cuộc chạy bộ buổi sáng ở công viên, bạn bứt tốc vượt qua người đang chạy ở vị trí thứ hai. Ngay lúc vừa vượt qua đó, bạn đứng thứ mấy?",
     "choices": [
       "Thứ nhất",
       "Thứ hai",
       "Thứ ba"
     ],
     "answerIndex": 1,
-    "explanation": "Bạn chiếm vị trí thứ hai. Người dẫn đầu vẫn ở phía trước.",
+    "explanation": "Vượt qua người thứ hai thì bạn thế chỗ của họ ở vị trí thứ hai, còn người dẫn đầu thứ nhất vẫn đang chạy phía trước.",
     "source": "himorning",
     "license": "original"
   },
@@ -352,14 +352,14 @@
     "kind": "riddle",
     "language": "vi",
     "theme": "everydayLife",
-    "text": "Một chiếc đồng hồ chạy chậm một phút mỗi giờ. Lúc 12 giờ trưa, nó chỉ đúng giờ. Đến 4 giờ chiều, nó chỉ mấy giờ?",
+    "text": "Luộc chín 1 quả trứng đà điểu trong nồi nước sôi mất 40 phút. Nếu bạn bỏ cùng lúc 2 quả trứng đà điểu vào chung chiếc nồi lớn đó thì luộc chín mất bao lâu?",
     "choices": [
-      "3:56",
-      "4:00",
-      "4:04"
+      "Vẫn 40 phút",
+      "80 phút",
+      "20 phút"
     ],
     "answerIndex": 0,
-    "explanation": "Sau bốn giờ, đồng hồ chậm bốn phút.",
+    "explanation": "Hai quả trứng được luộc song song cùng lúc trong một nồi nước sôi nên vẫn chỉ mất 40 phút.",
     "source": "himorning",
     "license": "original"
   },
@@ -368,14 +368,14 @@
     "kind": "riddle",
     "language": "vi",
     "theme": "creativeBreaks",
-    "text": "Một hàng gạch lặp theo thứ tự xanh, vàng, trắng. Viên thứ 11 màu gì?",
+    "text": "Trong căn phòng yên tĩnh, tôi mỏng manh đến mức chỉ cần bạn cất tiếng gọi đúng tên tôi lên thôi là tôi lập tức vỡ tan. Tôi là gì?",
     "choices": [
-      "Xanh",
-      "Vàng",
-      "Trắng"
+      "Lời thì thầm",
+      "Sự im lặng",
+      "Tiếng vang"
     ],
     "answerIndex": 1,
-    "explanation": "Viên 9 khép lại nhóm thứ ba. Viên 10 màu xanh, viên 11 màu vàng.",
+    "explanation": "Ngay khoảnh khắc bạn phát ra âm thanh để gọi tên “sự im lặng” thì sự im lặng đã bị phá vỡ.",
     "source": "himorning",
     "license": "original"
   },
@@ -384,14 +384,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "peopleAndPlans",
-    "text": "Trạm cứu hộ đang xin khăn sạch và đã có đủ chăn. Nếu chỉ mang được một món, bạn nên mang gì?",
+    "text": "Trạm cứu hộ thú cưng đăng tin: “Tụi mình đã được tặng dư chăn ấm, hiện chỉ đang rất thiếu khăn bông sạch để lau khô cho các bé sau khi tắm.” Túi bạn chỉ đựng vừa một món. Bạn nên mang gì tới?",
     "choices": [
-      "Một chiếc khăn sạch",
-      "Một chiếc chăn",
-      "Một chiếc khăn chưa giặt"
+      "Một chiếc khăn bông đã giặt sạch",
+      "Một chiếc chăn bông dày",
+      "Một chiếc khăn dính bùn chưa giặt"
     ],
     "answerIndex": 0,
-    "explanation": "Trạm đang cần khăn sạch.",
+    "explanation": "Trạm đã đủ chăn và đang cần đúng khăn bông sạch để tắm cho thú cưng.",
     "source": "himorning",
     "license": "original"
   }

@@ -168,7 +168,10 @@ struct ChallengeView: View {
      Text(result ?? message)
       .font(distanceLayout ? .system(size: 34, weight: .semibold) : .title3.weight(.medium))
       .minimumScaleFactor(distanceLayout ? 0.6 : 1)
-      .multilineTextAlignment(.center).accessibilityIdentifier("challengeMessage")
+      .multilineTextAlignment(.center)
+      .contentTransition(.opacity)
+      .animation(reduceMotion ? nil : .smooth(duration: 0.22), value: result ?? message)
+      .accessibilityIdentifier("challengeMessage")
      }
      if !finished,challenge.kind != .none,camera == nil,movementCamera == nil,rhythmCamera == nil,!speechListening {
       DisclosureGroup(appText("challenge_guide_scoring_title")) {
@@ -180,9 +183,14 @@ struct ChallengeView: View {
       ProgressView().accessibilityLabel(message)
      }
      if (challenge.kind == .readAndChoose || challenge.kind == .riddle) && !finished, let prompt = challenge.kind == .riddle ? riddlePrompt : readPrompt {
-      Text(prompt.text).font(.title3.weight(.semibold)).multilineTextAlignment(.center)
+      Text(prompt.text)
+       .font(.title3.weight(.semibold))
+       .multilineTextAlignment(.center)
+       .transition(.opacity.combined(with: .scale(scale: 0.98)))
       ForEach(Array(prompt.choices.enumerated()), id: \.offset) { index, choice in
-       Button(choice) { chooseMeaning(index, prompt: prompt) }.buttonStyle(MorningButtonStyle(primary: false)).accessibilityIdentifier("readChoice-\(index)")
+       Button(choice) { chooseMeaning(index, prompt: prompt) }
+        .buttonStyle(MorningButtonStyle(primary: false))
+        .accessibilityIdentifier("readChoice-\(index)")
       }
      }
      if challenge.kind == .readAloud, let item = readAloudItem {
@@ -656,7 +664,10 @@ struct ReadingFeedbackView: View {
    .accessibilityAddTraits(.isStaticText)
    .accessibilityIdentifier("readingPrompt").accessibilityLabel(target).accessibilityValue(wordSummary(feedback))
    Text(String(format: appText("Word match: %d/100"), Int((feedback.score * 100).rounded())))
-    .font(.headline).accessibilityIdentifier("readingScore")
+    .font(.headline)
+    .contentTransition(.numericText())
+    .animation(.smooth(duration: 0.2), value: Int((feedback.score * 100).rounded()))
+    .accessibilityIdentifier("readingScore")
    ProgressView(value: feedback.score, total: 1).accessibilityLabel(appText("Word match score"))
    Text(appText("Matched words are green. Underlined words need practice. Gray words have not been read yet."))
     .font(.footnote).foregroundStyle(MorningTheme.muted)

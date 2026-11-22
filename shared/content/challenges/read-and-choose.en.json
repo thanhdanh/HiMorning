@@ -4,14 +4,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "workAndStudy",
-    "text": "You have twenty minutes before a call. Editing a draft needs twenty uninterrupted minutes; replying to messages takes five. Which plan finishes the draft before the call?",
+    "text": "Your 9:00 call starts in twenty minutes. Brewing pour-over coffee takes five minutes of hands-on pouring, while reviewing the slide deck needs twenty uninterrupted minutes. Which plan gets the slides finished before 9:00?",
     "choices": [
-      "Edit the draft now",
-      "Reply first, then edit",
-      "Edit for ten minutes, reply, then finish"
+      "Review the slides right now and grab coffee after",
+      "Brew coffee first, then speed-read the slides",
+      "Review half the slides, brew coffee, then finish"
     ],
     "answerIndex": 0,
-    "explanation": "Editing now uses the full twenty-minute window. Replying first leaves fifteen minutes; interrupting the edit also breaks its uninterrupted requirement.",
+    "explanation": "Reviewing right away uses the full twenty-minute window. Brewing coffee first or halfway through breaks the twenty uninterrupted minutes required.",
     "source": "himorning",
     "license": "original"
   },
@@ -20,14 +20,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "workAndStudy",
-    "text": "The shared folder contains Draft 3 and Draft 4. A message says, “I corrected the figures in Draft 4; the conclusion is unchanged.” Which file should a reviewer use for the corrected figures?",
+    "text": "Two files sit in the team folder: “Budget_Final.xlsx” and “Budget_Final_v2.xlsx”. A sticky note says: “I fixed the typo in the numbers inside v2; the summary line stayed the same.” Which file has the corrected numbers?",
     "choices": [
-      "Draft 3, because the conclusion is unchanged",
-      "Draft 4, where the figures were corrected",
-      "Either file; the figures must match"
+      "Budget_Final, because the summary stayed the same",
+      "Budget_Final_v2, where the numbers were fixed",
+      "Either file, since the numbers must match"
     ],
     "answerIndex": 1,
-    "explanation": "The message distinguishes the corrected figures from the unchanged conclusion. Only Draft 4 is identified as containing those corrections.",
+    "explanation": "The note separates the fixed numbers from the unchanged summary. Only v2 carries the corrected figures.",
     "source": "himorning",
     "license": "original"
   },
@@ -36,14 +36,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "workAndStudy",
-    "text": "A workshop has two rooms. One holds eight people with a screen; the other holds twelve without a screen. Nine people need a screen, and furniture cannot move. What does this tell the organizer?",
+    "text": "A morning demo has two rooms available. The Glass Room seats 8 people and has a projector; the Oak Room seats 12 people without a projector. Nine attendees need to see the projector, and chairs cannot be moved. What follows?",
     "choices": [
-      "The twelve-seat room meets both needs",
-      "The eight-seat room meets both needs",
+      "The Oak Room meets both needs",
+      "The Glass Room meets both needs",
       "Neither room meets both needs as arranged"
     ],
     "answerIndex": 2,
-    "explanation": "One room lacks a seat; the other lacks a screen. More capacity alone does not satisfy both requirements.",
+    "explanation": "One room lacks a seat and the other lacks a projector, so neither room satisfies both conditions without changing the setup.",
     "source": "himorning",
     "license": "original"
   },
@@ -52,14 +52,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "workAndStudy",
-    "text": "A portal always shows a receipt for a submitted report, and receipts stay visible. Noor sees no receipt for hers. Under these stated rules, what follows?",
+    "text": "The homework portal instantly emails a confirmation code for every uploaded essay, and that email never expires. Linh checks her inbox and spam folder and finds no code. Under these rules, what is certain?",
     "choices": [
-      "Her report is not recorded as submitted",
-      "Her report was rejected after submission",
-      "The reviewer has not opened her report"
+      "Her essay has not been recorded as uploaded",
+      "The professor already graded and rejected it",
+      "The professor has not opened her inbox yet"
     ],
     "answerIndex": 0,
-    "explanation": "A submitted report would have a visible receipt. The absence establishes submission status, not a reviewer decision or reading status.",
+    "explanation": "Every uploaded essay triggers a confirmation code. No code means the upload itself was never recorded.",
     "source": "himorning",
     "license": "original"
   },
@@ -68,14 +68,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "everydayLife",
-    "text": "A recipe uses two cups of rice for four servings. You need six servings, keeping the same ratio. Which amount fits?",
+    "text": "Grandma’s pancake note says: “Two scoops of flour feed four hungry people.” Six hungry friends just rang your doorbell. Keeping her exact ratio, how much flour do you need?",
     "choices": [
-      "Two and a half cups",
-      "Three cups",
-      "Four cups"
+      "Two and a half scoops",
+      "Three scoops",
+      "Four scoops"
     ],
     "answerIndex": 1,
-    "explanation": "Each serving uses half a cup. Six servings therefore need three cups.",
+    "explanation": "Four people use two scoops, which is half a scoop per person. Six people need three scoops.",
     "source": "himorning",
     "license": "original"
   },
@@ -84,14 +84,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "everydayLife",
-    "text": "The pickup note says, “Your parcel is in locker 12. The shop counter only handles returns.” You want to collect this parcel. Where should you go?",
+    "text": "A delivery text reads: “Your fresh coffee beans are waiting in Smart Locker 12. The lobby desk only accepts return packages.” You want to pick up your coffee beans. Where do you go?",
     "choices": [
-      "The counter to ask for the parcel",
-      "Either place handles collection",
-      "Locker 12"
+      "The lobby desk",
+      "Either place works for pickups",
+      "Smart Locker 12"
     ],
     "answerIndex": 2,
-    "explanation": "The note assigns collection to locker 12 and returns to the counter. They serve different purposes.",
+    "explanation": "Pickups go to Smart Locker 12, while the lobby desk only handles returns.",
     "source": "himorning",
     "license": "original"
   },
@@ -100,14 +100,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "everydayLife",
-    "text": "A refill sign says, “Same cup, same day, receipt required.” You have today’s receipt but brought yesterday’s cup instead of the cup on that receipt. Which condition is missing?",
+    "text": "The bakery’s free-refill chalkboard says: “Same mug, same morning, receipt in hand.” You have this morning’s receipt in your pocket, but you accidentally brought yesterday’s travel mug. Which rule did you miss?",
     "choices": [
-      "Using the cup from today’s purchase",
-      "Having a receipt",
-      "Returning on the same day"
+      "Using the mug from this morning’s order",
+      "Keeping the printed receipt",
+      "Coming back on the same morning"
     ],
     "answerIndex": 0,
-    "explanation": "The receipt and date meet two conditions. The cup must also be the one associated with that purchase.",
+    "explanation": "You have today’s receipt on the same morning, but the mug itself does not match today’s purchase.",
     "source": "himorning",
     "license": "original"
   },
@@ -116,14 +116,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "everydayLife",
-    "text": "The community library accepts returns through a slot all day, but loans require a volunteer from 2 to 5. You arrive at noon with one borrowed book and want another. What can you do immediately?",
+    "text": "The neighborhood bookshop lets you drop returned books through the brass slot 24 hours a day, while borrowing a new book requires the shopkeeper, who arrives at 2:00 p.m. You stop by at noon. What can you do right away?",
     "choices": [
-      "Borrow a new book only",
-      "Return the borrowed book only",
-      "Both return and borrow"
+      "Borrow a new novel only",
+      "Drop off your returned book only",
+      "Both return your book and borrow a new one"
     ],
     "answerIndex": 1,
-    "explanation": "The return slot is available at noon. Borrowing must wait until the volunteer arrives at 2.",
+    "explanation": "The return slot is open all day, including noon, whereas borrowing has to wait until 2:00 p.m.",
     "source": "himorning",
     "license": "original"
   },
@@ -132,14 +132,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "peopleAndPlans",
-    "text": "Ari can meet Monday or Tuesday; Bo can meet Tuesday or Wednesday. Cam is available only Tuesday. Which day works for everyone?",
+    "text": "Two fathers and two sons sit down together for morning phở. Each person orders his own bowl, yet the waiter brings only three bowls and everyone has a full bowl. How does that work?",
     "choices": [
-      "Monday",
-      "Wednesday",
-      "Tuesday"
+      "One person shared his broth",
+      "The waiter miscounted the table",
+      "They are grandfather, father, and son"
     ],
     "answerIndex": 2,
-    "explanation": "Tuesday is in all three availability lists. The other days each exclude at least one person.",
+    "explanation": "Three generations sit at the table: the father in the middle is both a son to the grandfather and a father to his own son.",
     "source": "himorning",
     "license": "original"
   },
@@ -148,14 +148,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "peopleAndPlans",
-    "text": "Jo writes, “If the film starts after eight, save me a seat. Before eight, I am still on the train.” The screening starts at 8:30. What has Jo asked the group to do?",
+    "text": "Trang texts the group chat: “If the acoustic show starts after 8:00, save me a front-row chair. Before 8:00, I’m still on the metro.” The café posts a start time of 8:30. What should the group do?",
     "choices": [
-      "Save a seat for Jo",
-      "Move the screening earlier",
-      "Assume Jo cannot come"
+      "Save a chair for Trang",
+      "Ask the band to play at 7:45",
+      "Assume Trang is skipping tonight"
     ],
     "answerIndex": 0,
-    "explanation": "The screening meets Jo’s stated condition: it starts after eight. The request is to save a seat.",
+    "explanation": "An 8:30 start is after 8:00, which matches the exact condition Trang gave for saving her a chair.",
     "source": "himorning",
     "license": "original"
   },
@@ -164,14 +164,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "peopleAndPlans",
-    "text": "Minh says, “I can bring dessert, but I cannot bring anything that needs a fridge.” The host offers ice cream that must stay frozen, or biscuits that keep at room temperature. Which fits Minh’s offer?",
+    "text": "Minh offers: “I’ll bring a sweet treat for the picnic, as long as it doesn’t need a cooler.” The host suggests either gelato cones or crispy almond biscotti. Which option fits Minh’s rule?",
     "choices": [
-      "Ice cream, because it is dessert",
-      "Biscuits, because they need no fridge",
-      "Both, because both are sweet"
+      "Gelato cones, because everyone loves ice cream",
+      "Almond biscotti, because they keep at room temperature",
+      "Both treats, since both are sweet"
     ],
     "answerIndex": 1,
-    "explanation": "Both are desserts, but only the biscuits also satisfy the no-fridge condition.",
+    "explanation": "Both are sweet, but gelato melts without a cooler while biscotti stay crisp at room temperature.",
     "source": "himorning",
     "license": "original"
   },
@@ -180,14 +180,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "peopleAndPlans",
-    "text": "A message says, “I like the café idea; I still need to check whether I’m free.” What is confirmed?",
+    "text": "A friend replies to your brunch invite: “That rooftop café looks amazing! I still need to check if I’m free this Sunday.” What is actually confirmed?",
     "choices": [
-      "The person will attend",
-      "The meeting time is agreed",
-      "The person likes the idea, but attendance is undecided"
+      "Your friend will definitely be there",
+      "Sunday’s table is already booked",
+      "Your friend likes the café idea, but attendance is undecided"
     ],
     "answerIndex": 2,
-    "explanation": "Enthusiasm for the idea is explicit. Availability has not yet been checked, so attendance is not confirmed.",
+    "explanation": "Enthusiasm for the café is clear, but Sunday availability has not been checked, so attendance is not confirmed.",
     "source": "himorning",
     "license": "original"
   },
@@ -196,14 +196,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "creativeBreaks",
-    "text": "A lamp casts a sculpture’s shadow west. In this setup the shadow falls directly away from the lamp. Which side is the lamp on?",
+    "text": "At dawn, a courtyard statue casts a long shadow pointing straight west. Since a shadow always falls directly away from the light source, which side is the rising sun shining from?",
     "choices": [
       "East",
       "West",
       "North"
     ],
     "answerIndex": 0,
-    "explanation": "Westward shadow means light comes from the opposite side, east.",
+    "explanation": "A westward shadow means the light is shining from the opposite direction: east.",
     "source": "himorning",
     "license": "original"
   },
@@ -212,14 +212,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "creativeBreaks",
-    "text": "A photo shows empty chairs after a concert. The caption says only, “Ten minutes after the last song.” Which statement is supported without inventing a reason?",
+    "text": "An exhibition photo shows an empty stage with a single guitar stand. The caption reads only: “Ten minutes after the encore.” Which statement sticks strictly to the facts?",
     "choices": [
-      "The audience disliked the concert",
-      "The chairs were empty ten minutes after the last song",
-      "Nobody attended the concert"
+      "The crowd walked out early in boredom",
+      "The stage was empty ten minutes after the encore",
+      "The concert was canceled before it began"
     ],
     "answerIndex": 1,
-    "explanation": "The image and caption establish the scene and timing. They do not reveal attendance earlier or how people felt.",
+    "explanation": "The photo and caption tell us what the stage looked like ten minutes after the encore, not how large the crowd was earlier.",
     "source": "himorning",
     "license": "original"
   },
@@ -228,14 +228,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "creativeBreaks",
-    "text": "A poster brief says, “Keep the title above the photo, and the date below the photo.” In a draft the date sits between the title and the photo. What needs moving?",
+    "text": "An art director’s note says: “Put the festival title above the illustration, and the ticket date below the illustration.” In your draft, the date is sandwiched between the title and the illustration. What one move fixes it?",
     "choices": [
-      "Move the title below the photo",
-      "Move the photo below the date",
-      "Move the date below the photo"
+      "Move the title below the illustration",
+      "Delete the illustration",
+      "Move the date below the illustration"
     ],
     "answerIndex": 2,
-    "explanation": "The title already belongs above the photo. Moving the date below the photo restores the required order.",
+    "explanation": "The title is already on top. Moving the date below the illustration puts all three elements in the requested order.",
     "source": "himorning",
     "license": "original"
   },
@@ -244,14 +244,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "creativeBreaks",
-    "text": "A short film needs thirty seconds of continuous music. Three clips are twenty seconds, thirty-five seconds, and forty seconds. You can trim but cannot join clips. Of the three original clips, which is the shortest that can supply the music?",
+    "text": "Your morning reel needs 30 seconds of unbroken acoustic guitar. You have three takes lasting 20 seconds, 35 seconds, and 40 seconds. You may trim a take, but you cannot loop or splice takes together. Which is the shortest take that works?",
     "choices": [
-      "35 seconds",
-      "20 seconds",
-      "40 seconds"
+      "The 35-second take",
+      "The 20-second take",
+      "The 40-second take"
     ],
     "answerIndex": 0,
-    "explanation": "Twenty seconds is too short. Both longer clips can be trimmed to thirty seconds, and thirty-five is the shorter of those.",
+    "explanation": "The 20-second take is too short. Both 35 and 40 seconds can be trimmed to 30, and 35 seconds is the shorter of the two.",
     "source": "himorning",
     "license": "original"
   },
@@ -260,14 +260,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "cityAndTravel",
-    "text": "On a map, the market is directly north of the library. The café is directly east of the library. From the café, which direction leads toward the market?",
+    "text": "On your neighborhood map, the flower market sits due north of the library, and the bakery sits due east of the library. If you stand outside the bakery and look straight toward the flower market, which way are you facing?",
     "choices": [
       "Southeast",
       "Northwest",
       "Southwest"
     ],
     "answerIndex": 1,
-    "explanation": "From the café, the market lies north and west: northwest.",
+    "explanation": "From the bakery (east of the library) to the flower market (north of the library), you look north and west: northwest.",
     "source": "himorning",
     "license": "original"
   },
@@ -276,14 +276,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "cityAndTravel",
-    "text": "Bus A serves the museum but not the station. Bus B serves the station but not the museum. Both stop at Central. Starting at the station, which route reaches the museum?",
+    "text": "Tram A stops at the Art Museum but skips Central Station. Tram B starts at Central Station but never reaches the Art Museum. Both trams stop at River Square. Starting from Central Station, how do you ride to the Art Museum?",
     "choices": [
-      "Take A from the station, then B",
-      "Stay on B all the way",
-      "Take B to Central, then A"
+      "Board Tram A at Central Station, then switch to B",
+      "Stay on Tram B the entire trip",
+      "Ride Tram B to River Square, then transfer to Tram A"
     ],
     "answerIndex": 2,
-    "explanation": "Bus B can take you from the station to the shared stop. Bus A then connects that stop to the museum.",
+    "explanation": "Only Tram B serves Central Station. Riding it to the shared stop at River Square lets you transfer to Tram A for the Art Museum.",
     "source": "himorning",
     "license": "original"
   },
@@ -292,14 +292,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "cityAndTravel",
-    "text": "The gallery closes at 8 p.m. today. Last entry is 30 minutes before closing. What is the latest you can get in?",
+    "text": "The botanical glasshouse closes its gates at 8:00 p.m. and stops admitting new visitors 30 minutes before closing. What is the latest time you can enter?",
     "choices": [
       "7:30 p.m.",
       "5:30 p.m.",
-      "8 p.m."
+      "8:00 p.m."
     ],
     "answerIndex": 0,
-    "explanation": "Thirty minutes before 8 p.m. is 7:30 p.m.",
+    "explanation": "Thirty minutes before the 8:00 p.m. closing time is 7:30 p.m.",
     "source": "himorning",
     "license": "original"
   },
@@ -308,14 +308,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "cityAndTravel",
-    "text": "You reach a station at 10:10. The express leaves at 10:20 and takes twenty minutes; the local leaves now and takes thirty-five. Ignoring other delays, which gets you there first?",
+    "text": "You step onto the platform at 10:10. The local train leaves immediately and takes 35 minutes; the express train waits until 10:20 to depart and takes 20 minutes. Assuming both run on time, which train reaches your stop first?",
     "choices": [
-      "The local, because it leaves now",
-      "The express, by five minutes",
-      "Both arrive together"
+      "The local, because it leaves right away",
+      "The express, arriving 5 minutes earlier",
+      "Both trains arrive at the exact same minute"
     ],
     "answerIndex": 1,
-    "explanation": "The express arrives at 10:40, including its wait. The local arrives at 10:45, so the express wins by five minutes.",
+    "explanation": "The local arrives at 10:45 (10:10 + 35 min). Even with a 10-minute wait, the express arrives at 10:40 (10:20 + 20 min), five minutes ahead.",
     "source": "himorning",
     "license": "original"
   },
@@ -324,14 +324,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "curiosity",
-    "text": "A sensor records an alert only when a room is below its light threshold. An alert appears at noon. What can the alert establish?",
+    "text": "A desk sensor logs a “low-light” note whenever brightness in the study drops below 150 lux. A low-light note appears at 12:00 noon. What does that log entry prove on its own?",
     "choices": [
-      "The room has no windows",
-      "The weather outside is cloudy",
-      "The room was below the set light threshold"
+      "The study has no windows at all",
+      "A thunderstorm is passing overhead",
+      "Brightness at the sensor was below 150 lux at noon"
     ],
     "answerIndex": 2,
-    "explanation": "The alert establishes the measured light level. It does not identify the cause, such as weather or windows.",
+    "explanation": "The sensor only measures the light level at the desk. Closed curtains, shade, or clouds could cause it, so only the lux threshold is proven.",
     "source": "himorning",
     "license": "original"
   },
@@ -340,14 +340,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "curiosity",
-    "text": "A clock loses one minute every hour. It is set correctly at noon. Three real hours later, what time will it show?",
+    "text": "A vintage wall clock loses 2 minutes every hour, while a stopped pocket watch stands still at 7:00. Over a full 24-hour day, which timepiece shows the exact right time more often?",
     "choices": [
-      "2:57",
-      "3:00",
-      "3:03"
+      "The stopped pocket watch, twice a day",
+      "The slow wall clock, every hour",
+      "Neither ever shows the right time"
     ],
     "answerIndex": 0,
-    "explanation": "Three hours pass, but the clock loses three minutes. It shows three minutes before three: 2:57.",
+    "explanation": "A stopped 12-hour watch is right twice every 24 hours (at 7:00 a.m. and 7:00 p.m.), while a clock losing 2 minutes an hour takes 15 days to drift back to the exact time.",
     "source": "himorning",
     "license": "original"
   },
@@ -356,14 +356,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "curiosity",
-    "text": "A photo file was created on Monday when an old print was scanned. The print has no date. What can Monday’s file date tell you?",
+    "text": "You scan an undated film photograph from your childhood on Monday morning, creating “scan_01.jpg”. What does Monday’s file creation timestamp actually tell you?",
     "choices": [
-      "The original photo was taken Monday",
-      "The digital file was made Monday",
-      "The print was first developed Monday"
+      "The childhood photo was originally snapped on a Monday",
+      "The digital scan file was saved on Monday",
+      "The film roll was developed on Monday"
     ],
     "answerIndex": 1,
-    "explanation": "The file date records the scanning result, not when the original scene was photographed or the print developed.",
+    "explanation": "A digital file timestamp records when the scan was created on your computer, not when the camera shutter clicked years ago.",
     "source": "himorning",
     "license": "original"
   },
@@ -372,14 +372,14 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "curiosity",
-    "text": "A display shows twelve objects. A sign says that every wooden object is handmade. Four objects are wooden. What is the smallest number we know are handmade?",
+    "text": "A craft shelf displays 12 teacups. A card beside them states: “Every ceramic cup on this shelf is hand-thrown.” You count 4 ceramic cups and 8 glass cups. What is the minimum number of hand-thrown cups guaranteed by the card?",
     "choices": [
-      "Exactly twelve",
-      "None, because the others are unknown",
-      "At least four"
+      "All 12 cups",
+      "Zero, because the glass cups are unknown",
+      "At least 4 cups"
     ],
     "answerIndex": 2,
-    "explanation": "The four wooden objects are guaranteed handmade. Others might be handmade too, but the sign does not establish that.",
+    "explanation": "The rule guarantees the 4 ceramic cups are hand-thrown. Some glass cups might be handmade too, so we know at least 4 are.",
     "source": "himorning",
     "license": "original"
   }

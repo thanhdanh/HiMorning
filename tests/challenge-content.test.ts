@@ -74,7 +74,7 @@ describe('challenge content pack', () => {
  it('curated bilingual pool has balanced themes, explanations and matching puzzles', () => {
   const bundled = read('../apps/ios/Resources/challenge-content.json');
   expect(validatePack(bundled).errors).toEqual([]);
-  expect(bundled.version).toBe(4);
+  expect(bundled.version).toBe(5);
   expect(bundled.items).toHaveLength(204);
   for (const kind of ['readAloud', 'readAndChoose', 'riddle']) {
    const perTheme = kind === 'riddle' ? 3 : kind === 'readAndChoose' ? 4 : 6;

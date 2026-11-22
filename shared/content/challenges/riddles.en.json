@@ -4,14 +4,14 @@
     "kind": "riddle",
     "language": "en",
     "theme": "workAndStudy",
-    "text": "Mai, Lin, and Bo each bring a different item: a cup, fruit, or bread. Mai brings neither food item, and Lin does not bring bread. What does Bo bring?",
+    "text": "A project takes three engineers three hours to debug. If three more equally fast engineers join the call only to ask for status updates, how long does the original three-hour work take when nobody actually shares the keyboard?",
     "choices": [
-      "Bread",
-      "A cup",
-      "Fruit"
+      "Still three hours",
+      "Ninety minutes",
+      "Six hours"
     ],
     "answerIndex": 0,
-    "explanation": "Mai brings the cup. Lin must bring fruit, leaving bread for Bo.",
+    "explanation": "If the extra people only listen in and cannot split the single keyboard task, the hands-on work still takes three hours.",
     "source": "himorning",
     "license": "original"
   },
@@ -20,14 +20,14 @@
     "kind": "riddle",
     "language": "en",
     "theme": "workAndStudy",
-    "text": "At 9:00, a file starts downloading for five minutes while a printer starts an eight-minute job. Both run without interruption. When are both jobs finished?",
+    "text": "Before a big exam, your tutor hands you three focus lozenges and says, “Take one every thirty minutes.” If you take the first one right now, how many minutes until all three are gone?",
     "choices": [
-      "9:05",
-      "9:08",
-      "9:13"
+      "90 minutes",
+      "60 minutes",
+      "45 minutes"
     ],
     "answerIndex": 1,
-    "explanation": "The jobs run at the same time. The download ends at 9:05; the slower printer ends at 9:08.",
+    "explanation": "You take the first at minute 0, the second at minute 30, and the third at minute 60. Three lozenges only have two gaps between them.",
     "source": "himorning",
     "license": "original"
   },
@@ -36,14 +36,14 @@
     "kind": "riddle",
     "language": "en",
     "theme": "workAndStudy",
-    "text": "Every draft with a red tag needs review. A draft needs review, but its tag is hidden. Must its tag be red?",
+    "text": "What belongs only to you on your badge and email signature, yet your coworkers use it far more often than you do?",
     "choices": [
-      "Yes, it must be red",
-      "No, it cannot be red",
-      "The rule does not tell us"
+      "Your desk chair",
+      "Your password",
+      "Your name"
     ],
     "answerIndex": 2,
-    "explanation": "The rule tells us what red tags require. It does not say that only red-tagged drafts need review.",
+    "explanation": "Other people call you by your name all day, while you rarely say your own name out loud.",
     "source": "himorning",
     "license": "original"
   },
@@ -52,14 +52,14 @@
     "kind": "riddle",
     "language": "en",
     "theme": "everydayLife",
-    "text": "You cut one straight ribbon into four separate pieces, making one cut at a time and never stacking or folding it. How many cuts are needed?",
+    "text": "There are five crisp apples in the kitchen bowl, and you take away three for breakfast. How many apples do you have now?",
     "choices": [
-      "3",
-      "4",
-      "5"
+      "3 apples",
+      "2 apples",
+      "5 apples"
     ],
     "answerIndex": 0,
-    "explanation": "One piece becomes two after one cut. Each additional cut adds one piece, so three cuts make four.",
+    "explanation": "You took three apples, so those three are the ones in your hands. Two stay behind in the bowl.",
     "source": "himorning",
     "license": "original"
   },
@@ -68,14 +68,14 @@
     "kind": "riddle",
     "language": "en",
     "theme": "everydayLife",
-    "text": "Two closed jars contain only tea or only coffee, one of each. Their labels say tea and coffee, but both labels are wrong. What is in the jar labeled coffee?",
+    "text": "During a morning power outage you walk into a dark kitchen holding one match. Inside are a candle, an oil lamp, and a gas stove. What do you light first?",
     "choices": [
-      "Coffee",
-      "Tea",
-      "Not enough information"
+      "The candle",
+      "The match",
+      "The gas stove"
     ],
     "answerIndex": 1,
-    "explanation": "Both labels are wrong and each jar holds just one drink. The coffee-labeled jar must hold tea.",
+    "explanation": "You cannot light the candle, lamp, or stove until you strike the match first.",
     "source": "himorning",
     "license": "original"
   },
@@ -84,14 +84,14 @@
     "kind": "riddle",
     "language": "en",
     "theme": "everydayLife",
-    "text": "A small bag holds at most six kilograms. The camera weighs two, the books three, and the speaker four. Which pair fits and uses the full weight allowance?",
+    "text": "What gets wetter and wetter the more it dries your hands after your morning face wash?",
     "choices": [
-      "Books and speaker",
-      "Camera and books",
-      "Camera and speaker"
+      "A bar of soap",
+      "Warm tap water",
+      "A towel"
     ],
     "answerIndex": 2,
-    "explanation": "The camera and speaker weigh exactly six kilograms. The books with the speaker weigh seven; the camera with books uses only five.",
+    "explanation": "As a towel absorbs water to dry your skin, the fabric itself becomes wetter.",
     "source": "himorning",
     "license": "original"
   },
@@ -100,14 +100,14 @@
     "kind": "riddle",
     "language": "en",
     "theme": "peopleAndPlans",
-    "text": "Three friends can meet only on these days: An on Friday or Saturday, Bao on Saturday or Sunday, Chi on Friday or Saturday. Which day works for all three?",
+    "text": "Lan’s mother has five children. The first four are named Spring, Summer, Autumn, and Winter. What is the fifth child’s name?",
     "choices": [
-      "Saturday",
-      "Friday",
-      "Sunday"
+      "Lan",
+      "Monsoon",
+      "Morning"
     ],
     "answerIndex": 0,
-    "explanation": "Saturday appears in all three lists. Bao is unavailable Friday, and An and Chi are unavailable Sunday.",
+    "explanation": "The riddle begins with “Lan’s mother,” so Lan is the fifth child in the family.",
     "source": "himorning",
     "license": "original"
   },
@@ -116,14 +116,14 @@
     "kind": "riddle",
     "language": "en",
     "theme": "peopleAndPlans",
-    "text": "A key is in exactly one of three boxes: blue, green, or gold. Exactly one statement is true: “It is in blue” and “It is not in gold.” Where is the key?",
+    "text": "The café key is hidden in one of three boxes: blue, green, or gold. Two notes sit beside them: “It is in the blue box” and “It is not in the gold box.” Only one note tells the truth. Where is the key?",
     "choices": [
       "Blue box",
       "Green box",
       "Gold box"
     ],
     "answerIndex": 1,
-    "explanation": "Blue makes both statements true; gold makes both false. Green makes only “not in gold” true.",
+    "explanation": "If it were in blue, both notes would be true; if it were in gold, both would be false. Only the green box makes just one note true.",
     "source": "himorning",
     "license": "original"
   },
@@ -132,14 +132,14 @@
     "kind": "riddle",
     "language": "en",
     "theme": "peopleAndPlans",
-    "text": "Four friends each send one private greeting to every other friend. A greeting from An to Bao is separate from Bao to An. How many greetings are sent?",
+    "text": "While planning the year’s group trips, Minh asks: “Some months have 30 days and some have 31. How many months have 28 days?”",
     "choices": [
-      "6",
-      "8",
-      "12"
+      "Only one",
+      "Four months",
+      "All 12 months"
     ],
     "answerIndex": 2,
-    "explanation": "Each of four people sends three greetings. Four times three is twelve; each direction counts separately.",
+    "explanation": "February stops at 28 (or 29), but every single month of the year reaches day 28.",
     "source": "himorning",
     "license": "original"
   },
@@ -148,14 +148,14 @@
     "kind": "riddle",
     "language": "en",
     "theme": "creativeBreaks",
-    "text": "A zine has three steps: print, fold, and staple. Folding must follow printing, and stapling must follow folding. Which step is immediately before stapling?",
+    "text": "I have rows of keys that open no doors, space for your fingers, and I can fill a café with music. What am I?",
     "choices": [
-      "Fold",
-      "Print",
-      "Either print or fold"
+      "A piano",
+      "A keyring",
+      "A sketchbook"
     ],
     "answerIndex": 0,
-    "explanation": "The required order is print, fold, staple. Folding is the step directly before stapling.",
+    "explanation": "A piano has musical keys rather than door locks.",
     "source": "himorning",
     "license": "original"
   },
@@ -164,14 +164,14 @@
     "kind": "riddle",
     "language": "en",
     "theme": "creativeBreaks",
-    "text": "A rhythm repeats clap, tap, tap, rest, starting at beat one. What happens on beat seven?",
+    "text": "A sculptor carves a block of wood: the more material she takes away from the gap, the bigger it grows. What is she making bigger?",
     "choices": [
-      "Clap",
-      "Tap",
-      "Rest"
+      "The wood shavings",
+      "A hole or hollow",
+      "The chisel blade"
     ],
     "answerIndex": 1,
-    "explanation": "Beats five through eight repeat clap, tap, tap, rest. Beat seven is the second tap in that group.",
+    "explanation": "Removing material makes a hole or hollow space larger.",
     "source": "himorning",
     "license": "original"
   },
@@ -180,14 +180,14 @@
     "kind": "riddle",
     "language": "en",
     "theme": "creativeBreaks",
-    "text": "A photo is twelve units wide and eight tall. You crop only its width to make a square, keeping the full height. How many width units must you remove in total?",
+    "text": "Which word in the English dictionary is always spelled “incorrectly”?",
     "choices": [
-      "2",
-      "8",
-      "4"
+      "Rhythm",
+      "Queue",
+      "Incorrectly"
     ],
     "answerIndex": 2,
-    "explanation": "The square must be eight units wide to match its height. Twelve minus eight leaves four units to remove in total.",
+    "explanation": "It is a play on words: the word “incorrectly” itself is literally spelled i-n-c-o-r-r-e-c-t-l-y.",
     "source": "himorning",
     "license": "original"
   },
@@ -196,14 +196,14 @@
     "kind": "riddle",
     "language": "en",
     "theme": "cityAndTravel",
-    "text": "The café is reached by either of two routes: a direct twelve-minute bus ride, or a four-minute metro ride plus a five-minute transfer and a two-minute walk. Which is quicker?",
+    "text": "A city bus driver goes the wrong way down a one-way street right past two traffic officers, and neither stops him. Why?",
     "choices": [
-      "Metro route by one minute",
-      "Bus route by one minute",
-      "They take the same time"
+      "He was walking on the sidewalk",
+      "His bus was invisible",
+      "It was a leap day"
     ],
     "answerIndex": 0,
-    "explanation": "The metro route takes four plus five plus two, or eleven minutes. That is one minute less than twelve.",
+    "explanation": "He is a bus driver by profession, but he was walking on foot rather than driving his bus.",
     "source": "himorning",
     "license": "original"
   },
@@ -212,14 +212,14 @@
     "kind": "riddle",
     "language": "en",
     "theme": "cityAndTravel",
-    "text": "A train leaves at 8:50 and arrives at 9:15 the same morning. How long is the trip?",
+    "text": "An electric metro train heads north at 60 km/h while a brisk morning wind blows west at 30 km/h. Which way does the smoke from the locomotive blow?",
     "choices": [
-      "35 minutes",
-      "25 minutes",
-      "65 minutes"
+      "Southwest",
+      "There is no smoke",
+      "Southeast"
     ],
     "answerIndex": 1,
-    "explanation": "Ten minutes takes us to 9:00; fifteen more takes us to 9:15. The trip lasts twenty-five minutes.",
+    "explanation": "An electric train runs on electricity, so it produces no smoke at all.",
     "source": "himorning",
     "license": "original"
   },
@@ -228,14 +228,14 @@
     "kind": "riddle",
     "language": "en",
     "theme": "cityAndTravel",
-    "text": "A shuttle travels A, B, C, D, E in that order. You board at B and get off at E. Counting arrival at E but not boarding at B, how many stops do you reach?",
+    "text": "I have bustling cities without houses, winding rivers without water, and tall mountains without rocks. You fold me into your backpack. What am I?",
     "choices": [
-      "2",
-      "4",
-      "3"
+      "A compass",
+      "A train ticket",
+      "A map"
     ],
     "answerIndex": 2,
-    "explanation": "After boarding at B, you reach C, D, and E: three stops.",
+    "explanation": "A map shows cities, rivers, and mountains on paper without the physical objects.",
     "source": "himorning",
     "license": "original"
   },
@@ -244,14 +244,14 @@
     "kind": "riddle",
     "language": "en",
     "theme": "curiosity",
-    "text": "A sequence alternates two steps: add three, then multiply by two. Starting at two gives 2, 5, 10, 13, 26. What comes next?",
+    "text": "Which weighs more on a balanced scale: a full kilogram of fluffy pillow feathers or a kilogram of solid cast iron?",
     "choices": [
-      "29",
-      "52",
-      "30"
+      "They weigh the same",
+      "The cast iron",
+      "The pillow feathers"
     ],
     "answerIndex": 0,
-    "explanation": "The step after multiplying is adding three. Twenty-six plus three is twenty-nine.",
+    "explanation": "The feathers take up much more room, but one kilogram equals one kilogram either way.",
     "source": "himorning",
     "license": "original"
   },
@@ -260,14 +260,14 @@
     "kind": "riddle",
     "language": "en",
     "theme": "curiosity",
-    "text": "A jar has exactly three blue beads and two white beads. Without looking and without putting any back, how many must you take to guarantee two of the same color?",
+    "text": "Before Mount Everest was measured and named by surveyors, what was the highest mountain on Earth?",
     "choices": [
-      "2",
-      "3",
-      "4"
+      "K2",
+      "Still Mount Everest",
+      "Mount Kilimanjaro"
     ],
     "answerIndex": 1,
-    "explanation": "Two draws could give one of each color. The third bead must match one of the two colors already drawn.",
+    "explanation": "Mount Everest was already the tallest peak on the planet long before anyone measured or named it.",
     "source": "himorning",
     "license": "original"
   },
@@ -276,14 +276,14 @@
     "kind": "riddle",
     "language": "en",
     "theme": "curiosity",
-    "text": "In this card set, every triangle is striped. A card has no stripes. Which shape is ruled out by that rule?",
+    "text": "I follow you down the street every sunny morning, stretch tall at dawn, and vanish the moment you step into a dark room. What am I?",
     "choices": [
-      "A circle",
-      "A square",
-      "A triangle"
+      "Your alarm clock",
+      "A morning breeze",
+      "Your shadow"
     ],
     "answerIndex": 2,
-    "explanation": "A triangle must have stripes. Without stripes, this card cannot be a triangle; the rule says nothing about circles or squares.",
+    "explanation": "Your shadow only appears when light hits you and disappears in the dark.",
     "source": "himorning",
     "license": "original"
   }

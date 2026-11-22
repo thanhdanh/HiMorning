@@ -1,6 +1,6 @@
 {
- "version": 4,
- "generatedAt": "2026-11-14T17:30:00Z",
+ "version": 5,
+ "generatedAt": "2026-11-22T06:22:00Z",
  "items": [
   {
    "id": "voice-v4-en-001",
@@ -330,33 +330,33 @@
    "id": "library-v3-en-cinema",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "The cinema says, “Please use Door B after 8 p.m.” You arrive at 8:10 p.m. Which door should you use?",
+   "text": "The indie cinema ticket stub reads: “Before 8:00 p.m. enter through the lobby café (Door A). After 8:00 p.m. the café locks up—please use the courtyard gate (Door B).” You arrive at 8:10 p.m. Which entrance works?",
    "choices": [
-    "Door A",
-    "Door B",
-    "Either door"
+    "Door A through the café",
+    "Door B through the courtyard",
+    "Both doors are wide open"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "creativeBreaks",
-   "explanation": "8:10 p.m. is after 8 p.m., so use Door B."
+   "explanation": "At 8:10 p.m. the café entrance is already locked, so you use Door B in the courtyard."
   },
   {
    "id": "library-v3-en-drop-off",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "Minh says, “Leave the bag with reception unless I text you.” Minh hasn’t sent a text. Where should the bag go?",
+   "text": "Minh texts you: “Leave my gym bag at the front desk unless I message you a new plan before 8:00.” It is now 8:05 and your phone has zero new messages from Minh. Where does the bag go?",
    "choices": [
-    "At reception",
-    "Outside the building",
-    "Back home"
+    "At the front desk",
+    "On the sidewalk outside",
+    "Back in your closet at home"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans",
-   "explanation": "The exception applies only if Minh texts."
+   "explanation": "Since Minh never sent a new message before 8:00, the original plan to leave it at the front desk stands."
   },
   {
    "id": "library-v3-en-jupiter-day",
@@ -379,17 +379,17 @@
    "id": "library-v3-en-library-return",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "Your library book is due on Tuesday. The library will be closed on Tuesday, but its return slot stays open. Can you return it that day?",
+   "text": "Your borrowed design book is due on Tuesday. A sign on the library door says: “Main reading room closed Tuesday for floor waxing; 24-hour outdoor return drop stays open.” Can you still return the book on time on Tuesday?",
    "choices": [
-    "Yes, through the slot",
-    "No, it must be Monday",
-    "Only if you borrow it again"
+    "Yes, by sliding it into the outdoor return drop",
+    "No, you must wait until Wednesday morning",
+    "Only if you bring a library staff key"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "workAndStudy",
-   "explanation": "The return slot is open even while the library is closed."
+   "explanation": "The outdoor return drop stays open 24 hours even while the reading room inside is closed."
   },
   {
    "id": "library-v3-en-outer-order",
@@ -412,49 +412,49 @@
    "id": "library-v3-en-park",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "Two paths end at the same park. One is open to bikes, the other is for walking only. Which path can you ride on?",
+   "text": "Two shady trails wind up to the lakeside pavilion. The Lakeside Loop allows bicycles and joggers, while the Bamboo Footpath is strictly for walkers on foot. You are riding your bike this morning. Which trail can you take?",
    "choices": [
-    "Both paths",
-    "The walking path",
-    "The path open to bikes"
+    "Either trail",
+    "The Bamboo Footpath",
+    "The Lakeside Loop"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel",
-   "explanation": "Only one sign allows bikes."
+   "explanation": "Only the Lakeside Loop permits bicycles; the Bamboo Footpath is foot-traffic only."
   },
   {
    "id": "library-v3-en-recipe",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "A recipe serves four and uses two eggs. You’re making half the recipe. How many eggs do you need?",
+   "text": "A French toast recipe says: “Whisk 2 eggs with milk to make 4 thick slices.” You are only cooking breakfast for yourself and want 2 slices. How many eggs do you whisk?",
    "choices": [
-    "One",
-    "Two",
-    "Four"
+    "One egg",
+    "Two eggs",
+    "Four eggs"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife",
-   "explanation": "Half of two eggs is one egg."
+   "explanation": "Making half the slices (2 instead of 4) uses half the eggs: one egg."
   },
   {
    "id": "library-v3-en-shelter",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "A shelter asks for clean towels and says it has enough blankets. You can bring only one item. What would help?",
+   "text": "A community animal shelter posts: “We are overflowing with warm blankets, but we urgently need clean cotton towels for bath day.” You have room in your tote bag for one donation. What helps them today?",
    "choices": [
-    "A clean towel",
-    "A blanket",
-    "A towel that needs washing"
+    "A freshly washed cotton towel",
+    "A thick winter blanket",
+    "A muddy beach towel"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans",
-   "explanation": "Clean towels are on the request list."
+   "explanation": "They already have plenty of blankets and specifically asked for clean towels."
   },
   {
    "id": "library-v3-en-tide-pull",
@@ -477,215 +477,215 @@
    "id": "library-v3-en-train",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "The 7:40 train skips Hill Street. The 7:48 stops there. Your meeting is on Hill Street. Which train should you take?",
+   "text": "The 7:40 express train zooms right past Hill Station without stopping, while the 7:48 commuter train stops at every platform, including Hill Station. Your morning coffee meetup is right outside Hill Station. Which train gets you to your coffee?",
    "choices": [
-    "The 7:40",
-    "The 7:48",
-    "Either train"
+    "The 7:40 express",
+    "The 7:48 commuter train",
+    "Either train works the same"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel",
-   "explanation": "The later train is the only one that stops at Hill Street."
+   "explanation": "A faster train does not help if it skips your stop; only the 7:48 train actually lets you off at Hill Station."
   },
   {
    "id": "rc-v2-en-001",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "You have twenty minutes before a call. Editing a draft needs twenty uninterrupted minutes; replying to messages takes five. Which plan finishes the draft before the call?",
+   "text": "Your 9:00 call starts in twenty minutes. Brewing pour-over coffee takes five minutes of hands-on pouring, while reviewing the slide deck needs twenty uninterrupted minutes. Which plan gets the slides finished before 9:00?",
    "choices": [
-    "Edit the draft now",
-    "Reply first, then edit",
-    "Edit for ten minutes, reply, then finish"
+    "Review the slides right now and grab coffee after",
+    "Brew coffee first, then speed-read the slides",
+    "Review half the slides, brew coffee, then finish"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "workAndStudy",
-   "explanation": "Editing now uses the full twenty-minute window. Replying first leaves fifteen minutes; interrupting the edit also breaks its uninterrupted requirement."
+   "explanation": "Reviewing right away uses the full twenty-minute window. Brewing coffee first or halfway through breaks the twenty uninterrupted minutes required."
   },
   {
    "id": "rc-v2-en-002",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "The shared folder contains Draft 3 and Draft 4. A message says, “I corrected the figures in Draft 4; the conclusion is unchanged.” Which file should a reviewer use for the corrected figures?",
+   "text": "Two files sit in the team folder: “Budget_Final.xlsx” and “Budget_Final_v2.xlsx”. A sticky note says: “I fixed the typo in the numbers inside v2; the summary line stayed the same.” Which file has the corrected numbers?",
    "choices": [
-    "Draft 3, because the conclusion is unchanged",
-    "Draft 4, where the figures were corrected",
-    "Either file; the figures must match"
+    "Budget_Final, because the summary stayed the same",
+    "Budget_Final_v2, where the numbers were fixed",
+    "Either file, since the numbers must match"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "workAndStudy",
-   "explanation": "The message distinguishes the corrected figures from the unchanged conclusion. Only Draft 4 is identified as containing those corrections."
+   "explanation": "The note separates the fixed numbers from the unchanged summary. Only v2 carries the corrected figures."
   },
   {
    "id": "rc-v2-en-003",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "A workshop has two rooms. One holds eight people with a screen; the other holds twelve without a screen. Nine people need a screen, and furniture cannot move. What does this tell the organizer?",
+   "text": "A morning demo has two rooms available. The Glass Room seats 8 people and has a projector; the Oak Room seats 12 people without a projector. Nine attendees need to see the projector, and chairs cannot be moved. What follows?",
    "choices": [
-    "The twelve-seat room meets both needs",
-    "The eight-seat room meets both needs",
+    "The Oak Room meets both needs",
+    "The Glass Room meets both needs",
     "Neither room meets both needs as arranged"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "workAndStudy",
-   "explanation": "One room lacks a seat; the other lacks a screen. More capacity alone does not satisfy both requirements."
+   "explanation": "One room lacks a seat and the other lacks a projector, so neither room satisfies both conditions without changing the setup."
   },
   {
    "id": "rc-v2-en-004",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "A portal always shows a receipt for a submitted report, and receipts stay visible. Noor sees no receipt for hers. Under these stated rules, what follows?",
+   "text": "The homework portal instantly emails a confirmation code for every uploaded essay, and that email never expires. Linh checks her inbox and spam folder and finds no code. Under these rules, what is certain?",
    "choices": [
-    "Her report is not recorded as submitted",
-    "Her report was rejected after submission",
-    "The reviewer has not opened her report"
+    "Her essay has not been recorded as uploaded",
+    "The professor already graded and rejected it",
+    "The professor has not opened her inbox yet"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "workAndStudy",
-   "explanation": "A submitted report would have a visible receipt. The absence establishes submission status, not a reviewer decision or reading status."
+   "explanation": "Every uploaded essay triggers a confirmation code. No code means the upload itself was never recorded."
   },
   {
    "id": "rc-v2-en-005",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "A recipe uses two cups of rice for four servings. You need six servings, keeping the same ratio. Which amount fits?",
+   "text": "Grandma’s pancake note says: “Two scoops of flour feed four hungry people.” Six hungry friends just rang your doorbell. Keeping her exact ratio, how much flour do you need?",
    "choices": [
-    "Two and a half cups",
-    "Three cups",
-    "Four cups"
+    "Two and a half scoops",
+    "Three scoops",
+    "Four scoops"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife",
-   "explanation": "Each serving uses half a cup. Six servings therefore need three cups."
+   "explanation": "Four people use two scoops, which is half a scoop per person. Six people need three scoops."
   },
   {
    "id": "rc-v2-en-006",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "The pickup note says, “Your parcel is in locker 12. The shop counter only handles returns.” You want to collect this parcel. Where should you go?",
+   "text": "A delivery text reads: “Your fresh coffee beans are waiting in Smart Locker 12. The lobby desk only accepts return packages.” You want to pick up your coffee beans. Where do you go?",
    "choices": [
-    "The counter to ask for the parcel",
-    "Either place handles collection",
-    "Locker 12"
+    "The lobby desk",
+    "Either place works for pickups",
+    "Smart Locker 12"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife",
-   "explanation": "The note assigns collection to locker 12 and returns to the counter. They serve different purposes."
+   "explanation": "Pickups go to Smart Locker 12, while the lobby desk only handles returns."
   },
   {
    "id": "rc-v2-en-007",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "A refill sign says, “Same cup, same day, receipt required.” You have today’s receipt but brought yesterday’s cup instead of the cup on that receipt. Which condition is missing?",
+   "text": "The bakery’s free-refill chalkboard says: “Same mug, same morning, receipt in hand.” You have this morning’s receipt in your pocket, but you accidentally brought yesterday’s travel mug. Which rule did you miss?",
    "choices": [
-    "Using the cup from today’s purchase",
-    "Having a receipt",
-    "Returning on the same day"
+    "Using the mug from this morning’s order",
+    "Keeping the printed receipt",
+    "Coming back on the same morning"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife",
-   "explanation": "The receipt and date meet two conditions. The cup must also be the one associated with that purchase."
+   "explanation": "You have today’s receipt on the same morning, but the mug itself does not match today’s purchase."
   },
   {
    "id": "rc-v2-en-008",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "The community library accepts returns through a slot all day, but loans require a volunteer from 2 to 5. You arrive at noon with one borrowed book and want another. What can you do immediately?",
+   "text": "The neighborhood bookshop lets you drop returned books through the brass slot 24 hours a day, while borrowing a new book requires the shopkeeper, who arrives at 2:00 p.m. You stop by at noon. What can you do right away?",
    "choices": [
-    "Borrow a new book only",
-    "Return the borrowed book only",
-    "Both return and borrow"
+    "Borrow a new novel only",
+    "Drop off your returned book only",
+    "Both return your book and borrow a new one"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife",
-   "explanation": "The return slot is available at noon. Borrowing must wait until the volunteer arrives at 2."
+   "explanation": "The return slot is open all day, including noon, whereas borrowing has to wait until 2:00 p.m."
   },
   {
    "id": "rc-v2-en-009",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "Ari can meet Monday or Tuesday; Bo can meet Tuesday or Wednesday. Cam is available only Tuesday. Which day works for everyone?",
+   "text": "Two fathers and two sons sit down together for morning phở. Each person orders his own bowl, yet the waiter brings only three bowls and everyone has a full bowl. How does that work?",
    "choices": [
-    "Monday",
-    "Wednesday",
-    "Tuesday"
+    "One person shared his broth",
+    "The waiter miscounted the table",
+    "They are grandfather, father, and son"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans",
-   "explanation": "Tuesday is in all three availability lists. The other days each exclude at least one person."
+   "explanation": "Three generations sit at the table: the father in the middle is both a son to the grandfather and a father to his own son."
   },
   {
    "id": "rc-v2-en-010",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "Jo writes, “If the film starts after eight, save me a seat. Before eight, I am still on the train.” The screening starts at 8:30. What has Jo asked the group to do?",
+   "text": "Trang texts the group chat: “If the acoustic show starts after 8:00, save me a front-row chair. Before 8:00, I’m still on the metro.” The café posts a start time of 8:30. What should the group do?",
    "choices": [
-    "Save a seat for Jo",
-    "Move the screening earlier",
-    "Assume Jo cannot come"
+    "Save a chair for Trang",
+    "Ask the band to play at 7:45",
+    "Assume Trang is skipping tonight"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans",
-   "explanation": "The screening meets Jo’s stated condition: it starts after eight. The request is to save a seat."
+   "explanation": "An 8:30 start is after 8:00, which matches the exact condition Trang gave for saving her a chair."
   },
   {
    "id": "rc-v2-en-011",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "Minh says, “I can bring dessert, but I cannot bring anything that needs a fridge.” The host offers ice cream that must stay frozen, or biscuits that keep at room temperature. Which fits Minh’s offer?",
+   "text": "Minh offers: “I’ll bring a sweet treat for the picnic, as long as it doesn’t need a cooler.” The host suggests either gelato cones or crispy almond biscotti. Which option fits Minh’s rule?",
    "choices": [
-    "Ice cream, because it is dessert",
-    "Biscuits, because they need no fridge",
-    "Both, because both are sweet"
+    "Gelato cones, because everyone loves ice cream",
+    "Almond biscotti, because they keep at room temperature",
+    "Both treats, since both are sweet"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans",
-   "explanation": "Both are desserts, but only the biscuits also satisfy the no-fridge condition."
+   "explanation": "Both are sweet, but gelato melts without a cooler while biscotti stay crisp at room temperature."
   },
   {
    "id": "rc-v2-en-012",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "A message says, “I like the café idea; I still need to check whether I’m free.” What is confirmed?",
+   "text": "A friend replies to your brunch invite: “That rooftop café looks amazing! I still need to check if I’m free this Sunday.” What is actually confirmed?",
    "choices": [
-    "The person will attend",
-    "The meeting time is agreed",
-    "The person likes the idea, but attendance is undecided"
+    "Your friend will definitely be there",
+    "Sunday’s table is already booked",
+    "Your friend likes the café idea, but attendance is undecided"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans",
-   "explanation": "Enthusiasm for the idea is explicit. Availability has not yet been checked, so attendance is not confirmed."
+   "explanation": "Enthusiasm for the café is clear, but Sunday availability has not been checked, so attendance is not confirmed."
   },
   {
    "id": "rc-v2-en-013",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "A lamp casts a sculpture’s shadow west. In this setup the shadow falls directly away from the lamp. Which side is the lamp on?",
+   "text": "At dawn, a courtyard statue casts a long shadow pointing straight west. Since a shadow always falls directly away from the light source, which side is the rising sun shining from?",
    "choices": [
     "East",
     "West",
@@ -695,61 +695,61 @@
    "source": "himorning",
    "license": "original",
    "theme": "creativeBreaks",
-   "explanation": "Westward shadow means light comes from the opposite side, east."
+   "explanation": "A westward shadow means the light is shining from the opposite direction: east."
   },
   {
    "id": "rc-v2-en-014",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "A photo shows empty chairs after a concert. The caption says only, “Ten minutes after the last song.” Which statement is supported without inventing a reason?",
+   "text": "An exhibition photo shows an empty stage with a single guitar stand. The caption reads only: “Ten minutes after the encore.” Which statement sticks strictly to the facts?",
    "choices": [
-    "The audience disliked the concert",
-    "The chairs were empty ten minutes after the last song",
-    "Nobody attended the concert"
+    "The crowd walked out early in boredom",
+    "The stage was empty ten minutes after the encore",
+    "The concert was canceled before it began"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "creativeBreaks",
-   "explanation": "The image and caption establish the scene and timing. They do not reveal attendance earlier or how people felt."
+   "explanation": "The photo and caption tell us what the stage looked like ten minutes after the encore, not how large the crowd was earlier."
   },
   {
    "id": "rc-v2-en-015",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "A poster brief says, “Keep the title above the photo, and the date below the photo.” In a draft the date sits between the title and the photo. What needs moving?",
+   "text": "An art director’s note says: “Put the festival title above the illustration, and the ticket date below the illustration.” In your draft, the date is sandwiched between the title and the illustration. What one move fixes it?",
    "choices": [
-    "Move the title below the photo",
-    "Move the photo below the date",
-    "Move the date below the photo"
+    "Move the title below the illustration",
+    "Delete the illustration",
+    "Move the date below the illustration"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "creativeBreaks",
-   "explanation": "The title already belongs above the photo. Moving the date below the photo restores the required order."
+   "explanation": "The title is already on top. Moving the date below the illustration puts all three elements in the requested order."
   },
   {
    "id": "rc-v2-en-016",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "A short film needs thirty seconds of continuous music. Three clips are twenty seconds, thirty-five seconds, and forty seconds. You can trim but cannot join clips. Of the three original clips, which is the shortest that can supply the music?",
+   "text": "Your morning reel needs 30 seconds of unbroken acoustic guitar. You have three takes lasting 20 seconds, 35 seconds, and 40 seconds. You may trim a take, but you cannot loop or splice takes together. Which is the shortest take that works?",
    "choices": [
-    "35 seconds",
-    "20 seconds",
-    "40 seconds"
+    "The 35-second take",
+    "The 20-second take",
+    "The 40-second take"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "creativeBreaks",
-   "explanation": "Twenty seconds is too short. Both longer clips can be trimmed to thirty seconds, and thirty-five is the shorter of those."
+   "explanation": "The 20-second take is too short. Both 35 and 40 seconds can be trimmed to 30, and 35 seconds is the shorter of the two."
   },
   {
    "id": "rc-v2-en-017",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "On a map, the market is directly north of the library. The café is directly east of the library. From the café, which direction leads toward the market?",
+   "text": "On your neighborhood map, the flower market sits due north of the library, and the bakery sits due east of the library. If you stand outside the bakery and look straight toward the flower market, which way are you facing?",
    "choices": [
     "Southeast",
     "Northwest",
@@ -759,135 +759,135 @@
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel",
-   "explanation": "From the café, the market lies north and west: northwest."
+   "explanation": "From the bakery (east of the library) to the flower market (north of the library), you look north and west: northwest."
   },
   {
    "id": "rc-v2-en-018",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "Bus A serves the museum but not the station. Bus B serves the station but not the museum. Both stop at Central. Starting at the station, which route reaches the museum?",
+   "text": "Tram A stops at the Art Museum but skips Central Station. Tram B starts at Central Station but never reaches the Art Museum. Both trams stop at River Square. Starting from Central Station, how do you ride to the Art Museum?",
    "choices": [
-    "Take A from the station, then B",
-    "Stay on B all the way",
-    "Take B to Central, then A"
+    "Board Tram A at Central Station, then switch to B",
+    "Stay on Tram B the entire trip",
+    "Ride Tram B to River Square, then transfer to Tram A"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel",
-   "explanation": "Bus B can take you from the station to the shared stop. Bus A then connects that stop to the museum."
+   "explanation": "Only Tram B serves Central Station. Riding it to the shared stop at River Square lets you transfer to Tram A for the Art Museum."
   },
   {
    "id": "rc-v2-en-019",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "The gallery closes at 8 p.m. today. Last entry is 30 minutes before closing. What is the latest you can get in?",
+   "text": "The botanical glasshouse closes its gates at 8:00 p.m. and stops admitting new visitors 30 minutes before closing. What is the latest time you can enter?",
    "choices": [
     "7:30 p.m.",
     "5:30 p.m.",
-    "8 p.m."
+    "8:00 p.m."
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel",
-   "explanation": "Thirty minutes before 8 p.m. is 7:30 p.m."
+   "explanation": "Thirty minutes before the 8:00 p.m. closing time is 7:30 p.m."
   },
   {
    "id": "rc-v2-en-020",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "You reach a station at 10:10. The express leaves at 10:20 and takes twenty minutes; the local leaves now and takes thirty-five. Ignoring other delays, which gets you there first?",
+   "text": "You step onto the platform at 10:10. The local train leaves immediately and takes 35 minutes; the express train waits until 10:20 to depart and takes 20 minutes. Assuming both run on time, which train reaches your stop first?",
    "choices": [
-    "The local, because it leaves now",
-    "The express, by five minutes",
-    "Both arrive together"
+    "The local, because it leaves right away",
+    "The express, arriving 5 minutes earlier",
+    "Both trains arrive at the exact same minute"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel",
-   "explanation": "The express arrives at 10:40, including its wait. The local arrives at 10:45, so the express wins by five minutes."
+   "explanation": "The local arrives at 10:45 (10:10 + 35 min). Even with a 10-minute wait, the express arrives at 10:40 (10:20 + 20 min), five minutes ahead."
   },
   {
    "id": "rc-v2-en-021",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "A sensor records an alert only when a room is below its light threshold. An alert appears at noon. What can the alert establish?",
+   "text": "A desk sensor logs a “low-light” note whenever brightness in the study drops below 150 lux. A low-light note appears at 12:00 noon. What does that log entry prove on its own?",
    "choices": [
-    "The room has no windows",
-    "The weather outside is cloudy",
-    "The room was below the set light threshold"
+    "The study has no windows at all",
+    "A thunderstorm is passing overhead",
+    "Brightness at the sensor was below 150 lux at noon"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "curiosity",
-   "explanation": "The alert establishes the measured light level. It does not identify the cause, such as weather or windows."
+   "explanation": "The sensor only measures the light level at the desk. Closed curtains, shade, or clouds could cause it, so only the lux threshold is proven."
   },
   {
    "id": "rc-v2-en-022",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "A clock loses one minute every hour. It is set correctly at noon. Three real hours later, what time will it show?",
+   "text": "A vintage wall clock loses 2 minutes every hour, while a stopped pocket watch stands still at 7:00. Over a full 24-hour day, which timepiece shows the exact right time more often?",
    "choices": [
-    "2:57",
-    "3:00",
-    "3:03"
+    "The stopped pocket watch, twice a day",
+    "The slow wall clock, every hour",
+    "Neither ever shows the right time"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "curiosity",
-   "explanation": "Three hours pass, but the clock loses three minutes. It shows three minutes before three: 2:57."
+   "explanation": "A stopped 12-hour watch is right twice every 24 hours (at 7:00 a.m. and 7:00 p.m.), while a clock losing 2 minutes an hour takes 15 days to drift back to the exact time."
   },
   {
    "id": "rc-v2-en-023",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "A photo file was created on Monday when an old print was scanned. The print has no date. What can Monday’s file date tell you?",
+   "text": "You scan an undated film photograph from your childhood on Monday morning, creating “scan_01.jpg”. What does Monday’s file creation timestamp actually tell you?",
    "choices": [
-    "The original photo was taken Monday",
-    "The digital file was made Monday",
-    "The print was first developed Monday"
+    "The childhood photo was originally snapped on a Monday",
+    "The digital scan file was saved on Monday",
+    "The film roll was developed on Monday"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "curiosity",
-   "explanation": "The file date records the scanning result, not when the original scene was photographed or the print developed."
+   "explanation": "A digital file timestamp records when the scan was created on your computer, not when the camera shutter clicked years ago."
   },
   {
    "id": "rc-v2-en-024",
    "kind": "readAndChoose",
    "language": "en",
-   "text": "A display shows twelve objects. A sign says that every wooden object is handmade. Four objects are wooden. What is the smallest number we know are handmade?",
+   "text": "A craft shelf displays 12 teacups. A card beside them states: “Every ceramic cup on this shelf is hand-thrown.” You count 4 ceramic cups and 8 glass cups. What is the minimum number of hand-thrown cups guaranteed by the card?",
    "choices": [
-    "Exactly twelve",
-    "None, because the others are unknown",
-    "At least four"
+    "All 12 cups",
+    "Zero, because the glass cups are unknown",
+    "At least 4 cups"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "curiosity",
-   "explanation": "The four wooden objects are guaranteed handmade. Others might be handmade too, but the sign does not establish that."
+   "explanation": "The rule guarantees the 4 ceramic cups are hand-thrown. Some glass cups might be handmade too, so we know at least 4 are."
   },
   {
    "id": "library-v3-en-clock",
    "kind": "riddle",
    "language": "en",
-   "text": "A clock loses one minute each hour. It is correct at noon. What will it show at 4 p.m.?",
+   "text": "You boil one ostrich egg in a big pot of water, and it takes 40 minutes to cook through. If you put two ostrich eggs into the same big pot of boiling water at the same time, how long do they take?",
    "choices": [
-    "3:56",
-    "4:00",
-    "4:04"
+    "Still 40 minutes",
+    "80 minutes",
+    "20 minutes"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife",
-   "explanation": "Four hours have passed, so the clock is four minutes slow."
+   "explanation": "Both eggs boil together in the pot at the same time, so they finish in 40 minutes."
   },
   {
    "id": "library-v3-en-coral",
@@ -978,17 +978,17 @@
    "id": "library-v3-en-race",
    "kind": "riddle",
    "language": "en",
-   "text": "You pass the runner in second place. What place are you in now?",
+   "text": "In a morning park sprint, you put on a burst of speed and overtake the runner in second place. What place are you in right now?",
    "choices": [
-    "First",
-    "Second",
-    "Third"
+    "First place",
+    "Second place",
+    "Third place"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans",
-   "explanation": "You take second place. The leader is still ahead."
+   "explanation": "When you pass the person in second place, you take their second-place spot—the first-place leader is still ahead of you."
   },
   {
    "id": "library-v3-en-rocky-planet",
@@ -1011,49 +1011,49 @@
    "id": "library-v3-en-shirts",
    "kind": "riddle",
    "language": "en",
-   "text": "A drawer holds only black and white socks. In the dark, how many must you take to guarantee a matching pair?",
+   "text": "Your sock drawer holds 10 black socks and 10 white socks mixed together. In the pitch-dark bedroom at 6:00 a.m., what is the smallest number of socks you must grab to be 100% sure you have a matching pair?",
    "choices": [
-    "Two",
-    "Three",
-    "Four"
+    "2 socks",
+    "3 socks",
+    "11 socks"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife",
-   "explanation": "The first two could be different. The third must match one of them."
+   "explanation": "With only two colors, the first two socks might be one black and one white, so the third sock is guaranteed to match one of them."
   },
   {
    "id": "library-v3-en-ticket-number",
    "kind": "riddle",
    "language": "en",
-   "text": "My ticket number is an even number between 35 and 41. Its digits add up to 11. What number is it?",
+   "text": "A rooster perches right on the sharp peak of a barn roof facing north. If it lays an egg at sunrise, which side of the roof does the egg roll down?",
    "choices": [
-    "36",
-    "38",
-    "40"
+    "The east side",
+    "Roosters do not lay eggs",
+    "The west side"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel",
-   "explanation": "Of the even numbers in that range, only 38 has digits that add to 11."
+   "explanation": "Hens lay eggs; roosters never lay eggs no matter which way the roof slopes."
   },
   {
    "id": "library-v3-en-tiles",
    "kind": "riddle",
    "language": "en",
-   "text": "A border repeats the colors blue, yellow, white. What color is tile 11?",
+   "text": "You speak my name out loud in a quiet library, and the very instant you say it, I am broken. What am I?",
    "choices": [
-    "Blue",
-    "Yellow",
-    "White"
+    "A whisper",
+    "Silence",
+    "An echo"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "creativeBreaks",
-   "explanation": "Tile 9 ends the third set. Tiles 10 and 11 start with blue and yellow."
+   "explanation": "The moment you make a sound to say “silence,” the silence itself is broken."
   },
   {
    "id": "library-v3-en-titan",
@@ -1110,119 +1110,119 @@
    "id": "logic-v2-en-001",
    "kind": "riddle",
    "language": "en",
-   "text": "Mai, Lin, and Bo each bring a different item: a cup, fruit, or bread. Mai brings neither food item, and Lin does not bring bread. What does Bo bring?",
+   "text": "A project takes three engineers three hours to debug. If three more equally fast engineers join the call only to ask for status updates, how long does the original three-hour work take when nobody actually shares the keyboard?",
    "choices": [
-    "Bread",
-    "A cup",
-    "Fruit"
+    "Still three hours",
+    "Ninety minutes",
+    "Six hours"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "workAndStudy",
-   "explanation": "Mai brings the cup. Lin must bring fruit, leaving bread for Bo."
+   "explanation": "If the extra people only listen in and cannot split the single keyboard task, the hands-on work still takes three hours."
   },
   {
    "id": "logic-v2-en-002",
    "kind": "riddle",
    "language": "en",
-   "text": "At 9:00, a file starts downloading for five minutes while a printer starts an eight-minute job. Both run without interruption. When are both jobs finished?",
+   "text": "Before a big exam, your tutor hands you three focus lozenges and says, “Take one every thirty minutes.” If you take the first one right now, how many minutes until all three are gone?",
    "choices": [
-    "9:05",
-    "9:08",
-    "9:13"
+    "90 minutes",
+    "60 minutes",
+    "45 minutes"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "workAndStudy",
-   "explanation": "The jobs run at the same time. The download ends at 9:05; the slower printer ends at 9:08."
+   "explanation": "You take the first at minute 0, the second at minute 30, and the third at minute 60. Three lozenges only have two gaps between them."
   },
   {
    "id": "logic-v2-en-003",
    "kind": "riddle",
    "language": "en",
-   "text": "Every draft with a red tag needs review. A draft needs review, but its tag is hidden. Must its tag be red?",
+   "text": "What belongs only to you on your badge and email signature, yet your coworkers use it far more often than you do?",
    "choices": [
-    "Yes, it must be red",
-    "No, it cannot be red",
-    "The rule does not tell us"
+    "Your desk chair",
+    "Your password",
+    "Your name"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "workAndStudy",
-   "explanation": "The rule tells us what red tags require. It does not say that only red-tagged drafts need review."
+   "explanation": "Other people call you by your name all day, while you rarely say your own name out loud."
   },
   {
    "id": "logic-v2-en-004",
    "kind": "riddle",
    "language": "en",
-   "text": "You cut one straight ribbon into four separate pieces, making one cut at a time and never stacking or folding it. How many cuts are needed?",
+   "text": "There are five crisp apples in the kitchen bowl, and you take away three for breakfast. How many apples do you have now?",
    "choices": [
-    "3",
-    "4",
-    "5"
+    "3 apples",
+    "2 apples",
+    "5 apples"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife",
-   "explanation": "One piece becomes two after one cut. Each additional cut adds one piece, so three cuts make four."
+   "explanation": "You took three apples, so those three are the ones in your hands. Two stay behind in the bowl."
   },
   {
    "id": "logic-v2-en-005",
    "kind": "riddle",
    "language": "en",
-   "text": "Two closed jars contain only tea or only coffee, one of each. Their labels say tea and coffee, but both labels are wrong. What is in the jar labeled coffee?",
+   "text": "During a morning power outage you walk into a dark kitchen holding one match. Inside are a candle, an oil lamp, and a gas stove. What do you light first?",
    "choices": [
-    "Coffee",
-    "Tea",
-    "Not enough information"
+    "The candle",
+    "The match",
+    "The gas stove"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife",
-   "explanation": "Both labels are wrong and each jar holds just one drink. The coffee-labeled jar must hold tea."
+   "explanation": "You cannot light the candle, lamp, or stove until you strike the match first."
   },
   {
    "id": "logic-v2-en-006",
    "kind": "riddle",
    "language": "en",
-   "text": "A small bag holds at most six kilograms. The camera weighs two, the books three, and the speaker four. Which pair fits and uses the full weight allowance?",
+   "text": "What gets wetter and wetter the more it dries your hands after your morning face wash?",
    "choices": [
-    "Books and speaker",
-    "Camera and books",
-    "Camera and speaker"
+    "A bar of soap",
+    "Warm tap water",
+    "A towel"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife",
-   "explanation": "The camera and speaker weigh exactly six kilograms. The books with the speaker weigh seven; the camera with books uses only five."
+   "explanation": "As a towel absorbs water to dry your skin, the fabric itself becomes wetter."
   },
   {
    "id": "logic-v2-en-007",
    "kind": "riddle",
    "language": "en",
-   "text": "Three friends can meet only on these days: An on Friday or Saturday, Bao on Saturday or Sunday, Chi on Friday or Saturday. Which day works for all three?",
+   "text": "Lan’s mother has five children. The first four are named Spring, Summer, Autumn, and Winter. What is the fifth child’s name?",
    "choices": [
-    "Saturday",
-    "Friday",
-    "Sunday"
+    "Lan",
+    "Monsoon",
+    "Morning"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans",
-   "explanation": "Saturday appears in all three lists. Bao is unavailable Friday, and An and Chi are unavailable Sunday."
+   "explanation": "The riddle begins with “Lan’s mother,” so Lan is the fifth child in the family."
   },
   {
    "id": "logic-v2-en-008",
    "kind": "riddle",
    "language": "en",
-   "text": "A key is in exactly one of three boxes: blue, green, or gold. Exactly one statement is true: “It is in blue” and “It is not in gold.” Where is the key?",
+   "text": "The café key is hidden in one of three boxes: blue, green, or gold. Two notes sit beside them: “It is in the blue box” and “It is not in the gold box.” Only one note tells the truth. Where is the key?",
    "choices": [
     "Blue box",
     "Green box",
@@ -1232,167 +1232,167 @@
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans",
-   "explanation": "Blue makes both statements true; gold makes both false. Green makes only “not in gold” true."
+   "explanation": "If it were in blue, both notes would be true; if it were in gold, both would be false. Only the green box makes just one note true."
   },
   {
    "id": "logic-v2-en-009",
    "kind": "riddle",
    "language": "en",
-   "text": "Four friends each send one private greeting to every other friend. A greeting from An to Bao is separate from Bao to An. How many greetings are sent?",
+   "text": "While planning the year’s group trips, Minh asks: “Some months have 30 days and some have 31. How many months have 28 days?”",
    "choices": [
-    "6",
-    "8",
-    "12"
+    "Only one",
+    "Four months",
+    "All 12 months"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans",
-   "explanation": "Each of four people sends three greetings. Four times three is twelve; each direction counts separately."
+   "explanation": "February stops at 28 (or 29), but every single month of the year reaches day 28."
   },
   {
    "id": "logic-v2-en-010",
    "kind": "riddle",
    "language": "en",
-   "text": "A zine has three steps: print, fold, and staple. Folding must follow printing, and stapling must follow folding. Which step is immediately before stapling?",
+   "text": "I have rows of keys that open no doors, space for your fingers, and I can fill a café with music. What am I?",
    "choices": [
-    "Fold",
-    "Print",
-    "Either print or fold"
+    "A piano",
+    "A keyring",
+    "A sketchbook"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "creativeBreaks",
-   "explanation": "The required order is print, fold, staple. Folding is the step directly before stapling."
+   "explanation": "A piano has musical keys rather than door locks."
   },
   {
    "id": "logic-v2-en-011",
    "kind": "riddle",
    "language": "en",
-   "text": "A rhythm repeats clap, tap, tap, rest, starting at beat one. What happens on beat seven?",
+   "text": "A sculptor carves a block of wood: the more material she takes away from the gap, the bigger it grows. What is she making bigger?",
    "choices": [
-    "Clap",
-    "Tap",
-    "Rest"
+    "The wood shavings",
+    "A hole or hollow",
+    "The chisel blade"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "creativeBreaks",
-   "explanation": "Beats five through eight repeat clap, tap, tap, rest. Beat seven is the second tap in that group."
+   "explanation": "Removing material makes a hole or hollow space larger."
   },
   {
    "id": "logic-v2-en-012",
    "kind": "riddle",
    "language": "en",
-   "text": "A photo is twelve units wide and eight tall. You crop only its width to make a square, keeping the full height. How many width units must you remove in total?",
+   "text": "Which word in the English dictionary is always spelled “incorrectly”?",
    "choices": [
-    "2",
-    "8",
-    "4"
+    "Rhythm",
+    "Queue",
+    "Incorrectly"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "creativeBreaks",
-   "explanation": "The square must be eight units wide to match its height. Twelve minus eight leaves four units to remove in total."
+   "explanation": "It is a play on words: the word “incorrectly” itself is literally spelled i-n-c-o-r-r-e-c-t-l-y."
   },
   {
    "id": "logic-v2-en-013",
    "kind": "riddle",
    "language": "en",
-   "text": "The café is reached by either of two routes: a direct twelve-minute bus ride, or a four-minute metro ride plus a five-minute transfer and a two-minute walk. Which is quicker?",
+   "text": "A city bus driver goes the wrong way down a one-way street right past two traffic officers, and neither stops him. Why?",
    "choices": [
-    "Metro route by one minute",
-    "Bus route by one minute",
-    "They take the same time"
+    "He was walking on the sidewalk",
+    "His bus was invisible",
+    "It was a leap day"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel",
-   "explanation": "The metro route takes four plus five plus two, or eleven minutes. That is one minute less than twelve."
+   "explanation": "He is a bus driver by profession, but he was walking on foot rather than driving his bus."
   },
   {
    "id": "logic-v2-en-014",
    "kind": "riddle",
    "language": "en",
-   "text": "A train leaves at 8:50 and arrives at 9:15 the same morning. How long is the trip?",
+   "text": "An electric metro train heads north at 60 km/h while a brisk morning wind blows west at 30 km/h. Which way does the smoke from the locomotive blow?",
    "choices": [
-    "35 minutes",
-    "25 minutes",
-    "65 minutes"
+    "Southwest",
+    "There is no smoke",
+    "Southeast"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel",
-   "explanation": "Ten minutes takes us to 9:00; fifteen more takes us to 9:15. The trip lasts twenty-five minutes."
+   "explanation": "An electric train runs on electricity, so it produces no smoke at all."
   },
   {
    "id": "logic-v2-en-015",
    "kind": "riddle",
    "language": "en",
-   "text": "A shuttle travels A, B, C, D, E in that order. You board at B and get off at E. Counting arrival at E but not boarding at B, how many stops do you reach?",
+   "text": "I have bustling cities without houses, winding rivers without water, and tall mountains without rocks. You fold me into your backpack. What am I?",
    "choices": [
-    "2",
-    "4",
-    "3"
+    "A compass",
+    "A train ticket",
+    "A map"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel",
-   "explanation": "After boarding at B, you reach C, D, and E: three stops."
+   "explanation": "A map shows cities, rivers, and mountains on paper without the physical objects."
   },
   {
    "id": "logic-v2-en-016",
    "kind": "riddle",
    "language": "en",
-   "text": "A sequence alternates two steps: add three, then multiply by two. Starting at two gives 2, 5, 10, 13, 26. What comes next?",
+   "text": "Which weighs more on a balanced scale: a full kilogram of fluffy pillow feathers or a kilogram of solid cast iron?",
    "choices": [
-    "29",
-    "52",
-    "30"
+    "They weigh the same",
+    "The cast iron",
+    "The pillow feathers"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "curiosity",
-   "explanation": "The step after multiplying is adding three. Twenty-six plus three is twenty-nine."
+   "explanation": "The feathers take up much more room, but one kilogram equals one kilogram either way."
   },
   {
    "id": "logic-v2-en-017",
    "kind": "riddle",
    "language": "en",
-   "text": "A jar has exactly three blue beads and two white beads. Without looking and without putting any back, how many must you take to guarantee two of the same color?",
+   "text": "Before Mount Everest was measured and named by surveyors, what was the highest mountain on Earth?",
    "choices": [
-    "2",
-    "3",
-    "4"
+    "K2",
+    "Still Mount Everest",
+    "Mount Kilimanjaro"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "curiosity",
-   "explanation": "Two draws could give one of each color. The third bead must match one of the two colors already drawn."
+   "explanation": "Mount Everest was already the tallest peak on the planet long before anyone measured or named it."
   },
   {
    "id": "logic-v2-en-018",
    "kind": "riddle",
    "language": "en",
-   "text": "In this card set, every triangle is striped. A card has no stripes. Which shape is ruled out by that rule?",
+   "text": "I follow you down the street every sunny morning, stretch tall at dawn, and vanish the moment you step into a dark room. What am I?",
    "choices": [
-    "A circle",
-    "A square",
-    "A triangle"
+    "Your alarm clock",
+    "A morning breeze",
+    "Your shadow"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "curiosity",
-   "explanation": "A triangle must have stripes. Without stripes, this card cannot be a triangle; the rule says nothing about circles or squares."
+   "explanation": "Your shadow only appears when light hits you and disappears in the dark."
   },
   {
    "id": "voice-v2-vi-001",
@@ -1722,33 +1722,33 @@
    "id": "library-v3-vi-cinema",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Rạp phim ghi: “Sau 8 giờ tối, vui lòng đi cửa B.” Bạn tới lúc 8:10 tối. Bạn đi cửa nào?",
+   "text": "Cuống vé rạp phim ghi: “Trước 8 giờ tối, mời đi lối quán cà phê sảnh (Cửa A). Sau 8 giờ tối quán đóng cửa, vui lòng đi lối cổng sân trong (Cửa B).” Bạn tới rạp lúc 8 giờ 10 tối. Bạn vào bằng lối nào?",
    "choices": [
-    "Cửa A",
-    "Cửa B",
-    "Cửa nào cũng được"
+    "Cửa A qua quán cà phê",
+    "Cửa B qua cổng sân trong",
+    "Cả hai cửa đều đang mở"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "creativeBreaks",
-   "explanation": "8:10 tối đã qua mốc 8 giờ nên bạn đi cửa B."
+   "explanation": "8 giờ 10 tối đã qua mốc 8 giờ, quán cà phê đã khóa nên bạn đi lối Cửa B ở sân trong."
   },
   {
    "id": "library-v3-vi-drop-off",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Minh nhắn: “Cứ gửi túi ở quầy lễ tân. Có gì đổi mình nhắn sau.” Minh chưa nhắn thêm. Bạn gửi túi ở đâu?",
+   "text": "Minh dặn: “Cứ gửi túi đồ tập ở quầy lễ tân giúp mình, trừ khi trước 8 giờ mình nhắn đổi chỗ.” Bây giờ đã 8 giờ 05 và điện thoại bạn không có tin nhắn mới nào từ Minh. Túi đồ nên gửi ở đâu?",
    "choices": [
-    "Quầy lễ tân",
-    "Bên ngoài tòa nhà",
-    "Mang về nhà"
+    "Ở quầy lễ tân",
+    "Đặt trên ghế đá ngoài sân",
+    "Cầm luôn về nhà cất tủ"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans",
-   "explanation": "Chưa có gì thay đổi nên bạn vẫn gửi túi ở quầy lễ tân."
+   "explanation": "Vì Minh không nhắn đổi kế hoạch trước 8 giờ nên cứ làm đúng lời hẹn ban đầu là gửi ở quầy lễ tân."
   },
   {
    "id": "library-v3-vi-jupiter-day",
@@ -1771,17 +1771,17 @@
    "id": "library-v3-vi-library-return",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Sách đến hạn trả vào thứ Ba. Hôm đó thư viện đóng cửa, nhưng khe trả sách vẫn mở. Bạn có trả được vào thứ Ba không?",
+   "text": "Cuốn sách thiết kế bạn mượn đến hạn trả vào thứ Ba. Biển trước cửa ghi: “Thứ Ba phòng đọc đóng cửa để đánh bóng sàn; hộp nhận trả sách tự động ngoài hiên vẫn mở 24/24.” Bạn có trả sách đúng hạn vào thứ Ba được không?",
    "choices": [
-    "Có, bỏ vào khe trả sách",
-    "Không, phải trả thứ Hai",
-    "Chỉ khi mượn lại sách"
+    "Được, chỉ cần thả sách vào hộp trả ngoài hiên",
+    "Không, phải đợi sáng thứ Tư phòng đọc mở cửa",
+    "Chỉ trả được nếu mượn chìa khóa của bảo vệ"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "workAndStudy",
-   "explanation": "Khe trả sách vẫn mở dù thư viện đóng cửa."
+   "explanation": "Hộp trả sách tự động ngoài hiên vẫn mở 24/24 ngay cả khi phòng đọc bên trong đóng cửa."
   },
   {
    "id": "library-v3-vi-outer-order",
@@ -1804,49 +1804,49 @@
    "id": "library-v3-vi-park",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Hai lối đi đều dẫn tới công viên. Một lối cho xe đạp, lối kia chỉ dành cho người đi bộ. Bạn được đạp xe ở lối nào?",
+   "text": "Hai con đường rợp bóng cây cùng dẫn ra hồ. Đường Vòng Hồ dành cho cả xe đạp và người chạy bộ, còn Đường Trúc chỉ dành riêng cho người đi bộ. Sáng nay bạn đang đạp xe. Bạn được đi đường nào?",
    "choices": [
-    "Cả hai lối",
-    "Lối đi bộ",
-    "Lối cho xe đạp"
+    "Đi đường nào cũng được",
+    "Đường Trúc",
+    "Đường Vòng Hồ"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel",
-   "explanation": "Chỉ một lối có biển cho phép xe đạp."
+   "explanation": "Chỉ Đường Vòng Hồ mới cho phép xe đạp lưu thông."
   },
   {
    "id": "library-v3-vi-recipe",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Công thức cho bốn người dùng hai quả trứng. Bạn làm nửa phần. Cần mấy quả trứng?",
+   "text": "Công thức bánh mì áp chảo ghi: “Đánh tan 2 quả trứng với sữa tươi cho 4 lát bánh dày.” Sáng nay bạn chỉ làm điểm tâm cho riêng mình với 2 lát bánh. Bạn cần dùng mấy quả trứng?",
    "choices": [
-    "Một",
-    "Hai",
-    "Bốn"
+    "Một quả trứng",
+    "Hai quả trứng",
+    "Bốn quả trứng"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife",
-   "explanation": "Làm nửa phần thì dùng nửa số trứng, tức một quả."
+   "explanation": "Làm nửa số lát bánh (2 lát thay vì 4 lát) thì dùng một nửa lượng trứng, tức 1 quả."
   },
   {
    "id": "library-v3-vi-shelter",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Trạm cứu hộ đang xin khăn sạch và đã có đủ chăn. Nếu chỉ mang được một món, bạn nên mang gì?",
+   "text": "Trạm cứu hộ thú cưng đăng tin: “Tụi mình đã được tặng dư chăn ấm, hiện chỉ đang rất thiếu khăn bông sạch để lau khô cho các bé sau khi tắm.” Túi bạn chỉ đựng vừa một món. Bạn nên mang gì tới?",
    "choices": [
-    "Một chiếc khăn sạch",
-    "Một chiếc chăn",
-    "Một chiếc khăn chưa giặt"
+    "Một chiếc khăn bông đã giặt sạch",
+    "Một chiếc chăn bông dày",
+    "Một chiếc khăn dính bùn chưa giặt"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans",
-   "explanation": "Trạm đang cần khăn sạch."
+   "explanation": "Trạm đã đủ chăn và đang cần đúng khăn bông sạch để tắm cho thú cưng."
   },
   {
    "id": "library-v3-vi-tide-pull",
@@ -1869,215 +1869,215 @@
    "id": "library-v3-vi-train",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Chuyến tàu 7:40 bỏ qua ga Đồi. Chuyến 7:48 có dừng. Bạn có hẹn gần ga Đồi. Nên đi chuyến nào?",
+   "text": "Chuyến tàu nhanh 7:40 lướt thẳng qua ga Đồi không dừng, còn chuyến tàu thường 7:48 ghé từng trạm, trong đó có ga Đồi. Quán cà phê bạn hẹn nằm ngay sát cổng ga Đồi. Bạn nên lên chuyến nào?",
    "choices": [
-    "7:40",
-    "7:48",
-    "Chuyến nào cũng được"
+    "Chuyến tàu nhanh 7:40",
+    "Chuyến tàu thường 7:48",
+    "Chuyến nào cũng xuống ga Đồi được"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel",
-   "explanation": "Trong hai chuyến, chỉ chuyến 7:48 dừng ở ga Đồi."
+   "explanation": "Tàu chạy nhanh đến mấy mà bỏ qua trạm cần xuống thì cũng không giúp được bạn; chỉ chuyến 7:48 mới dừng ở ga Đồi."
   },
   {
    "id": "rc-v2-vi-001",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Bạn có 20 phút trước cuộc gọi. Chỉnh bản nháp cần 20 phút liền; trả lời tin nhắn mất 5 phút. Kế hoạch nào hoàn tất bản nháp trước cuộc gọi?",
+   "text": "Còn đúng 20 phút nữa là tới cuộc họp 9 giờ. Pha một bình cà phê phin mất 5 phút đứng canh, còn duyệt lại bài thuyết trình cần đúng 20 phút tập trung liên tục. Làm sao để xong bài thuyết trình trước 9 giờ?",
    "choices": [
-    "Chỉnh bản nháp ngay",
-    "Trả lời tin nhắn rồi chỉnh",
-    "Chỉnh 10 phút, trả lời rồi chỉnh tiếp"
+    "Duyệt bài thuyết trình ngay, họp xong mới pha cà phê",
+    "Pha cà phê trước cho thơm rồi duyệt lướt",
+    "Duyệt 10 phút, ra pha cà phê rồi quay lại duyệt tiếp"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "workAndStudy",
-   "explanation": "Chỉnh ngay tận dụng đủ 20 phút liền. Trả lời trước chỉ còn 15 phút; chen tin nhắn vào giữa cũng làm gián đoạn việc chỉnh."
+   "explanation": "Duyệt ngay mới đủ trọn 20 phút liền mạch. Pha cà phê trước hay chen vào giữa đều làm thiếu thời gian và đứt mạch tập trung."
   },
   {
    "id": "rc-v2-vi-002",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Thư mục chung có Bản nháp 3 và Bản nháp 4. Tin nhắn ghi: “Mình sửa số liệu trong Bản 4, kết luận giữ nguyên.” Muốn xem số liệu đã sửa, nên mở bản nào?",
+   "text": "Thư mục nhóm có hai tệp: “BaoCao_Chot.xlsx” và “BaoCao_Chot_Thiet.xlsx”. Tin nhắn ghi: “Mình đã sửa lại bảng số liệu ở bản Chot_Thiet, phần kết luận giữ nguyên.” Muốn lấy số liệu đúng, bạn mở tệp nào?",
    "choices": [
-    "Bản 3 vì kết luận không đổi",
-    "Bản 4, nơi số liệu đã sửa",
-    "Bản nào cũng được vì số liệu chắc giống nhau"
+    "BaoCao_Chot vì kết luận không đổi",
+    "BaoCao_Chot_Thiet, nơi số liệu vừa được sửa",
+    "Tệp nào cũng được vì tên đều có chữ Chot"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "workAndStudy",
-   "explanation": "Tin nhắn phân biệt số liệu đã sửa với kết luận không đổi. Chỉ Bản 4 được xác nhận có phần số liệu mới."
+   "explanation": "Tin nhắn nói rõ chỉ bản Chot_Thiet mới được cập nhật bảng số liệu đã sửa."
   },
   {
    "id": "rc-v2-vi-003",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Buổi chia sẻ có hai phòng: một phòng 8 chỗ có màn hình, một phòng 12 chỗ không có màn hình. Có 9 người cần xem màn hình, đồ đạc không thể chuyển. Người tổ chức biết gì?",
+   "text": "Buổi chia sẻ sáng nay có hai phòng trống: phòng Kính có 8 ghế và màn chiếu; phòng Gỗ có 12 ghế nhưng không có màn chiếu. Nhóm có 9 người cần nhìn màn chiếu và không được chuyển bàn ghế. Điều gì đúng?",
    "choices": [
-    "Phòng 12 chỗ đáp ứng cả hai điều kiện",
-    "Phòng 8 chỗ đáp ứng cả hai điều kiện",
-    "Cách bố trí hiện tại chưa phòng nào đáp ứng đủ"
+    "Phòng Gỗ đáp ứng đủ cả hai yêu cầu",
+    "Phòng Kính đáp ứng đủ cả hai yêu cầu",
+    "Với cách bố trí hiện tại, chưa phòng nào đáp ứng đủ"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "workAndStudy",
-   "explanation": "Một phòng thiếu chỗ ngồi, phòng kia thiếu màn hình. Chỉ nhiều chỗ hơn vẫn chưa đáp ứng cả hai điều kiện."
+   "explanation": "Một phòng thiếu ghế ngồi, phòng kia lại thiếu màn chiếu, nên giữ nguyên hiện trạng thì chưa phòng nào đáp ứng đủ."
   },
   {
    "id": "rc-v2-vi-004",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Cổng nộp bài luôn hiện biên nhận cho bài đã nộp, và biên nhận luôn được giữ lại. Nhi không thấy biên nhận bài của mình. Theo quy tắc đã nêu, điều gì đúng?",
+   "text": "Hệ thống nộp bài luôn gửi ngay mã biên nhận vào hộp thư mỗi khi có bài tải lên thành công, và mã này không bao giờ tự xóa. Nhi kiểm tra khắp hộp thư mà chưa thấy mã nào. Theo quy tắc trên, điều gì chắc chắn đúng?",
    "choices": [
-    "Bài chưa được ghi nhận là đã nộp",
-    "Bài đã nộp nhưng bị từ chối",
-    "Người chấm chưa mở bài của cô ấy"
+    "Bài của Nhi chưa được hệ thống ghi nhận là đã nộp",
+    "Bài của Nhi đã nộp nhưng bị giảng viên trả về",
+    "Giảng viên chưa mở bài của Nhi ra đọc"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "workAndStudy",
-   "explanation": "Bài đã nộp phải có biên nhận hiện rõ. Không có biên nhận cho biết trạng thái nộp, chứ không cho biết quyết định hay việc đọc của người chấm."
+   "explanation": "Cứ nộp thành công là phải có mã biên nhận. Chưa có mã nghĩa là thao tác nộp bài chưa được ghi nhận."
   },
   {
    "id": "rc-v2-vi-005",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Công thức dùng 2 cốc gạo cho 4 phần ăn. Bạn cần 6 phần, giữ nguyên tỷ lệ. Lượng nào phù hợp?",
+   "text": "Sổ tay nấu ăn ghi: “Cứ 2 muỗng bột làm được bánh kếp cho 4 người ăn sáng.” Sáng nay có 6 người bạn ghé chơi. Giữ đúng tỉ lệ công thức, bạn cần đong mấy muỗng bột?",
    "choices": [
-    "Hai cốc rưỡi",
-    "Ba cốc",
-    "Bốn cốc"
+    "Hai muỗng rưỡi",
+    "Ba muỗng",
+    "Bốn muỗng"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife",
-   "explanation": "Mỗi phần dùng nửa cốc. Sáu phần vì thế cần ba cốc."
+   "explanation": "Bốn người dùng 2 muỗng, tức mỗi người nửa muỗng. Sáu người vì thế cần đúng 3 muỗng bột."
   },
   {
    "id": "rc-v2-vi-006",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Giấy báo ghi: “Kiện hàng ở ngăn tủ 12. Quầy cửa hàng chỉ nhận hàng trả lại.” Bạn muốn lấy kiện này. Nên đến đâu?",
+   "text": "Tin nhắn giao hàng báo: “Túi hạt cà phê của bạn đang ở tủ thông minh số 12. Quầy lễ tân sảnh chỉ nhận hàng đổi trả.” Bạn muốn lấy túi cà phê mới đặt. Bạn nên đi đâu?",
    "choices": [
-    "Quầy để nhận kiện hàng",
-    "Chỗ nào cũng nhận hàng được",
-    "Ngăn tủ 12"
+    "Ra quầy lễ tân sảnh hỏi lấy hàng",
+    "Chỗ nào cũng lấy hàng được",
+    "Tới tủ thông minh số 12"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife",
-   "explanation": "Giấy báo chỉ rõ lấy hàng ở ngăn 12, trả hàng ở quầy. Hai nơi có vai trò khác nhau."
+   "explanation": "Tin nhắn phân biệt rõ: lấy hàng mới ở tủ số 12, còn quầy lễ tân chỉ xử lý hàng đổi trả."
   },
   {
    "id": "rc-v2-vi-007",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Biển châm thêm đồ uống ghi: “Cùng cốc, cùng ngày, cần hóa đơn.” Bạn có hóa đơn hôm nay nhưng mang cốc hôm qua, không phải cốc trên hóa đơn. Còn thiếu điều kiện nào?",
+   "text": "Bảng gỗ ở quán cà phê ghi ưu đãi châm thêm: “Đúng chiếc ly đó, trong cùng buổi sáng, kèm hóa đơn.” Bạn cầm hóa đơn sáng nay nhưng lại mang theo chiếc ly giữ nhiệt của hôm qua. Bạn đang thiếu điều kiện nào?",
    "choices": [
-    "Dùng đúng cốc của lần mua hôm nay",
-    "Có hóa đơn",
-    "Quay lại trong cùng ngày"
+    "Dùng đúng chiếc ly của đơn hàng sáng nay",
+    "Giữ tờ hóa đơn mua nước",
+    "Quay lại trong cùng một buổi sáng"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife",
-   "explanation": "Hóa đơn và ngày đã đáp ứng hai điều kiện. Cốc còn phải đúng chiếc đi cùng lần mua đó."
+   "explanation": "Bạn đã có hóa đơn của sáng hôm nay, nhưng chiếc ly đang cầm lại là ly của hôm qua."
   },
   {
    "id": "rc-v2-vi-008",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Tủ sách cộng đồng nhận trả sách qua khe cả ngày; mượn sách cần tình nguyện viên từ 2 đến 5 giờ. Bạn tới lúc trưa, muốn trả một cuốn và mượn cuốn khác. Việc nào làm ngay được?",
+   "text": "Tiệm sách khu phố mở khe trả sách suốt 24 giờ, nhưng muốn mượn cuốn mới thì phải có thủ thư trực từ 2 giờ chiều. Bạn ghé tiệm đúng 12 giờ trưa để trả cuốn cũ và mượn cuốn mới. Việc nào làm được ngay lúc đó?",
    "choices": [
-    "Chỉ mượn cuốn mới",
-    "Chỉ trả cuốn đã mượn",
-    "Cả trả lẫn mượn"
+    "Chỉ mượn được cuốn mới",
+    "Chỉ trả được cuốn sách cũ qua khe",
+    "Làm được cả hai việc ngay lúc trưa"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife",
-   "explanation": "Khe trả sách dùng được lúc trưa. Muốn mượn phải đợi tình nguyện viên tới lúc 2 giờ."
+   "explanation": "Khe trả sách hoạt động cả ngày nên trả được ngay lúc trưa, còn muốn mượn sách mới phải đợi tới 2 giờ chiều."
   },
   {
    "id": "rc-v2-vi-009",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "An gặp được thứ Hai hoặc thứ Ba; Bảo rảnh thứ Ba hoặc thứ Tư. Chi chỉ rảnh thứ Ba. Ngày nào cả nhóm gặp được?",
+   "text": "Hai người cha và hai người con cùng vào quán phở sáng. Mỗi người gọi riêng một tô, chủ quán bưng ra đúng 3 tô mà ai cũng có nguyên một tô phở nóng trước mặt. Chuyện gì đã xảy ra?",
    "choices": [
-    "Thứ Hai",
-    "Thứ Tư",
-    "Thứ Ba"
+    "Có hai người ăn chung một tô",
+    "Chủ quán đếm thiếu khách",
+    "Họ là ba thế hệ: ông nội, bố và con trai"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans",
-   "explanation": "Thứ Ba có trong cả ba lịch rảnh. Mỗi ngày còn lại đều có ít nhất một người không tham gia được."
+   "explanation": "Bàn ăn có 3 người: ông nội, người bố (vừa là con của ông, vừa là cha của cháu) và cậu con trai."
   },
   {
    "id": "rc-v2-vi-010",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Trang nhắn: “Phim bắt đầu sau 8 giờ thì giữ chỗ cho mình. Trước 8 giờ mình còn trên tàu.” Suất chiếu bắt đầu 8 giờ rưỡi. Trang đã nhờ nhóm làm gì?",
+   "text": "Trang nhắn trong nhóm: “Nếu đêm nhạc bắt đầu sau 8 giờ tối thì giữ cho mình một ghế nhé. Trước 8 giờ mình vẫn còn trên tàu.” Quán thông báo mở màn lúc 8 giờ 30. Nhóm nên làm gì theo lời Trang?",
    "choices": [
-    "Giữ chỗ cho Trang",
-    "Chuyển suất chiếu sớm hơn",
-    "Cho rằng Trang không đến được"
+    "Giữ một ghế cho Trang",
+    "Nhờ ban nhạc diễn sớm lúc 7 giờ 45",
+    "Mặc định là Trang không tới được"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans",
-   "explanation": "Suất chiếu đáp ứng điều kiện Trang nêu: bắt đầu sau 8 giờ. Lời nhờ là giữ một chỗ."
+   "explanation": "8 giờ 30 là sau 8 giờ tối, khớp đúng điều kiện Trang nhờ cả nhóm giữ ghế."
   },
   {
    "id": "rc-v2-vi-011",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Minh nói: “Mình mang món ngọt được, nhưng không mang thứ cần tủ lạnh.” Chủ nhà gợi ý kem phải giữ đông hoặc bánh quy để được ở nhiệt độ phòng. Món nào hợp lời Minh?",
+   "text": "Minh nhận phần chuẩn bị: “Mình mang đồ ngọt đi dã ngoại được, miễn là món đó không cần bỏ thùng đá.” Chủ nhà gợi ý kem ốc quế hoặc bánh quy hạnh nhân. Món nào khớp với điều kiện của Minh?",
    "choices": [
-    "Kem vì đó là món ngọt",
-    "Bánh quy vì không cần tủ lạnh",
-    "Cả hai vì đều ngọt"
+    "Kem ốc quế vì ai đi dã ngoại cũng thích kem",
+    "Bánh quy hạnh nhân vì để nhiệt độ thường vẫn giòn",
+    "Cả hai món vì món nào cũng ngọt"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans",
-   "explanation": "Cả hai là món ngọt, nhưng chỉ bánh quy đáp ứng thêm điều kiện không cần tủ lạnh."
+   "explanation": "Cả hai đều là đồ ngọt, nhưng kem sẽ chảy nếu không có thùng đá, chỉ bánh quy hạnh nhân giữ được ở nhiệt độ phòng."
   },
   {
    "id": "rc-v2-vi-012",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Tin nhắn ghi: “Mình thích ý tưởng ra quán đó, nhưng còn phải xem hôm ấy có rảnh không.” Điều gì đã được xác nhận?",
+   "text": "Bạn rủ đi cà phê sân thượng và nhận được tin nhắn: “Quán đó nhìn mê quá! Để mình xem lại lịch Chủ nhật này có trống không nhé.” Điều gì đã được xác nhận?",
    "choices": [
-    "Người đó chắc chắn tham gia",
-    "Giờ gặp đã được chốt",
-    "Người đó thích ý tưởng, nhưng chưa chốt tham gia"
+    "Người bạn chắc chắn sẽ đi vào Chủ nhật",
+    "Bàn trên sân thượng đã được đặt xong",
+    "Người bạn thích gợi ý quán đó, nhưng chưa chốt tham gia"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans",
-   "explanation": "Sự hào hứng với ý tưởng đã rõ. Lịch rảnh chưa được kiểm tra, nên việc tham gia vẫn chưa chốt."
+   "explanation": "Bạn ấy rất hào hứng với quán, nhưng lịch Chủ nhật chưa kiểm tra xong nên việc đi hay không vẫn chưa chốt."
   },
   {
    "id": "rc-v2-vi-013",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Đèn chiếu bóng tượng về phía tây. Trong bố trí này, bóng đổ thẳng về hướng ngược với đèn. Đèn nằm phía nào của tượng?",
+   "text": "Nắng sớm chiếu qua sân làm bóng bức tượng đổ dài thẳng về hướng tây. Vì bóng luôn đổ về hướng đối diện với nguồn sáng, ánh nắng đang chiếu tới từ phía nào của bức tượng?",
    "choices": [
     "Phía đông",
     "Phía tây",
@@ -2087,61 +2087,61 @@
    "source": "himorning",
    "license": "original",
    "theme": "creativeBreaks",
-   "explanation": "Bóng hướng tây nghĩa là ánh sáng đến từ phía đối diện, tức phía đông."
+   "explanation": "Bóng đổ về hướng tây nghĩa là nguồn sáng nằm ở phía ngược lại: phía đông."
   },
   {
    "id": "rc-v2-vi-014",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Ảnh chụp những chiếc ghế trống sau buổi nhạc. Chú thích chỉ ghi: “Mười phút sau bài cuối.” Câu nào có căn cứ mà không tự đoán nguyên nhân?",
+   "text": "Bức ảnh triển lãm chụp sân khấu trống với chiếc giá đỡ đàn guitar. Dòng chú thích chỉ ghi vỏn vẹn: “Mười phút sau bài hát cuối.” Nhận định nào bám sát thông tin đã cho mà không tự suy diễn?",
    "choices": [
-    "Khán giả không thích buổi nhạc",
-    "Ghế trống mười phút sau bài cuối",
-    "Buổi nhạc không có người xem"
+    "Khán giả chán nên bỏ về sớm",
+    "Sân khấu trống mười phút sau bài hát cuối",
+    "Đêm nhạc đã bị hủy từ đầu"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "creativeBreaks",
-   "explanation": "Ảnh và chú thích cho biết cảnh lúc chụp cùng thời điểm. Chúng không cho biết lượng người xem trước đó hay cảm nhận của họ."
+   "explanation": "Ảnh và chú thích chỉ xác nhận khung cảnh sân khấu lúc 10 phút sau bài cuối, không nói gì về lượng khán giả trước đó."
   },
   {
    "id": "rc-v2-vi-015",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Yêu cầu áp phích ghi: “Tên sự kiện trên ảnh, ngày tổ chức dưới ảnh.” Bản nháp đặt ngày giữa tên và ảnh. Cần chuyển gì?",
+   "text": "Bố cục áp phích yêu cầu: “Tên đêm nhạc nằm trên hình minh họa, ngày diễn nằm dưới hình minh họa.” Trong bản nháp hiện tại, dòng ngày diễn lại nằm kẹp giữa tên đêm nhạc và hình minh họa. Cần chỉnh một thao tác nào?",
    "choices": [
-    "Đưa tên xuống dưới ảnh",
-    "Đưa ảnh xuống dưới ngày",
-    "Đưa ngày xuống dưới ảnh"
+    "Đưa tên đêm nhạc xuống dưới hình minh họa",
+    "Xóa hình minh họa đi",
+    "Đưa dòng ngày diễn xuống dưới hình minh họa"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "creativeBreaks",
-   "explanation": "Tên vốn cần nằm trên ảnh. Chuyển ngày xuống dưới ảnh sẽ khôi phục đúng thứ tự yêu cầu."
+   "explanation": "Tên đêm nhạc đã ở phía trên. Chỉ cần chuyển dòng ngày diễn xuống dưới hình minh họa là đúng thứ tự."
   },
   {
    "id": "rc-v2-vi-016",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Phim ngắn cần 30 giây nhạc liền mạch. Ba đoạn dài 20, 35 và 40 giây. Được cắt bớt, không được nối đoạn. Trong ba đoạn gốc, đoạn ngắn nhất đủ dùng dài bao lâu?",
+   "text": "Video ngắn cần đúng 30 giây nhạc guitar liền mạch. Bạn có 3 bản thu dài 20 giây, 35 giây và 40 giây. Bạn chỉ được cắt bớt chứ không được nối hay lặp đoạn. Bản thu ngắn nhất dùng được là bản nào?",
    "choices": [
-    "35 giây",
-    "20 giây",
-    "40 giây"
+    "Bản 35 giây",
+    "Bản 20 giây",
+    "Bản 40 giây"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "creativeBreaks",
-   "explanation": "Đoạn 20 giây quá ngắn. Hai đoạn dài hơn đều cắt còn 30 giây được; 35 giây là đoạn ngắn hơn trong hai đoạn ấy."
+   "explanation": "Bản 20 giây bị thiếu. Cả hai bản 35 giây và 40 giây đều cắt gọn về 30 giây được, trong đó 35 giây là bản ngắn hơn."
   },
   {
    "id": "rc-v2-vi-017",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Trên bản đồ, chợ ở thẳng phía bắc thư viện. Quán cà phê ở thẳng phía đông thư viện. Từ quán nhìn về chợ là hướng nào?",
+   "text": "Trên bản đồ khu phố, chợ hoa nằm thẳng hướng bắc của thư viện, còn tiệm bánh nằm thẳng hướng đông của thư viện. Đứng từ cửa tiệm bánh nhìn thẳng về phía chợ hoa là hướng nào?",
    "choices": [
     "Đông nam",
     "Tây bắc",
@@ -2151,135 +2151,135 @@
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel",
-   "explanation": "Từ quán, chợ nằm về phía bắc và phía tây, tức tây bắc."
+   "explanation": "Từ tiệm bánh (phía đông thư viện) nhìn sang chợ hoa (phía bắc thư viện), hướng nhìn vừa chếch lên bắc vừa sang tây, tức tây bắc."
   },
   {
    "id": "rc-v2-vi-018",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Xe A qua bảo tàng, không qua ga. Xe B qua ga, không qua bảo tàng. Cả hai dừng ở Trung tâm. Từ ga, đi thế nào để tới bảo tàng?",
+   "text": "Tuyến xe A đi qua Bảo tàng Mỹ thuật nhưng không ghé Ga Trung tâm. Tuyến xe B xuất phát từ Ga Trung tâm nhưng không tới Bảo tàng. Cả hai tuyến đều dừng ở Quảng trường Sông. Từ Ga Trung tâm đi Bảo tàng thế nào?",
    "choices": [
-    "Đi A từ ga rồi đổi B",
-    "Ngồi B suốt chuyến",
-    "Đi B đến Trung tâm rồi đổi A"
+    "Bắt tuyến A từ Ga Trung tâm rồi đổi sang tuyến B",
+    "Ngồi nguyên trên tuyến B suốt quãng đường",
+    "Đi tuyến B tới Quảng trường Sông rồi đổi sang tuyến A"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel",
-   "explanation": "Xe B đưa bạn từ ga tới điểm chung. Từ đó xe A mới đi tiếp tới bảo tàng."
+   "explanation": "Tại Ga Trung tâm chỉ có tuyến B. Đi tuyến B tới trạm chung Quảng trường Sông rồi chuyển sang tuyến A sẽ tới được Bảo tàng."
   },
   {
    "id": "rc-v2-vi-019",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Phòng tranh hôm nay mở đến 8 giờ tối và ngừng nhận khách trước giờ đóng cửa 30 phút. Muộn nhất bạn có thể vào lúc mấy giờ?",
+   "text": "Nhà kính thực vật đóng cửa lúc 8 giờ tối và ngừng nhận khách mới trước giờ đóng cửa 30 phút. Muộn nhất bạn có thể bước qua cổng vào lúc mấy giờ?",
    "choices": [
-    "7 giờ rưỡi tối",
-    "8 giờ tối",
-    "5 giờ rưỡi chiều"
+    "7 giờ 30 tối",
+    "5 giờ 30 chiều",
+    "8 giờ tối"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel",
-   "explanation": "Trừ 30 phút từ 8 giờ tối, bạn có giờ vào cửa cuối cùng là 7 giờ rưỡi tối."
+   "explanation": "Lấy mốc 8 giờ tối trừ đi 30 phút ngừng nhận khách, khung giờ vào cổng muộn nhất là 7 giờ 30 tối."
   },
   {
    "id": "rc-v2-vi-020",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Bạn tới ga lúc 10 giờ 10. Tàu nhanh rời lúc 10 giờ 20, đi 20 phút; tàu thường rời ngay, đi 35 phút. Không có chậm trễ khác, tàu nào đến trước?",
+   "text": "Bạn bước vào sân ga lúc 10 giờ 10. Tàu thường lăn bánh ngay lập tức và chạy hết 35 phút; tàu tốc hành đợi đến 10 giờ 20 mới chạy nhưng chỉ mất 20 phút di chuyển. Nếu cả hai đúng giờ, tàu nào đưa bạn tới đích sớm hơn?",
    "choices": [
-    "Tàu thường vì rời ngay",
-    "Tàu nhanh, sớm hơn 5 phút",
-    "Hai tàu đến cùng lúc"
+    "Tàu thường vì khởi hành ngay không phải chờ",
+    "Tàu tốc hành tới sớm hơn 5 phút",
+    "Hai tàu chạm ga đích cùng một phút"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel",
-   "explanation": "Tính cả lúc chờ, tàu nhanh tới lúc 10 giờ 40. Tàu thường tới 10 giờ 45, muộn hơn 5 phút."
+   "explanation": "Tàu thường tới nơi lúc 10 giờ 45. Tàu tốc hành dù chờ 10 phút nhưng tới nơi lúc 10 giờ 40, sớm hơn 5 phút."
   },
   {
    "id": "rc-v2-vi-021",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Cảm biến chỉ ghi cảnh báo khi ánh sáng trong phòng dưới ngưỡng đặt sẵn. Một cảnh báo xuất hiện lúc trưa. Cảnh báo cho biết được điều gì?",
+   "text": "Cảm biến trên bàn học chỉ bật thông báo “thiếu sáng” khi độ sáng tại bàn xuống dưới 150 lux. Đúng 12 giờ trưa, một thông báo thiếu sáng xuất hiện. Riêng thông báo đó chứng minh được điều gì?",
    "choices": [
-    "Phòng không có cửa sổ",
-    "Ngoài trời đang nhiều mây",
-    "Ánh sáng trong phòng dưới ngưỡng đặt sẵn"
+    "Căn phòng hoàn toàn không có cửa sổ",
+    "Ngoài trời đang có cơn giông lớn",
+    "Độ sáng tại bàn học lúc 12 giờ trưa thấp hơn 150 lux"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "curiosity",
-   "explanation": "Cảnh báo xác nhận mức sáng đo được, không xác định nguyên nhân như thời tiết hay cửa sổ."
+   "explanation": "Cảm biến chỉ đo mức sáng ngay tại bàn. Rèm kéo kín hay bóng râm đều có thể làm giảm sáng, nên chỉ kết luận chắc chắn được mức lux dưới ngưỡng."
   },
   {
    "id": "rc-v2-vi-022",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Đồng hồ chạy chậm 1 phút mỗi giờ. Nó được chỉnh đúng lúc 12 giờ trưa. Sau 3 giờ thực tế, nó chỉ mấy giờ?",
+   "text": "Một chiếc đồng hồ treo tường chạy chậm 2 phút mỗi giờ, còn một chiếc đồng hồ bỏ túi đã hết cót và đứng yên ở đúng số 7:00. Trong suốt một ngày 24 giờ, chiếc nào chỉ đúng giờ thật nhiều lần hơn?",
    "choices": [
-    "2 giờ 57",
-    "3 giờ",
-    "3 giờ 03"
+    "Chiếc đồng hồ đứng yên, đúng giờ 2 lần mỗi ngày",
+    "Chiếc đồng hồ chạy chậm 2 phút mỗi giờ",
+    "Cả hai không bao giờ chỉ đúng giờ thật"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "curiosity",
-   "explanation": "Lúc thời gian thật là 3 giờ, đồng hồ còn chậm 3 phút, nên chỉ 2 giờ 57."
+   "explanation": "Đồng hồ 12 tiếng đứng yên ở 7:00 vẫn khớp đúng giờ thật 2 lần mỗi ngày (7 giờ sáng và 7 giờ tối), trong khi đồng hồ chạy chậm cứ lệch dần suốt nhiều ngày."
   },
   {
    "id": "rc-v2-vi-023",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Tệp ảnh được tạo thứ Hai khi quét một tấm ảnh giấy cũ. Ảnh giấy không ghi ngày. Ngày tạo tệp thứ Hai cho biết điều gì?",
+   "text": "Sáng thứ Hai, bạn đem một tấm ảnh phim thời thơ ấu không ghi ngày tháng đi quét (scan) vào máy tính, tạo ra tệp “anh_ky_niem.jpg”. Thông tin “Ngày tạo tệp: Thứ Hai” cho bạn biết chắc điều gì?",
    "choices": [
-    "Ảnh gốc được chụp thứ Hai",
-    "Tệp kỹ thuật số được tạo thứ Hai",
-    "Ảnh giấy được rửa lần đầu thứ Hai"
+    "Tấm ảnh gốc thời thơ ấu được chụp vào ngày thứ Hai",
+    "Tệp ảnh kỹ thuật số được tạo ra vào thứ Hai",
+    "Cuộn phim ngày xưa được tráng rửa vào thứ Hai"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "curiosity",
-   "explanation": "Ngày tệp ghi nhận kết quả quét, không cho biết lúc chụp cảnh gốc hay lúc rửa ảnh giấy."
+   "explanation": "Ngày tạo tệp trên máy tính chỉ ghi nhận thời điểm bạn quét ảnh ra tệp số, không phải ngày bấm máy chụp tấm ảnh gốc."
   },
   {
    "id": "rc-v2-vi-024",
    "kind": "readAndChoose",
    "language": "vi",
-   "text": "Kệ trưng bày có 12 món. Biển ghi mọi món bằng gỗ đều làm thủ công. Có 4 món bằng gỗ. Ta biết chắc ít nhất mấy món làm thủ công?",
+   "text": "Kệ trà trưng bày 12 chiếc tách. Tấm biển nhỏ ghi: “Mọi chiếc tách gốm trên kệ này đều được nặn thủ công.” Bạn đếm thấy 4 chiếc tách gốm và 8 chiếc tách thủy tinh. Có ít nhất bao nhiêu chiếc tách chắc chắn được làm thủ công?",
    "choices": [
-    "Đúng 12 món",
-    "Không món nào vì chưa rõ các món khác",
-    "Ít nhất 4 món"
+    "Cả 12 chiếc tách",
+    "Không chắc chiếc nào vì còn 8 chiếc thủy tinh",
+    "Ít nhất 4 chiếc tách"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "curiosity",
-   "explanation": "Bốn món gỗ chắc chắn làm thủ công. Các món khác có thể cũng vậy, nhưng biển không xác nhận điều đó."
+   "explanation": "Tấm biển bảo đảm 4 chiếc tách gốm là hàng thủ công. Các tách thủy tinh có thể làm tay hoặc làm máy, nên chắc chắn có ít nhất 4 chiếc."
   },
   {
    "id": "library-v3-vi-clock",
    "kind": "riddle",
    "language": "vi",
-   "text": "Một chiếc đồng hồ chạy chậm một phút mỗi giờ. Lúc 12 giờ trưa, nó chỉ đúng giờ. Đến 4 giờ chiều, nó chỉ mấy giờ?",
+   "text": "Luộc chín 1 quả trứng đà điểu trong nồi nước sôi mất 40 phút. Nếu bạn bỏ cùng lúc 2 quả trứng đà điểu vào chung chiếc nồi lớn đó thì luộc chín mất bao lâu?",
    "choices": [
-    "3:56",
-    "4:00",
-    "4:04"
+    "Vẫn 40 phút",
+    "80 phút",
+    "20 phút"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife",
-   "explanation": "Sau bốn giờ, đồng hồ chậm bốn phút."
+   "explanation": "Hai quả trứng được luộc song song cùng lúc trong một nồi nước sôi nên vẫn chỉ mất 40 phút."
   },
   {
    "id": "library-v3-vi-coral",
@@ -2370,7 +2370,7 @@
    "id": "library-v3-vi-race",
    "kind": "riddle",
    "language": "vi",
-   "text": "Bạn vượt qua người đang chạy thứ hai. Giờ bạn đứng thứ mấy?",
+   "text": "Trong cuộc chạy bộ buổi sáng ở công viên, bạn bứt tốc vượt qua người đang chạy ở vị trí thứ hai. Ngay lúc vừa vượt qua đó, bạn đứng thứ mấy?",
    "choices": [
     "Thứ nhất",
     "Thứ hai",
@@ -2380,7 +2380,7 @@
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans",
-   "explanation": "Bạn chiếm vị trí thứ hai. Người dẫn đầu vẫn ở phía trước."
+   "explanation": "Vượt qua người thứ hai thì bạn thế chỗ của họ ở vị trí thứ hai, còn người dẫn đầu thứ nhất vẫn đang chạy phía trước."
   },
   {
    "id": "library-v3-vi-rocky-planet",
@@ -2403,49 +2403,49 @@
    "id": "library-v3-vi-shirts",
    "kind": "riddle",
    "language": "vi",
-   "text": "Ngăn kéo chỉ có tất đen và tất trắng. Trong bóng tối, bạn phải lấy ít nhất mấy chiếc để chắc chắn có một đôi cùng màu?",
+   "text": "Ngăn kéo có 10 chiếc tất đen và 10 chiếc tất trắng để lẫn vào nhau. Sáng sớm chưa bật đèn, bạn phải lấy ngẫu nhiên ít nhất mấy chiếc để chắc chắn 100% có một đôi tất cùng màu?",
    "choices": [
-    "Hai",
-    "Ba",
-    "Bốn"
+    "2 chiếc",
+    "3 chiếc",
+    "11 chiếc"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife",
-   "explanation": "Hai chiếc đầu có thể khác màu. Chiếc thứ ba chắc chắn trùng màu với một chiếc đã lấy."
+   "explanation": "Vì chỉ có hai màu đen và trắng nên 2 chiếc đầu có thể lệch màu nhau; lấy tới chiếc thứ 3 thì chắc chắn trùng màu với một trong hai chiếc kia."
   },
   {
    "id": "library-v3-vi-ticket-number",
    "kind": "riddle",
    "language": "vi",
-   "text": "Số vé của mình là số chẵn lớn hơn 35 và nhỏ hơn 41. Tổng hai chữ số là 11. Số vé là bao nhiêu?",
+   "text": "Một chú gà trống đứng ngay chính giữa sống mái nhà dốc đều sang hai bên đông và tây. Nếu lúc bình minh chú đẻ một quả trứng thì trứng sẽ lăn xuống phía nào?",
    "choices": [
-    "36",
-    "38",
-    "40"
+    "Lăn về phía đông",
+    "Gà trống không đẻ trứng",
+    "Lăn về phía tây"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel",
-   "explanation": "Trong ba số chẵn này, chỉ 38 có hai chữ số cộng lại bằng 11."
+   "explanation": "Chỉ có gà mái mới đẻ trứng, còn gà trống chỉ gáy báo thức chứ không bao giờ đẻ trứng."
   },
   {
    "id": "library-v3-vi-tiles",
    "kind": "riddle",
    "language": "vi",
-   "text": "Một hàng gạch lặp theo thứ tự xanh, vàng, trắng. Viên thứ 11 màu gì?",
+   "text": "Trong căn phòng yên tĩnh, tôi mỏng manh đến mức chỉ cần bạn cất tiếng gọi đúng tên tôi lên thôi là tôi lập tức vỡ tan. Tôi là gì?",
    "choices": [
-    "Xanh",
-    "Vàng",
-    "Trắng"
+    "Lời thì thầm",
+    "Sự im lặng",
+    "Tiếng vang"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "creativeBreaks",
-   "explanation": "Viên 9 khép lại nhóm thứ ba. Viên 10 màu xanh, viên 11 màu vàng."
+   "explanation": "Ngay khoảnh khắc bạn phát ra âm thanh để gọi tên “sự im lặng” thì sự im lặng đã bị phá vỡ."
   },
   {
    "id": "library-v3-vi-titan",
@@ -2502,119 +2502,119 @@
    "id": "logic-v2-vi-001",
    "kind": "riddle",
    "language": "vi",
-   "text": "Mai, Linh và Bảo mỗi người mang một món khác nhau: cốc, trái cây hoặc bánh mì. Mai không mang đồ ăn; Linh không mang bánh mì. Bảo mang gì?",
+   "text": "Một lỗi phần mềm cần 3 kỹ sư ngồi sửa trong 3 giờ. Nếu có thêm 3 người nữa vào cuộc gọi chỉ để hỏi “Xong chưa?”, nhưng vẫn chỉ có một bàn phím làm việc, thì phần việc gốc mất bao lâu?",
    "choices": [
-    "Bánh mì",
-    "Cốc",
-    "Trái cây"
+    "Vẫn mất 3 giờ",
+    "90 phút",
+    "6 giờ"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "workAndStudy",
-   "explanation": "Mai mang cốc. Linh phải mang trái cây, nên bánh mì là của Bảo."
+   "explanation": "Người vào hỏi thăm không chia sẻ được thao tác trên cùng một bàn phím, nên công việc thực tế vẫn cần đủ 3 giờ."
   },
   {
    "id": "logic-v2-vi-002",
    "kind": "riddle",
    "language": "vi",
-   "text": "Lúc 9 giờ, một tệp bắt đầu tải trong 5 phút, đồng thời máy in bắt đầu việc mất 8 phút. Cả hai chạy liên tục. Khi nào cả hai xong?",
+   "text": "Trước giờ ôn thi, bạn có 3 viên kẹo bạc hà tỉnh ngủ với lời dặn: “Cứ cách 30 phút ngậm 1 viên.” Nếu bạn ngậm viên đầu tiên ngay bây giờ, sau bao nhiêu phút bạn dùng tới viên cuối cùng?",
    "choices": [
-    "9 giờ 05",
-    "9 giờ 08",
-    "9 giờ 13"
+    "90 phút",
+    "60 phút",
+    "45 phút"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "workAndStudy",
-   "explanation": "Hai việc chạy cùng lúc. Tệp tải xong lúc 9 giờ 05; máy in chậm hơn, xong lúc 9 giờ 08."
+   "explanation": "Viên đầu ở phút 0, viên thứ hai ở phút 30 và viên thứ ba ở phút 60. Ba viên chỉ có hai khoảng nghỉ 30 phút ở giữa."
   },
   {
    "id": "logic-v2-vi-003",
    "kind": "riddle",
    "language": "vi",
-   "text": "Mọi bản nháp gắn nhãn đỏ đều cần xem lại. Một bản nháp cần xem lại, nhưng nhãn bị che. Nhãn đó có chắc là màu đỏ không?",
+   "text": "Thứ gì thuộc về riêng bạn trên thẻ nhân viên và chữ ký email, nhưng đồng nghiệp lại gọi và dùng nó nhiều hơn cả chính bạn?",
    "choices": [
-    "Chắc chắn màu đỏ",
-    "Chắc chắn không đỏ",
-    "Quy tắc chưa đủ để biết"
+    "Chiếc ghế xoay",
+    "Mật khẩu máy tính",
+    "Tên của bạn"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "workAndStudy",
-   "explanation": "Quy tắc nói bản gắn nhãn đỏ cần xem lại, chứ không nói chỉ bản nhãn đỏ mới cần xem lại."
+   "explanation": "Mọi người xung quanh gọi tên bạn suốt cả ngày, còn chính bạn lại hiếm khi tự gọi tên mình."
   },
   {
    "id": "logic-v2-vi-004",
    "kind": "riddle",
    "language": "vi",
-   "text": "Bạn cắt một dải ruy băng thẳng thành 4 đoạn rời, mỗi lần chỉ cắt một chỗ, không gấp hay chồng lên nhau. Cần mấy lần cắt?",
+   "text": "Trên bàn bếp có 5 quả táo giòn, bạn cầm lấy 3 quả để ăn sáng. Hỏi lúc này trong tay bạn có mấy quả táo?",
    "choices": [
-    "3",
-    "4",
-    "5"
+    "3 quả",
+    "2 quả",
+    "5 quả"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife",
-   "explanation": "Từ một đoạn, mỗi lần cắt thêm được một đoạn. Vì vậy 3 lần cắt tạo ra 4 đoạn."
+   "explanation": "Bạn lấy 3 quả nên bạn đang có đúng 3 quả đó. Hai quả còn lại là số táo nằm lại trên bàn."
   },
   {
    "id": "logic-v2-vi-005",
    "kind": "riddle",
    "language": "vi",
-   "text": "Hai hũ kín chứa trà hoặc cà phê, mỗi loại một hũ. Hai nhãn ghi trà và cà phê đều dán sai. Hũ ghi cà phê chứa gì?",
+   "text": "Sáng sớm mất điện, bạn bước vào căn bếp tối với đúng một que diêm. Trong bếp có cây nến, chiếc đèn dầu và bếp ga. Bạn phải đốt thứ gì đầu tiên?",
    "choices": [
-    "Cà phê",
-    "Trà",
-    "Không đủ thông tin"
+    "Cây nến",
+    "Que diêm",
+    "Bếp ga"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife",
-   "explanation": "Cả hai nhãn đều sai và mỗi hũ chỉ có một loại. Hũ ghi cà phê vì thế phải chứa trà."
+   "explanation": "Muốn châm nến, đèn dầu hay bếp ga thì trước hết bạn phải quẹt cháy que diêm trong tay đã."
   },
   {
    "id": "logic-v2-vi-006",
    "kind": "riddle",
    "language": "vi",
-   "text": "Túi nhỏ đựng tối đa 6 ký. Máy ảnh nặng 2 ký, sách 3 ký, loa 4 ký. Cặp nào vừa túi mà tận dụng hết mức cân?",
+   "text": "Thứ gì trong phòng tắm càng làm khô tay bạn sau khi rửa mặt buổi sáng thì chính nó lại càng ướt thêm?",
    "choices": [
-    "Sách và loa",
-    "Máy ảnh và sách",
-    "Máy ảnh và loa"
+    "Bánh xà phòng",
+    "Dòng nước ấm",
+    "Chiếc khăn lau"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "everydayLife",
-   "explanation": "Máy ảnh và loa đúng 6 ký. Sách với loa nặng 7 ký; máy ảnh với sách mới dùng 5 ký."
+   "explanation": "Khăn thấm nước để làm khô tay và mặt bạn, nên lau càng nhiều thì khăn càng ướt."
   },
   {
    "id": "logic-v2-vi-007",
    "kind": "riddle",
    "language": "vi",
-   "text": "Ba người bạn chỉ rảnh những ngày sau: An thứ Sáu hoặc thứ Bảy, Bảo thứ Bảy hoặc Chủ nhật, Chi thứ Sáu hoặc thứ Bảy. Ngày nào cả ba đều rảnh?",
+   "text": "Mẹ của Lan có 5 người con. Bốn người đầu tên là Xuân, Hạ, Thu, Đông. Hỏi người con thứ năm tên là gì?",
    "choices": [
-    "Thứ Bảy",
-    "Thứ Sáu",
-    "Chủ nhật"
+    "Lan",
+    "Mưa",
+    "Nắng"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans",
-   "explanation": "Thứ Bảy có trong cả ba danh sách. Bảo không rảnh thứ Sáu; An và Chi không rảnh Chủ nhật."
+   "explanation": "Ngay đầu câu đã nói “Mẹ của Lan”, nên người con thứ năm chính là Lan."
   },
   {
    "id": "logic-v2-vi-008",
    "kind": "riddle",
    "language": "vi",
-   "text": "Chìa khóa nằm trong đúng một hộp: xanh dương, xanh lá hoặc vàng. Trong hai câu “Ở hộp xanh dương” và “Không ở hộp vàng”, đúng một câu đúng. Khóa ở đâu?",
+   "text": "Chìa khóa quán cà phê nằm trong đúng một chiếc hộp: hộp xanh dương, hộp xanh lá hoặc hộp vàng. Trên bàn có hai mẩu giấy: “Khóa ở hộp xanh dương” và “Khóa không ở hộp vàng”. Biết rằng chỉ đúng một mẩu giấy nói thật. Khóa nằm ở đâu?",
    "choices": [
     "Hộp xanh dương",
     "Hộp xanh lá",
@@ -2624,167 +2624,167 @@
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans",
-   "explanation": "Hộp xanh dương khiến cả hai câu đúng; hộp vàng khiến cả hai sai. Hộp xanh lá chỉ khiến câu “không ở hộp vàng” đúng."
+   "explanation": "Nếu ở hộp xanh dương thì cả hai câu đều đúng; nếu ở hộp vàng thì cả hai câu đều sai. Chỉ hộp xanh lá giúp đúng một câu là thật."
   },
   {
    "id": "logic-v2-vi-009",
    "kind": "riddle",
    "language": "vi",
-   "text": "Bốn người bạn mỗi người gửi một lời chào riêng cho từng người còn lại. An gửi Bảo khác với Bảo gửi An. Có tất cả bao nhiêu lời chào?",
+   "text": "Khi lên lịch đi chơi cả năm, Minh đố cả nhóm: “Có tháng 30 ngày, có tháng 31 ngày. Vậy trong năm có bao nhiêu tháng có ngày 28?”",
    "choices": [
-    "6",
-    "8",
-    "12"
+    "Chỉ 1 tháng",
+    "4 tháng",
+    "Cả 12 tháng"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "peopleAndPlans",
-   "explanation": "Mỗi người gửi 3 lời chào. Có 4 người nên tổng là 12; mỗi chiều gửi được tính riêng."
+   "explanation": "Tháng Hai dừng ở 28 (hoặc 29) ngày, nhưng cả 12 tháng trong năm đều đi qua ngày 28."
   },
   {
    "id": "logic-v2-vi-010",
    "kind": "riddle",
    "language": "vi",
-   "text": "Làm một cuốn tạp chí nhỏ có ba bước: in, gấp, bấm ghim. Phải in trước khi gấp, gấp trước khi bấm ghim. Bước ngay trước bấm ghim là gì?",
+   "text": "Tôi có hàng chục phím nhưng chẳng mở được ổ khóa nào, chỉ cần đôi bàn tay chạm vào là vang lên giai điệu khắp quán nhỏ. Tôi là gì?",
    "choices": [
-    "Gấp",
-    "In",
-    "In hoặc gấp đều được"
+    "Đàn dương cầm (piano)",
+    "Chùm chìa khóa",
+    "Cuốn sổ vẽ"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "creativeBreaks",
-   "explanation": "Thứ tự bắt buộc là in, gấp, bấm ghim. Gấp là bước ngay trước bấm ghim."
+   "explanation": "Đàn piano có nhiều phím đàn để ngân vang giai điệu chứ không dùng để mở cửa."
   },
   {
    "id": "logic-v2-vi-011",
    "kind": "riddle",
    "language": "vi",
-   "text": "Một nhịp lặp lại theo thứ tự: vỗ tay, gõ, gõ, nghỉ, bắt đầu từ nhịp 1. Đến nhịp 7 là gì?",
+   "text": "Người thợ chạm khắc gỗ nhận ra một nghịch lý thú vị: càng lấy bớt phần gỗ ở giữa ra thì thứ đó lại càng to hơn. Thứ đang lớn dần lên là gì?",
    "choices": [
-    "Vỗ tay",
-    "Gõ",
-    "Nghỉ"
+    "Mùn cưa",
+    "Cái lỗ hoặc hốc rỗng",
+    "Lưỡi đục"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "creativeBreaks",
-   "explanation": "Nhịp 5 đến 8 lặp lại vỗ tay, gõ, gõ, nghỉ. Nhịp 7 là lần gõ thứ hai trong nhóm này."
+   "explanation": "Khoét bỏ càng nhiều vật liệu thì khoảng trống hay cái lỗ ở đó càng rộng ra."
   },
   {
    "id": "logic-v2-vi-012",
    "kind": "riddle",
    "language": "vi",
-   "text": "Ảnh rộng 12 đơn vị, cao 8 đơn vị. Bạn chỉ cắt bớt chiều rộng để thành hình vuông, giữ nguyên chiều cao. Tổng cộng phải bỏ bao nhiêu đơn vị chiều rộng?",
+   "text": "Trong từ điển tiếng Việt, từ nào dù bạn tra kỹ đến đâu vẫn luôn được viết là “sai”?",
    "choices": [
-    "2",
-    "8",
-    "4"
+    "Nghiêng",
+    "Trăn trở",
+    "Từ “sai”"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "creativeBreaks",
-   "explanation": "Hình vuông phải rộng 8 đơn vị để bằng chiều cao. Từ 12 xuống 8, tổng cộng cần bỏ 4 đơn vị."
+   "explanation": "Đây là câu đố chữ vui: bản thân chữ “sai” đương nhiên lúc nào cũng được đánh vần và viết là “sai”."
   },
   {
    "id": "logic-v2-vi-013",
    "kind": "riddle",
    "language": "vi",
-   "text": "Có hai đường tới quán: xe buýt đi thẳng mất 12 phút; hoặc tàu điện 4 phút, chuyển tuyến 5 phút rồi đi bộ thêm 2 phút. Đường nào nhanh hơn?",
+   "text": "Một bác tài xế xe buýt đi ngược chiều trên đường một chiều ngay trước mặt hai cảnh sát giao thông mà không hề bị tuýt còi. Vì sao?",
    "choices": [
-    "Đường tàu điện nhanh hơn 1 phút",
-    "Đường xe buýt nhanh hơn 1 phút",
-    "Hai đường bằng nhau"
+    "Bác ấy đang đi bộ trên vỉa hè",
+    "Chiếc xe buýt tàng hình",
+    "Hôm đó là ngày 29 tháng 2"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel",
-   "explanation": "Đường tàu điện mất 4 cộng 5 cộng 2, tổng 11 phút, ít hơn đường xe buýt 1 phút."
+   "explanation": "Nghề của bác là tài xế xe buýt, nhưng lúc đó bác đang đi bộ trên vỉa hè chứ không lái xe."
   },
   {
    "id": "logic-v2-vi-014",
    "kind": "riddle",
    "language": "vi",
-   "text": "Tàu khởi hành lúc 8 giờ 50 và đến lúc 9 giờ 15 trong cùng buổi sáng. Chuyến đi kéo dài bao lâu?",
+   "text": "Một đoàn tàu điện chạy về hướng bắc với tốc độ 60 km/giờ, gió sớm thổi mạnh về hướng tây 30 km/giờ. Khói từ đầu tàu sẽ bay về hướng nào?",
    "choices": [
-    "35 phút",
-    "25 phút",
-    "65 phút"
+    "Tây nam",
+    "Không có khói nào cả",
+    "Đông nam"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel",
-   "explanation": "Từ 8 giờ 50 đến 9 giờ là 10 phút, rồi thêm 15 phút nữa. Tổng cộng là 25 phút."
+   "explanation": "Tàu điện chạy bằng điện nên hoàn toàn không xả khói."
   },
   {
    "id": "logic-v2-vi-015",
    "kind": "riddle",
    "language": "vi",
-   "text": "Xe đi qua A, B, C, D, E theo thứ tự. Bạn lên ở B, xuống ở E. Tính cả điểm đến E nhưng không tính điểm lên B, bạn tới mấy điểm dừng?",
+   "text": "Tôi có thành phố nhưng không có ngôi nhà nào, có sông dài nhưng chẳng có giọt nước, có núi cao mà không có hòn đá. Bạn gấp tôi gọn trong ba lô. Tôi là gì?",
    "choices": [
-    "2",
-    "4",
-    "3"
+    "Chiếc la bàn",
+    "Tấm vé tàu",
+    "Tấm bản đồ"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "cityAndTravel",
-   "explanation": "Sau khi lên ở B, bạn tới C, D rồi E: tổng cộng 3 điểm dừng."
+   "explanation": "Tấm bản đồ vẽ thành phố, sông ngòi và núi non trên mặt giấy."
   },
   {
    "id": "logic-v2-vi-016",
    "kind": "riddle",
    "language": "vi",
-   "text": "Dãy số lặp hai bước: cộng 3, rồi nhân 2. Bắt đầu từ 2 được 2, 5, 10, 13, 26. Số tiếp theo là gì?",
+   "text": "Đặt lên bàn cân thăng bằng giữa một ký bông gòn phồng to và một ký sắt đặc nhỏ gọn, bên nào nặng hơn?",
    "choices": [
-    "29",
-    "52",
-    "30"
+    "Hai bên nặng bằng nhau",
+    "Một ký sắt đặc",
+    "Một ký bông gòn"
    ],
    "answerIndex": 0,
    "source": "himorning",
    "license": "original",
    "theme": "curiosity",
-   "explanation": "Sau bước nhân 2 đến bước cộng 3. Vì vậy 26 cộng 3 bằng 29."
+   "explanation": "Bông gòn chiếm nhiều diện tích hơn, nhưng đã cùng là một ký thì khối lượng hai bên bằng nhau."
   },
   {
    "id": "logic-v2-vi-017",
    "kind": "riddle",
    "language": "vi",
-   "text": "Lọ có đúng 3 hạt xanh và 2 hạt trắng. Không nhìn và không bỏ lại hạt nào, bạn cần lấy ít nhất mấy hạt để chắc chắn có hai hạt cùng màu?",
+   "text": "Trước khi đỉnh Everest được các nhà địa lý đo đạc và đặt tên, ngọn núi nào cao nhất Trái Đất?",
    "choices": [
-    "2",
-    "3",
-    "4"
+    "Đỉnh K2",
+    "Vẫn là đỉnh Everest",
+    "Đỉnh Kilimanjaro"
    ],
    "answerIndex": 1,
    "source": "himorning",
    "license": "original",
    "theme": "curiosity",
-   "explanation": "Hai lần lấy có thể được mỗi màu một hạt. Hạt thứ ba chắc chắn trùng một trong hai màu đã lấy."
+   "explanation": "Dù con người chưa đo hay đặt tên thì ngọn núi đó vẫn đã đứng sừng sững ở độ cao lớn nhất hành tinh."
   },
   {
    "id": "logic-v2-vi-018",
    "kind": "riddle",
    "language": "vi",
-   "text": "Trong bộ thẻ này, mọi hình tam giác đều có sọc. Một thẻ không có sọc. Theo quy tắc đó, hình nào bị loại trừ?",
+   "text": "Tôi lặng lẽ bước theo bạn dưới nắng sớm, vươn dài ra lúc bình minh nhưng biến mất ngay khi bạn bước vào phòng tối. Tôi là gì?",
    "choices": [
-    "Hình tròn",
-    "Hình vuông",
-    "Hình tam giác"
+    "Chuông báo thức",
+    "Cơn gió sớm",
+    "Cái bóng của bạn"
    ],
    "answerIndex": 2,
    "source": "himorning",
    "license": "original",
    "theme": "curiosity",
-   "explanation": "Hình tam giác bắt buộc có sọc. Thẻ không sọc không thể là tam giác; quy tắc không nói gì về hình tròn hay vuông."
+   "explanation": "Cái bóng chỉ xuất hiện khi có ánh sáng chiếu vào bạn và biến mất khi vào chỗ tối."
   }
  ]
 }

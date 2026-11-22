@@ -80,7 +80,7 @@ struct MovementIllustration:View {
  var body:some View {
   GeometryReader { geometry in
    let diameter=min(geometry.size.width,geometry.size.height)
-   TimelineView(.animation(minimumInterval:icon ? 1.0/24 : 1.0/30,paused:!running)) { context in
+   TimelineView(.animation(minimumInterval:icon ? 1.0/30 : 1.0/60,paused:!running)) { context in
     let seconds=elapsed+(running ? max(0,context.date.timeIntervalSince(resumedAt)) : 0)
     MovementFigure(selection:selection,phase:animated && !motionReduced ? seconds / Self.loopDuration(for:selection) : 0.22,icon:icon)
      .fill(.foreground).padding(diameter*(icon ? 0.025 : 0.10))

@@ -50,8 +50,7 @@ struct ExploreChallengesView: View {
          } label: {
           HStack(alignment: .top, spacing: 14) {
            let tint = MorningTheme.modeAccent(kind.preferredMode)
-           Image(systemName: kind.icon)
-            .font(.title3)
+           ChallengeIcon(kind: kind, size: 24, animated: true)
             .foregroundStyle(tint)
             .frame(width: 28, height: 28)
             .padding(8)

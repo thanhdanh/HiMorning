@@ -4,14 +4,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "workAndStudy",
-    "text": "Bạn có 20 phút trước cuộc gọi. Chỉnh bản nháp cần 20 phút liền; trả lời tin nhắn mất 5 phút. Kế hoạch nào hoàn tất bản nháp trước cuộc gọi?",
+    "text": "Còn đúng 20 phút nữa là tới cuộc họp 9 giờ. Pha một bình cà phê phin mất 5 phút đứng canh, còn duyệt lại bài thuyết trình cần đúng 20 phút tập trung liên tục. Làm sao để xong bài thuyết trình trước 9 giờ?",
     "choices": [
-      "Chỉnh bản nháp ngay",
-      "Trả lời tin nhắn rồi chỉnh",
-      "Chỉnh 10 phút, trả lời rồi chỉnh tiếp"
+      "Duyệt bài thuyết trình ngay, họp xong mới pha cà phê",
+      "Pha cà phê trước cho thơm rồi duyệt lướt",
+      "Duyệt 10 phút, ra pha cà phê rồi quay lại duyệt tiếp"
     ],
     "answerIndex": 0,
-    "explanation": "Chỉnh ngay tận dụng đủ 20 phút liền. Trả lời trước chỉ còn 15 phút; chen tin nhắn vào giữa cũng làm gián đoạn việc chỉnh.",
+    "explanation": "Duyệt ngay mới đủ trọn 20 phút liền mạch. Pha cà phê trước hay chen vào giữa đều làm thiếu thời gian và đứt mạch tập trung.",
     "source": "himorning",
     "license": "original"
   },
@@ -20,14 +20,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "workAndStudy",
-    "text": "Thư mục chung có Bản nháp 3 và Bản nháp 4. Tin nhắn ghi: “Mình sửa số liệu trong Bản 4, kết luận giữ nguyên.” Muốn xem số liệu đã sửa, nên mở bản nào?",
+    "text": "Thư mục nhóm có hai tệp: “BaoCao_Chot.xlsx” và “BaoCao_Chot_Thiet.xlsx”. Tin nhắn ghi: “Mình đã sửa lại bảng số liệu ở bản Chot_Thiet, phần kết luận giữ nguyên.” Muốn lấy số liệu đúng, bạn mở tệp nào?",
     "choices": [
-      "Bản 3 vì kết luận không đổi",
-      "Bản 4, nơi số liệu đã sửa",
-      "Bản nào cũng được vì số liệu chắc giống nhau"
+      "BaoCao_Chot vì kết luận không đổi",
+      "BaoCao_Chot_Thiet, nơi số liệu vừa được sửa",
+      "Tệp nào cũng được vì tên đều có chữ Chot"
     ],
     "answerIndex": 1,
-    "explanation": "Tin nhắn phân biệt số liệu đã sửa với kết luận không đổi. Chỉ Bản 4 được xác nhận có phần số liệu mới.",
+    "explanation": "Tin nhắn nói rõ chỉ bản Chot_Thiet mới được cập nhật bảng số liệu đã sửa.",
     "source": "himorning",
     "license": "original"
   },
@@ -36,14 +36,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "workAndStudy",
-    "text": "Buổi chia sẻ có hai phòng: một phòng 8 chỗ có màn hình, một phòng 12 chỗ không có màn hình. Có 9 người cần xem màn hình, đồ đạc không thể chuyển. Người tổ chức biết gì?",
+    "text": "Buổi chia sẻ sáng nay có hai phòng trống: phòng Kính có 8 ghế và màn chiếu; phòng Gỗ có 12 ghế nhưng không có màn chiếu. Nhóm có 9 người cần nhìn màn chiếu và không được chuyển bàn ghế. Điều gì đúng?",
     "choices": [
-      "Phòng 12 chỗ đáp ứng cả hai điều kiện",
-      "Phòng 8 chỗ đáp ứng cả hai điều kiện",
-      "Cách bố trí hiện tại chưa phòng nào đáp ứng đủ"
+      "Phòng Gỗ đáp ứng đủ cả hai yêu cầu",
+      "Phòng Kính đáp ứng đủ cả hai yêu cầu",
+      "Với cách bố trí hiện tại, chưa phòng nào đáp ứng đủ"
     ],
     "answerIndex": 2,
-    "explanation": "Một phòng thiếu chỗ ngồi, phòng kia thiếu màn hình. Chỉ nhiều chỗ hơn vẫn chưa đáp ứng cả hai điều kiện.",
+    "explanation": "Một phòng thiếu ghế ngồi, phòng kia lại thiếu màn chiếu, nên giữ nguyên hiện trạng thì chưa phòng nào đáp ứng đủ.",
     "source": "himorning",
     "license": "original"
   },
@@ -52,14 +52,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "workAndStudy",
-    "text": "Cổng nộp bài luôn hiện biên nhận cho bài đã nộp, và biên nhận luôn được giữ lại. Nhi không thấy biên nhận bài của mình. Theo quy tắc đã nêu, điều gì đúng?",
+    "text": "Hệ thống nộp bài luôn gửi ngay mã biên nhận vào hộp thư mỗi khi có bài tải lên thành công, và mã này không bao giờ tự xóa. Nhi kiểm tra khắp hộp thư mà chưa thấy mã nào. Theo quy tắc trên, điều gì chắc chắn đúng?",
     "choices": [
-      "Bài chưa được ghi nhận là đã nộp",
-      "Bài đã nộp nhưng bị từ chối",
-      "Người chấm chưa mở bài của cô ấy"
+      "Bài của Nhi chưa được hệ thống ghi nhận là đã nộp",
+      "Bài của Nhi đã nộp nhưng bị giảng viên trả về",
+      "Giảng viên chưa mở bài của Nhi ra đọc"
     ],
     "answerIndex": 0,
-    "explanation": "Bài đã nộp phải có biên nhận hiện rõ. Không có biên nhận cho biết trạng thái nộp, chứ không cho biết quyết định hay việc đọc của người chấm.",
+    "explanation": "Cứ nộp thành công là phải có mã biên nhận. Chưa có mã nghĩa là thao tác nộp bài chưa được ghi nhận.",
     "source": "himorning",
     "license": "original"
   },
@@ -68,14 +68,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "everydayLife",
-    "text": "Công thức dùng 2 cốc gạo cho 4 phần ăn. Bạn cần 6 phần, giữ nguyên tỷ lệ. Lượng nào phù hợp?",
+    "text": "Sổ tay nấu ăn ghi: “Cứ 2 muỗng bột làm được bánh kếp cho 4 người ăn sáng.” Sáng nay có 6 người bạn ghé chơi. Giữ đúng tỉ lệ công thức, bạn cần đong mấy muỗng bột?",
     "choices": [
-      "Hai cốc rưỡi",
-      "Ba cốc",
-      "Bốn cốc"
+      "Hai muỗng rưỡi",
+      "Ba muỗng",
+      "Bốn muỗng"
     ],
     "answerIndex": 1,
-    "explanation": "Mỗi phần dùng nửa cốc. Sáu phần vì thế cần ba cốc.",
+    "explanation": "Bốn người dùng 2 muỗng, tức mỗi người nửa muỗng. Sáu người vì thế cần đúng 3 muỗng bột.",
     "source": "himorning",
     "license": "original"
   },
@@ -84,14 +84,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "everydayLife",
-    "text": "Giấy báo ghi: “Kiện hàng ở ngăn tủ 12. Quầy cửa hàng chỉ nhận hàng trả lại.” Bạn muốn lấy kiện này. Nên đến đâu?",
+    "text": "Tin nhắn giao hàng báo: “Túi hạt cà phê của bạn đang ở tủ thông minh số 12. Quầy lễ tân sảnh chỉ nhận hàng đổi trả.” Bạn muốn lấy túi cà phê mới đặt. Bạn nên đi đâu?",
     "choices": [
-      "Quầy để nhận kiện hàng",
-      "Chỗ nào cũng nhận hàng được",
-      "Ngăn tủ 12"
+      "Ra quầy lễ tân sảnh hỏi lấy hàng",
+      "Chỗ nào cũng lấy hàng được",
+      "Tới tủ thông minh số 12"
     ],
     "answerIndex": 2,
-    "explanation": "Giấy báo chỉ rõ lấy hàng ở ngăn 12, trả hàng ở quầy. Hai nơi có vai trò khác nhau.",
+    "explanation": "Tin nhắn phân biệt rõ: lấy hàng mới ở tủ số 12, còn quầy lễ tân chỉ xử lý hàng đổi trả.",
     "source": "himorning",
     "license": "original"
   },
@@ -100,14 +100,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "everydayLife",
-    "text": "Biển châm thêm đồ uống ghi: “Cùng cốc, cùng ngày, cần hóa đơn.” Bạn có hóa đơn hôm nay nhưng mang cốc hôm qua, không phải cốc trên hóa đơn. Còn thiếu điều kiện nào?",
+    "text": "Bảng gỗ ở quán cà phê ghi ưu đãi châm thêm: “Đúng chiếc ly đó, trong cùng buổi sáng, kèm hóa đơn.” Bạn cầm hóa đơn sáng nay nhưng lại mang theo chiếc ly giữ nhiệt của hôm qua. Bạn đang thiếu điều kiện nào?",
     "choices": [
-      "Dùng đúng cốc của lần mua hôm nay",
-      "Có hóa đơn",
-      "Quay lại trong cùng ngày"
+      "Dùng đúng chiếc ly của đơn hàng sáng nay",
+      "Giữ tờ hóa đơn mua nước",
+      "Quay lại trong cùng một buổi sáng"
     ],
     "answerIndex": 0,
-    "explanation": "Hóa đơn và ngày đã đáp ứng hai điều kiện. Cốc còn phải đúng chiếc đi cùng lần mua đó.",
+    "explanation": "Bạn đã có hóa đơn của sáng hôm nay, nhưng chiếc ly đang cầm lại là ly của hôm qua.",
     "source": "himorning",
     "license": "original"
   },
@@ -116,14 +116,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "everydayLife",
-    "text": "Tủ sách cộng đồng nhận trả sách qua khe cả ngày; mượn sách cần tình nguyện viên từ 2 đến 5 giờ. Bạn tới lúc trưa, muốn trả một cuốn và mượn cuốn khác. Việc nào làm ngay được?",
+    "text": "Tiệm sách khu phố mở khe trả sách suốt 24 giờ, nhưng muốn mượn cuốn mới thì phải có thủ thư trực từ 2 giờ chiều. Bạn ghé tiệm đúng 12 giờ trưa để trả cuốn cũ và mượn cuốn mới. Việc nào làm được ngay lúc đó?",
     "choices": [
-      "Chỉ mượn cuốn mới",
-      "Chỉ trả cuốn đã mượn",
-      "Cả trả lẫn mượn"
+      "Chỉ mượn được cuốn mới",
+      "Chỉ trả được cuốn sách cũ qua khe",
+      "Làm được cả hai việc ngay lúc trưa"
     ],
     "answerIndex": 1,
-    "explanation": "Khe trả sách dùng được lúc trưa. Muốn mượn phải đợi tình nguyện viên tới lúc 2 giờ.",
+    "explanation": "Khe trả sách hoạt động cả ngày nên trả được ngay lúc trưa, còn muốn mượn sách mới phải đợi tới 2 giờ chiều.",
     "source": "himorning",
     "license": "original"
   },
@@ -132,14 +132,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "peopleAndPlans",
-    "text": "An gặp được thứ Hai hoặc thứ Ba; Bảo rảnh thứ Ba hoặc thứ Tư. Chi chỉ rảnh thứ Ba. Ngày nào cả nhóm gặp được?",
+    "text": "Hai người cha và hai người con cùng vào quán phở sáng. Mỗi người gọi riêng một tô, chủ quán bưng ra đúng 3 tô mà ai cũng có nguyên một tô phở nóng trước mặt. Chuyện gì đã xảy ra?",
     "choices": [
-      "Thứ Hai",
-      "Thứ Tư",
-      "Thứ Ba"
+      "Có hai người ăn chung một tô",
+      "Chủ quán đếm thiếu khách",
+      "Họ là ba thế hệ: ông nội, bố và con trai"
     ],
     "answerIndex": 2,
-    "explanation": "Thứ Ba có trong cả ba lịch rảnh. Mỗi ngày còn lại đều có ít nhất một người không tham gia được.",
+    "explanation": "Bàn ăn có 3 người: ông nội, người bố (vừa là con của ông, vừa là cha của cháu) và cậu con trai.",
     "source": "himorning",
     "license": "original"
   },
@@ -148,14 +148,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "peopleAndPlans",
-    "text": "Trang nhắn: “Phim bắt đầu sau 8 giờ thì giữ chỗ cho mình. Trước 8 giờ mình còn trên tàu.” Suất chiếu bắt đầu 8 giờ rưỡi. Trang đã nhờ nhóm làm gì?",
+    "text": "Trang nhắn trong nhóm: “Nếu đêm nhạc bắt đầu sau 8 giờ tối thì giữ cho mình một ghế nhé. Trước 8 giờ mình vẫn còn trên tàu.” Quán thông báo mở màn lúc 8 giờ 30. Nhóm nên làm gì theo lời Trang?",
     "choices": [
-      "Giữ chỗ cho Trang",
-      "Chuyển suất chiếu sớm hơn",
-      "Cho rằng Trang không đến được"
+      "Giữ một ghế cho Trang",
+      "Nhờ ban nhạc diễn sớm lúc 7 giờ 45",
+      "Mặc định là Trang không tới được"
     ],
     "answerIndex": 0,
-    "explanation": "Suất chiếu đáp ứng điều kiện Trang nêu: bắt đầu sau 8 giờ. Lời nhờ là giữ một chỗ.",
+    "explanation": "8 giờ 30 là sau 8 giờ tối, khớp đúng điều kiện Trang nhờ cả nhóm giữ ghế.",
     "source": "himorning",
     "license": "original"
   },
@@ -164,14 +164,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "peopleAndPlans",
-    "text": "Minh nói: “Mình mang món ngọt được, nhưng không mang thứ cần tủ lạnh.” Chủ nhà gợi ý kem phải giữ đông hoặc bánh quy để được ở nhiệt độ phòng. Món nào hợp lời Minh?",
+    "text": "Minh nhận phần chuẩn bị: “Mình mang đồ ngọt đi dã ngoại được, miễn là món đó không cần bỏ thùng đá.” Chủ nhà gợi ý kem ốc quế hoặc bánh quy hạnh nhân. Món nào khớp với điều kiện của Minh?",
     "choices": [
-      "Kem vì đó là món ngọt",
-      "Bánh quy vì không cần tủ lạnh",
-      "Cả hai vì đều ngọt"
+      "Kem ốc quế vì ai đi dã ngoại cũng thích kem",
+      "Bánh quy hạnh nhân vì để nhiệt độ thường vẫn giòn",
+      "Cả hai món vì món nào cũng ngọt"
     ],
     "answerIndex": 1,
-    "explanation": "Cả hai là món ngọt, nhưng chỉ bánh quy đáp ứng thêm điều kiện không cần tủ lạnh.",
+    "explanation": "Cả hai đều là đồ ngọt, nhưng kem sẽ chảy nếu không có thùng đá, chỉ bánh quy hạnh nhân giữ được ở nhiệt độ phòng.",
     "source": "himorning",
     "license": "original"
   },
@@ -180,14 +180,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "peopleAndPlans",
-    "text": "Tin nhắn ghi: “Mình thích ý tưởng ra quán đó, nhưng còn phải xem hôm ấy có rảnh không.” Điều gì đã được xác nhận?",
+    "text": "Bạn rủ đi cà phê sân thượng và nhận được tin nhắn: “Quán đó nhìn mê quá! Để mình xem lại lịch Chủ nhật này có trống không nhé.” Điều gì đã được xác nhận?",
     "choices": [
-      "Người đó chắc chắn tham gia",
-      "Giờ gặp đã được chốt",
-      "Người đó thích ý tưởng, nhưng chưa chốt tham gia"
+      "Người bạn chắc chắn sẽ đi vào Chủ nhật",
+      "Bàn trên sân thượng đã được đặt xong",
+      "Người bạn thích gợi ý quán đó, nhưng chưa chốt tham gia"
     ],
     "answerIndex": 2,
-    "explanation": "Sự hào hứng với ý tưởng đã rõ. Lịch rảnh chưa được kiểm tra, nên việc tham gia vẫn chưa chốt.",
+    "explanation": "Bạn ấy rất hào hứng với quán, nhưng lịch Chủ nhật chưa kiểm tra xong nên việc đi hay không vẫn chưa chốt.",
     "source": "himorning",
     "license": "original"
   },
@@ -196,14 +196,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "creativeBreaks",
-    "text": "Đèn chiếu bóng tượng về phía tây. Trong bố trí này, bóng đổ thẳng về hướng ngược với đèn. Đèn nằm phía nào của tượng?",
+    "text": "Nắng sớm chiếu qua sân làm bóng bức tượng đổ dài thẳng về hướng tây. Vì bóng luôn đổ về hướng đối diện với nguồn sáng, ánh nắng đang chiếu tới từ phía nào của bức tượng?",
     "choices": [
       "Phía đông",
       "Phía tây",
       "Phía bắc"
     ],
     "answerIndex": 0,
-    "explanation": "Bóng hướng tây nghĩa là ánh sáng đến từ phía đối diện, tức phía đông.",
+    "explanation": "Bóng đổ về hướng tây nghĩa là nguồn sáng nằm ở phía ngược lại: phía đông.",
     "source": "himorning",
     "license": "original"
   },
@@ -212,14 +212,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "creativeBreaks",
-    "text": "Ảnh chụp những chiếc ghế trống sau buổi nhạc. Chú thích chỉ ghi: “Mười phút sau bài cuối.” Câu nào có căn cứ mà không tự đoán nguyên nhân?",
+    "text": "Bức ảnh triển lãm chụp sân khấu trống với chiếc giá đỡ đàn guitar. Dòng chú thích chỉ ghi vỏn vẹn: “Mười phút sau bài hát cuối.” Nhận định nào bám sát thông tin đã cho mà không tự suy diễn?",
     "choices": [
-      "Khán giả không thích buổi nhạc",
-      "Ghế trống mười phút sau bài cuối",
-      "Buổi nhạc không có người xem"
+      "Khán giả chán nên bỏ về sớm",
+      "Sân khấu trống mười phút sau bài hát cuối",
+      "Đêm nhạc đã bị hủy từ đầu"
     ],
     "answerIndex": 1,
-    "explanation": "Ảnh và chú thích cho biết cảnh lúc chụp cùng thời điểm. Chúng không cho biết lượng người xem trước đó hay cảm nhận của họ.",
+    "explanation": "Ảnh và chú thích chỉ xác nhận khung cảnh sân khấu lúc 10 phút sau bài cuối, không nói gì về lượng khán giả trước đó.",
     "source": "himorning",
     "license": "original"
   },
@@ -228,14 +228,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "creativeBreaks",
-    "text": "Yêu cầu áp phích ghi: “Tên sự kiện trên ảnh, ngày tổ chức dưới ảnh.” Bản nháp đặt ngày giữa tên và ảnh. Cần chuyển gì?",
+    "text": "Bố cục áp phích yêu cầu: “Tên đêm nhạc nằm trên hình minh họa, ngày diễn nằm dưới hình minh họa.” Trong bản nháp hiện tại, dòng ngày diễn lại nằm kẹp giữa tên đêm nhạc và hình minh họa. Cần chỉnh một thao tác nào?",
     "choices": [
-      "Đưa tên xuống dưới ảnh",
-      "Đưa ảnh xuống dưới ngày",
-      "Đưa ngày xuống dưới ảnh"
+      "Đưa tên đêm nhạc xuống dưới hình minh họa",
+      "Xóa hình minh họa đi",
+      "Đưa dòng ngày diễn xuống dưới hình minh họa"
     ],
     "answerIndex": 2,
-    "explanation": "Tên vốn cần nằm trên ảnh. Chuyển ngày xuống dưới ảnh sẽ khôi phục đúng thứ tự yêu cầu.",
+    "explanation": "Tên đêm nhạc đã ở phía trên. Chỉ cần chuyển dòng ngày diễn xuống dưới hình minh họa là đúng thứ tự.",
     "source": "himorning",
     "license": "original"
   },
@@ -244,14 +244,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "creativeBreaks",
-    "text": "Phim ngắn cần 30 giây nhạc liền mạch. Ba đoạn dài 20, 35 và 40 giây. Được cắt bớt, không được nối đoạn. Trong ba đoạn gốc, đoạn ngắn nhất đủ dùng dài bao lâu?",
+    "text": "Video ngắn cần đúng 30 giây nhạc guitar liền mạch. Bạn có 3 bản thu dài 20 giây, 35 giây và 40 giây. Bạn chỉ được cắt bớt chứ không được nối hay lặp đoạn. Bản thu ngắn nhất dùng được là bản nào?",
     "choices": [
-      "35 giây",
-      "20 giây",
-      "40 giây"
+      "Bản 35 giây",
+      "Bản 20 giây",
+      "Bản 40 giây"
     ],
     "answerIndex": 0,
-    "explanation": "Đoạn 20 giây quá ngắn. Hai đoạn dài hơn đều cắt còn 30 giây được; 35 giây là đoạn ngắn hơn trong hai đoạn ấy.",
+    "explanation": "Bản 20 giây bị thiếu. Cả hai bản 35 giây và 40 giây đều cắt gọn về 30 giây được, trong đó 35 giây là bản ngắn hơn.",
     "source": "himorning",
     "license": "original"
   },
@@ -260,14 +260,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "cityAndTravel",
-    "text": "Trên bản đồ, chợ ở thẳng phía bắc thư viện. Quán cà phê ở thẳng phía đông thư viện. Từ quán nhìn về chợ là hướng nào?",
+    "text": "Trên bản đồ khu phố, chợ hoa nằm thẳng hướng bắc của thư viện, còn tiệm bánh nằm thẳng hướng đông của thư viện. Đứng từ cửa tiệm bánh nhìn thẳng về phía chợ hoa là hướng nào?",
     "choices": [
       "Đông nam",
       "Tây bắc",
       "Tây nam"
     ],
     "answerIndex": 1,
-    "explanation": "Từ quán, chợ nằm về phía bắc và phía tây, tức tây bắc.",
+    "explanation": "Từ tiệm bánh (phía đông thư viện) nhìn sang chợ hoa (phía bắc thư viện), hướng nhìn vừa chếch lên bắc vừa sang tây, tức tây bắc.",
     "source": "himorning",
     "license": "original"
   },
@@ -276,14 +276,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "cityAndTravel",
-    "text": "Xe A qua bảo tàng, không qua ga. Xe B qua ga, không qua bảo tàng. Cả hai dừng ở Trung tâm. Từ ga, đi thế nào để tới bảo tàng?",
+    "text": "Tuyến xe A đi qua Bảo tàng Mỹ thuật nhưng không ghé Ga Trung tâm. Tuyến xe B xuất phát từ Ga Trung tâm nhưng không tới Bảo tàng. Cả hai tuyến đều dừng ở Quảng trường Sông. Từ Ga Trung tâm đi Bảo tàng thế nào?",
     "choices": [
-      "Đi A từ ga rồi đổi B",
-      "Ngồi B suốt chuyến",
-      "Đi B đến Trung tâm rồi đổi A"
+      "Bắt tuyến A từ Ga Trung tâm rồi đổi sang tuyến B",
+      "Ngồi nguyên trên tuyến B suốt quãng đường",
+      "Đi tuyến B tới Quảng trường Sông rồi đổi sang tuyến A"
     ],
     "answerIndex": 2,
-    "explanation": "Xe B đưa bạn từ ga tới điểm chung. Từ đó xe A mới đi tiếp tới bảo tàng.",
+    "explanation": "Tại Ga Trung tâm chỉ có tuyến B. Đi tuyến B tới trạm chung Quảng trường Sông rồi chuyển sang tuyến A sẽ tới được Bảo tàng.",
     "source": "himorning",
     "license": "original"
   },
@@ -292,14 +292,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "cityAndTravel",
-    "text": "Phòng tranh hôm nay mở đến 8 giờ tối và ngừng nhận khách trước giờ đóng cửa 30 phút. Muộn nhất bạn có thể vào lúc mấy giờ?",
+    "text": "Nhà kính thực vật đóng cửa lúc 8 giờ tối và ngừng nhận khách mới trước giờ đóng cửa 30 phút. Muộn nhất bạn có thể bước qua cổng vào lúc mấy giờ?",
     "choices": [
-      "7 giờ rưỡi tối",
-      "8 giờ tối",
-      "5 giờ rưỡi chiều"
+      "7 giờ 30 tối",
+      "5 giờ 30 chiều",
+      "8 giờ tối"
     ],
     "answerIndex": 0,
-    "explanation": "Trừ 30 phút từ 8 giờ tối, bạn có giờ vào cửa cuối cùng là 7 giờ rưỡi tối.",
+    "explanation": "Lấy mốc 8 giờ tối trừ đi 30 phút ngừng nhận khách, khung giờ vào cổng muộn nhất là 7 giờ 30 tối.",
     "source": "himorning",
     "license": "original"
   },
@@ -308,14 +308,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "cityAndTravel",
-    "text": "Bạn tới ga lúc 10 giờ 10. Tàu nhanh rời lúc 10 giờ 20, đi 20 phút; tàu thường rời ngay, đi 35 phút. Không có chậm trễ khác, tàu nào đến trước?",
+    "text": "Bạn bước vào sân ga lúc 10 giờ 10. Tàu thường lăn bánh ngay lập tức và chạy hết 35 phút; tàu tốc hành đợi đến 10 giờ 20 mới chạy nhưng chỉ mất 20 phút di chuyển. Nếu cả hai đúng giờ, tàu nào đưa bạn tới đích sớm hơn?",
     "choices": [
-      "Tàu thường vì rời ngay",
-      "Tàu nhanh, sớm hơn 5 phút",
-      "Hai tàu đến cùng lúc"
+      "Tàu thường vì khởi hành ngay không phải chờ",
+      "Tàu tốc hành tới sớm hơn 5 phút",
+      "Hai tàu chạm ga đích cùng một phút"
     ],
     "answerIndex": 1,
-    "explanation": "Tính cả lúc chờ, tàu nhanh tới lúc 10 giờ 40. Tàu thường tới 10 giờ 45, muộn hơn 5 phút.",
+    "explanation": "Tàu thường tới nơi lúc 10 giờ 45. Tàu tốc hành dù chờ 10 phút nhưng tới nơi lúc 10 giờ 40, sớm hơn 5 phút.",
     "source": "himorning",
     "license": "original"
   },
@@ -324,14 +324,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "curiosity",
-    "text": "Cảm biến chỉ ghi cảnh báo khi ánh sáng trong phòng dưới ngưỡng đặt sẵn. Một cảnh báo xuất hiện lúc trưa. Cảnh báo cho biết được điều gì?",
+    "text": "Cảm biến trên bàn học chỉ bật thông báo “thiếu sáng” khi độ sáng tại bàn xuống dưới 150 lux. Đúng 12 giờ trưa, một thông báo thiếu sáng xuất hiện. Riêng thông báo đó chứng minh được điều gì?",
     "choices": [
-      "Phòng không có cửa sổ",
-      "Ngoài trời đang nhiều mây",
-      "Ánh sáng trong phòng dưới ngưỡng đặt sẵn"
+      "Căn phòng hoàn toàn không có cửa sổ",
+      "Ngoài trời đang có cơn giông lớn",
+      "Độ sáng tại bàn học lúc 12 giờ trưa thấp hơn 150 lux"
     ],
     "answerIndex": 2,
-    "explanation": "Cảnh báo xác nhận mức sáng đo được, không xác định nguyên nhân như thời tiết hay cửa sổ.",
+    "explanation": "Cảm biến chỉ đo mức sáng ngay tại bàn. Rèm kéo kín hay bóng râm đều có thể làm giảm sáng, nên chỉ kết luận chắc chắn được mức lux dưới ngưỡng.",
     "source": "himorning",
     "license": "original"
   },
@@ -340,14 +340,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "curiosity",
-    "text": "Đồng hồ chạy chậm 1 phút mỗi giờ. Nó được chỉnh đúng lúc 12 giờ trưa. Sau 3 giờ thực tế, nó chỉ mấy giờ?",
+    "text": "Một chiếc đồng hồ treo tường chạy chậm 2 phút mỗi giờ, còn một chiếc đồng hồ bỏ túi đã hết cót và đứng yên ở đúng số 7:00. Trong suốt một ngày 24 giờ, chiếc nào chỉ đúng giờ thật nhiều lần hơn?",
     "choices": [
-      "2 giờ 57",
-      "3 giờ",
-      "3 giờ 03"
+      "Chiếc đồng hồ đứng yên, đúng giờ 2 lần mỗi ngày",
+      "Chiếc đồng hồ chạy chậm 2 phút mỗi giờ",
+      "Cả hai không bao giờ chỉ đúng giờ thật"
     ],
     "answerIndex": 0,
-    "explanation": "Lúc thời gian thật là 3 giờ, đồng hồ còn chậm 3 phút, nên chỉ 2 giờ 57.",
+    "explanation": "Đồng hồ 12 tiếng đứng yên ở 7:00 vẫn khớp đúng giờ thật 2 lần mỗi ngày (7 giờ sáng và 7 giờ tối), trong khi đồng hồ chạy chậm cứ lệch dần suốt nhiều ngày.",
     "source": "himorning",
     "license": "original"
   },
@@ -356,14 +356,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "curiosity",
-    "text": "Tệp ảnh được tạo thứ Hai khi quét một tấm ảnh giấy cũ. Ảnh giấy không ghi ngày. Ngày tạo tệp thứ Hai cho biết điều gì?",
+    "text": "Sáng thứ Hai, bạn đem một tấm ảnh phim thời thơ ấu không ghi ngày tháng đi quét (scan) vào máy tính, tạo ra tệp “anh_ky_niem.jpg”. Thông tin “Ngày tạo tệp: Thứ Hai” cho bạn biết chắc điều gì?",
     "choices": [
-      "Ảnh gốc được chụp thứ Hai",
-      "Tệp kỹ thuật số được tạo thứ Hai",
-      "Ảnh giấy được rửa lần đầu thứ Hai"
+      "Tấm ảnh gốc thời thơ ấu được chụp vào ngày thứ Hai",
+      "Tệp ảnh kỹ thuật số được tạo ra vào thứ Hai",
+      "Cuộn phim ngày xưa được tráng rửa vào thứ Hai"
     ],
     "answerIndex": 1,
-    "explanation": "Ngày tệp ghi nhận kết quả quét, không cho biết lúc chụp cảnh gốc hay lúc rửa ảnh giấy.",
+    "explanation": "Ngày tạo tệp trên máy tính chỉ ghi nhận thời điểm bạn quét ảnh ra tệp số, không phải ngày bấm máy chụp tấm ảnh gốc.",
     "source": "himorning",
     "license": "original"
   },
@@ -372,14 +372,14 @@
     "kind": "readAndChoose",
     "language": "vi",
     "theme": "curiosity",
-    "text": "Kệ trưng bày có 12 món. Biển ghi mọi món bằng gỗ đều làm thủ công. Có 4 món bằng gỗ. Ta biết chắc ít nhất mấy món làm thủ công?",
+    "text": "Kệ trà trưng bày 12 chiếc tách. Tấm biển nhỏ ghi: “Mọi chiếc tách gốm trên kệ này đều được nặn thủ công.” Bạn đếm thấy 4 chiếc tách gốm và 8 chiếc tách thủy tinh. Có ít nhất bao nhiêu chiếc tách chắc chắn được làm thủ công?",
     "choices": [
-      "Đúng 12 món",
-      "Không món nào vì chưa rõ các món khác",
-      "Ít nhất 4 món"
+      "Cả 12 chiếc tách",
+      "Không chắc chiếc nào vì còn 8 chiếc thủy tinh",
+      "Ít nhất 4 chiếc tách"
     ],
     "answerIndex": 2,
-    "explanation": "Bốn món gỗ chắc chắn làm thủ công. Các món khác có thể cũng vậy, nhưng biển không xác nhận điều đó.",
+    "explanation": "Tấm biển bảo đảm 4 chiếc tách gốm là hàng thủ công. Các tách thủy tinh có thể làm tay hoặc làm máy, nên chắc chắn có ít nhất 4 chiếc.",
     "source": "himorning",
     "license": "original"
   }
