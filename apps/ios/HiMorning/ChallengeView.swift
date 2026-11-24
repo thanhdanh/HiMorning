@@ -737,7 +737,7 @@ private struct ReadingPromptWord: View {
  private var color: Color {
   switch status {
   case .correct: MorningTheme.correctWord
-  case .incorrect: .red
+  case .incorrect: MorningTheme.error
   case .pending: MorningTheme.muted
   }
  }

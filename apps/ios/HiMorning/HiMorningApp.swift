@@ -551,36 +551,15 @@ struct HomeView:View {
   NavigationStack {
    ScrollView {
     VStack(alignment:.leading,spacing:14) {
-     HStack(spacing:8) {
-      Label {
-       Text("HiMorning.").modifier(MorningTypography.wordmark)
-        .lineLimit(1).minimumScaleFactor(0.75)
-      } icon: {
-       Image(systemName:"sunrise").font(.system(size:20,weight:.bold))
-      }.labelStyle(.titleAndIcon)
-       .fixedSize(horizontal:true,vertical:true).accessibilityLabel("Hi Morning")
-      Spacer(minLength:4)
-      GlassEffectContainer(spacing:8) {
-      HStack(spacing:6) {
-      Button {showingBedtime=true} label:{Image(systemName:"moon.stars").frame(width:44,height:44).glassEffect(.regular.interactive(),in:.circle).contentShape(Rectangle())}
-       .buttonStyle(.plain)
-       .accessibilityIdentifier("bedtimeAnchor").accessibilityLabel(appText("Evening & health"))
-      Button {progress=true} label:{Image(systemName:"chart.bar").frame(width:44,height:44).glassEffect(.regular.interactive(),in:.circle).contentShape(Rectangle())}
-       .buttonStyle(.plain)
-       .accessibilityIdentifier("morningProgress").accessibilityLabel(appText("Your progress"))
-      Button {pro=true} label:{Text(appText("Pro")).font(.subheadline.weight(.semibold)).frame(minWidth:44,minHeight:44).glassEffect(.regular.interactive(),in:.circle).contentShape(Rectangle())}
-       .buttonStyle(.plain)
-       .accessibilityIdentifier("hiMorningPro").accessibilityLabel("HiMorning Pro")
-      Menu {
-       Picker(appText("Language"),selection:$language) {
-        Text(appText("Use device language")).tag("system")
-        Text(appText("English")).tag("en")
-        Text(appText("Vietnamese")).tag("vi")
-       }
-      } label: {Image(systemName:"globe").frame(width:44,height:44).glassEffect(.regular.interactive(),in:.circle)}
-       .buttonStyle(.plain)
-       .accessibilityIdentifier("appLanguage").accessibilityLabel(appText("Language"))
+     ViewThatFits(in:.horizontal) {
+      HStack(spacing:8) {
+       brandWordmark
+       Spacer(minLength:4)
+       headerActions
       }
+      VStack(alignment:.leading,spacing:12) {
+       brandWordmark
+       headerActions
       }
      }
      HStack(alignment:.firstTextBaseline) {
@@ -689,7 +668,7 @@ struct HomeView:View {
  private var brandWordmark:some View {
   Label {
    Text("HiMorning.")
-    .modifier(MorningTypography.heading(size:22,relativeTo:.title2))
+    .modifier(MorningTypography.wordmark)
     .lineLimit(1).minimumScaleFactor(0.75)
   } icon: {
    Image(systemName:"sunrise").font(.system(size:20,weight:.bold))

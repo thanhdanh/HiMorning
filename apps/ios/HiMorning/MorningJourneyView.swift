@@ -171,7 +171,9 @@ struct MorningPurposePicker:View {
         }.fixedSize(horizontal:false,vertical:true)
         Spacer(minLength:0)
         if store.journey?.focus == focus {Image(systemName:"checkmark.circle.fill")}
-       }.padding(20).frame(maxWidth:.infinity,alignment:.leading).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:20))
+       }.padding(20).frame(maxWidth:.infinity,alignment:.leading)
+        .background(MorningTheme.surface,in:RoundedRectangle(cornerRadius:MorningTheme.Radius.card))
+        .overlay {RoundedRectangle(cornerRadius:MorningTheme.Radius.card).strokeBorder(store.journey?.focus == focus ? MorningTheme.accent : MorningTheme.line,lineWidth:store.journey?.focus == focus ? 1.5 : 1)}
       }.buttonStyle(.plain).accessibilityIdentifier("morningPurpose-"+focus.rawValue)
      }
      if let message=store.message {Text(message).font(.footnote).foregroundStyle(MorningTheme.muted)}
