@@ -26,7 +26,6 @@ struct MorningProgressView:View {
   NavigationStack {
    ScrollView {
     VStack(alignment:.leading,spacing:24) {
-     Text(appText("Your progress")).modifier(MorningTypography.heading()).accessibilityAddTraits(.isHeader)
      if let error=model.progressError {
       Label(error,systemImage:"exclamationmark.circle").font(.subheadline).foregroundStyle(MorningTheme.muted)
      }
@@ -38,7 +37,9 @@ struct MorningProgressView:View {
         monthlyCard(month)
         modeSummary
        }.padding(.top,12)
-      }.font(.headline).accessibilityIdentifier("moreProgressDetails")
+      }.font(.headline).padding(20).background(MorningTheme.surface,in:RoundedRectangle(cornerRadius:MorningTheme.Radius.card))
+       .overlay {RoundedRectangle(cornerRadius:MorningTheme.Radius.card).strokeBorder(MorningTheme.line)}
+       .accessibilityIdentifier("moreProgressDetails")
       DisclosureGroup(appText("Most completed challenges")) {
        let reflection=MorningReflection(entries:entries)
        VStack(alignment:.leading,spacing:8) {
@@ -50,7 +51,8 @@ struct MorningProgressView:View {
          Text(appText("No repeat favorite yet.")).foregroundStyle(MorningTheme.muted)
         }
        }.font(.subheadline).padding(.top,12)
-      }.font(.headline)
+      }.font(.headline).padding(20).background(MorningTheme.surface,in:RoundedRectangle(cornerRadius:MorningTheme.Radius.card))
+       .overlay {RoundedRectangle(cornerRadius:MorningTheme.Radius.card).strokeBorder(MorningTheme.line)}
       DisclosureGroup(appText("Past 30 days")) {
        if entries.isEmpty {Text(appText("Your next morning is a fresh start.")).font(.subheadline).foregroundStyle(MorningTheme.muted)}
        ForEach(entries) {entry in entryRow(entry,showDate:true).padding(.top,16)}
@@ -142,8 +144,9 @@ struct MorningProgressView:View {
         Text(day.date,format:.dateTime.weekday(.abbreviated).locale(appLocale())).font(.caption2)
         Text(day.date,format:.dateTime.day().locale(appLocale())).font(.subheadline.weight(.semibold))
         Text(dayMode(day,compact:true)).font(.caption2)
-         .multilineTextAlignment(.center).fixedSize(horizontal:false,vertical:true).frame(minHeight:30,alignment:.top)
-       }.padding(.vertical,10).frame(minWidth:44,maxWidth:.infinity)
+         .lineLimit(1).minimumScaleFactor(0.75)
+         .multilineTextAlignment(.center).frame(minHeight:20,alignment:.top)
+       }.padding(.vertical,10).frame(maxWidth:.infinity,minHeight:44)
       }
      }
     }

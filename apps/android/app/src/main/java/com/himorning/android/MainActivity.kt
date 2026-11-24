@@ -88,7 +88,7 @@ class MainActivity : ComponentActivity() {
                 Surface(Modifier.fillMaxSize(), color = MorningTheme.colors.canvas) {
                     var showSplash by remember { mutableStateOf(true) }
                     LaunchedEffect(Unit) {
-                        kotlinx.coroutines.delay(1250)
+                        kotlinx.coroutines.delay(650)
                         showSplash = false
                     }
                     Box(Modifier.fillMaxSize()) {
@@ -132,11 +132,6 @@ private fun MorningSplashOverlay() {
                         brush = Brush.radialGradient(listOf(colors.yellow.copy(alpha = 0.32f * p), colors.yellow.copy(alpha = 0.08f * p), Color.Transparent)),
                         radius = size.minDimension * 0.48f,
                     )
-                    drawCircle(
-                        color = colors.yellow.copy(alpha = 0.25f * p),
-                        radius = (38.dp.toPx() + 26.dp.toPx() * p),
-                        style = Stroke(width = 2.dp.toPx()),
-                    )
                     val rayCount = 12
                     val outerRadius = 60.dp.toPx()
                     val innerRadius = 50.dp.toPx()
@@ -152,8 +147,8 @@ private fun MorningSplashOverlay() {
                             cap = StrokeCap.Round,
                         )
                     }
-                    drawCircle(color = colors.yellow, radius = 38.dp.toPx() * (0.76f + 0.24f * rise.value))
                 }
+                MorningSun(size = 96.dp, showRays = false)
             }
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,

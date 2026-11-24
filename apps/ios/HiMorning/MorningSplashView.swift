@@ -18,11 +18,6 @@ struct MorningSplashView:View {
 
    VStack(spacing:20) {
     ZStack {
-     Circle()
-      .stroke(MorningTheme.yellow.opacity(0.28),lineWidth:2)
-      .frame(width:entered ? 148 : 92,height:entered ? 148 : 92)
-      .opacity(entered ? 0.55 : 0)
-
      ForEach(0..<12,id:\.self) { index in
       Capsule()
        .fill(MorningTheme.accent.opacity(0.45))
@@ -32,7 +27,7 @@ struct MorningSplashView:View {
      }
      .opacity(entered ? 1 : 0)
 
-     MorningSun(size:104)
+     MorningSun(size:104,showRays:false)
       .scaleEffect(entered ? 1 : 0.72)
       .offset(y:entered ? 0 : 28)
     }

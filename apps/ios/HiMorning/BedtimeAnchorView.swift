@@ -68,7 +68,7 @@ struct BedtimeAnchorView: View {
          .font(.footnote).foregroundStyle(MorningTheme.muted)
        }
       }
-      .tint(MorningTheme.yellow)
+      .tint(MorningTheme.alarmSwitchOn)
       .accessibilityIdentifier("bedtimeAnchorToggle")
 
       if store.settings.enabled {
@@ -87,8 +87,8 @@ struct BedtimeAnchorView: View {
       }
      }
      .padding(18)
-     .background(MorningTheme.surface, in: RoundedRectangle(cornerRadius: 20))
-     .overlay(RoundedRectangle(cornerRadius: 20).strokeBorder(MorningTheme.line))
+     .background(MorningTheme.surface, in: RoundedRectangle(cornerRadius: MorningTheme.Radius.card))
+     .overlay(RoundedRectangle(cornerRadius: MorningTheme.Radius.card).strokeBorder(MorningTheme.line))
 
      VStack(alignment: .leading, spacing: 14) {
       Toggle(isOn: sunriseRampBinding) {
@@ -98,7 +98,7 @@ struct BedtimeAnchorView: View {
          .font(.footnote).foregroundStyle(MorningTheme.muted)
        }
       }
-      .tint(MorningTheme.yellow)
+      .tint(MorningTheme.alarmSwitchOn)
 
       if MorningHealthSync.isAvailable {
        Divider().overlay(MorningTheme.line)
@@ -109,12 +109,12 @@ struct BedtimeAnchorView: View {
           .font(.footnote).foregroundStyle(MorningTheme.muted)
         }
        }
-       .tint(MorningTheme.yellow)
+       .tint(MorningTheme.alarmSwitchOn)
       }
      }
      .padding(18)
-     .background(MorningTheme.surface, in: RoundedRectangle(cornerRadius: 20))
-     .overlay(RoundedRectangle(cornerRadius: 20).strokeBorder(MorningTheme.line))
+     .background(MorningTheme.surface, in: RoundedRectangle(cornerRadius: MorningTheme.Radius.card))
+     .overlay(RoundedRectangle(cornerRadius: MorningTheme.Radius.card).strokeBorder(MorningTheme.line))
     }
     .padding(20)
    }

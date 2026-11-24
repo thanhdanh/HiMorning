@@ -30,6 +30,7 @@ internal fun Modifier.morningSurface(
     radius: Dp = 24.dp,
     tint: Color = Color.Transparent,
     elevated: Boolean = true,
+    borderColor: Color? = null,
 ): Modifier {
     val dark = isSystemInDarkTheme()
     val shape = RoundedCornerShape(radius)
@@ -49,7 +50,10 @@ internal fun Modifier.morningSurface(
             spotColor = Color.Black.copy(alpha = .10f))
         .clip(shape)
         .background(Brush.verticalGradient(listOf(topLight, tintedBase, bottomShade)))
-        .border(1.dp, Brush.verticalGradient(listOf(edgeTop, edgeBottom)), shape)
+        .then(
+            if (borderColor != null) Modifier.border(1.dp, borderColor, shape)
+            else Modifier.border(1.dp, Brush.verticalGradient(listOf(edgeTop, edgeBottom)), shape),
+        )
 }
 
 /** A static, broad warm wash behind the screen; radial gradients avoid a blur dependency. */

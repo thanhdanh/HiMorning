@@ -86,14 +86,20 @@ internal fun MorningButton(
 ) {
     val colors = MorningTheme.colors
     val interactions = remember { MutableInteractionSource() }
-    val buttonSurface = if (primary) colors.yellow else colors.surface
+    val buttonSurface = if (!enabled) colors.soft else if (primary) colors.yellow else colors.surface
     Button(
         onClick = onClick,
         enabled = enabled,
         interactionSource = interactions,
         modifier = modifier.fillMaxWidth().defaultMinSize(minHeight = 48.dp)
             .morningPress(interactions, enabled)
-            .morningSurface(buttonSurface, radius = 16.dp, tint = colors.yellow, elevated = primary),
+            .morningSurface(
+                buttonSurface,
+                radius = 16.dp,
+                tint = if (enabled) colors.yellow else Color.Transparent,
+                elevated = primary && enabled,
+                borderColor = if (!primary || !enabled) colors.line else null,
+            ),
         shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent,
@@ -101,7 +107,6 @@ internal fun MorningButton(
             disabledContainerColor = Color.Transparent,
             disabledContentColor = colors.muted,
         ),
-        border = if (primary) null else BorderStroke(1.dp, colors.line),
         elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp, pressedElevation = 0.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -152,23 +157,25 @@ internal fun MorningSunrise(size: Dp = 28.dp, modifier: Modifier = Modifier) {
 }
 
 @Composable
-internal fun MorningSun(size: Dp = 68.dp, modifier: Modifier = Modifier) {
+internal fun MorningSun(size: Dp = 68.dp, showRays: Boolean = true, modifier: Modifier = Modifier) {
     val palette = MorningTheme.colors
     Canvas(modifier.size(size)) {
         val center = Offset(this.size.width / 2, this.size.height / 2)
         val unit = this.size.minDimension / 140f
         val rayColor = palette.accent
-        repeat(12) { index ->
-            val angle = Math.toRadians(index * 30.0)
-            val inner = 51f * unit
-            val outer = 63f * unit
-            drawLine(
-                rayColor,
-                Offset(center.x + kotlin.math.cos(angle).toFloat() * inner, center.y + kotlin.math.sin(angle).toFloat() * inner),
-                Offset(center.x + kotlin.math.cos(angle).toFloat() * outer, center.y + kotlin.math.sin(angle).toFloat() * outer),
-                strokeWidth = 2f * unit,
-                cap = StrokeCap.Round,
-            )
+        if (showRays) {
+            repeat(12) { index ->
+                val angle = Math.toRadians(index * 30.0)
+                val inner = 51f * unit
+                val outer = 63f * unit
+                drawLine(
+                    rayColor,
+                    Offset(center.x + kotlin.math.cos(angle).toFloat() * inner, center.y + kotlin.math.sin(angle).toFloat() * inner),
+                    Offset(center.x + kotlin.math.cos(angle).toFloat() * outer, center.y + kotlin.math.sin(angle).toFloat() * outer),
+                    strokeWidth = 2f * unit,
+                    cap = StrokeCap.Round,
+                )
+            }
         }
         drawCircle(palette.yellow, radius = 45f * unit, center = center)
         val eyeY = center.y - 4f * unit

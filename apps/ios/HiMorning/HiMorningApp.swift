@@ -24,7 +24,7 @@ import ActivityKit
     guard showSplash else {return}
     let keepOpen=ProcessInfo.processInfo.arguments.contains("--ui-splash-hold")
     guard !keepOpen else {return}
-    try? await Task.sleep(for:.seconds(1.25))
+    try? await Task.sleep(for:.seconds(0.65))
     withAnimation(reduceMotion ? .linear(duration:0.15) : .easeOut(duration:0.35)) {
      showSplash=false
     }
@@ -46,6 +46,7 @@ struct NoopBackupScheduler:BackupRingScheduler {
 #endif
 @MainActor final class PilotModel:ObservableObject {
  @Published var alarms:[SavedAlarm]=[]
+ @Published var hasLoadedAlarms=false
  @Published var togglingAlarms:[UUID:Bool]=[:]
  @Published var error:String?
  @Published var selected:SavedAlarm?
@@ -304,13 +305,15 @@ struct NoopBackupScheduler:BackupRingScheduler {
   #if DEBUG
   // Presentation fixtures have no native schedules to reconcile.
   if ProcessInfo.processInfo.arguments.contains("--ui-testing"),ProcessInfo.processInfo.arguments.contains("--ui-home-alarms") {
-   alarms=await library.all();openPending();return
+   alarms=await library.all()
+  hasLoadedAlarms=true;openPending();return
   }
   #endif
   do {try await library.reconcile()}
   catch LibraryError.busy {return}
   catch {self.error=appText("Your alarms could not be checked. Please check alarm access.")}
   alarms=await library.all()
+  hasLoadedAlarms=true
   if alarms.contains(where:{$0.state == .confirmed}) {preview.start()} else {preview.refresh()}
   let assignedCreditIDs=Set(alarms.compactMap { $0.state == .confirmed ? $0.challengeTrial?.id : nil })
   if challengeCredits.contains(where:{assignedCreditIDs.contains($0.id)}) {
@@ -397,6 +400,7 @@ struct NoopBackupScheduler:BackupRingScheduler {
     persistChallengeCredits()
    }
    alarms=await library.all()
+  hasLoadedAlarms=true
    if alarms.contains(where:{$0.state == .confirmed}) {preview.start()}
    syncWidgetSnapshot()
    await replanBackups()
@@ -417,18 +421,21 @@ struct NoopBackupScheduler:BackupRingScheduler {
   catch AlarmScheduleError.accessDenied {self.error=appText("Alarm wasn’t scheduled. Allow alarms for HiMorning in Settings.")}
   catch {self.error=appText("Alarm schedule unconfirmed") }
   alarms=await library.all()
+  hasLoadedAlarms=true
   await replanBackups()
  }
  func retryTurningOff(_ alarm:SavedAlarm) async {
   guard let library else {return}
   do {try await library.disable(id:alarm.id)} catch {self.error=appText("Alarm schedule unconfirmed")}
   alarms=await library.all()
+  hasLoadedAlarms=true
   await replanBackups()
  }
  func remove(_ alarm:SavedAlarm) async {
   guard let library else {return}
   do {try await library.remove(id:alarm.id)} catch {self.error=appText("This alarm could not be removed. It may still be set in the system.")}
   alarms=await library.all()
+  hasLoadedAlarms=true
   await replanBackups()
  }
  private func clearExpiredChallengeTrials(completedAlarmID:UUID?=nil) async {
@@ -443,6 +450,7 @@ struct NoopBackupScheduler:BackupRingScheduler {
    try? await library.update(cleared)
   }
   alarms=await library.all()
+  hasLoadedAlarms=true
  }
  func openPending() {
   guard let raw=UserDefaults.standard.string(forKey:"pendingAlarmID"),let id=UUID(uuidString:raw),let alarm=alarms.first(where:{$0.id==id}) else {return}
@@ -453,7 +461,7 @@ struct NoopBackupScheduler:BackupRingScheduler {
 }
 extension WakeMode {
  var title:String {switch self {case .gentle:return appText("Gentle");case .balanced:return appText("Balanced");case .focused:return appText("Challenging")}}
- var icon:String {switch self {case .gentle:return "leaf";case .balanced:return "circle.lefthalf.filled";case .focused:return "scope"}}
+ var icon:String {switch self {case .gentle:return "leaf.fill";case .balanced:return "sun.max.fill";case .focused:return "bolt.fill"}}
 }
 extension AlarmSound {
  var title:String {switch self {
@@ -597,11 +605,25 @@ struct HomeView:View {
      if model.backupWarning {Text(appText("Some backup rings could not be updated. Please check your system alarms.")).font(.footnote).foregroundStyle(MorningTheme.muted)}
      Button {editor=AlarmDraft(alarm:nil)} label:{Label(appText(model.alarms.isEmpty ? "Set an alarm" : "Add alarm"),systemImage:"plus")}
       .buttonStyle(MorningButtonStyle()).accessibilityIdentifier("addAlarm")
-     if model.alarms.isEmpty {firstMorningCard}
-      Button {exploringChallenges=true} label: {
-       Text(appText("Explore challenges")).frame(maxWidth:.infinity)
+     if !model.hasLoadedAlarms {
+      ForEach(0..<2,id:\.self) { _ in
+       RoundedRectangle(cornerRadius:MorningTheme.Radius.hero)
+        .fill(MorningTheme.soft.opacity(0.7))
+        .frame(height:92)
       }
-      .buttonStyle(MorningButtonStyle(primary:false)).accessibilityIdentifier("practiceChallenges")
+     } else if model.alarms.isEmpty {firstMorningCard}
+     Button {exploringChallenges=true} label: {
+      HStack(spacing:12) {
+       Image(systemName:"play.circle").font(.title3.weight(.semibold)).foregroundStyle(MorningTheme.accent)
+       Text(appText("Explore challenges")).font(.body.weight(.semibold)).foregroundStyle(MorningTheme.ink)
+       Spacer(minLength:8)
+       Image(systemName:"chevron.right").font(.footnote.weight(.semibold)).foregroundStyle(MorningTheme.muted)
+      }
+      .padding(.horizontal,18).frame(maxWidth:.infinity,minHeight:48)
+      .background(MorningTheme.surface,in:RoundedRectangle(cornerRadius:MorningTheme.Radius.control))
+      .overlay {RoundedRectangle(cornerRadius:MorningTheme.Radius.control).strokeBorder(MorningTheme.line)}
+     }
+     .buttonStyle(.plain).accessibilityIdentifier("practiceChallenges")
      MorningJourneyCard(model:model,store:model.journey,choosePurpose:{choosingPurpose=true},plan:{selection,alarm in
       let upcoming=alarm.flatMap {$0.canPrepareJourney() ? $0 : nil}
       editor=AlarmDraft(alarm:upcoming,scope:upcoming == nil ? .all:.challenge,suggestedChallenge:selection)
@@ -616,7 +638,7 @@ struct HomeView:View {
       }
      }
     }.padding(.horizontal,20).padding(.top,20).padding(.bottom,40)
-   }.background(MorningTheme.canvas.ignoresSafeArea()).foregroundStyle(MorningTheme.ink).tint(MorningTheme.accent)
+   }.background {MorningBackdrop()}.foregroundStyle(MorningTheme.ink).tint(MorningTheme.accent)
    .navigationTitle("HiMorning").toolbar(.hidden,for:.navigationBar)
    .preferredColorScheme(testingColorScheme)
    .sheet(item:$editor) {draft in AlarmEditor(alarm:draft.alarm,scope:draft.scope,suggestedChallenge:draft.suggestedChallenge,store:model.subscriptions,preview:model.preview,practiceModel:model)}
@@ -663,6 +685,66 @@ struct HomeView:View {
    .onChange(of:phase) {_,value in if value == .active {Task {await model.refresh();await model.subscriptions.refresh()};Task {await model.refreshContent()}}}
    .onChange(of:reduceMotion) {_,value in if value {model.celebrationID=nil}}
   }
+ }
+ private var brandWordmark:some View {
+  Label {
+   Text("HiMorning.")
+    .modifier(MorningTypography.heading(size:22,relativeTo:.title2))
+    .lineLimit(1).minimumScaleFactor(0.75)
+  } icon: {
+   Image(systemName:"sunrise").font(.system(size:20,weight:.bold))
+  }.labelStyle(.titleAndIcon)
+   .fixedSize(horizontal:true,vertical:true).accessibilityLabel("Hi Morning")
+ }
+ @ViewBuilder private var headerActions:some View {
+  GlassEffectContainer(spacing:8) {
+   HStack(spacing:6) {
+    Button {showingBedtime=true} label: {
+     headerCircleIcon("moon.zzz")
+    }.buttonStyle(.plain)
+     .accessibilityIdentifier("bedtimeAnchor").accessibilityLabel(appText("Evening & health"))
+    Button {progress=true} label: {
+     headerCircleIcon("chart.bar")
+    }.buttonStyle(.plain)
+     .accessibilityIdentifier("morningProgress").accessibilityLabel(appText("Your progress"))
+    Button {pro=true} label: {
+     Text(appText("Pro")).font(.subheadline.weight(.semibold))
+      .foregroundStyle(reduceTransparency ? MorningTheme.proInk : MorningTheme.ink)
+      .padding(.horizontal,12).frame(height:44)
+      .background {
+       if reduceTransparency {
+        Capsule().fill(MorningTheme.proGoldLight)
+         .overlay {Capsule().strokeBorder(MorningTheme.proGoldEdge,lineWidth:0.75)}
+       }
+      }
+      .glassEffect(reduceTransparency ? .identity : .regular.tint(MorningTheme.proGold.opacity(0.32)).interactive(),in:.capsule)
+      .contentShape(Capsule())
+    }.buttonStyle(.plain)
+     .accessibilityIdentifier("hiMorningPro").accessibilityLabel("HiMorning Pro")
+    Menu {
+     Picker(appText("Language"),selection:$language) {
+      Text(appText("Use device language")).tag("system")
+      Text(appText("English")).tag("en")
+      Text(appText("Vietnamese")).tag("vi")
+     }
+    } label: {
+     headerCircleIcon("globe")
+    }.buttonStyle(.plain)
+     .accessibilityIdentifier("appLanguage").accessibilityLabel(appText("Language"))
+   }
+  }
+ }
+ @ViewBuilder private func headerCircleIcon(_ systemName:String)->some View {
+  Image(systemName:systemName)
+   .frame(width:44,height:44)
+   .background {
+    if reduceTransparency {
+     Circle().fill(MorningTheme.surface)
+      .overlay {Circle().strokeBorder(MorningTheme.line,lineWidth:1)}
+    }
+   }
+   .glassEffect(reduceTransparency ? .identity : .regular.interactive(),in:.circle)
+   .contentShape(Circle())
  }
  private var firstMorningCard:some View {
   VStack(alignment:.leading,spacing:10) {
@@ -816,17 +898,21 @@ struct HomeView:View {
   }.padding(.horizontal,18).padding(.vertical,16).foregroundStyle(ink)
    .background {
     ZStack {
-     RoundedRectangle(cornerRadius:26).fill(MorningTheme.surface)
-     RoundedRectangle(cornerRadius:26)
+     RoundedRectangle(cornerRadius:MorningTheme.Radius.hero).fill(MorningTheme.surface)
+     RoundedRectangle(cornerRadius:MorningTheme.Radius.hero)
       .fill(LinearGradient(colors:[MorningTheme.alarmCardHighlight,MorningTheme.yellow],startPoint:.topLeading,endPoint:.bottomTrailing))
       .opacity(armed ? 1 : 0)
     }
    }
-   .clipShape(RoundedRectangle(cornerRadius:26))
-   .overlay {RoundedRectangle(cornerRadius:26).strokeBorder(armed ? MorningTheme.alarmCardEdge : MorningTheme.line,lineWidth:1)}
-   .contentShape(RoundedRectangle(cornerRadius:26))
+   .clipShape(RoundedRectangle(cornerRadius:MorningTheme.Radius.hero))
+   .overlay {RoundedRectangle(cornerRadius:MorningTheme.Radius.hero).strokeBorder(armed ? MorningTheme.alarmCardEdge : MorningTheme.line,lineWidth:1)}
+   .contentShape(RoundedRectangle(cornerRadius:MorningTheme.Radius.hero))
    .accessibilityElement(children:.contain).accessibilityIdentifier("alarmCard-"+alarm.id.uuidString)
    .onTapGesture {openAlarm(alarm,scope:.all)}
+   .contextMenu {
+    Button {openAlarm(alarm,scope:.all)} label: {Label(appText("Edit alarm"),systemImage:"pencil")}
+    Button(role:.destructive) {alarmToDelete=alarm} label: {Label(appText("Delete"),systemImage:"trash")}
+   }
    .accessibilityAction(.default) {openAlarm(alarm,scope:.all)}
  }
  private func openAlarm(_ alarm:SavedAlarm,scope:AlarmEditorScope) {

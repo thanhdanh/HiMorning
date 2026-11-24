@@ -62,7 +62,15 @@ struct MorningJourneyCard:View {
     Text(journey.focus.title).font(.headline).fixedSize(horizontal:false,vertical:true).accessibilityIdentifier("journeyPurpose")
    }
    Spacer(minLength:0)
-   Button(action:choosePurpose) {Text(appText("Change goal")).font(.subheadline).frame(minHeight:44)}
+   Button(action:choosePurpose) {
+    HStack(spacing:4) {
+     Text(appText("Change goal"))
+     Image(systemName:"chevron.right").font(.caption2.weight(.semibold))
+    }
+    .font(.subheadline.weight(.medium))
+    .foregroundStyle(MorningTheme.accent)
+    .frame(minHeight:44)
+   }
     .accessibilityLabel(appText("Change my purpose")).accessibilityIdentifier("changeMorningPurpose")
   }
   ViewThatFits(in:.horizontal) {

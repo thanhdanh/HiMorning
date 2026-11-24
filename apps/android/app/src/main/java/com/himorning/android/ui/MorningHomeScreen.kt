@@ -40,6 +40,7 @@ import androidx.compose.material.icons.outlined.Event
 import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.material.icons.outlined.ExpandLess
 import androidx.compose.material.icons.outlined.PlayArrow
+import androidx.compose.material.icons.outlined.PlayCircleOutline
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.Lightbulb
 import androidx.compose.material.icons.outlined.Mic
@@ -152,7 +153,7 @@ internal fun MorningHomeScreen(
             readiness()
             MorningButton(
                 text = stringResource(R.string.home_explore), onClick = onExplore, primary = false,
-                leadingIcon = challengeIcon(ChallengeKind.READ_AND_CHOOSE),
+                leadingIcon = Icons.Outlined.PlayCircleOutline,
             )
         }
         JourneyCard(state, suggestedMission, purposeChosen, onPurpose, onMissionPractice, onMissionPlan, onRestartJourney, onProgress)
@@ -301,7 +302,7 @@ private fun AlarmCard(
     val clockInk by animateColorAsState(if (alarm.enabled) ink else colors.alarmClockOff, tween(220))
     val armedAlpha by animateFloatAsState(if (armed) 1f else 0f, tween(240))
     val borderColor by animateColorAsState(if (armed) MorningTheme.alarmCardEdge else colors.line, tween(240))
-    val shape = RoundedCornerShape(26.dp)
+    val shape = RoundedCornerShape(24.dp)
     val completeToday = entries.any { it.alarmId == alarm.id && it.completedChallenge && sameLocalDay(it.date, now) }
     var menuExpanded by remember { mutableStateOf(false) }
     val cardInteractions = remember { MutableInteractionSource() }

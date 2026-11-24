@@ -67,8 +67,9 @@ struct ProView:View {
 
  private func benefit(_ title:String,_ description:String,icon:String)->some View {
   HStack(alignment:.top,spacing:12) {
-   Image(systemName:icon).font(.body.weight(.semibold)).foregroundStyle(MorningTheme.accent)
-    .frame(width:36,height:36).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:10))
+   Image(systemName:icon).font(.body.weight(.semibold)).foregroundStyle(MorningTheme.proInk)
+    .frame(width:36,height:36).background(MorningTheme.proSurface,in:RoundedRectangle(cornerRadius:10))
+    .overlay {RoundedRectangle(cornerRadius:10).strokeBorder(MorningTheme.proGoldEdge.opacity(0.4),lineWidth:0.75)}
     .accessibilityHidden(true)
    VStack(alignment:.leading,spacing:3) {
     Text(appText(title)).font(.subheadline.weight(.semibold))
@@ -106,7 +107,11 @@ struct ProView:View {
     }
    }
   case .loading:
-   ProgressView(appText("Loading plans…")).accessibilityIdentifier("subscriptionLoading")
+   VStack(spacing:10) {
+    ForEach(0..<2,id:\.self) { _ in
+     RoundedRectangle(cornerRadius:14).fill(MorningTheme.soft).frame(height:68)
+    }
+   }.accessibilityIdentifier("subscriptionLoading")
   case .unavailable:
    unavailable(appText("Plans are unavailable right now."))
   case .failed:
@@ -165,7 +170,7 @@ struct ProView:View {
    .font(.caption2.weight(.semibold))
    .fixedSize(horizontal:false,vertical:true)
    .padding(.horizontal,8).padding(.vertical,3)
-   .foregroundStyle(MorningTheme.proInk).background(MorningTheme.proGoldLight,in:RoundedRectangle(cornerRadius:10))
+   .foregroundStyle(MorningTheme.proInk).background(MorningTheme.proGoldLight,in:Capsule())
    .accessibilityLabel(String(format:appText("Save %@ compared with the monthly plan"),locale:appLocale(),formatted))
  }
 
@@ -190,17 +195,25 @@ struct ProView:View {
    if let message=store.message {
     Text(message).font(.footnote).accessibilityIdentifier("purchaseMessage")
    }
-   Button {Task {await store.restorePurchases()}} label: {
-    Group {
-     if store.isRestoring {ProgressView(appText("Restoring purchases…"))}
-     else {Text(appText("Restore purchases"))}
-    }.frame(minHeight:44)
-   }.buttonStyle(.plain).disabled(store.isRestoring || purchasing).accessibilityIdentifier("restorePurchases")
    ViewThatFits(in:.horizontal) {
-    HStack(spacing:18) {policyLinks}
-    VStack(alignment:.leading,spacing:0) {policyLinks}
-   }.font(.footnote).foregroundStyle(MorningTheme.muted)
+    HStack(spacing:16) {
+     restoreButton
+     policyLinks
+    }
+    VStack(spacing:4) {
+     restoreButton
+     HStack(spacing:16) {policyLinks}
+    }
+   }.font(.footnote).foregroundStyle(MorningTheme.muted).frame(maxWidth:.infinity)
   }
+ }
+ private var restoreButton:some View {
+  Button {Task {await store.restorePurchases()}} label: {
+   Group {
+    if store.isRestoring {ProgressView(appText("Restoring purchases…"))}
+    else {Text(appText("Restore purchases"))}
+   }.frame(minHeight:44)
+  }.buttonStyle(.plain).disabled(store.isRestoring || purchasing).accessibilityIdentifier("restorePurchases")
  }
 
  private var policyLinks:some View {

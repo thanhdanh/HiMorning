@@ -56,8 +56,14 @@ struct SwipeableAlarmCard<Content:View>:View {
     .allowsHitTesting(isOpen).accessibilityHidden(!isOpen)
    content().offset(x:offset)
   }
-  .background(offset<0 ? Color.red : .clear,in:RoundedRectangle(cornerRadius:26))
-  .clipShape(RoundedRectangle(cornerRadius:26))
+  .background {
+   if offset < 0 {
+    RoundedRectangle(cornerRadius:MorningTheme.Radius.hero)
+     .fill(Color(uiColor:.systemRed))
+     .padding(2)
+   }
+  }
+  .clipShape(RoundedRectangle(cornerRadius:MorningTheme.Radius.hero))
   .gesture(AlarmCardPan(canClose:isOpen) {pan in
    switch pan.state {
    case .began:

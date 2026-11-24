@@ -280,13 +280,13 @@ struct AlarmEditor:View {
    HStack(spacing:16) {
     Text(appText("Label")).foregroundStyle(MorningTheme.ink)
     TextField(appText("Optional label"),text:$label)
-     .textFieldStyle(.plain).multilineTextAlignment(.trailing).foregroundStyle(MorningTheme.muted)
+     .textFieldStyle(.plain).multilineTextAlignment(.trailing).foregroundStyle(MorningTheme.ink)
      .focused($labelFocused).submitLabel(.done).onSubmit {labelFocused=false}
      .accessibilityLabel(appText("Label")).accessibilityIdentifier("alarmLabel")
    }.font(.body).padding(.horizontal,16).frame(minHeight:54)
 
-  }.background(MorningTheme.surface,in:RoundedRectangle(cornerRadius:16))
-   .overlay {RoundedRectangle(cornerRadius:16).strokeBorder(MorningTheme.line.opacity(0.6))}
+  }.background(MorningTheme.surface,in:RoundedRectangle(cornerRadius:MorningTheme.Radius.card))
+   .overlay {RoundedRectangle(cornerRadius:MorningTheme.Radius.card).strokeBorder(MorningTheme.line.opacity(0.6))}
  }
  private var settingsDivider:some View {
   Divider().overlay(MorningTheme.line).padding(.leading,16)
@@ -358,7 +358,8 @@ struct AlarmEditor:View {
      }.buttonStyle(.glassProminent).tint(MorningTheme.yellow).foregroundStyle(MorningTheme.onYellow)
       .disabled(saving).accessibilityIdentifier("saveAlarm")
       .accessibilityLabel(appText(saving ? "Saving…" : "Save"))
-    }.padding(.horizontal,20).padding(.top,12).padding(.bottom,labelFocused ? 32 : 8)
+    }.padding(.horizontal,20).padding(.top,12).padding(.bottom,8)
+     .overlay(alignment:.top) {Rectangle().fill(MorningTheme.line.opacity(0.6)).frame(height:0.5)}
      .background {MorningTheme.canvas.ignoresSafeArea(edges:.bottom)}
 
  }
@@ -382,25 +383,22 @@ struct AlarmEditor:View {
   let layout=wide ? AnyLayout(HStackLayout(alignment:.center,spacing:12)) : AnyLayout(VStackLayout(alignment:.leading,spacing:8))
   let reserveTitleLines = !wide && dynamicTypeSize <= .large && !legacy
   let infoAlignment:Alignment = wide ? .trailing : .topTrailing
-  let shape=RoundedRectangle(cornerRadius:24)
+  let shape=RoundedRectangle(cornerRadius:MorningTheme.Radius.card)
   return ZStack(alignment:infoAlignment) {
    Button {
     if locked {info(for:kind)} else {selectChallenge(kind)}
    } label: {
     layout {
-     HStack(spacing:5) {
-      ChallengeIcon(kind:kind,seated:rhythmVariant == .seated,size:26)
+     ChallengeIcon(kind:kind,seated:rhythmVariant == .seated,size:26)
       .foregroundStyle(tint)
       .frame(width:40,height:40).background(tint.opacity(0.13),in:RoundedRectangle(cornerRadius:13))
-      if locked && !wide {ProLockBadge(compact:true).accessibilityHidden(true)}
-     }
      VStack(alignment:.leading,spacing:wide ? 4 : 8) {
      let title=Text(legacy ? String(format:appText("%@ · saved choice"),kind.title) : kind.title)
       .font(.subheadline.weight(.bold)).multilineTextAlignment(.leading).fixedSize(horizontal:false,vertical:true)
      if reserveTitleLines {title.lineLimit(2,reservesSpace:true)} else {title}
      ZStack(alignment:.leading) {
       Text(verbatim:" ").accessibilityHidden(true)
-      if locked && wide {
+      if locked {
        ProLockBadge(compact:true).accessibilityHidden(true)
       } else if selected && !locked {
        Label(appText("Selected"),systemImage:"checkmark.circle.fill").foregroundStyle(tint)

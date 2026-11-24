@@ -134,11 +134,11 @@ struct ChallengeView: View {
       }
      }
      Label {
-      Text(challenge.displayTitle).modifier(MorningTypography.heading(size:15,relativeTo:.subheadline))
+      Text(challenge.displayTitle)
      } icon: {
       ChallengeIcon(kind:challenge.kind,seated:challenge.rhythmVariant == .seated,size:19)
        .foregroundStyle(MorningTheme.modeAccent(effectiveAlarm.mode))
-     }.font(.subheadline.weight(.medium)).padding(.horizontal,14).padding(.vertical,8).background(MorningTheme.soft,in:Capsule())
+     }.font(.subheadline.weight(.semibold)).padding(.horizontal,14).padding(.vertical,8).background(MorningTheme.soft,in:Capsule())
      if let theme = contentTheme {
       Text(ChallengePrompts.themeTitle(theme)).font(.caption.weight(.semibold)).foregroundStyle(MorningTheme.muted)
        .accessibilityIdentifier("contentTheme")
@@ -177,20 +177,33 @@ struct ChallengeView: View {
       DisclosureGroup(appText("challenge_guide_scoring_title")) {
        ChallengeCheckingGuide(selection:challenge).padding(.top,8)
       }.font(.footnote.weight(.semibold)).frame(maxWidth:.infinity,alignment:.leading)
+       .padding(12).background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:14))
        .accessibilityIdentifier("showChallengeCheckingGuide")
      }
      if !finished && (busy || stopping || speechFinishing || preparingExample) {
       ProgressView().accessibilityLabel(message)
      }
-     if (challenge.kind == .readAndChoose || challenge.kind == .riddle) && !finished, let prompt = challenge.kind == .riddle ? riddlePrompt : readPrompt {
-      Text(prompt.text)
-       .font(.title3.weight(.semibold))
-       .multilineTextAlignment(.center)
-       .transition(.opacity.combined(with: .scale(scale: 0.98)))
-      ForEach(Array(prompt.choices.enumerated()), id: \.offset) { index, choice in
-       Button(choice) { chooseMeaning(index, prompt: prompt) }
-        .buttonStyle(MorningButtonStyle(primary: false))
-        .accessibilityIdentifier("readChoice-\(index)")
+     if (challenge.kind == .readAndChoose || challenge.kind == .riddle) && !finished {
+      if let prompt = challenge.kind == .riddle ? riddlePrompt : readPrompt {
+       Text(prompt.text)
+        .font(.title3.weight(.semibold))
+        .lineSpacing(4)
+        .frame(maxWidth:.infinity,alignment:.leading)
+        .padding(18)
+        .background(MorningTheme.surface,in:RoundedRectangle(cornerRadius:MorningTheme.Radius.card))
+        .overlay {RoundedRectangle(cornerRadius:MorningTheme.Radius.card).strokeBorder(MorningTheme.line)}
+        .transition(.opacity.combined(with: .scale(scale: 0.98)))
+       ForEach(Array(prompt.choices.enumerated()), id: \.offset) { index, choice in
+        Button(choice) { chooseMeaning(index, prompt: prompt) }
+         .buttonStyle(MorningButtonStyle(primary: false))
+         .accessibilityIdentifier("readChoice-\(index)")
+       }
+      } else {
+       Text(appText("Try again"))
+        .font(.subheadline).foregroundStyle(MorningTheme.muted)
+        .frame(maxWidth:.infinity,alignment:.center).padding(18)
+        .background(MorningTheme.surface,in:RoundedRectangle(cornerRadius:MorningTheme.Radius.card))
+        .overlay {RoundedRectangle(cornerRadius:MorningTheme.Radius.card).strokeBorder(MorningTheme.line)}
       }
      }
      if challenge.kind == .readAloud, let item = readAloudItem {
@@ -220,8 +233,10 @@ struct ChallengeView: View {
      if finished {
       if !scrollCompletionActions { completionActions }
       Button(appText(rehearsal ? "Back to alarm" : "Back to home")) { dismiss() }
-       .buttonStyle(.plain).font(.subheadline).underline().foregroundStyle(MorningTheme.muted)
-       .frame(maxWidth:.infinity,minHeight:44).accessibilityIdentifier("backToHome")
+       .buttonStyle(.plain).font(.subheadline.weight(.semibold)).foregroundStyle(MorningTheme.ink)
+       .frame(maxWidth:.infinity,minHeight:44)
+       .background(MorningTheme.soft,in:RoundedRectangle(cornerRadius:MorningTheme.Radius.control))
+       .accessibilityIdentifier("backToHome")
      } else {
       if challenge.kind == .pushUps && camera == nil {
        Button { consentDialog = true } label: { ChallengeStartLabel(title: "Start challenge") }.buttonStyle(MorningButtonStyle()).disabled(busy || stopping).accessibilityIdentifier("startChallenge")

@@ -36,14 +36,14 @@ internal data class MorningColors(
 
 private val lightMorningColors = MorningColors(
     canvas = Color(0xFFFFFCF6), surface = Color.White, soft = Color(0xFFF4F1E9),
-    ink = Color(0xFF29251D), muted = Color(0xFF6D675B), line = Color(0xFFE9E5DC),
+    ink = Color(0xFF29251D), muted = Color(0xFF6D675B), line = Color(0xFFDDD7CA),
     yellow = Color(0xFFF5C842), hero = Color(0xFFF8D960), alarmClockOff = Color(0xFF6D675B),
-    onYellow = Color(0xFF29251D), accent = Color(0xFF967211), success = Color(0xFF44634A),
+    onYellow = Color(0xFF29251D), accent = Color(0xFF805E08), success = Color(0xFF44634A),
     correctWord = Color(0xFF126B36),
 )
 private val darkMorningColors = MorningColors(
-    canvas = Color(0xFF201F1A), surface = Color(0xFF2C2A24), soft = Color(0xFF353229),
-    ink = Color(0xFFF8F4EA), muted = Color(0xFFC2BBAE), line = Color(0xFF49463D),
+    canvas = Color(0xFF171612), surface = Color(0xFF25231D), soft = Color(0xFF312E26),
+    ink = Color(0xFFF8F4EA), muted = Color(0xFFC2BBAE), line = Color(0xFF4D493E),
     yellow = Color(0xFFF5C842), hero = Color(0xFFF8D960), alarmClockOff = Color(0xFFA8A093),
     onYellow = Color(0xFF29251D), accent = Color(0xFFF5C842), success = Color(0xFFBDD6BF),
     correctWord = Color(0xFF7FE5A2),
