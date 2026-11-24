@@ -310,7 +310,7 @@ private fun AlarmCard(
 
     Column(
         Modifier.fillMaxWidth()
-            .animateContentSize(tween(durationMillis = 260, easing = FastOutSlowInEasing))
+            .animateContentSize(tween(durationMillis = 320, easing = FastOutSlowInEasing))
             .morningPress(cardInteractions)
             .clip(shape)
             .background(colors.surface)
@@ -335,8 +335,8 @@ private fun AlarmCard(
             AlarmTimeColumn(alarm, ink, clockInk, detailInk, onEdit)
             AnimatedVisibility(
                 visible = !compactDisabled,
-                enter = fadeIn(tween(220)) + expandVertically(tween(260, easing = FastOutSlowInEasing)),
-                exit = fadeOut(tween(150)) + shrinkVertically(tween(220, easing = FastOutSlowInEasing)),
+                enter = fadeIn(tween(240, delayMillis = 60)) + expandVertically(tween(320, easing = FastOutSlowInEasing)),
+                exit = fadeOut(tween(120)) + shrinkVertically(tween(280, easing = FastOutSlowInEasing)),
             ) {
                 ChallengeSummary(alarm, ink, onEdit, stacked = true, onYellow = armed)
             }
@@ -345,8 +345,8 @@ private fun AlarmCard(
                 Box(Modifier.weight(1f)) { AlarmTimeColumn(alarm, ink, clockInk, detailInk, onEdit) }
                 AnimatedVisibility(
                     visible = !compactDisabled,
-                    enter = fadeIn(tween(220)),
-                    exit = fadeOut(tween(150)),
+                    enter = fadeIn(tween(240, delayMillis = 60)),
+                    exit = fadeOut(tween(120)),
                 ) {
                     ChallengeSummary(alarm, ink, onEdit, stacked = false, onYellow = armed, modifier = Modifier.widthIn(max = 138.dp))
                 }
@@ -354,8 +354,8 @@ private fun AlarmCard(
         }
         AnimatedVisibility(
             visible = !compactDisabled,
-            enter = fadeIn(tween(220)) + expandVertically(tween(260, easing = FastOutSlowInEasing)),
-            exit = fadeOut(tween(150)) + shrinkVertically(tween(220, easing = FastOutSlowInEasing)),
+            enter = fadeIn(tween(240, delayMillis = 60)) + expandVertically(tween(320, easing = FastOutSlowInEasing)),
+            exit = fadeOut(tween(120)) + shrinkVertically(tween(280, easing = FastOutSlowInEasing)),
         ) {
             Divider(color = ink.copy(alpha = .14f), thickness = 1.dp)
         }
@@ -378,7 +378,7 @@ private fun AlarmCard(
             if (stack) Spacer(Modifier.weight(1f)) else Box(Modifier.weight(1f)) { statusLabels() }
             AnimatedVisibility(
                 visible = !compactDisabled && alarm.enabled && alarm.challenge != ChallengeKind.NONE,
-                enter = fadeIn(tween(180)),
+                enter = fadeIn(tween(220, delayMillis = 40)),
                 exit = fadeOut(tween(120)),
             ) {
                 IconButton(onClick = { onPractice(alarm) }, interactionSource = playInteractions,
