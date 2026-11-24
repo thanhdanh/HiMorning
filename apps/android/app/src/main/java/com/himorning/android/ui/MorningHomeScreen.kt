@@ -314,64 +314,36 @@ private fun AlarmCard(
         verticalArrangement = Arrangement.spacedBy(if (compactDisabled) 4.dp else 12.dp),
     ) {
         if (compactDisabled) {
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    if (alarm.label.isNotBlank()) {
-                        Text(alarm.label, style = MaterialTheme.typography.titleSmall, color = detailInk, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    }
-                    Text(
-                        alarmTimeText(LocalContext.current, alarm),
-                        style = MaterialTheme.typography.headlineMedium.copy(fontSize = 34.sp, fontWeight = FontWeight.Medium, fontFeatureSettings = "tnum"),
-                        color = clockInk,
-                        maxLines = 1,
-                    )
-                    Text(stringResource(stateText(ScheduleState.OFF)), style = MaterialTheme.typography.bodySmall, color = detailInk)
-                    if (completeToday) {
-                        Text(stringResource(R.string.home_completed_today), style = MaterialTheme.typography.bodySmall, color = colors.success)
-                    }
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                if (alarm.label.isNotBlank()) {
+                    Text(alarm.label, style = MaterialTheme.typography.titleSmall, color = detailInk, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
-                Switch(
-                    checked = armed,
-                    enabled = alarm.state != ScheduleState.PENDING,
-                    onCheckedChange = { onToggle(alarm, it) },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = Color.White, checkedTrackColor = MorningTheme.alarmSwitchOn, checkedBorderColor = Color.Transparent,
-                        uncheckedThumbColor = colors.muted, uncheckedTrackColor = colors.surface, uncheckedBorderColor = colors.muted,
-                    ),
-                    modifier = Modifier.semantics { contentDescription = toggleLabel },
+                Text(
+                    alarmTimeText(LocalContext.current, alarm),
+                    style = MaterialTheme.typography.headlineMedium.copy(fontSize = 34.sp, fontWeight = FontWeight.Medium, fontFeatureSettings = "tnum"),
+                    color = clockInk,
+                    maxLines = 1,
                 )
-                Box {
-                    IconButton(onClick = { menuExpanded = true }, interactionSource = menuInteractions,
-                        modifier = Modifier.size(44.dp).morningPress(menuInteractions)
-                        .semantics { contentDescription = optionsLabel }) {
-                        Icon(Icons.Outlined.MoreVert, contentDescription = null, tint = detailInk)
-                    }
-                    DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
-                        DropdownMenuItem(text = { Text(stringResource(R.string.home_edit_alarm)) }, leadingIcon = { Icon(Icons.Outlined.Edit, null) },
-                            onClick = { menuExpanded = false; onEdit(alarm, AlarmEditorScope.ALL) })
-                        DropdownMenuItem(text = { Text(stringResource(R.string.home_delete_alarm)) }, leadingIcon = { Icon(Icons.Outlined.DeleteOutline, null) },
-                            onClick = { menuExpanded = false; onDelete(alarm) })
-                    }
+            }
+        } else {
+            if (stack) {
+                AlarmTimeColumn(alarm, ink, clockInk, detailInk, onEdit)
+                ChallengeSummary(alarm, ink, onEdit, stacked = true, onYellow = armed)
+            } else {
+                Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.Top) {
+                    Box(Modifier.weight(1f)) { AlarmTimeColumn(alarm, ink, clockInk, detailInk, onEdit) }
+                    ChallengeSummary(alarm, ink, onEdit, stacked = false, onYellow = armed, modifier = Modifier.widthIn(max = 138.dp))
                 }
             }
-            return@Column
-        }
-        if (stack) {
-            AlarmTimeColumn(alarm, ink, clockInk, detailInk, onEdit)
-            ChallengeSummary(alarm, ink, onEdit, stacked = true, onYellow = armed)
-        } else {
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.Top) {
-                Box(Modifier.weight(1f)) { AlarmTimeColumn(alarm, ink, clockInk, detailInk, onEdit) }
-                ChallengeSummary(alarm, ink, onEdit, stacked = false, onYellow = armed, modifier = Modifier.widthIn(max = 138.dp))
-            }
+            Divider(color = ink.copy(alpha = .14f), thickness = 1.dp)
         }
         val status = when {
+            compactDisabled -> stringResource(stateText(ScheduleState.OFF))
             needsReview -> stringResource(stateText(ScheduleState.NEEDS_REVIEW))
             alarm.state == ScheduleState.PENDING -> stringResource(stateText(ScheduleState.PENDING))
             armed -> nextOccurrence(confirmedAt)
             else -> stringResource(stateText(ScheduleState.OFF))
         }
-        Divider(color = ink.copy(alpha = .14f), thickness = 1.dp)
         val statusLabels: @Composable () -> Unit = {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(status, style = MaterialTheme.typography.bodySmall, color = if (needsReview) ink else detailInk)
@@ -382,7 +354,7 @@ private fun AlarmCard(
         if (stack) statusLabels()
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             if (stack) Spacer(Modifier.weight(1f)) else Box(Modifier.weight(1f)) { statusLabels() }
-            if (alarm.enabled && alarm.challenge != ChallengeKind.NONE) {
+            if (!compactDisabled && alarm.enabled && alarm.challenge != ChallengeKind.NONE) {
                 IconButton(onClick = { onPractice(alarm) }, interactionSource = playInteractions,
                     modifier = Modifier.size(48.dp).morningPress(playInteractions)
                     .semantics { contentDescription = tryLabel }) {

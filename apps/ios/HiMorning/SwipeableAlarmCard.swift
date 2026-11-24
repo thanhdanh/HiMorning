@@ -13,6 +13,14 @@ private struct AlarmCardPan:UIGestureRecognizerRepresentable {
    let velocity=pan.velocity(in:pan.view)
    return abs(velocity.x)>abs(velocity.y)*1.2 && (velocity.x<0 || canClose)
   }
+  func gestureRecognizer(_ gestureRecognizer:UIGestureRecognizer,shouldReceive touch:UITouch)->Bool {
+   var view=touch.view
+   while let current=view {
+    if current is UISwitch {return false}
+    view=current.superview
+   }
+   return true
+  }
  }
  func makeCoordinator(converter:CoordinateSpaceConverter)->Coordinator {Coordinator(canClose:canClose)}
  func makeUIGestureRecognizer(context:Context)->UIPanGestureRecognizer {

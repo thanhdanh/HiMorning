@@ -46,6 +46,7 @@ struct NoopBackupScheduler:BackupRingScheduler {
 #endif
 @MainActor final class PilotModel:ObservableObject {
  @Published var alarms:[SavedAlarm]=[]
+ @Published var togglingAlarms:[UUID:Bool]=[:]
  @Published var error:String?
  @Published var selected:SavedAlarm?
  @Published var rehearsal=false
@@ -401,9 +402,18 @@ struct NoopBackupScheduler:BackupRingScheduler {
    await replanBackups()
   } catch {alarms=await library.all();throw error}
  }
- func toggle(_ alarm:SavedAlarm) async {
-  guard let library else {return}
-  do {if alarm.enabled && alarm.state == .confirmed {try await library.disable(id:alarm.id)} else {try await library.enable(id:alarm.id)}}
+ func requestToggle(_ alarm:SavedAlarm) {
+  guard togglingAlarms[alarm.id] == nil else {return}
+  let targetEnabled = !(alarm.enabled && alarm.state == .confirmed)
+  togglingAlarms[alarm.id]=targetEnabled
+  Task {await toggle(alarm,targetEnabled:targetEnabled)}
+ }
+ func toggle(_ alarm:SavedAlarm,targetEnabled:Bool?=nil) async {
+  guard let library else {togglingAlarms.removeValue(forKey:alarm.id);return}
+  let enable=targetEnabled ?? !(alarm.enabled && alarm.state == .confirmed)
+  togglingAlarms[alarm.id]=enable
+  defer {togglingAlarms.removeValue(forKey:alarm.id)}
+  do {if enable {try await library.enable(id:alarm.id)} else {try await library.disable(id:alarm.id)}}
   catch AlarmScheduleError.accessDenied {self.error=appText("Alarm wasn’t scheduled. Allow alarms for HiMorning in Settings.")}
   catch {self.error=appText("Alarm schedule unconfirmed") }
   alarms=await library.all()
@@ -710,15 +720,20 @@ struct HomeView:View {
  }
  private func alarmCard(_ alarm:SavedAlarm,now:Date)->some View {
   let completed=model.journal?.completedToday(alarmID:alarm.id,now:now) ?? false
-  let armed=alarm.enabled && alarm.state == .confirmed
-  let compactDisabled = !alarm.enabled && alarm.state != .needsReview
+  let pendingTarget=model.togglingAlarms[alarm.id]
+  let armed=pendingTarget ?? (alarm.enabled && alarm.state == .confirmed)
+  let isEnabledVisual=pendingTarget ?? alarm.enabled
+  let compactDisabled = !isEnabledVisual && alarm.state != .needsReview
   let ink=armed ? MorningTheme.onYellow : MorningTheme.ink
   let detailInk=armed ? MorningTheme.alarmDetailOnYellow : MorningTheme.muted
   let clock=Text(alarmTimeText(alarm.time))
    .font(.system(size:compactDisabled ? clockSize * 0.78 : clockSize,weight:.medium,design:.rounded))
-   .foregroundStyle(alarm.enabled ? ink : MorningTheme.alarmClockOff)
+   .foregroundStyle(isEnabledVisual ? ink : MorningTheme.alarmClockOff)
    .monospacedDigit().lineLimit(1).minimumScaleFactor(0.6).accessibilityIdentifier("alarmTime-"+alarm.id.uuidString)
-  let toggle=Toggle(appText("Alarm enabled"),isOn:Binding(get:{armed},set:{_ in Task {await model.toggle(alarm)}}))
+  let toggle=Toggle(appText("Alarm enabled"),isOn:Binding(get:{armed},set:{newValue in
+   guard newValue != armed else {return}
+   model.requestToggle(alarm)
+  }))
    .toggleStyle(.switch).labelsHidden().fixedSize().tint(MorningTheme.alarmSwitchOn)
    .accessibilityIdentifier("toggleAlarm-"+alarm.id.uuidString)
   let repeatDays=HStack(alignment:.firstTextBaseline,spacing:5) {
@@ -739,63 +754,59 @@ struct HomeView:View {
   }.buttonStyle(.plain).accessibilityIdentifier("editAlarmSchedule-"+alarm.id.uuidString)
   let mainLayout=dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment:.leading,spacing:16)) : AnyLayout(HStackLayout(alignment:.top,spacing:16))
   let footerLayout=dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment:.leading,spacing:8)) : AnyLayout(HStackLayout(alignment:.center,spacing:8))
-  return Group {
+  return VStack(alignment:.leading,spacing:compactDisabled ? 6 : 12) {
    if compactDisabled {
-    HStack(alignment:.center,spacing:14) {
-     VStack(alignment:.leading,spacing:4) {
-      if !alarm.label.isEmpty {
-       Text(alarm.label).font(.subheadline.weight(.medium)).lineLimit(1)
-        .foregroundStyle(detailInk)
-        .accessibilityIdentifier("alarmLabel-"+alarm.id.uuidString)
-      }
-      clock
-      alarmStatus(alarm,now:now,completed:completed,onYellow:false)
-     }.frame(maxWidth:.infinity,alignment:.leading)
-     toggle.disabled(alarm.state == .pending)
-    }
-    .padding(.horizontal,18).padding(.vertical,14)
+    VStack(alignment:.leading,spacing:4) {
+     if !alarm.label.isEmpty {
+      Text(alarm.label).font(.subheadline.weight(.medium)).lineLimit(1)
+       .foregroundStyle(detailInk)
+       .accessibilityIdentifier("alarmLabel-"+alarm.id.uuidString)
+     }
+     clock
+    }.frame(maxWidth:.infinity,alignment:.leading)
    } else {
-    VStack(alignment:.leading,spacing:12) {
-     mainLayout {
-      VStack(alignment:.leading,spacing:10) {
-       clockBlock
-       Label {
-        Text(alarm.sound.title).fixedSize(horizontal:false,vertical:true)
-       } icon: {Image(systemName:"speaker.wave.2").accessibilityHidden(true)}
-        .font(.caption.weight(.medium)).foregroundStyle(detailInk)
-        .accessibilityIdentifier("alarmSound-"+alarm.id.uuidString)
-      }.frame(maxWidth:.infinity,alignment:.leading)
-      Button {openAlarm(alarm,scope:.challenge)} label: {
-       alarmChallengeSummary(alarm,now:now,onYellow:armed).contentShape(Rectangle())
-      }.buttonStyle(.plain).accessibilityIdentifier("editAlarmChallenge-"+alarm.id.uuidString)
-     }
-     Rectangle().fill(ink.opacity(0.14)).frame(height:0.5).accessibilityHidden(true)
-     footerLayout {
-      alarmStatus(alarm,now:now,completed:completed,onYellow:armed).frame(maxWidth:.infinity,alignment:.leading)
-      HStack(spacing:8) {
-       tryAlarmButton(alarm).foregroundStyle(detailInk)
-       if alarm.state == .needsReview {
-        Button(appText(alarm.enabled ? "Retry schedule" : "Retry turning off")) {
-         Task {
-          if alarm.enabled {await model.toggle(alarm)}
-          else {await model.retryTurningOff(alarm)}
-         }
-        }.font(.footnote.weight(.semibold)).frame(minHeight:44)
-       } else {toggle.disabled(alarm.state == .pending)}
-      }
-     }
-    }.padding(18)
+    mainLayout {
+     VStack(alignment:.leading,spacing:10) {
+      clockBlock
+      Label {
+       Text(alarm.sound.title).fixedSize(horizontal:false,vertical:true)
+      } icon: {Image(systemName:"speaker.wave.2").accessibilityHidden(true)}
+       .font(.caption.weight(.medium)).foregroundStyle(detailInk)
+       .accessibilityIdentifier("alarmSound-"+alarm.id.uuidString)
+     }.frame(maxWidth:.infinity,alignment:.leading)
+     Button {openAlarm(alarm,scope:.challenge)} label: {
+      alarmChallengeSummary(alarm,now:now,onYellow:armed).contentShape(Rectangle())
+     }.buttonStyle(.plain).accessibilityIdentifier("editAlarmChallenge-"+alarm.id.uuidString)
+    }
+    Rectangle().fill(ink.opacity(0.14)).frame(height:0.5).accessibilityHidden(true)
    }
-  }.foregroundStyle(ink)
+   footerLayout {
+    alarmStatus(alarm,now:now,completed:completed,onYellow:armed).frame(maxWidth:.infinity,alignment:.leading)
+    HStack(spacing:8) {
+     if !compactDisabled {
+      tryAlarmButton(alarm).foregroundStyle(detailInk)
+     }
+     if alarm.state == .needsReview {
+      Button(appText(alarm.enabled ? "Retry schedule" : "Retry turning off")) {
+       Task {
+        if alarm.enabled {await model.toggle(alarm)}
+        else {await model.retryTurningOff(alarm)}
+       }
+      }.font(.footnote.weight(.semibold)).frame(minHeight:44)
+     } else {toggle.disabled(alarm.state == .pending)}
+    }
+   }
+  }.padding(.horizontal,18).padding(.vertical,compactDisabled ? 14 : 18).foregroundStyle(ink)
    .background {
     let shape=RoundedRectangle(cornerRadius:26)
     if armed {
      shape.fill(LinearGradient(colors:[MorningTheme.alarmCardHighlight,MorningTheme.yellow],startPoint:.topLeading,endPoint:.bottomTrailing))
     } else {shape.fill(MorningTheme.surface)}
    }
+   .clipShape(RoundedRectangle(cornerRadius:26))
    .overlay {RoundedRectangle(cornerRadius:26).strokeBorder(armed ? MorningTheme.alarmCardEdge : MorningTheme.line,lineWidth:1)}
    .contentShape(RoundedRectangle(cornerRadius:26))
-   .animation(reduceMotion ? nil : .spring(response:0.34,dampingFraction:0.86),value:alarm.enabled)
+   .animation(reduceMotion ? nil : .spring(response:0.32,dampingFraction:0.88),value:compactDisabled)
    .accessibilityElement(children:.contain).accessibilityIdentifier("alarmCard-"+alarm.id.uuidString)
    .onTapGesture {openAlarm(alarm,scope:.all)}
    .accessibilityAction(.default) {openAlarm(alarm,scope:.all)}

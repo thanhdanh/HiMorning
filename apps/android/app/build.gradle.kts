@@ -52,8 +52,8 @@ android {
         applicationId = "com.himorning.android"
         minSdk = 31
         targetSdk = 36
-        versionCode = 3
-        versionName = "1.0.1"
+        versionCode = 4
+        versionName = "1.0.2"
         buildConfigField("String", "CONTENT_ORIGIN", "\"$contentOrigin\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

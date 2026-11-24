@@ -141,6 +141,20 @@ final class DeviceFixesUITests:XCTestCase {
   let checklist=XCTAttachment(screenshot:app.screenshot());checklist.name="challenge-checklist-dark-large";checklist.lifetime = .keepAlways;add(checklist)
   app.buttons["Hủy"].tap();app.terminate()
  }
+ func testAlarmToggleSwitchesBetweenCompactAndExpandedCleanly() {
+  let app=launch(["--ui-home-alarms"])
+  let id="00000000-0000-0000-0000-000000000001"
+  let toggle=app.switches["toggleAlarm-"+id]
+  XCTAssertTrue(toggle.waitForExistence(timeout:5))
+  XCTAssertEqual(toggle.value as? String,"1")
+  XCTAssertTrue(app.staticTexts["alarmChallenge-"+id].exists)
+  XCTAssertTrue(app.staticTexts["alarmSound-"+id].exists)
+  toggle.tap()
+  XCTAssertEqual(toggle.value as? String,"0")
+  XCTAssertFalse(app.staticTexts["alarmChallenge-"+id].exists)
+  XCTAssertFalse(app.staticTexts["alarmSound-"+id].exists)
+  app.terminate()
+ }
  func testQuickEditorCanRecoverExpiredSettingsWithoutLosingItsDraft() {
   let app=launch(["--ui-disabled-alarm","--ui-sound-access-expires"])
   let id="00000000-0000-0000-0000-000000000001"
