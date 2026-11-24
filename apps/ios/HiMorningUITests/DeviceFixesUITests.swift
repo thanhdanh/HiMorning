@@ -144,8 +144,15 @@ final class DeviceFixesUITests:XCTestCase {
  func testAlarmToggleSwitchesBetweenCompactAndExpandedCleanly() {
   let app=launch(["--ui-home-alarms"])
   let id="00000000-0000-0000-0000-000000000001"
+  let second="00000000-0000-0000-0000-000000000002"
+  let third="00000000-0000-0000-0000-000000000003"
+  let card1=app.descendants(matching:.any)["alarmCard-"+id]
+  let card2=app.descendants(matching:.any)["alarmCard-"+second]
+  let card3=app.descendants(matching:.any)["alarmCard-"+third]
   let toggle=app.switches["toggleAlarm-"+id]
   XCTAssertTrue(toggle.waitForExistence(timeout:5))
+  XCTAssertLessThan(card1.frame.minY,card3.frame.minY)
+  XCTAssertLessThan(card3.frame.minY,card2.frame.minY)
   XCTAssertEqual(toggle.value as? String,"1")
   XCTAssertTrue(app.staticTexts["alarmChallenge-"+id].exists)
   XCTAssertTrue(app.staticTexts["alarmSound-"+id].exists)
@@ -153,6 +160,8 @@ final class DeviceFixesUITests:XCTestCase {
   XCTAssertEqual(toggle.value as? String,"0")
   XCTAssertFalse(app.staticTexts["alarmChallenge-"+id].exists)
   XCTAssertFalse(app.staticTexts["alarmSound-"+id].exists)
+  XCTAssertLessThan(card1.frame.minY,card3.frame.minY)
+  XCTAssertLessThan(card3.frame.minY,card2.frame.minY)
   app.terminate()
  }
  func testQuickEditorCanRecoverExpiredSettingsWithoutLosingItsDraft() {

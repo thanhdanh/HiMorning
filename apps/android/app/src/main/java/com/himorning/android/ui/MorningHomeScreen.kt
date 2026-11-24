@@ -1,8 +1,16 @@
 package com.himorning.android.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.runtime.key
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -131,13 +139,10 @@ internal fun MorningHomeScreen(
                 Text(DateTimeFormatter.ofPattern("EEE, MMM d", locale).format(java.time.LocalDate.now()),
                     style = MaterialTheme.typography.bodySmall, color = colors.muted)
             }
-            val now = Instant.now()
-            state.alarms.sortedWith(compareBy<Alarm> { alarm ->
-                if (alarm.enabled && alarm.state == ScheduleState.CONFIRMED)
-                    alarm.scheduledAt?.let(Instant::ofEpochMilli)?.takeIf { it > now } ?: Instant.MAX
-                else Instant.MAX
-            }.thenBy { it.hour }.thenBy { it.minute }).forEach { alarm ->
-                AlarmCard(alarm, state.entries, onEdit, onToggle, onDelete, onPractice)
+            state.alarms.sortedWith(compareBy<Alarm> { it.hour }.thenBy { it.minute }.thenBy { it.id }).forEach { alarm ->
+                key(alarm.id) {
+                    AlarmCard(alarm, state.entries, onEdit, onToggle, onDelete, onPractice)
+                }
             }
             MorningButton(
                 text = stringResource(if (state.alarms.isEmpty()) R.string.set_an_alarm else R.string.home_add_alarm), onClick = onAdd, leadingIcon = Icons.Outlined.Add,
@@ -291,9 +296,11 @@ private fun AlarmCard(
     val optionsLabel = stringResource(R.string.home_alarm_options)
     val density = LocalDensity.current
     val stack = density.fontScale >= 1.3f || LocalConfiguration.current.screenWidthDp < 380
-    val ink = if (armed) colors.onYellow else colors.ink
-    val detailInk = if (armed) MorningTheme.alarmDetailOnYellow else colors.muted
-    val clockInk = if (alarm.enabled) ink else colors.alarmClockOff
+    val ink by animateColorAsState(if (armed) colors.onYellow else colors.ink, tween(220))
+    val detailInk by animateColorAsState(if (armed) MorningTheme.alarmDetailOnYellow else colors.muted, tween(220))
+    val clockInk by animateColorAsState(if (alarm.enabled) ink else colors.alarmClockOff, tween(220))
+    val armedAlpha by animateFloatAsState(if (armed) 1f else 0f, tween(240))
+    val borderColor by animateColorAsState(if (armed) MorningTheme.alarmCardEdge else colors.line, tween(240))
     val shape = RoundedCornerShape(26.dp)
     val completeToday = entries.any { it.alarmId == alarm.id && it.completedChallenge && sameLocalDay(it.date, now) }
     var menuExpanded by remember { mutableStateOf(false) }
@@ -303,38 +310,53 @@ private fun AlarmCard(
 
     Column(
         Modifier.fillMaxWidth()
-            .animateContentSize(spring(dampingRatio = 0.85f, stiffness = Spring.StiffnessMediumLow))
+            .animateContentSize(tween(durationMillis = 260, easing = FastOutSlowInEasing))
             .morningPress(cardInteractions)
             .clip(shape)
-            .then(if (armed) Modifier.background(Brush.linearGradient(listOf(MorningTheme.alarmCardHighlight, colors.yellow)))
-                else Modifier.background(colors.surface))
-            .border(1.dp, if (armed) MorningTheme.alarmCardEdge else colors.line, shape)
+            .background(colors.surface)
+            .then(
+                if (armedAlpha > 0f) {
+                    Modifier.background(
+                        Brush.linearGradient(
+                            listOf(
+                                MorningTheme.alarmCardHighlight.copy(alpha = armedAlpha),
+                                colors.yellow.copy(alpha = armedAlpha),
+                            )
+                        )
+                    )
+                } else Modifier
+            )
+            .border(1.dp, borderColor, shape)
             .clickable(interactionSource = cardInteractions, indication = LocalIndication.current) { onEdit(alarm, AlarmEditorScope.ALL) }
             .padding(horizontal = 18.dp, vertical = if (compactDisabled) 12.dp else 18.dp),
         verticalArrangement = Arrangement.spacedBy(if (compactDisabled) 4.dp else 12.dp),
     ) {
-        if (compactDisabled) {
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                if (alarm.label.isNotBlank()) {
-                    Text(alarm.label, style = MaterialTheme.typography.titleSmall, color = detailInk, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                }
-                Text(
-                    alarmTimeText(LocalContext.current, alarm),
-                    style = MaterialTheme.typography.headlineMedium.copy(fontSize = 34.sp, fontWeight = FontWeight.Medium, fontFeatureSettings = "tnum"),
-                    color = clockInk,
-                    maxLines = 1,
-                )
+        if (stack) {
+            AlarmTimeColumn(alarm, ink, clockInk, detailInk, onEdit)
+            AnimatedVisibility(
+                visible = !compactDisabled,
+                enter = fadeIn(tween(220)) + expandVertically(tween(260, easing = FastOutSlowInEasing)),
+                exit = fadeOut(tween(150)) + shrinkVertically(tween(220, easing = FastOutSlowInEasing)),
+            ) {
+                ChallengeSummary(alarm, ink, onEdit, stacked = true, onYellow = armed)
             }
         } else {
-            if (stack) {
-                AlarmTimeColumn(alarm, ink, clockInk, detailInk, onEdit)
-                ChallengeSummary(alarm, ink, onEdit, stacked = true, onYellow = armed)
-            } else {
-                Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.Top) {
-                    Box(Modifier.weight(1f)) { AlarmTimeColumn(alarm, ink, clockInk, detailInk, onEdit) }
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.Top) {
+                Box(Modifier.weight(1f)) { AlarmTimeColumn(alarm, ink, clockInk, detailInk, onEdit) }
+                AnimatedVisibility(
+                    visible = !compactDisabled,
+                    enter = fadeIn(tween(220)),
+                    exit = fadeOut(tween(150)),
+                ) {
                     ChallengeSummary(alarm, ink, onEdit, stacked = false, onYellow = armed, modifier = Modifier.widthIn(max = 138.dp))
                 }
             }
+        }
+        AnimatedVisibility(
+            visible = !compactDisabled,
+            enter = fadeIn(tween(220)) + expandVertically(tween(260, easing = FastOutSlowInEasing)),
+            exit = fadeOut(tween(150)) + shrinkVertically(tween(220, easing = FastOutSlowInEasing)),
+        ) {
             Divider(color = ink.copy(alpha = .14f), thickness = 1.dp)
         }
         val status = when {
@@ -354,7 +376,11 @@ private fun AlarmCard(
         if (stack) statusLabels()
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             if (stack) Spacer(Modifier.weight(1f)) else Box(Modifier.weight(1f)) { statusLabels() }
-            if (!compactDisabled && alarm.enabled && alarm.challenge != ChallengeKind.NONE) {
+            AnimatedVisibility(
+                visible = !compactDisabled && alarm.enabled && alarm.challenge != ChallengeKind.NONE,
+                enter = fadeIn(tween(180)),
+                exit = fadeOut(tween(120)),
+            ) {
                 IconButton(onClick = { onPractice(alarm) }, interactionSource = playInteractions,
                     modifier = Modifier.size(48.dp).morningPress(playInteractions)
                     .semantics { contentDescription = tryLabel }) {
