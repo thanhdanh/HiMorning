@@ -42,7 +42,7 @@ struct ChallengeIcon:View {
    } else {
     switch artwork {
     case .asset:image.resizable().scaledToFit()
-    case .symbol:image.symbolRenderingMode(.monochrome).font(.system(size:size,weight:.medium))
+    case .symbol:image.symbolRenderingMode(.hierarchical).font(.system(size:size,weight:.medium))
     }
    }
   }.frame(width:size,height:size).accessibilityHidden(true)

@@ -67,7 +67,7 @@ struct ProView:View {
 
  private func benefit(_ title:String,_ description:String,icon:String)->some View {
   HStack(alignment:.top,spacing:12) {
-   Image(systemName:icon).font(.body.weight(.semibold)).foregroundStyle(MorningTheme.proInk)
+   Image(systemName:icon).font(.body.weight(.semibold)).foregroundStyle(MorningTheme.accent)
     .frame(width:36,height:36).background(MorningTheme.proSurface,in:RoundedRectangle(cornerRadius:10))
     .overlay {RoundedRectangle(cornerRadius:10).strokeBorder(MorningTheme.proGoldEdge.opacity(0.4),lineWidth:0.75)}
     .accessibilityHidden(true)
