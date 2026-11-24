@@ -1,5 +1,7 @@
+import java.io.FileInputStream
 import java.net.URI
 import java.security.MessageDigest
+import java.util.Properties
 
 plugins {
     id("com.android.application")
@@ -36,6 +38,13 @@ if (contentOrigin.isNotEmpty()) {
         (origin.rawPath == "" || origin.rawPath == "/")) { "Use the same HTTPS Workers origin as iOS." }
 }
 
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties = Properties().apply {
+    if (keystorePropertiesFile.isFile) {
+        FileInputStream(keystorePropertiesFile).use(::load)
+    }
+}
+
 android {
     namespace = "com.himorning.android"
     compileSdk = 36
@@ -43,10 +52,30 @@ android {
         applicationId = "com.himorning.android"
         minSdk = 31
         targetSdk = 36
-        versionCode = 2
-        versionName = "1.0.0"
+        versionCode = 3
+        versionName = "1.0.1"
         buildConfigField("String", "CONTENT_ORIGIN", "\"$contentOrigin\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+    signingConfigs {
+        create("release") {
+            val storePath = keystoreProperties.getProperty("storeFile")
+            if (!storePath.isNullOrBlank()) {
+                storeFile = rootProject.file(storePath)
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
+        }
+    }
+    buildTypes {
+        getByName("release") {
+            if (keystorePropertiesFile.isFile) {
+                signingConfig = signingConfigs.getByName("release")
+            }
+            isMinifyEnabled = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
     }
     buildFeatures { compose = true; buildConfig = true }
     androidResources { noCompress += listOf("task", "m4a") }

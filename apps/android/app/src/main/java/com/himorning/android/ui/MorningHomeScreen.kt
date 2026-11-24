@@ -1,5 +1,8 @@
 package com.himorning.android.ui
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -283,6 +286,7 @@ private fun AlarmCard(
     val armed = alarm.enabled && alarm.state == ScheduleState.CONFIRMED && confirmedAt != null
     val needsReview = alarm.state == ScheduleState.NEEDS_REVIEW ||
         (alarm.state == ScheduleState.CONFIRMED && alarm.enabled && confirmedAt == null)
+    val compactDisabled = !alarm.enabled && !needsReview
     val toggleLabel = stringResource(if (armed) R.string.home_turn_off else R.string.home_turn_on)
     val optionsLabel = stringResource(R.string.home_alarm_options)
     val density = LocalDensity.current
@@ -299,15 +303,59 @@ private fun AlarmCard(
 
     Column(
         Modifier.fillMaxWidth()
+            .animateContentSize(spring(dampingRatio = 0.85f, stiffness = Spring.StiffnessMediumLow))
             .morningPress(cardInteractions)
             .clip(shape)
             .then(if (armed) Modifier.background(Brush.linearGradient(listOf(MorningTheme.alarmCardHighlight, colors.yellow)))
                 else Modifier.background(colors.surface))
             .border(1.dp, if (armed) MorningTheme.alarmCardEdge else colors.line, shape)
             .clickable(interactionSource = cardInteractions, indication = LocalIndication.current) { onEdit(alarm, AlarmEditorScope.ALL) }
-            .padding(18.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+            .padding(horizontal = 18.dp, vertical = if (compactDisabled) 12.dp else 18.dp),
+        verticalArrangement = Arrangement.spacedBy(if (compactDisabled) 4.dp else 12.dp),
     ) {
+        if (compactDisabled) {
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    if (alarm.label.isNotBlank()) {
+                        Text(alarm.label, style = MaterialTheme.typography.titleSmall, color = detailInk, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    }
+                    Text(
+                        alarmTimeText(LocalContext.current, alarm),
+                        style = MaterialTheme.typography.headlineMedium.copy(fontSize = 34.sp, fontWeight = FontWeight.Medium, fontFeatureSettings = "tnum"),
+                        color = clockInk,
+                        maxLines = 1,
+                    )
+                    Text(stringResource(stateText(ScheduleState.OFF)), style = MaterialTheme.typography.bodySmall, color = detailInk)
+                    if (completeToday) {
+                        Text(stringResource(R.string.home_completed_today), style = MaterialTheme.typography.bodySmall, color = colors.success)
+                    }
+                }
+                Switch(
+                    checked = armed,
+                    enabled = alarm.state != ScheduleState.PENDING,
+                    onCheckedChange = { onToggle(alarm, it) },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = Color.White, checkedTrackColor = MorningTheme.alarmSwitchOn, checkedBorderColor = Color.Transparent,
+                        uncheckedThumbColor = colors.muted, uncheckedTrackColor = colors.surface, uncheckedBorderColor = colors.muted,
+                    ),
+                    modifier = Modifier.semantics { contentDescription = toggleLabel },
+                )
+                Box {
+                    IconButton(onClick = { menuExpanded = true }, interactionSource = menuInteractions,
+                        modifier = Modifier.size(44.dp).morningPress(menuInteractions)
+                        .semantics { contentDescription = optionsLabel }) {
+                        Icon(Icons.Outlined.MoreVert, contentDescription = null, tint = detailInk)
+                    }
+                    DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
+                        DropdownMenuItem(text = { Text(stringResource(R.string.home_edit_alarm)) }, leadingIcon = { Icon(Icons.Outlined.Edit, null) },
+                            onClick = { menuExpanded = false; onEdit(alarm, AlarmEditorScope.ALL) })
+                        DropdownMenuItem(text = { Text(stringResource(R.string.home_delete_alarm)) }, leadingIcon = { Icon(Icons.Outlined.DeleteOutline, null) },
+                            onClick = { menuExpanded = false; onDelete(alarm) })
+                    }
+                }
+            }
+            return@Column
+        }
         if (stack) {
             AlarmTimeColumn(alarm, ink, clockInk, detailInk, onEdit)
             ChallengeSummary(alarm, ink, onEdit, stacked = true, onYellow = armed)

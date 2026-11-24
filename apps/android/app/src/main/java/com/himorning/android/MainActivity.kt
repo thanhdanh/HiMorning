@@ -20,6 +20,19 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -28,11 +41,19 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -64,7 +85,97 @@ class MainActivity : ComponentActivity() {
         setContent {
             HiMorningTheme {
                 MorningSystemBars()
-                Surface(Modifier.fillMaxSize(), color = MorningTheme.colors.canvas) { HiMorning() }
+                Surface(Modifier.fillMaxSize(), color = MorningTheme.colors.canvas) {
+                    var showSplash by remember { mutableStateOf(true) }
+                    LaunchedEffect(Unit) {
+                        kotlinx.coroutines.delay(1250)
+                        showSplash = false
+                    }
+                    Box(Modifier.fillMaxSize()) {
+                        HiMorning()
+                        AnimatedVisibility(
+                            visible = showSplash,
+                            exit = fadeOut(tween(320)) + scaleOut(targetScale = 1.03f, animationSpec = tween(320)),
+                        ) {
+                            MorningSplashOverlay()
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MorningSplashOverlay() {
+    val rise = remember { Animatable(0f) }
+    LaunchedEffect(Unit) {
+        rise.animateTo(1f, spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow))
+    }
+    val spinTransition = rememberInfiniteTransition(label = "splash-rays")
+    val rayAngle by spinTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(animation = tween(8000, easing = LinearEasing), repeatMode = RepeatMode.Restart),
+        label = "ray-angle",
+    )
+    val colors = MorningTheme.colors
+    Box(
+        modifier = Modifier.fillMaxSize().background(colors.canvas),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(20.dp)) {
+            Box(Modifier.size(160.dp), contentAlignment = Alignment.Center) {
+                Canvas(Modifier.fillMaxSize()) {
+                    val p = rise.value.coerceIn(0f, 1.15f)
+                    drawCircle(
+                        brush = Brush.radialGradient(listOf(colors.yellow.copy(alpha = 0.32f * p), colors.yellow.copy(alpha = 0.08f * p), Color.Transparent)),
+                        radius = size.minDimension * 0.48f,
+                    )
+                    drawCircle(
+                        color = colors.yellow.copy(alpha = 0.25f * p),
+                        radius = (38.dp.toPx() + 26.dp.toPx() * p),
+                        style = Stroke(width = 2.dp.toPx()),
+                    )
+                    val rayCount = 12
+                    val outerRadius = 60.dp.toPx()
+                    val innerRadius = 50.dp.toPx()
+                    for (i in 0 until rayCount) {
+                        val angle = Math.toRadians((i * 30.0 + rayAngle))
+                        val cos = kotlin.math.cos(angle).toFloat()
+                        val sin = kotlin.math.sin(angle).toFloat()
+                        drawLine(
+                            color = colors.accent.copy(alpha = 0.45f * p),
+                            start = Offset(center.x + innerRadius * cos, center.y + innerRadius * sin),
+                            end = Offset(center.x + outerRadius * cos, center.y + outerRadius * sin),
+                            strokeWidth = 2.5.dp.toPx(),
+                            cap = StrokeCap.Round,
+                        )
+                    }
+                    drawCircle(color = colors.yellow, radius = 38.dp.toPx() * (0.76f + 0.24f * rise.value))
+                }
+            }
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.graphicsLayer {
+                    alpha = rise.value.coerceIn(0f, 1f)
+                    translationY = (1f - rise.value) * 18.dp.toPx()
+                },
+            ) {
+                Text(
+                    "HiMorning.",
+                    fontFamily = quicksandFont,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 32.sp,
+                    color = colors.ink,
+                )
+                Text(
+                    stringResource(R.string.splash_tagline),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = colors.muted,
+                    textAlign = TextAlign.Center,
+                )
             }
         }
     }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">HiMorning</string>
+    <string name="splash_tagline">Một ngày mới,\nnhẹ nhàng hơn.</string>
     <string name="alarms">Báo thức</string>
     <string name="explore">Luyện tập</string>
     <string name="progress">Tiến trình</string>

@@ -1,6 +1,12 @@
 .gradle/
 .kotlin/
 local.properties
+keystore.properties
 **/build/
 *.jks
 *.keystore
+*.p12
+*.pfx
+*.pepk
+*.pem
+*.pk8

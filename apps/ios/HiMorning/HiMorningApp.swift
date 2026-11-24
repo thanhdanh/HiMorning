@@ -8,7 +8,30 @@ import ActivityKit
 @main struct HiMorningApp:App {
  @StateObject private var model=PilotModel()
  @AppStorage("appLanguage") private var language="system"
- var body:some Scene {WindowGroup {HomeView(model:model).environment(\.locale,Locale(identifier:(AppLanguage(rawValue:language) ?? .system).resolved(preferredLanguages:Locale.preferredLanguages)))}}
+ @State private var showSplash = !ProcessInfo.processInfo.arguments.contains("--ui-testing") || ProcessInfo.processInfo.arguments.contains("--ui-splash")
+ @Environment(\.accessibilityReduceMotion) private var reduceMotion
+ var body:some Scene {
+  WindowGroup {
+   ZStack {
+    HomeView(model:model)
+    if showSplash {
+     MorningSplashView()
+      .transition(reduceMotion ? .opacity : .opacity.combined(with:.scale(scale:1.03)))
+      .zIndex(1)
+    }
+   }
+   .task {
+    guard showSplash else {return}
+    let keepOpen=ProcessInfo.processInfo.arguments.contains("--ui-splash-hold")
+    guard !keepOpen else {return}
+    try? await Task.sleep(for:.seconds(1.25))
+    withAnimation(reduceMotion ? .linear(duration:0.15) : .easeOut(duration:0.35)) {
+     showSplash=false
+    }
+   }
+   .environment(\.locale,Locale(identifier:(AppLanguage(rawValue:language) ?? .system).resolved(preferredLanguages:Locale.preferredLanguages)))
+  }
+ }
 }
 enum AlarmSaveError:Error {case soundUnavailable,challengeUnavailable,trialUnavailable,trialAlarmOff}
 struct ChallengeCredit:Codable,Equatable {
@@ -688,9 +711,11 @@ struct HomeView:View {
  private func alarmCard(_ alarm:SavedAlarm,now:Date)->some View {
   let completed=model.journal?.completedToday(alarmID:alarm.id,now:now) ?? false
   let armed=alarm.enabled && alarm.state == .confirmed
+  let compactDisabled = !alarm.enabled && alarm.state != .needsReview
   let ink=armed ? MorningTheme.onYellow : MorningTheme.ink
   let detailInk=armed ? MorningTheme.alarmDetailOnYellow : MorningTheme.muted
-  let clock=Text(alarmTimeText(alarm.time)).font(.system(size:clockSize,weight:.medium,design:.rounded))
+  let clock=Text(alarmTimeText(alarm.time))
+   .font(.system(size:compactDisabled ? clockSize * 0.78 : clockSize,weight:.medium,design:.rounded))
    .foregroundStyle(alarm.enabled ? ink : MorningTheme.alarmClockOff)
    .monospacedDigit().lineLimit(1).minimumScaleFactor(0.6).accessibilityIdentifier("alarmTime-"+alarm.id.uuidString)
   let toggle=Toggle(appText("Alarm enabled"),isOn:Binding(get:{armed},set:{_ in Task {await model.toggle(alarm)}}))
@@ -714,36 +739,54 @@ struct HomeView:View {
   }.buttonStyle(.plain).accessibilityIdentifier("editAlarmSchedule-"+alarm.id.uuidString)
   let mainLayout=dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment:.leading,spacing:16)) : AnyLayout(HStackLayout(alignment:.top,spacing:16))
   let footerLayout=dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment:.leading,spacing:8)) : AnyLayout(HStackLayout(alignment:.center,spacing:8))
-  return VStack(alignment:.leading,spacing:12) {
-   mainLayout {
-    VStack(alignment:.leading,spacing:10) {
-     clockBlock
-     Label {
-      Text(alarm.sound.title).fixedSize(horizontal:false,vertical:true)
-     } icon: {Image(systemName:"speaker.wave.2").accessibilityHidden(true)}
-      .font(.caption.weight(.medium)).foregroundStyle(detailInk)
-      .accessibilityIdentifier("alarmSound-"+alarm.id.uuidString)
-    }.frame(maxWidth:.infinity,alignment:.leading)
-    Button {openAlarm(alarm,scope:.challenge)} label: {
-     alarmChallengeSummary(alarm,now:now,onYellow:armed).contentShape(Rectangle())
-    }.buttonStyle(.plain).accessibilityIdentifier("editAlarmChallenge-"+alarm.id.uuidString)
-   }
-   Rectangle().fill(ink.opacity(0.14)).frame(height:0.5).accessibilityHidden(true)
-   footerLayout {
-    alarmStatus(alarm,now:now,completed:completed,onYellow:armed).frame(maxWidth:.infinity,alignment:.leading)
-    HStack(spacing:8) {
-     tryAlarmButton(alarm).foregroundStyle(detailInk)
-     if alarm.state == .needsReview {
-      Button(appText(alarm.enabled ? "Retry schedule" : "Retry turning off")) {
-       Task {
-        if alarm.enabled {await model.toggle(alarm)}
-        else {await model.retryTurningOff(alarm)}
-       }
-      }.font(.footnote.weight(.semibold)).frame(minHeight:44)
-     } else {toggle.disabled(alarm.state == .pending)}
+  return Group {
+   if compactDisabled {
+    HStack(alignment:.center,spacing:14) {
+     VStack(alignment:.leading,spacing:4) {
+      if !alarm.label.isEmpty {
+       Text(alarm.label).font(.subheadline.weight(.medium)).lineLimit(1)
+        .foregroundStyle(detailInk)
+        .accessibilityIdentifier("alarmLabel-"+alarm.id.uuidString)
+      }
+      clock
+      alarmStatus(alarm,now:now,completed:completed,onYellow:false)
+     }.frame(maxWidth:.infinity,alignment:.leading)
+     toggle.disabled(alarm.state == .pending)
     }
+    .padding(.horizontal,18).padding(.vertical,14)
+   } else {
+    VStack(alignment:.leading,spacing:12) {
+     mainLayout {
+      VStack(alignment:.leading,spacing:10) {
+       clockBlock
+       Label {
+        Text(alarm.sound.title).fixedSize(horizontal:false,vertical:true)
+       } icon: {Image(systemName:"speaker.wave.2").accessibilityHidden(true)}
+        .font(.caption.weight(.medium)).foregroundStyle(detailInk)
+        .accessibilityIdentifier("alarmSound-"+alarm.id.uuidString)
+      }.frame(maxWidth:.infinity,alignment:.leading)
+      Button {openAlarm(alarm,scope:.challenge)} label: {
+       alarmChallengeSummary(alarm,now:now,onYellow:armed).contentShape(Rectangle())
+      }.buttonStyle(.plain).accessibilityIdentifier("editAlarmChallenge-"+alarm.id.uuidString)
+     }
+     Rectangle().fill(ink.opacity(0.14)).frame(height:0.5).accessibilityHidden(true)
+     footerLayout {
+      alarmStatus(alarm,now:now,completed:completed,onYellow:armed).frame(maxWidth:.infinity,alignment:.leading)
+      HStack(spacing:8) {
+       tryAlarmButton(alarm).foregroundStyle(detailInk)
+       if alarm.state == .needsReview {
+        Button(appText(alarm.enabled ? "Retry schedule" : "Retry turning off")) {
+         Task {
+          if alarm.enabled {await model.toggle(alarm)}
+          else {await model.retryTurningOff(alarm)}
+         }
+        }.font(.footnote.weight(.semibold)).frame(minHeight:44)
+       } else {toggle.disabled(alarm.state == .pending)}
+      }
+     }
+    }.padding(18)
    }
-  }.padding(18).foregroundStyle(ink)
+  }.foregroundStyle(ink)
    .background {
     let shape=RoundedRectangle(cornerRadius:26)
     if armed {
@@ -752,6 +795,7 @@ struct HomeView:View {
    }
    .overlay {RoundedRectangle(cornerRadius:26).strokeBorder(armed ? MorningTheme.alarmCardEdge : MorningTheme.line,lineWidth:1)}
    .contentShape(RoundedRectangle(cornerRadius:26))
+   .animation(reduceMotion ? nil : .spring(response:0.34,dampingFraction:0.86),value:alarm.enabled)
    .accessibilityElement(children:.contain).accessibilityIdentifier("alarmCard-"+alarm.id.uuidString)
    .onTapGesture {openAlarm(alarm,scope:.all)}
    .accessibilityAction(.default) {openAlarm(alarm,scope:.all)}
