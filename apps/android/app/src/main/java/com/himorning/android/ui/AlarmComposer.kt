@@ -290,12 +290,13 @@ fun AlarmComposer(
         val tint = MorningTheme.modeAccent(details.mode)
         AlertDialog(
             onDismissRequest = { challengeInfo = null },
-            icon = {
-                val iconSize = if (cameraRequired) 58.dp else 28.dp
-                Box(Modifier.background(tint.copy(alpha = .12f), CircleShape).padding(8.dp)) {
-                    MovementChallengeIcon(details.challenge, details.seated, tint = tint, size = iconSize)
+            icon = if (!cameraRequired) {
+                {
+                    Box(Modifier.background(tint.copy(alpha = .12f), CircleShape).padding(8.dp)) {
+                        MovementChallengeIcon(details.challenge, details.seated, tint = tint, size = 28.dp)
+                    }
                 }
-            },
+            } else null,
             title = {
                 Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(stringResource(challengeText(details.challenge)), fontFamily = quicksandFont, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center)
@@ -322,6 +323,7 @@ fun AlarmComposer(
                         }
                     }
                     if (cameraRequired) {
+                        MovementMotionStage(kind = details.challenge, seated = details.seated)
                         Row(
                             Modifier.fillMaxWidth().background(colors.soft, RoundedCornerShape(14.dp)).padding(12.dp),
                             horizontalArrangement = Arrangement.spacedBy(10.dp),

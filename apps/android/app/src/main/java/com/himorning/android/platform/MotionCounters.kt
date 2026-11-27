@@ -232,6 +232,7 @@ internal class PushUpCounter {
     private var lowered: Long? = null
     private var previous: Long? = null
     private var lostSince: Long? = null
+    private var formLostSince: Long? = null
     private var completed = 0
 
     fun observe(elbow: Double, body: Double, incline: Double, now: Long): Int {
@@ -239,18 +240,28 @@ internal class PushUpCounter {
             lostSince?.let { now - it > 600 } == true) interrupt()
         previous = now
         lostSince = null
-        if (elbow !in 0.0..180.0 || body !in 150.0..180.0 || incline !in 0.0..35.0) {
+        if (!elbow.isFinite() || !body.isFinite() || !incline.isFinite() || elbow !in 0.0..180.0) {
             interrupt()
             return completed
         }
+        if (body !in 150.0..180.0 || incline !in 0.0..42.0) {
+            val since = formLostSince ?: now
+            if (now - since > 450) interrupt() else formLostSince = since
+            return completed
+        }
+        if (formLostSince?.let { now - it > 450 } == true) {
+            interrupt()
+            return completed
+        }
+        formLostSince = null
 
         val start = began
         val bottom = lowered
         if (start != null && now - start > 15_000) interrupt()
-        else if (start == null && elbow >= 160) began = now
-        else if (start != null && bottom == null && elbow <= 90) {
+        else if (start == null && elbow >= 150) began = now
+        else if (start != null && bottom == null && elbow <= 98) {
             if (now - start >= 150) lowered = now else interrupt()
-        } else if (start != null && bottom != null && elbow >= 160) {
+        } else if (start != null && bottom != null && elbow >= 150) {
             if (now - start >= 750 && now - bottom >= 150) completed++
             interrupt()
         }
@@ -268,6 +279,7 @@ internal class PushUpCounter {
         lowered = null
         previous = null
         lostSince = null
+        formLostSince = null
     }
 }
 

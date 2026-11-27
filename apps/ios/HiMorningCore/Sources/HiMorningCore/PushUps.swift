@@ -5,14 +5,16 @@ public struct PushUpCounter:Sendable {
  public private(set) var completedReps=0
  public var ready:Bool {completedReps == target}
  private static let occlusionGraceMs=600
+ private static let formGraceMs=450
  private var phase=0
  private var began:Int?
  private var loweredAt:Int?
  private var lastObservation:Int?
  private var lostSince:Int?
+ private var formLostSince:Int?
  // ChallengeCoordinator.completePushUps requires target == the saved repetitions, so this must accept every saved value.
  public init(target:Int) {self.target=min(ChallengeSelection.maximumPushUps,max(1,target))}
- public mutating func interrupt() {phase=0;began=nil;loweredAt=nil;lastObservation=nil;lostSince=nil}
+ public mutating func interrupt() {phase=0;began=nil;loweredAt=nil;lastObservation=nil;lostSince=nil;formLostSince=nil}
  public mutating func observe(elbowAngle:Double,bodyAngle:Double,incline:Double,visible:Bool,timestampMs:Int) {
   guard !ready else {return}
   // Same limit as CameraCapture, so a long target never keeps the camera open after counting has stopped.
@@ -28,14 +30,20 @@ public struct PushUpCounter:Sendable {
   }
   if let lostSince,timestampMs-lostSince>Self.occlusionGraceMs {interrupt();return}
   lostSince=nil
-  guard elbowAngle.isFinite,bodyAngle.isFinite,incline.isFinite,
-        (0...180).contains(elbowAngle),(150...180).contains(bodyAngle),(0...35).contains(incline) else {interrupt();return}
+  guard elbowAngle.isFinite,bodyAngle.isFinite,incline.isFinite,(0...180).contains(elbowAngle) else {interrupt();return}
+  guard (150...180).contains(bodyAngle),(0...42).contains(incline) else {
+   let since=formLostSince ?? timestampMs
+   if timestampMs-since>Self.formGraceMs {interrupt()} else {formLostSince=since;lastObservation=timestampMs}
+   return
+  }
+  if let formLostSince,timestampMs-formLostSince>Self.formGraceMs {interrupt();return}
+  formLostSince=nil
   lastObservation=timestampMs
   if let began,timestampMs-began>15000 {interrupt();lastObservation=timestampMs}
   let matches:Bool
   switch phase {
-  case 1:matches=elbowAngle<=90
-  default:matches=elbowAngle>=160
+  case 1:matches=elbowAngle<=98
+  default:matches=elbowAngle>=150
   }
   guard matches else {return}
   if phase == 0 {began=timestampMs}

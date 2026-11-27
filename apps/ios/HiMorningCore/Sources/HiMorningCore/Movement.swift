@@ -204,7 +204,7 @@ public struct MovementChallengeProgress:Sendable {
   default:interrupt();return completed
   }
   if pose != candidate {candidate=pose;candidateSince=timestampMs;candidateConsumed=false;return completed}
-  let requiredDuration=(kind == .stretching && pose == .overhead) ? 120:220
+  let requiredDuration=kind == .jumpingJacks ? 100 : (kind == .stretching && pose == .overhead) ? 120:220
   guard timestampMs-candidateSince>=requiredDuration,!candidateConsumed else {return completed}
   candidateConsumed=true
   consume(pose)

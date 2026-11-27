@@ -242,9 +242,15 @@ struct MorningProgressView:View {
    }
    ProgressView(value:Double(min(daysThisWeek,goal)),total:Double(goal)).tint(MorningTheme.success)
     .accessibilityLabel(appText("Weekly goal")).accessibilityValue("\(daysThisWeek)/\(goal)")
-   if model.access.hasFullAccess {Picker(appText("Weekly goal"),selection:Binding(get:{goal},set:{model.setGoal($0)})) {
-    ForEach(1...7,id:\.self) {value in Text(morningCountText(value)).tag(value)}
-   }.disabled(model.journal == nil)}
+   if model.access.hasFullAccess {
+    HStack {
+     Text(appText("Weekly goal")).font(.subheadline).foregroundStyle(MorningTheme.muted)
+     Spacer(minLength:8)
+     Picker(appText("Weekly goal"),selection:Binding(get:{goal},set:{model.setGoal($0)})) {
+      ForEach(1...7,id:\.self) {value in Text(morningCountText(value)).tag(value)}
+     }.disabled(model.journal == nil)
+    }
+   }
    DisclosureGroup(appText("How ratings work")) {
     VStack(alignment:.leading,spacing:10) {
      Text(appText("100 for completing a challenge, 0 for skipping. Multiple attempts in a morning are averaged. — means no record."))

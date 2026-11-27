@@ -103,13 +103,13 @@ struct AlarmEditor:View {
       if scope != .schedule {
       VStack(alignment:.leading,spacing:12) {
        Text(appText("When the alarm rings")).font(.headline)
-       HStack {
+       HStack(alignment:.center,spacing:10) {
         ChallengeIcon(kind:challenge.kind,seated:challenge.rhythmVariant == .seated,size:20)
          .foregroundStyle(challengeColor)
         let title=Text(challenge.displayTitle).font(.subheadline.weight(.semibold))
          .accessibilityIdentifier("composerChallengeTitle")
         if dynamicTypeSize.isAccessibilitySize {title}
-        else {title.lineLimit(2,reservesSpace:true)}
+        else {title.lineLimit(2)}
         Spacer()
         Button(appText("Try")) {startPractice()}
          .buttonStyle(.bordered).frame(minHeight:44).accessibilityIdentifier("trySelectedChallenge")
@@ -372,14 +372,14 @@ struct AlarmEditor:View {
     ForEach(available.filter {$0 != last},id:\.self) {challengeButton($0,wide:oneColumn)}
    }
    if let last {challengeButton(last,wide:true).id(last)}
-   if !available.contains(challenge.kind) {challengeButton(challenge.kind,legacy:true,wide:true)}
+   if !available.contains(challenge.kind) && (editing || challenge.kind != .none) {challengeButton(challenge.kind,legacy:true,wide:true)}
   }
  }
  private func challengeButton(_ kind:ChallengeKind,legacy:Bool=false,wide:Bool=false)->some View {
   let selected=challenge.kind == kind
   let tint=MorningTheme.modeAccent(legacy ? mode : filter)
   let locked = !preview.access.allows(challenge:kind)
-  let usesCamera=kind == .pushUps || kind == .guidedRhythm || kind.usesLocalMovement
+  let usesCamera=kind == .pushUps || kind == .guidedRhythm || kind == .morningLight || kind.usesLocalMovement
   let layout=wide ? AnyLayout(HStackLayout(alignment:.center,spacing:12)) : AnyLayout(VStackLayout(alignment:.leading,spacing:8))
   let reserveTitleLines = !wide && dynamicTypeSize <= .large && !legacy
   let infoAlignment:Alignment = wide ? .trailing : .topTrailing
@@ -393,7 +393,7 @@ struct AlarmEditor:View {
       .foregroundStyle(tint)
       .frame(width:40,height:40).background(tint.opacity(0.13),in:RoundedRectangle(cornerRadius:13))
      VStack(alignment:.leading,spacing:wide ? 4 : 8) {
-     let title=Text(legacy ? String(format:appText("%@ · saved choice"),kind.title) : kind.title)
+     let title=Text(legacy ? String(format:appText(editing ? "%@ · saved choice" : "%@ · current choice"),kind.title) : kind.title)
       .font(.subheadline.weight(.bold)).multilineTextAlignment(.leading).fixedSize(horizontal:false,vertical:true)
      if reserveTitleLines {title.lineLimit(2,reservesSpace:true)} else {title}
      ZStack(alignment:.leading) {

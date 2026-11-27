@@ -20,6 +20,17 @@ microphone audio on your iPhone. This release does not save or upload the raw
 camera images or microphone audio. You can revoke camera and microphone access
 in iPhone Settings and choose an activity that does not use them.
 
+If you enable Apple Health sync and grant permission, HiMorning checks your
+HealthKit authorization status and records completed morning challenges as brief
+Mindful Minutes check-ins in Apple Health on your iPhone. HiMorning never uses
+Apple Health data for advertising, marketing, or third-party data sharing, and
+does not upload HealthKit data off your device.
+
+On the Free plan after preview, HiMorning uses Google AdMob only when you
+explicitly choose to watch an optional rewarded ad to try a locked challenge,
+and Google User Messaging Platform to manage ad privacy consent. No camera
+images, voice audio, or Apple Health data are shared with AdMob.
+
 Apple handles App Store purchases. HiMorning reads verified purchase and
 subscription information from StoreKit to decide whether Pro is active. It
 does not receive your card details. Manage your subscription through your
@@ -50,6 +61,17 @@ Các hoạt động vận động xử lý hình ảnh camera trên iPhone. Ho�
 tiếng xử lý âm thanh micro trên iPhone. Bản này không lưu hoặc tải lên hình ảnh
 hay âm thanh gốc. Bạn có thể thu hồi quyền camera và micro trong Cài đặt iPhone
 và chọn hoạt động không cần các quyền đó.
+
+Nếu bạn bật đồng bộ Apple Sức khỏe và cấp quyền, HiMorning kiểm tra trạng thái
+cấp quyền HealthKit và lưu các buổi sáng hoàn thành thử thách thành bản ghi Phút
+chú tâm (Mindful Minutes) trong ứng dụng Sức khỏe trên iPhone. HiMorning tuyệt
+đối không dùng dữ liệu HealthKit cho quảng cáo, tiếp thị hoặc chia sẻ với bên
+thứ ba, và không tải dữ liệu Sức khỏe ra khỏi thiết bị.
+
+Ở gói Miễn phí sau thời gian dùng thử, HiMorning chỉ dùng Google AdMob khi bạn
+chủ động chọn xem quảng cáo có thưởng để dùng thử một thử thách khóa, cùng
+Google User Messaging Platform để quản lý lựa chọn quyền riêng tư. Hình ảnh
+camera, giọng nói và dữ liệu Apple Sức khỏe không bao giờ được gửi cho AdMob.
 
 Apple xử lý thanh toán qua App Store. HiMorning đọc thông tin giao dịch đã
 xác minh qua StoreKit để xác định quyền dùng Pro. Ứng dụng không nhận thông tin

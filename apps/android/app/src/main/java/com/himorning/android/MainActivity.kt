@@ -198,7 +198,7 @@ private fun MorningSplashOverlay() {
     LaunchedEffect(Unit) { refresh() }
 }
 
-private enum class HomeSheet { PROGRESS, LANGUAGE, PURPOSE, EXPLORE, PLAN }
+private enum class HomeSheet { PROGRESS, PRO, LANGUAGE, PURPOSE, EXPLORE, PLAN }
 
 @Composable private fun AppContent(repo: AppRepository, state: AppState, error: Boolean, clearError: () -> Unit, refresh: () -> Unit, showError: () -> Unit) {
     val context = LocalContext.current
@@ -239,7 +239,28 @@ private enum class HomeSheet { PROGRESS, LANGUAGE, PURPOSE, EXPLORE, PLAN }
             editor = null; sheet = null; selected = it; practice = false
         } }
     }
-    val full = true
+    val previewStore = remember { PreviewStore(context) }
+    val previewPeriod by previewStore.period.collectAsState()
+    val billing = remember { PlayBillingManager(context) }
+    val billingState by billing.state.collectAsState()
+    DisposableEffect(billing) {
+        onDispose { billing.close() }
+    }
+    LaunchedEffect(owner, billing, previewStore) {
+        owner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            billing.refresh()
+            previewStore.refresh()
+            awaitCancellation()
+        }
+    }
+    LaunchedEffect(state.alarms) {
+        if (state.alarms.any { it.state == ScheduleState.CONFIRMED }) {
+            previewStore.start()
+        }
+    }
+    val nowMs = System.currentTimeMillis()
+    val access = com.himorning.android.core.effectiveAccess(billingState.isPro, previewPeriod, nowMs)
+    val full = access.hasFullAccess
     val operation: (() -> Unit) -> Unit = { action -> runCatching(action).onFailure { showError() }; refresh() }
     val planThreshold = if (state.journey.completedToday())
         java.time.LocalDate.now().plusDays(1).atStartOfDay(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli()
@@ -273,6 +294,9 @@ private enum class HomeSheet { PROGRESS, LANGUAGE, PURPOSE, EXPLORE, PLAN }
     Box(Modifier.fillMaxSize().safeDrawingPadding()) {
         homeState.SaveableStateProvider("home") {
             MorningHomeScreen(state = state, purposeChosen = hasPurpose, suggestedMission = mission,
+                access = access,
+                previewHasStarted = previewPeriod.hasStarted,
+                previewRemainingDays = previewPeriod.remainingDays(nowMs),
                 onAdd = { beginNew() }, onEdit = { alarm, scope -> editor = AlarmEditorDraft(alarm, scope) },
                 onToggle = { alarm, enabled -> operation {
                     if (enabled && !scheduler.canScheduleExactAlarms()) {
@@ -289,6 +313,7 @@ private enum class HomeSheet { PROGRESS, LANGUAGE, PURPOSE, EXPLORE, PLAN }
                     }
                 } }, onDelete = { deleting = it }, onPractice = { selected = it; practice = true },
                 onExplore = { sheet = HomeSheet.EXPLORE }, onProgress = { sheet = HomeSheet.PROGRESS },
+                onPro = { sheet = HomeSheet.PRO },
                 onLanguage = { sheet = HomeSheet.LANGUAGE }, onPurpose = { sheet = HomeSheet.PURPOSE },
                 onQuickPractice = { selected = Alarm(hour = 7, minute = 0, challenge = ChallengeKind.READ_AND_CHOOSE, mode = WakeMode.BALANCED); practice = true },
                 onMissionPractice = { selected = mission; practice = true }, onMissionPlan = {
@@ -311,6 +336,7 @@ private enum class HomeSheet { PROGRESS, LANGUAGE, PURPOSE, EXPLORE, PLAN }
     sheet?.let { current ->
         val title = when (current) {
             HomeSheet.PROGRESS -> R.string.nav_your_progress
+            HomeSheet.PRO -> R.string.pro_title
             HomeSheet.LANGUAGE -> R.string.language
             HomeSheet.PURPOSE -> R.string.nav_morning_purpose
             HomeSheet.EXPLORE -> R.string.nav_explore_challenges
@@ -322,6 +348,16 @@ private enum class HomeSheet { PROGRESS, LANGUAGE, PURPOSE, EXPLORE, PLAN }
         MorningSheet(stringResource(title), { sheet = null }, titleStyle) {
             when (current) {
                 HomeSheet.PROGRESS -> MorningProgress(state) { goal -> operation { repo.setGoal(goal) } }
+                HomeSheet.PRO -> ProSheet(
+                    billingState = billingState,
+                    access = access,
+                    previewHasStarted = previewPeriod.hasStarted,
+                    previewRemainingDays = previewPeriod.remainingDays(nowMs),
+                    onSubscribe = { plan -> (context as? android.app.Activity)?.let { billing.launchPurchase(it, plan) } },
+                    onRestore = { billing.restorePurchases() },
+                    onRetryCatalog = { billing.reloadCatalog() },
+                    onManageSubscription = { billing.openManageSubscriptions(context) },
+                )
                 HomeSheet.LANGUAGE -> LanguagePicker(state.language) { language ->
                     runCatching { repo.setLanguage(language) }.onSuccess { (context as? android.app.Activity)?.recreate() }.onFailure { showError() }
                 }
@@ -619,16 +655,25 @@ private enum class HomeSheet { PROGRESS, LANGUAGE, PURPOSE, EXPLORE, PLAN }
                     MorningButton(text = stringResource(R.string.listen_example), primary = false, enabled = !listening, onClick = {
                         speakGuidance(current.text, AppLanguage.ENGLISH, current.id)
                     })
-                    MorningButton(text = stringResource(if (listening) R.string.listening else R.string.start_listening), enabled = !listening, onClick = {
-                        if (!permission(Manifest.permission.RECORD_AUDIO)) voiceLauncher.launch(Manifest.permission.RECORD_AUDIO)
-                        else {
-                            neuralVoice.stop(); tts?.stop(); if (!practice) RingingService.silence(context, saved.id, wakeSession); message = null; transcript = ""; listening = true
-                            speech.start("en-US", onTranscript = { transcript = it }, onFinal = { text ->
-                                transcript = text; listening = false
-                                if (RecognizedWordMatch.score(current.text, text, AppLanguage.ENGLISH) >= RecognizedWordMatch.PASSING_SCORE) finish(WakeOutcome.LOCAL_COMPLETED) else message = R.string.speech_error
-                            }, onError = { listening = false; message = R.string.speech_unavailable })
-                        }
-                    })
+                    MorningButton(
+                        text = stringResource(if (listening) R.string.finish_reading else R.string.start_listening),
+                        onClick = {
+                            if (listening) {
+                                speech.finish()
+                            } else if (!permission(Manifest.permission.RECORD_AUDIO)) {
+                                voiceLauncher.launch(Manifest.permission.RECORD_AUDIO)
+                            } else {
+                                neuralVoice.stop(); tts?.stop(); if (!practice) RingingService.silence(context, saved.id, wakeSession); message = null; transcript = ""; listening = true
+                                speech.start("en-US", onTranscript = { transcript = it }, onFinal = { text ->
+                                    transcript = text; listening = false
+                                    if (RecognizedWordMatch.score(current.text, text, AppLanguage.ENGLISH) >= RecognizedWordMatch.PASSING_SCORE) finish(WakeOutcome.LOCAL_COMPLETED) else message = R.string.speech_error
+                                }, onError = { err ->
+                                    listening = false
+                                    message = if (err == CaptureError.UNSUPPORTED) R.string.speech_unavailable else R.string.speech_error
+                                })
+                            }
+                        },
+                    )
                 } else {
                     Text(current.text, style = MaterialTheme.typography.headlineSmall)
                     current.choices.forEachIndexed { index, choice ->
@@ -651,8 +696,10 @@ private enum class HomeSheet { PROGRESS, LANGUAGE, PURPOSE, EXPLORE, PLAN }
                         capturing = false
                         message = when (failure) { CaptureError.TRACKING_LOST -> R.string.tracking_lost; CaptureError.TIMEOUT -> R.string.capture_timeout; else -> R.string.capture_error }
                     })
+                MovementMotionStage(kind = kind, seated = effective.seated, compact = true)
                 Text(instruction)
             } else {
+                MovementMotionStage(kind = kind, seated = effective.seated)
                 Text(instruction)
                 MorningButton(text = stringResource(R.string.start), onClick = {
                     if (permission(Manifest.permission.CAMERA)) startCamera() else cameraLauncher.launch(Manifest.permission.CAMERA)

@@ -49,7 +49,7 @@ struct ChallengeInfoSheet:View {
      }
      if locked {proCard}
      if kind.hasMovementIllustration {
-      MovementGuide(selection:info.selection,mode:info.mode,compact:true,showInstructions:false)
+      MovementGuide(selection:info.selection,mode:info.mode,compact:false,showInstructions:false)
      }
      VStack(alignment:.leading,spacing:12) {
       Text(appText(instruction)).font(.body).lineSpacing(3).fixedSize(horizontal:false,vertical:true)

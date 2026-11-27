@@ -86,12 +86,12 @@ final class CameraCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDelegate,
    let bodyAngle=PoseGeometry.jointAngle(joints[0],joints[3],joints[4],imageSize:size)
    let dx=abs(joints[0].x-joints[4].x)*size.width,dy=abs(joints[0].y-joints[4].y)*size.height
    let incline=atan2(dy,dx)*180 / .pi
-   let supported=joints[0].y>=joints[2].y-0.02 && abs(joints[2].y-joints[4].y)*size.height<=max(20,hypot(dx,dy)*0.2)
+   let supported=joints[0].y>=joints[2].y-0.02 && abs(joints[2].y-joints[4].y)*size.height<=max(24,hypot(dx,dy)*0.28)
    counter.observe(elbowAngle:elbow,bodyAngle:bodyAngle,incline:incline,visible:supported,timestampMs:timestamp)
-   let aligned=supported && bodyAngle>=150 && incline<=35
+   let aligned=supported && bodyAngle>=150 && incline<=42
    publish(ended:counter.ready,message:appText(counter.ready ? "Push-ups complete." : aligned ? "Move slowly up and down, within the camera view." : "Keep your body straight in a push-up position, with your whole body in view."))
    if counter.ready {stopCamera()}
-  } catch {counter.interrupt();publish(ended:false,message:appText("The movement is unclear. Try moving your phone."))}
+  } catch {counter.observe(elbowAngle:0,bodyAngle:0,incline:0,visible:false,timestampMs:timestamp);publish(ended:false,message:appText("The movement is unclear. Try moving your phone."))}
  }
  private func publish(ended:Bool,message:String) {
   guard !isCancelled else {return}

@@ -209,7 +209,6 @@ struct NoopBackupScheduler:BackupRingScheduler {
   accessObserver=preview.objectWillChange.sink { [weak self] in self?.objectWillChange.send() }
  }
  func practice(_ kind:ChallengeKind) {
-  guard kind != .none else {return}
   practiceMission(kind == .pushUps ? .pushUps(repetitions:kind.localMovementTarget ?? 10) : ChallengeSelection(kind:kind))
  }
  func practiceMission(_ selection:ChallengeSelection) {

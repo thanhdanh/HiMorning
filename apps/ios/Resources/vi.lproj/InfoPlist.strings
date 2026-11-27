@@ -3,5 +3,5 @@
 "NSCameraUsageDescription" = "Thử thách vận động dùng camera để kiểm tra động tác. Kiểm tra trên máy không lưu hay tải ảnh lên. Kiểm tra qua đám mây sẽ xin phép riêng.";
 "NSMicrophoneUsageDescription" = "Đọc thành tiếng dùng micrô để nhận diện từ ngay trên thiết bị. Âm thanh không được lưu hay tải lên.";
 
-"NSHealthShareUsageDescription" = "HiMorning tùy chọn đọc trạng thái quyền lưu lịch sử chánh niệm trên iPhone của bạn.";
+"NSHealthShareUsageDescription" = "HiMorning kiểm tra quyền Apple Health khi bạn bật đồng bộ các buổi sáng hoàn thành.";
 "NSHealthUpdateUsageDescription" = "HiMorning tùy chọn lưu các buổi sáng hoàn thành thử thách vào Apple Health.";

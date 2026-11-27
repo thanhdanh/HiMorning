@@ -34,4 +34,18 @@ final class MorningLightTests: XCTestCase {
   XCTAssertEqual(evaluator.process(luminance: 0.70, timestamp: 7.0), .completed)
   XCTAssertEqual(evaluator.process(luminance: 0.10, timestamp: 8.0), .completed)
  }
+
+ func testExposureBrightnessDistinguishesDarkBedroomFromSunlitWindow() {
+  // Dim room: f/1.8, 1/15s, ISO 800 -> low EV100 (~2.6) -> 0.0
+  let dark = MorningLightEvaluator.exposureBrightness(aperture: 1.8, exposureDuration: 1.0 / 15.0, iso: 800)
+  XCTAssertTrue(dark < 0.25)
+
+  // Bright window: f/1.8, 1/250s, ISO 100 -> high EV100 (~9.7) -> 1.0
+  let bright = MorningLightEvaluator.exposureBrightness(aperture: 1.8, exposureDuration: 1.0 / 250.0, iso: 100)
+  XCTAssertTrue(bright >= MorningLightEvaluator.defaultBrightThreshold)
+
+  // Invalid sensor values safely fall back to 0.
+  XCTAssertEqual(MorningLightEvaluator.exposureBrightness(aperture: 0, exposureDuration: 0.01, iso: 100), 0)
+  XCTAssertEqual(MorningLightEvaluator.exposureBrightness(aperture: 1.8, exposureDuration: .nan, iso: 100), 0)
+ }
 }

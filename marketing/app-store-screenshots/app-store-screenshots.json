@@ -1,0 +1,212 @@
+{
+  "schemaVersion": 3,
+  "appName": "HiMorning",
+  "themeId": "himorning-sunrise",
+  "fontId": "system-sans",
+  "connectedCanvas": true,
+  "locales": [
+    "en",
+    "vi"
+  ],
+  "locale": "en",
+  "device": "iphone",
+  "orientation": "portrait",
+  "appIcon": "/app-icon.png",
+  "scene": {
+    "backdrop": "gradient",
+    "span": true,
+    "decoration": "blobs",
+    "shadow": 65,
+    "glow": 35,
+    "tilt": 0,
+    "headlineWeight": 800,
+    "headlineCase": "as-typed",
+    "captionAlign": "center"
+  },
+  "slidesByDevice": {
+    "iphone": [
+      {
+        "id": "hm_iphone_01_hero",
+        "layout": "hero",
+        "label": {
+          "en": "CALM WAKE-UP ALARM",
+          "vi": "BÁO THỨC THỬ THÁCH"
+        },
+        "headline": {
+          "en": "Wake up gently.\nNo harsh sirens.",
+          "vi": "Dậy sớm nhẹ nhàng.\nKhông giật mình."
+        },
+        "screenshot": "/screenshots/apple/iphone/{locale}/01.png"
+      },
+      {
+        "id": "hm_iphone_02_motion",
+        "layout": "device-bottom",
+        "label": {
+          "en": "100% ON-DEVICE PRIVACY",
+          "vi": "BẢO MẬT TRÊN THIẾT BỊ"
+        },
+        "headline": {
+          "en": "Every rep counted.\nNever uploaded.",
+          "vi": "Đếm chuẩn từng nhịp.\nKhông tải video lên."
+        },
+        "screenshot": "/screenshots/apple/iphone/{locale}/02.png"
+      },
+      {
+        "id": "hm_iphone_03_brain",
+        "layout": "device-top",
+        "inverted": true,
+        "label": {
+          "en": "QUIET MORNING MISSIONS",
+          "vi": "BUỔI SÁNG YÊN TĨNH"
+        },
+        "headline": {
+          "en": "Read, speak,\nor solve a riddle.",
+          "vi": "Đọc nhanh, đọc to\nhoặc giải đố vui."
+        },
+        "screenshot": "/screenshots/apple/iphone/{locale}/03.png"
+      },
+      {
+        "id": "hm_iphone_04_journey",
+        "layout": "two-devices",
+        "label": {
+          "en": "7-MORNING JOURNEY",
+          "vi": "HÀNH TRÌNH 7 BUỔI SÁNG"
+        },
+        "headline": {
+          "en": "Build a routine.\nZero streak guilt.",
+          "vi": "Tạo nhịp dậy sớm.\nKhông lo mất chuỗi."
+        },
+        "screenshot": "/screenshots/apple/iphone/{locale}/04.png",
+        "screenshotSecondary": "/screenshots/apple/iphone/{locale}/05.png"
+      },
+      {
+        "id": "hm_iphone_05_insights",
+        "layout": "device-bottom",
+        "label": {
+          "en": "APPLE HEALTH & INSIGHTS",
+          "vi": "THỐNG KÊ & SỨC KHỎE"
+        },
+        "headline": {
+          "en": "See what works\nfor your mornings.",
+          "vi": "Hiểu rõ thử thách\ngiúp bạn tỉnh táo."
+        },
+        "screenshot": "/screenshots/apple/iphone/{locale}/05.png"
+      },
+      {
+        "id": "hm_iphone_06_preview",
+        "layout": "device-top",
+        "label": {
+          "en": "30-DAY FREE PREVIEW",
+          "vi": "30 NGÀY DÙNG THỬ"
+        },
+        "headline": {
+          "en": "Try every mission.\nNo card required.",
+          "vi": "Trải nghiệm trọn vẹn.\nKhông cần thẻ."
+        },
+        "screenshot": "/screenshots/apple/iphone/{locale}/06.png"
+      }
+    ],
+    "android": [
+      {
+        "id": "hm_android_01_hero",
+        "layout": "hero",
+        "label": {
+          "en": "CALM WAKE-UP ALARM",
+          "vi": "BÁO THỨC THỬ THÁCH"
+        },
+        "headline": {
+          "en": "Wake up gently.\nNo harsh sirens.",
+          "vi": "Dậy sớm nhẹ nhàng.\nKhông giật mình."
+        },
+        "screenshot": "/screenshots/android/phone/{locale}/01.png"
+      },
+      {
+        "id": "hm_android_02_motion",
+        "layout": "device-bottom",
+        "label": {
+          "en": "100% ON-DEVICE PRIVACY",
+          "vi": "BẢO MẬT TRÊN THIẾT BỊ"
+        },
+        "headline": {
+          "en": "Every rep counted.\nNever uploaded.",
+          "vi": "Đếm chuẩn từng nhịp.\nKhông tải video lên."
+        },
+        "screenshot": "/screenshots/android/phone/{locale}/02.png"
+      },
+      {
+        "id": "hm_android_03_brain",
+        "layout": "device-top",
+        "inverted": true,
+        "label": {
+          "en": "QUIET MORNING MISSIONS",
+          "vi": "BUỔI SÁNG YÊN TĨNH"
+        },
+        "headline": {
+          "en": "Read, speak,\nor solve a riddle.",
+          "vi": "Đọc nhanh, đọc to\nhoặc giải đố vui."
+        },
+        "screenshot": "/screenshots/android/phone/{locale}/03.png"
+      },
+      {
+        "id": "hm_android_04_journey",
+        "layout": "two-devices",
+        "label": {
+          "en": "7-MORNING JOURNEY",
+          "vi": "HÀNH TRÌNH 7 BUỔI SÁNG"
+        },
+        "headline": {
+          "en": "Build a routine.\nZero streak guilt.",
+          "vi": "Tạo nhịp dậy sớm.\nKhông lo mất chuỗi."
+        },
+        "screenshot": "/screenshots/android/phone/{locale}/04.png",
+        "screenshotSecondary": "/screenshots/android/phone/{locale}/05.png"
+      },
+      {
+        "id": "hm_android_05_insights",
+        "layout": "device-bottom",
+        "label": {
+          "en": "30-DAY INSIGHTS",
+          "vi": "THỐNG KÊ 30 NGÀY"
+        },
+        "headline": {
+          "en": "See what works\nfor your mornings.",
+          "vi": "Hiểu rõ thử thách\ngiúp bạn tỉnh táo."
+        },
+        "screenshot": "/screenshots/android/phone/{locale}/05.png"
+      },
+      {
+        "id": "hm_android_06_preview",
+        "layout": "device-top",
+        "label": {
+          "en": "30-DAY FREE PREVIEW",
+          "vi": "30 NGÀY DÙNG THỬ"
+        },
+        "headline": {
+          "en": "Try every mission.\nNo card required.",
+          "vi": "Trải nghiệm trọn vẹn.\nKhông cần thẻ."
+        },
+        "screenshot": "/screenshots/android/phone/{locale}/06.png"
+      }
+    ],
+    "feature-graphic": [
+      {
+        "id": "hm_feature_graphic",
+        "layout": "feature-graphic",
+        "label": {
+          "en": "ON-DEVICE CAMERA & VOICE MISSIONS",
+          "vi": "THỬ THÁCH VẬN ĐỘNG & GIỌNG NÓI TRÊN MÁY"
+        },
+        "headline": {
+          "en": "A small, calm start to your day.",
+          "vi": "Bắt đầu ngày mới nhẹ nhàng, đúng nhịp."
+        },
+        "screenshot": "/screenshots/apple/iphone/{locale}/01.png"
+      }
+    ]
+  },
+  "crossScreenMockupsByDevice": {
+    "iphone": [],
+    "android": [],
+    "feature-graphic": []
+  }
+}

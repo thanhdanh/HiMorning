@@ -52,8 +52,8 @@ android {
         applicationId = "com.himorning.android"
         minSdk = 31
         targetSdk = 36
-        versionCode = 4
-        versionName = "1.0.2"
+        versionCode = 6
+        versionName = "1.0.4"
         buildConfigField("String", "CONTENT_ORIGIN", "\"$contentOrigin\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -78,7 +78,7 @@ android {
         }
     }
     buildFeatures { compose = true; buildConfig = true }
-    androidResources { noCompress += listOf("task", "m4a") }
+    androidResources { noCompress += listOf("task", "m4a", "mp4") }
     sourceSets.getByName("main").assets.srcDir(handModelAssets)
     bundle { language { enableSplit = false } }
     compileOptions {
@@ -108,6 +108,7 @@ dependencies {
     implementation("com.google.mlkit:pose-detection:18.0.0-beta5")
     implementation("com.google.mediapipe:tasks-vision:0.10.33")
     implementation("com.google.mlkit:face-detection:16.1.7")
+    implementation("com.android.billingclient:billing-ktx:7.1.1")
     debugImplementation("androidx.compose.ui:ui-tooling")
     androidTestImplementation("androidx.test:runner:1.7.0")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")

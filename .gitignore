@@ -31,3 +31,5 @@ HiMorningCloud-Info.plist
 .wrangler/
 .dev.vars
 .dev.vars.*
+marketing/app-store-screenshots/node_modules/
+marketing/app-store-screenshots/.next/

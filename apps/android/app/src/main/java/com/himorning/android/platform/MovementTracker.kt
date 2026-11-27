@@ -121,13 +121,19 @@ internal class MovementTracker(private val kind: ChallengeKind, private val seat
         val state = if (seated) {
             val ls = joints[LEFT_SHOULDER] ?: return lost(now, marks, missing)
             val rs = joints[RIGHT_SHOULDER] ?: return lost(now, marks, missing)
-            val lw = joints[LEFT_WRIST] ?: return lost(now, marks, missing)
-            val rw = joints[RIGHT_WRIST] ?: return lost(now, marks, missing)
-            val margin = frame.uprightHeight * 0.08
-            when {
-                minOf(ls.y - lw.y, rs.y - rw.y) > margin -> 1
-                minOf(lw.y - ls.y, rw.y - rs.y) > margin -> 0
-                else -> null
+            val lw = joints[LEFT_WRIST]
+            val rw = joints[RIGHT_WRIST]
+            if (lw != null && rw != null) {
+                val margin = frame.uprightHeight * 0.08
+                when {
+                    minOf(ls.y - lw.y, rs.y - rw.y) > margin -> 1
+                    minOf(lw.y - ls.y, rw.y - rs.y) > margin -> 0
+                    else -> null
+                }
+            } else {
+                val le = joints[LEFT_ELBOW] ?: return lost(now, marks, missing)
+                val re = joints[RIGHT_ELBOW] ?: return lost(now, marks, missing)
+                reachPose(ls, rs, le, re, frame.shortSide)
             }
         } else {
             val leg = visibleSide(joints, LEG_SIDES) ?: return lost(now, marks, missing)
@@ -147,19 +153,26 @@ internal class MovementTracker(private val kind: ChallengeKind, private val seat
     private fun jumpingJacks(joints: Map<Int, MotionPoint>, frame: CameraFrame, now: Long, marks: TrackingMarks, missing: Int): MovementSample {
         val ls = joints[LEFT_SHOULDER] ?: return lost(now, marks, missing)
         val rs = joints[RIGHT_SHOULDER] ?: return lost(now, marks, missing)
-        val lw = joints[LEFT_WRIST] ?: return lost(now, marks, missing)
-        val rw = joints[RIGHT_WRIST] ?: return lost(now, marks, missing)
+        val lw = joints[LEFT_WRIST]
+        val rw = joints[RIGHT_WRIST]
+        val le = joints[LEFT_ELBOW]
+        val re = joints[RIGHT_ELBOW]
+        if ((lw == null && le == null) || (rw == null && re == null)) return lost(now, marks, missing)
         val la = joints[LEFT_ANKLE] ?: return lost(now, marks, R.string.tracking_show_feet)
         val ra = joints[RIGHT_ANKLE] ?: return lost(now, marks, R.string.tracking_show_feet)
         val shoulderWidth = abs(ls.x - rs.x)
         if (shoulderWidth < frame.shortSide * 0.06) return lost(now, marks, R.string.tracking_move_closer)
         val feet = abs(la.x - ra.x)
+        val leftUp = lw?.let { ls.y - it.y > frame.uprightHeight * 0.06 } ?: (le != null && ls.y - le.y > -frame.uprightHeight * 0.02)
+        val rightUp = rw?.let { rs.y - it.y > frame.uprightHeight * 0.06 } ?: (re != null && rs.y - re.y > -frame.uprightHeight * 0.02)
+        val leftDown = lw?.let { it.y - ls.y > frame.uprightHeight * 0.05 } ?: (le != null && le.y - ls.y > frame.uprightHeight * 0.08)
+        val rightDown = rw?.let { it.y - rs.y > frame.uprightHeight * 0.05 } ?: (re != null && re.y - rs.y > frame.uprightHeight * 0.08)
         val state = when {
-            minOf(ls.y - lw.y, rs.y - rw.y) > frame.uprightHeight * 0.06 && feet > shoulderWidth * 1.25 -> 1
-            minOf(lw.y - ls.y, rw.y - rs.y) > frame.uprightHeight * 0.05 && feet <= shoulderWidth * 1.15 -> 0
+            leftUp && rightUp && feet > shoulderWidth * 1.25 -> 1
+            leftDown && rightDown && feet <= shoulderWidth * 1.15 -> 0
             else -> null
         }
-        count = cycle.observe(state, now, visible = true)
+        count = cycle.observe(state, now, holdMillis = 100, visible = true)
         return active(marks)
     }
 
@@ -172,10 +185,10 @@ internal class MovementTracker(private val kind: ChallengeKind, private val seat
         val incline = Math.toDegrees(atan2(abs(stance.y), abs(stance.x)))
         val body = jointAngle(shoulder, hip, ankle)
         val supported = shoulder.y <= wrist.y + frame.uprightHeight * 0.02 &&
-            abs(wrist.y - ankle.y) <= maxOf(20.0, stance.length * 0.2)
+            abs(wrist.y - ankle.y) <= maxOf(24.0, stance.length * 0.28)
         if (!supported) return lost(now, marks, R.string.tracking_push_up_form)
         count = pushUp.observe(jointAngle(shoulder, elbow, wrist), body, incline, now)
-        return if (body >= 150 && incline <= 35) active(marks) else MovementSample(count, R.string.tracking_push_up_form, marks)
+        return if (body >= 150 && incline <= 42) active(marks) else MovementSample(count, R.string.tracking_push_up_form, marks)
     }
 
     private fun visibleSide(joints: Map<Int, MotionPoint>, sides: Array<IntArray>): Pair<Int, List<MotionPoint>>? {

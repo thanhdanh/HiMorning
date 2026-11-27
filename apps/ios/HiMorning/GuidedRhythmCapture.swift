@@ -118,15 +118,14 @@ final class GuidedRhythmCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDel
     }
    }
   } catch {
-   stopCamera()
-   publish(completed:false,ended:true,message:appText("The pose is unclear. Try again slowly."))
+   handleOcclusion(timestamp:timestamp,hint:.ok)
   }
  }
 
  private func classify(_ points:[VNHumanBodyPoseObservation.JointName:VNRecognizedPoint],imageSize:CGSize) -> PoseClassification {
   switch variant {
   case .standing:return classifyStanding(points,imageSize:imageSize)
-  case .seated:return classifySeatedArms(points)
+  case .seated:return classifySeatedArms(points,imageSize:imageSize)
   }
  }
 
@@ -143,15 +142,24 @@ final class GuidedRhythmCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDel
   return .transition
  }
 
- private func classifySeatedArms(_ points:[VNHumanBodyPoseObservation.JointName:VNRecognizedPoint]) -> PoseClassification {
+ private func classifySeatedArms(_ points:[VNHumanBodyPoseObservation.JointName:VNRecognizedPoint],imageSize:CGSize) -> PoseClassification {
   let names:[VNHumanBodyPoseObservation.JointName]=[.leftShoulder,.leftWrist,.rightShoulder,.rightWrist]
-  guard names.allSatisfy({PoseGeometry.isVisible(points[$0], minConfidence: 0.55)}),
-        let leftShoulder=points[.leftShoulder],let leftWrist=points[.leftWrist],
-        let rightShoulder=points[.rightShoulder],let rightWrist=points[.rightWrist] else {return .occluded}
-  let margin=0.08
-  if leftWrist.location.y>leftShoulder.location.y+margin && rightWrist.location.y>rightShoulder.location.y+margin {return .pose(.armsUp)}
-  if leftWrist.location.y<leftShoulder.location.y-margin && rightWrist.location.y<rightShoulder.location.y-margin {return .pose(.armsDown)}
-  return .transition
+  if names.allSatisfy({PoseGeometry.isVisible(points[$0], minConfidence: 0.55)}),
+     let leftShoulder=points[.leftShoulder],let leftWrist=points[.leftWrist],
+     let rightShoulder=points[.rightShoulder],let rightWrist=points[.rightWrist] {
+   let margin=0.08
+   if leftWrist.location.y>leftShoulder.location.y+margin && rightWrist.location.y>rightShoulder.location.y+margin {return .pose(.armsUp)}
+   if leftWrist.location.y<leftShoulder.location.y-margin && rightWrist.location.y<rightShoulder.location.y-margin {return .pose(.armsDown)}
+   return .transition
+  }
+  // Fallback when raised wrists briefly leave the top edge of a close nightstand camera.
+  let reach=ReachUpGeometry.assess(PoseGeometry.jointSamples(points),imageWidth:Double(imageSize.width),imageHeight:Double(imageSize.height))
+  switch reach.pose {
+  case .raised:return .pose(.armsUp)
+  case .lowered:return .pose(.armsDown)
+  case .transition:return .transition
+  case .unclear:return .occluded
+  }
  }
 
  private func handleOcclusion(timestamp:Int,hint:FramingHint) {

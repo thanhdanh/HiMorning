@@ -25,7 +25,8 @@ struct ExploreChallengesView: View {
   case .readAloud: return "Voice"
   case .morningLight: return "Window light"
   case .waveHand, .neckRotation: return "Close camera"
-  case .pushUps, .jumpingJacks, .stretching: return "Whole body"
+  case .stretching: return "Upper body"
+  case .pushUps, .jumpingJacks: return "Whole body"
   case .guidedRhythm: return "Camera"
   }
  }
@@ -57,13 +58,18 @@ struct ExploreChallengesView: View {
             .background(tint.opacity(0.12), in: RoundedRectangle(cornerRadius: 12))
 
            VStack(alignment: .leading, spacing: 4) {
-            HStack(spacing: 8) {
+            HStack(alignment: .center, spacing: 8) {
              Text(kind.title)
               .font(.headline)
               .foregroundStyle(MorningTheme.ink)
+              .lineLimit(1)
+              .minimumScaleFactor(0.85)
+              .layoutPriority(1)
              Spacer(minLength: 4)
              Text(appText(badgeKey(for: kind)))
               .font(.caption2.weight(.semibold))
+              .lineLimit(1)
+              .fixedSize()
               .padding(.horizontal, 8)
               .padding(.vertical, 4)
               .background(MorningTheme.soft, in: Capsule())

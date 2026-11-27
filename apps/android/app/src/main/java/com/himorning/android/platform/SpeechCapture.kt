@@ -51,6 +51,7 @@ class SpeechCapture(private val context: Context) {
             }
         }.onFailure { destroy(); onError(CaptureError.RECOGNITION_FAILED) }
     }
+    fun finish() { recognizer?.stopListening() }
     fun stop() { generation++; recognizer?.cancel() }
     fun destroy() { generation++; recognizer?.cancel(); recognizer?.destroy(); recognizer = null }
 }

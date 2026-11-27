@@ -37,13 +37,9 @@ struct ChallengeIcon:View {
 
  var body:some View {
   Group {
-   if animated && kind.hasMovementIllustration {
-    MovementIllustration(selection:.init(kind:kind,rhythmVariant:seated ? .seated : .standing),icon:true)
-   } else {
-    switch artwork {
-    case .asset:image.resizable().scaledToFit()
-    case .symbol:image.symbolRenderingMode(.hierarchical).font(.system(size:size,weight:.medium))
-    }
+   switch artwork {
+   case .asset:image.resizable().scaledToFit()
+   case .symbol:image.symbolRenderingMode(.hierarchical).font(.system(size:size,weight:.medium))
    }
   }.frame(width:size,height:size).accessibilityHidden(true)
  }

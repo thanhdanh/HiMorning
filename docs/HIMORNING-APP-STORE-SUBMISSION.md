@@ -7,7 +7,7 @@ bundled challenge content. Use the matching record in App Store Connect.
 | --- | --- |
 | Name | HiMorning |
 | Bundle ID | `com.himorning.HiMorning` |
-| Version and candidate build | `1.0 (1)` |
+| Version and candidate build | `1.0 (25)` |
 | Primary language | English (U.S.) |
 | Additional localization | Vietnamese |
 | Proposed category | Lifestyle |
@@ -17,7 +17,7 @@ bundled challenge content. Use the matching record in App Store Connect.
 
 ## Listing copy
 
-**Subtitle (en-US)** — A small start to your day
+**Subtitle (en-US):** A small start to your day
 
 Set an alarm and choose a short activity for when you wake up. Try a
 reading challenge or a movement challenge before adding it to your morning.
@@ -26,7 +26,7 @@ Build a routine over seven mornings and see the steps you've completed.
 HiMorning uses your iPhone's alarm system. Basic alarms and wake recovery
 work offline. Some activities ask for camera or microphone permission.
 
-**Phụ đề (vi)** — Bắt đầu ngày mới nhẹ nhàng
+**Phụ đề (vi):** Bắt đầu ngày mới nhẹ nhàng
 
 Đặt báo thức và chọn một hoạt động ngắn khi thức dậy. Bạn có thể thử đọc
 hoặc vận động trước khi đưa hoạt động vào lịch buổi sáng. Tạo thói quen

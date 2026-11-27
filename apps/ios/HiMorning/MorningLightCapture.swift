@@ -15,6 +15,8 @@ final class MorningLightCapture: NSObject, AVCaptureVideoDataOutputSampleBufferD
  private var evaluator = MorningLightEvaluator()
  private var configured = false
  private var stopped = false
+ private var captureDevice: AVCaptureDevice?
+ private var observers: [NSObjectProtocol] = []
  private let onUpdate: @Sendable (Double, MorningLightEvaluator.State) -> Void
  private let onInterruption: @Sendable () -> Void
 
@@ -50,6 +52,7 @@ final class MorningLightCapture: NSObject, AVCaptureVideoDataOutputSampleBufferD
   let session = self.session
   queue.async { [weak self] in
    guard let self, !self.stopped, !session.isRunning else { return }
+   self.registerObservers()
    session.startRunning()
   }
   return true
@@ -58,9 +61,30 @@ final class MorningLightCapture: NSObject, AVCaptureVideoDataOutputSampleBufferD
  func stop() {
   stopped = true
   let session = self.session
-  queue.async {
+  queue.async { [weak self] in
+   self?.clearObservers()
    if session.isRunning { session.stopRunning() }
   }
+ }
+
+ private func registerObservers() {
+  clearObservers()
+  for name in [AVCaptureSession.wasInterruptedNotification, AVCaptureSession.runtimeErrorNotification] {
+   observers.append(NotificationCenter.default.addObserver(forName: name, object: session, queue: nil) { [weak self] _ in
+    self?.queue.async { [weak self] in
+     guard let self, !self.stopped else { return }
+     self.stopped = true
+     self.clearObservers()
+     if self.session.isRunning { self.session.stopRunning() }
+     self.onInterruption()
+    }
+   })
+  }
+ }
+
+ private func clearObservers() {
+  observers.forEach { NotificationCenter.default.removeObserver($0) }
+  observers.removeAll()
  }
 
  private func configureSession() -> Bool {
@@ -70,6 +94,7 @@ final class MorningLightCapture: NSObject, AVCaptureVideoDataOutputSampleBufferD
    let input = try? AVCaptureDeviceInput(device: device) else {
    return false
   }
+  captureDevice = device
   session.beginConfiguration()
   session.sessionPreset = .low
   guard session.canAddInput(input) else {
@@ -115,7 +140,18 @@ final class MorningLightCapture: NSObject, AVCaptureVideoDataOutputSampleBufferD
    }
   }
   guard count > 0 else { return }
-  let luminance = Double(sum) / (Double(count) * 255.0)
+  let pixelLuminance = Double(sum) / (Double(count) * 255.0)
+  let evBrightness: Double
+  if let device = captureDevice {
+   evBrightness = MorningLightEvaluator.exposureBrightness(
+    aperture: Double(device.lensAperture),
+    exposureDuration: device.exposureDuration.seconds,
+    iso: Double(device.iso)
+   )
+  } else {
+   evBrightness = 0
+  }
+  let luminance = max(pixelLuminance, evBrightness)
   let timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer).seconds
   let state = evaluator.process(luminance: luminance, timestamp: timestamp)
   onUpdate(luminance, state)

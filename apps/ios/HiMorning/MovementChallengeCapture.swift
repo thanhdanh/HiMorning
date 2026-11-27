@@ -191,15 +191,27 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
    guard let p=allPoints[name],PoseGeometry.isVisible(p,minConfidence:0.6) else {return nil}
    return p.location
   }
-  guard let leftShoulder=point(.leftShoulder),let rightShoulder=point(.rightShoulder),let leftWrist=point(.leftWrist),let rightWrist=point(.rightWrist) else {
+  guard let leftShoulder=point(.leftShoulder),let rightShoulder=point(.rightShoulder) else {
+   counter.observeLoss(timestampMs:timestamp);publish(hint == .ok ? "The view is unclear. Try moving your phone.":kind.movementInstruction,hint:hint);return
+  }
+  let leftWrist=point(.leftWrist),rightWrist=point(.rightWrist)
+  let leftElbow=point(.leftElbow),rightElbow=point(.rightElbow)
+  guard (leftWrist != nil || leftElbow != nil),(rightWrist != nil || rightElbow != nil) else {
    counter.observeLoss(timestampMs:timestamp);publish(hint == .ok ? "The view is unclear. Try moving your phone.":kind.movementInstruction,hint:hint);return
   }
   guard let leftAnkle=point(.leftAnkle),let rightAnkle=point(.rightAnkle) else {
    counter.observeLoss(timestampMs:timestamp);publish(kind.movementInstruction,hint:hint);return
   }
   let shoulderWidth=abs(leftShoulder.x-rightShoulder.x),ankleWidth=abs(leftAnkle.x-rightAnkle.x)
-  let armsRaised=leftWrist.y>leftShoulder.y+0.06 && rightWrist.y>rightShoulder.y+0.06
-  let armsLowered=leftWrist.y<leftShoulder.y-0.05 && rightWrist.y<rightShoulder.y-0.05
+  guard shoulderWidth>=0.06 else {
+   counter.observeLoss(timestampMs:timestamp);publish(kind.movementInstruction,hint:.comeCloser);return
+  }
+  let leftArmUp=leftWrist.map {$0.y>leftShoulder.y+0.06} ?? (leftElbow.map {$0.y>leftShoulder.y-0.02} ?? false)
+  let rightArmUp=rightWrist.map {$0.y>rightShoulder.y+0.06} ?? (rightElbow.map {$0.y>rightShoulder.y-0.02} ?? false)
+  let leftArmDown=leftWrist.map {$0.y<leftShoulder.y-0.05} ?? (leftElbow.map {$0.y<leftShoulder.y-0.08} ?? false)
+  let rightArmDown=rightWrist.map {$0.y<rightShoulder.y-0.05} ?? (rightElbow.map {$0.y<rightShoulder.y-0.08} ?? false)
+  let armsRaised=leftArmUp && rightArmUp
+  let armsLowered=leftArmDown && rightArmDown
   let legsApart=ankleWidth>shoulderWidth*1.25
   let legsTogether=ankleWidth<=shoulderWidth*1.15
   let observation:MovementObservation=armsRaised && legsApart ? .jumpingJack(open:true) : armsLowered && legsTogether ? .jumpingJack(open:false) : .transition

@@ -272,7 +272,7 @@
     "kind": "readAndChoose",
     "language": "en",
     "theme": "creativeBreaks",
-    "text": "The indie cinema ticket stub reads: “Before 8:00 p.m. enter through the lobby café (Door A). After 8:00 p.m. the café locks up—please use the courtyard gate (Door B).” You arrive at 8:10 p.m. Which entrance works?",
+    "text": "The indie cinema ticket stub reads: “Before 8:00 p.m. enter through the lobby café (Door A). After 8:00 p.m. the café locks up. Please use the courtyard gate (Door B).” You arrive at 8:10 p.m. Which entrance works?",
     "choices": [
       "Door A through the café",
       "Door B through the courtyard",
@@ -343,7 +343,7 @@
       "Third place"
     ],
     "answerIndex": 1,
-    "explanation": "When you pass the person in second place, you take their second-place spot—the first-place leader is still ahead of you.",
+    "explanation": "When you pass the person in second place, you take their second-place spot. The first-place leader is still ahead of you.",
     "source": "himorning",
     "license": "original"
   },

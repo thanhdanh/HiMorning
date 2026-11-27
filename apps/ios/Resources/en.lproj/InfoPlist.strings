@@ -3,5 +3,5 @@
 "NSCameraUsageDescription" = "Movement challenges use the camera to check your motion. On-device checks do not save or upload images. Cloud checks ask for separate consent.";
 "NSMicrophoneUsageDescription" = "Read Aloud uses your microphone to recognize words on this device. Audio is not saved or uploaded.";
 
-"NSHealthShareUsageDescription" = "HiMorning optionally reads mindful history permission status on your iPhone.";
+"NSHealthShareUsageDescription" = "HiMorning checks Apple Health permission when you turn on morning check-in sync.";
 "NSHealthUpdateUsageDescription" = "HiMorning optionally saves completed morning wins as mindful check-ins in Apple Health.";

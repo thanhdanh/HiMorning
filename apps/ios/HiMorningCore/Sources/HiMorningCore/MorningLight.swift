@@ -62,4 +62,15 @@ public struct MorningLightEvaluator: Sendable {
   holdStartTimestamp = nil
   state = .seekingLight
  }
+
+ /// Converts hardware camera exposure (aperture, shutter seconds, ISO) into a normalized
+ /// 0...1 ambient brightness score so iOS auto-exposure cannot pull a sunny window below threshold.
+ public static func exposureBrightness(aperture: Double, exposureDuration: Double, iso: Double) -> Double {
+  guard aperture.isFinite, exposureDuration.isFinite, iso.isFinite,
+        aperture > 0, exposureDuration > 0, iso > 0 else { return 0 }
+  let ev100 = log2((aperture * aperture) / exposureDuration) - log2(iso / 100.0)
+  guard ev100.isFinite else { return 0 }
+  // Dark bedroom (~EV 2-4) maps near 0; bright lamp or sunlit window (~EV 7.5-12) maps >= 0.70.
+  return min(1.0, max(0.0, (ev100 - 4.0) / 4.5))
+ }
 }

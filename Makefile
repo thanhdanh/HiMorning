@@ -8,7 +8,7 @@ IOS_DEVICE_APP := $(IOS_BUILD)/DerivedData/Build/Products/Release-iphoneos/HiMor
 VERSION ?= 1.0
 BUILD_NUMBER ?= 1
 
-.PHONY: doctor ios-project ios-core-test ios-release-check ios-sim-ready ios-uitest ios-shot ios-devices ios-device ios-archive ios-testflight
+.PHONY: doctor ios-project ios-core-test ios-release-check ios-sim-ready ios-uitest ios-shot ios-devices ios-device ios-archive ios-testflight ios-appstore
 
 doctor:
 	@xcodebuild -version && xcodegen --version && xcrun --sdk iphoneos --show-sdk-version
@@ -83,6 +83,19 @@ ios-testflight:
 		{ echo "Upload evidence: $$run_dir"; \
 			perl -e 'alarm shift; exec @ARGV' 1800 xcodebuild -exportArchive \
 				-archivePath "$(TESTFLIGHT_ARCHIVE)" -exportPath "$$run_dir/export" \
+				-exportOptionsPlist "$$run_dir/ExportOptions.plist" -allowProvisioningUpdates \
+				>"$$run_dir/upload.log" 2>&1; \
+			result=$$?; tail -25 "$$run_dir/upload.log"; exit $$result; }
+
+ios-appstore:
+	@test -d "$(APPSTORE_ARCHIVE)/Products/Applications/HiMorning.app" || { echo 'Pass the verified HiMorning archive as APPSTORE_ARCHIVE.'; exit 64; }
+	@mkdir -p "$(IOS_ARTIFACTS)"
+	@run_dir=$$(mktemp -d "$(IOS_ARTIFACTS)/appstore-upload.XXXXXX") && \
+		printf '%s\n' '{"method":"app-store-connect","destination":"upload","signingStyle":"automatic","testFlightInternalTestingOnly":false,"manageAppVersionAndBuildNumber":false}' \
+		| plutil -convert xml1 -o "$$run_dir/ExportOptions.plist" -- - && \
+		{ echo "Upload evidence: $$run_dir"; \
+			perl -e 'alarm shift; exec @ARGV' 1800 xcodebuild -exportArchive \
+				-archivePath "$(APPSTORE_ARCHIVE)" -exportPath "$$run_dir/export" \
 				-exportOptionsPlist "$$run_dir/ExportOptions.plist" -allowProvisioningUpdates \
 				>"$$run_dir/upload.log" 2>&1; \
 			result=$$?; tail -25 "$$run_dir/upload.log"; exit $$result; }

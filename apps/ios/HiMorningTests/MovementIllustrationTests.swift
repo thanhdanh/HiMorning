@@ -1,5 +1,6 @@
 import XCTest
-import SwiftUI
+import AVFoundation
+import UIKit
 import HiMorningCore
 @testable import HiMorning
 
@@ -7,48 +8,30 @@ final class MovementIllustrationTests:XCTestCase {
  private var selections:[ChallengeSelection] {
   [.pushUps(repetitions:10),.init(kind:.waveHand),.init(kind:.neckRotation),.init(kind:.jumpingJacks),.init(kind:.stretching),.guidedRhythm(variant:.standing),.guidedRhythm(variant:.seated)]
  }
- func testEveryMovementStaysInsideBothIconAndGuideArtboardsThroughTheLoop() {
+
+ func testEveryMovementHasBundledStudioVideoAndPoster() {
+  var keys=Set<String>()
   for selection in selections {
-   for rect in [CGRect(x:0,y:0,width:32,height:30),CGRect(x:12,y:8,width:126,height:114)] {
-    for phase in stride(from:0.0,through:1.0,by:0.025) {
-     for icon in [false,true] {
-      let path=MovementFigure(selection:selection,phase:phase,icon:icon).path(in:rect)
-      XCTAssertFalse(path.isEmpty)
-      XCTAssertTrue(rect.contains(path.boundingRect),"Clipped \(selection.kind) at phase \(phase), icon: \(icon)")
-     }
-    }
+   guard let asset=StudioMotionAsset.forSelection(selection) else {
+    XCTFail("Missing StudioMotionAsset for \(selection)")
+    continue
+   }
+   XCTAssertTrue(keys.insert(asset.key).inserted,"Duplicate studio key \(asset.key)")
+   XCTAssertNotEqual(asset.phase1CueKey,asset.phase2CueKey,"Phase cues must differ for \(asset.key)")
+   XCTAssertNotNil(asset.videoURL,"Missing bundled MP4 motion_\(asset.key).mp4")
+   XCTAssertNotNil(asset.posterImage,"Missing bundled poster motion_\(asset.key)_poster.jpg")
+   if let poster=asset.posterImage {
+    let ratio=poster.size.width / max(1,poster.size.height)
+    XCTAssertEqual(ratio,16.0/9.0,accuracy:0.05,"Poster for \(asset.key) must be 16:9")
    }
   }
  }
- func testMovementHasDistinctPosesAndLoopsWithoutAnEndpointJump() {
-  let rect=CGRect(x:0,y:0,width:120,height:100)
-  for selection in selections {
-   let start=MovementFigure(selection:selection,phase:0).path(in:rect).cgPath
-   let pose=MovementFigure(selection:selection,phase:0.25).path(in:rect).cgPath
-   let end=MovementFigure(selection:selection,phase:1).path(in:rect).cgPath
-   XCTAssertFalse(start == pose,"Static guide for \(selection.kind)")
-   XCTAssertTrue(start == end,"Loop must return to its starting pose")
-  }
-  XCTAssertFalse(MovementFigure(selection:.guidedRhythm(variant:.standing),phase:0.25).path(in:rect).cgPath == MovementFigure(selection:.guidedRhythm(variant:.seated),phase:0.25).path(in:rect).cgPath)
- }
 
- func testMovementCadenceMatchesTheEffortOfEachChallengeAndRemainsContinuous() {
-  let quick=MovementIllustration.loopDuration(for:.init(kind:.waveHand))
-  let jumping=MovementIllustration.loopDuration(for:.init(kind:.jumpingJacks))
-  let controlled=MovementIllustration.loopDuration(for:.pushUps(repetitions:10))
-  let rhythm=MovementIllustration.loopDuration(for:.guidedRhythm(variant:.standing))
-  XCTAssertLessThan(quick,controlled)
-  XCTAssertLessThan(jumping,controlled)
-  XCTAssertLessThanOrEqual(controlled,3,"Push-ups should not look like slow motion")
-  XCTAssertLessThanOrEqual(rhythm,3,"Guided movement should have a natural cadence")
-
-  let rect=CGRect(x:0,y:0,width:120,height:100)
-  for selection in selections {
-   let before=MovementFigure(selection:selection,phase:0.999).path(in:rect).boundingRect
-   let after=MovementFigure(selection:selection,phase:0.001).path(in:rect).boundingRect
-   XCTAssertLessThan(abs(before.minX-after.minX),1.0,"Horizontal loop jump for \(selection.kind)")
-   XCTAssertLessThan(abs(before.minY-after.minY),1.0,"Vertical loop jump for \(selection.kind)")
-   XCTAssertLessThan(abs(before.width-after.width),1.0,"Scale loop jump for \(selection.kind)")
-  }
+ func testStandingAndSeatedGuidedRhythmUseDistinctStudioAssets() {
+  let standing=StudioMotionAsset.forSelection(.guidedRhythm(variant:.standing))
+  let seated=StudioMotionAsset.forSelection(.guidedRhythm(variant:.seated))
+  XCTAssertNotNil(standing)
+  XCTAssertNotNil(seated)
+  XCTAssertNotEqual(standing?.key,seated?.key)
  }
 }

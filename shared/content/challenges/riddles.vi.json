@@ -164,7 +164,7 @@
     "kind": "riddle",
     "language": "vi",
     "theme": "creativeBreaks",
-    "text": "Người thợ chạm khắc gỗ nhận ra một nghịch lý thú vị: càng lấy bớt phần gỗ ở giữa ra thì thứ đó lại càng to hơn. Thứ đang lớn dần lên là gì?",
+    "text": "Người thợ chạm khắc gỗ càng lấy bớt phần gỗ ở giữa ra thì thứ đó lại càng to hơn. Thứ đang lớn dần lên là gì?",
     "choices": [
       "Mùn cưa",
       "Cái lỗ hoặc hốc rỗng",
@@ -267,7 +267,7 @@
       "Đỉnh Kilimanjaro"
     ],
     "answerIndex": 1,
-    "explanation": "Dù con người chưa đo hay đặt tên thì ngọn núi đó vẫn đã đứng sừng sững ở độ cao lớn nhất hành tinh.",
+    "explanation": "Dù con người chưa đo hay đặt tên thì đỉnh Everest vẫn là ngọn núi cao nhất Trái Đất từ trước đó.",
     "source": "himorning",
     "license": "original"
   },

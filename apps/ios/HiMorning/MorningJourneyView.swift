@@ -19,7 +19,7 @@ extension MorningFocus {
  var detail:String {switch self {
   case .clearStart:return appText("One small decision or riddle before work or study.")
   case .gentleMovement:return appText("Wave, turn gently and follow a seated rhythm. Camera checked on this device.")
-  case .findYourVoice:return appText("Start with a short sentence, then try reading aloud in your app language.")
+  case .findYourVoice:return appText("Start with a short sentence, then try reading a short English passage aloud.")
   case .energize:return appText("A standing workout mix with 5 push-ups, stretches and 10 jumping jacks. Choose what fits you.")
  }}
  var icon:String {switch self {case .clearStart:return "puzzlepiece.extension.fill";case .gentleMovement:return "hand.wave.fill";case .findYourVoice:return "waveform.badge.mic";case .energize:return "figure.strengthtraining.traditional"}}
@@ -56,7 +56,7 @@ struct MorningJourneyCard:View {
  @ViewBuilder private func journeyContent(_ journey:MorningJourney,now:Date)->some View {
   let today=journey.completedToday(now:now)
   let mission=journey.focus.mission(at:journey.missionIndex(now:now),access:model.access)
-  HStack(alignment:.top,spacing:12) {
+  HStack(alignment:.center,spacing:12) {
    Image(systemName:journey.focus.icon).font(.title2).accessibilityHidden(true)
    VStack(alignment:.leading,spacing:4) {
     Text(journey.focus.title).font(.headline).fixedSize(horizontal:false,vertical:true).accessibilityIdentifier("journeyPurpose")

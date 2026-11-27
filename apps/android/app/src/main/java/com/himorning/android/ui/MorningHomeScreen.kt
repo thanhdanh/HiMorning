@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -92,6 +93,7 @@ import com.himorning.android.core.AppState
 import com.himorning.android.core.AppLanguage
 import com.himorning.android.core.ChallengeKind
 import com.himorning.android.core.Journey
+import com.himorning.android.core.MorningAccess
 import com.himorning.android.core.MorningEntry
 import com.himorning.android.core.MorningFocus
 import com.himorning.android.core.ScheduleState
@@ -109,6 +111,9 @@ internal fun MorningHomeScreen(
     state: AppState,
     purposeChosen: Boolean,
     suggestedMission: Alarm,
+    access: MorningAccess,
+    previewHasStarted: Boolean,
+    previewRemainingDays: Int,
     onAdd: () -> Unit,
     onEdit: (Alarm, AlarmEditorScope) -> Unit,
     onToggle: (Alarm, Boolean) -> Unit,
@@ -116,6 +121,7 @@ internal fun MorningHomeScreen(
     onPractice: (Alarm) -> Unit,
     onExplore: () -> Unit,
     onProgress: () -> Unit,
+    onPro: () -> Unit,
     onLanguage: () -> Unit,
     onPurpose: () -> Unit,
     onQuickPractice: () -> Unit,
@@ -132,7 +138,7 @@ internal fun MorningHomeScreen(
         verticalArrangement = Arrangement.spacedBy(18.dp),
     ) {
         val locale = homeLocale()
-        HomeHeader(onProgress, onLanguage)
+        HomeHeader(onProgress, onPro, onLanguage)
         Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(stringResource(R.string.home_alarms), style = MaterialTheme.typography.headlineMedium, fontFamily = quicksandFont, color = colors.ink)
@@ -158,11 +164,19 @@ internal fun MorningHomeScreen(
         }
         JourneyCard(state, suggestedMission, purposeChosen, onPurpose, onMissionPractice, onMissionPlan, onRestartJourney, onProgress)
         if (state.alarms.isNotEmpty() || state.entries.isNotEmpty()) RecentWinsCard(state.entries, onProgress)
+        if (access == MorningAccess.PREVIEW) {
+            Text(
+                if (previewHasStarted) stringResource(R.string.pro_preview_days_left, previewRemainingDays)
+                else stringResource(R.string.pro_preview_starts_on_first_alarm),
+                style = MaterialTheme.typography.bodySmall,
+                color = colors.muted,
+            )
+        }
     }
 }
 
 @Composable
-private fun HomeHeader(onProgress: () -> Unit, onLanguage: () -> Unit) {
+private fun HomeHeader(onProgress: () -> Unit, onPro: () -> Unit, onLanguage: () -> Unit) {
     val stack = LocalDensity.current.fontScale >= 1.3f
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -171,18 +185,29 @@ private fun HomeHeader(onProgress: () -> Unit, onLanguage: () -> Unit) {
                 color = MorningTheme.colors.ink, maxLines = 1)
             if (!stack) {
                 Spacer(Modifier.weight(1f))
-                HomeHeaderActions(onProgress, onLanguage)
+                HomeHeaderActions(onProgress, onPro, onLanguage)
             }
         }
         if (stack) Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically) { HomeHeaderActions(onProgress, onLanguage) }
+            verticalAlignment = Alignment.CenterVertically) { HomeHeaderActions(onProgress, onPro, onLanguage) }
     }
 }
 
 @Composable
-private fun HomeHeaderActions(onProgress: () -> Unit, onLanguage: () -> Unit) {
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+private fun HomeHeaderActions(onProgress: () -> Unit, onPro: () -> Unit, onLanguage: () -> Unit) {
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
         MorningIconButton(Icons.Outlined.BarChart, stringResource(R.string.home_progress), onProgress)
+        Box(
+            Modifier.height(44.dp)
+                .clip(CircleShape)
+                .background(Color(0xFFFFF2CF))
+                .border(0.75.dp, Color(0xFFC09A50), CircleShape)
+                .clickable(onClick = onPro)
+                .padding(horizontal = 14.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text("Pro", style = MaterialTheme.typography.labelLarge, color = Color(0xFF4E3516))
+        }
         MorningIconButton(Icons.Outlined.Language, stringResource(R.string.language), onLanguage)
     }
 }
