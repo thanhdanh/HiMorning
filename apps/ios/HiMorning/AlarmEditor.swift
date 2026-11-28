@@ -18,6 +18,7 @@ struct AlarmEditor:View {
  @State private var sound:AlarmSound = .system
  @State private var challenge:ChallengeSelection = .none
  @State private var pushUpTarget=10
+ @State private var pushUpVariant:PushUpVariant = .standard
  @State private var rhythmVariant:GuidedRhythmVariant = .standing
  @State private var filter:WakeMode = .gentle
  @State private var days:Set<Int>=[]
@@ -52,6 +53,7 @@ struct AlarmEditor:View {
    _challenge=State(initialValue:alarm.challenge);_days=State(initialValue:alarm.time.weekdays)
    _label=State(initialValue:alarm.label)
    _pushUpTarget=State(initialValue:alarm.challenge.repetitions ?? 5)
+   _pushUpVariant=State(initialValue:alarm.challenge.pushUpVariant ?? .standard)
    _rhythmVariant=State(initialValue:alarm.challenge.rhythmVariant ?? .standing)
    _filter=State(initialValue:alarm.mode)
   }
@@ -59,6 +61,7 @@ struct AlarmEditor:View {
    _challenge=State(initialValue:suggestedChallenge)
    _mode=State(initialValue:suggestedChallenge.kind.preferredMode)
    _pushUpTarget=State(initialValue:suggestedChallenge.repetitions ?? 5)
+   _pushUpVariant=State(initialValue:suggestedChallenge.pushUpVariant ?? .standard)
    _rhythmVariant=State(initialValue:suggestedChallenge.rhythmVariant ?? .seated)
    _filter=State(initialValue:suggestedChallenge.kind.preferredMode)
   }
@@ -187,7 +190,7 @@ struct AlarmEditor:View {
  private func info(for kind:ChallengeKind) {
   labelFocused=false;soundPreview.stop()
   let selection=challenge.kind == kind ? challenge : ChallengeSelection(
-   kind:kind,repetitions:kind == .pushUps ? max(kind.preferredMode.policy.reps,pushUpTarget) : nil,rhythmVariant:rhythmVariant)
+   kind:kind,repetitions:kind == .pushUps ? max(kind.preferredMode.policy.reps,pushUpTarget) : nil,rhythmVariant:rhythmVariant,pushUpVariant:kind == .pushUps ? pushUpVariant : nil)
   detail=ChallengeInfo(selection:selection,mode:ChallengeKind.available(in:filter).contains(kind) ? filter : mode)
  }
  private func startPractice() {
@@ -436,10 +439,10 @@ struct AlarmEditor:View {
     case .none:challenge = .none
     case .pushUps:
      pushUpTarget=max(mode == .focused ? 10 : 5,pushUpTarget)
-     challenge = .pushUps(repetitions:pushUpTarget)
+     challenge = .pushUps(repetitions:pushUpTarget,variant:pushUpVariant)
     case .readAndChoose:challenge = .readAndChoose
     case .guidedRhythm:challenge = .guidedRhythm(variant:rhythmVariant)
-    case .waveHand,.neckRotation,.riddle,.jumpingJacks,.stretching,.morningLight:challenge=ChallengeSelection(kind:kind)
+    case .squats,.waveHand,.neckRotation,.riddle,.jumpingJacks,.stretching,.morningLight:challenge=ChallengeSelection(kind:kind)
     case .readAloud:challenge = .readAloud
     }
  }
@@ -452,18 +455,24 @@ struct AlarmEditor:View {
        Text(appText("%lld push-ups",count:pushUpTarget)).font(.headline).monospacedDigit().accessibilityIdentifier("pushUpTarget")
        Spacer()
        Button {
-        pushUpTarget-=1;challenge = .pushUps(repetitions:pushUpTarget)
+        pushUpTarget-=1;challenge = .pushUps(repetitions:pushUpTarget,variant:pushUpVariant)
        } label:{Image(systemName:"minus").frame(width:44,height:44).contentShape(Rectangle())}
         .buttonStyle(.plain).background(MorningTheme.soft,in:Circle())
         .disabled(pushUpTarget <= (mode == .focused ? 10 : 5))
         .accessibilityLabel(appText("Decrease push-up target")).accessibilityIdentifier("decreasePushUpTarget")
        Button {
-        pushUpTarget=max(mode == .focused ? 10 : 5,pushUpTarget+1);challenge = .pushUps(repetitions:pushUpTarget)
+        pushUpTarget=max(mode == .focused ? 10 : 5,pushUpTarget+1);challenge = .pushUps(repetitions:pushUpTarget,variant:pushUpVariant)
        } label:{Image(systemName:"plus").frame(width:44,height:44).contentShape(Rectangle())}
         .buttonStyle(.plain).background(MorningTheme.soft,in:Circle())
        .disabled(pushUpTarget >= (preview.access.hasFullAccess ? ChallengeSelection.maximumPushUps : 5))
         .accessibilityLabel(appText("Increase push-up target")).accessibilityIdentifier("increasePushUpTarget")
       }
+      Picker(appText("Push-up style"),selection:$pushUpVariant) {
+       Text(appText("Standard")).tag(PushUpVariant.standard)
+       Text(appText("Incline / Knee")).tag(PushUpVariant.inclineOrKnee)
+      }.pickerStyle(.segmented)
+       .accessibilityIdentifier("pushUpVariantPicker")
+       .onChange(of:pushUpVariant) {_,value in challenge = .pushUps(repetitions:pushUpTarget,variant:value)}
      }
      if kind == .guidedRhythm {
       Picker(appText("Rhythm style"),selection:$rhythmVariant) {

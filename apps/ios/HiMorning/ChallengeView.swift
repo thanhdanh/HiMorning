@@ -75,6 +75,10 @@ struct ChallengeView: View {
  @State private var readAloudItem: ChallengeContentItem?
  @State private var message = appText("Good morning. Choose what feels right today.")
  @State private var tracking:CameraTrackingSnapshot = .empty
+ @State private var trackingHint:String?
+ @State private var romProgress:Double? = nil
+ @State private var isLowLight = false
+ @State private var fillLightOn = false
  @State private var reps = 0
  @State private var consent = false
  @State private var busy = false
@@ -318,7 +322,7 @@ struct ChallengeView: View {
       speechEnded = true
       complete(.localCompleted, success: appText("Great reading."))
      case .readAndChoose, .riddle: complete(.localCompleted, success: appText("Correct. Challenge completed!"))
-     case .waveHand, .neckRotation, .jumpingJacks, .stretching, .morningLight: complete(.localCompleted, success: appText("Challenge completed"))
+     case .waveHand, .neckRotation, .jumpingJacks, .squats, .stretching, .morningLight: complete(.localCompleted, success: appText("Challenge completed"))
      case .none: break
      }
     }
@@ -335,7 +339,7 @@ struct ChallengeView: View {
 
  private var distanceLayout: Bool {
   guard movementCamera != nil || rhythmCamera != nil else { return false }
-  return challenge.kind == .jumpingJacks || (challenge.kind == .guidedRhythm && (challenge.rhythmVariant ?? .standing) == .standing)
+  return challenge.kind == .jumpingJacks || challenge.kind == .squats || (challenge.kind == .guidedRhythm && (challenge.rhythmVariant ?? .standing) == .standing)
  }
 
  private var testingTrackingOverlay:Bool {
@@ -346,7 +350,17 @@ struct ChallengeView: View {
   #endif
  }
  @ViewBuilder private func cameraBlock(_ session:AVCaptureSession,counter:String)->some View {
-  let preview=TrackedCameraPreview(session:session,tracking:tracking,counter:counter,largeCounter:distanceLayout)
+  let preview=TrackedCameraPreview(
+   session:session,
+   tracking:tracking,
+   counter:counter,
+   largeCounter:distanceLayout,
+   statusHint:trackingHint,
+   romProgress:romProgress,
+   isLowLight:isLowLight,
+   fillLightOn:fillLightOn,
+   onToggleFillLight:{ fillLightOn.toggle() }
+  )
   // Keep the complete portrait camera frame, including the person and the room.
   preview.aspectRatio(3.0/4.0,contentMode:.fit).frame(maxWidth:300)
    .frame(maxWidth:.infinity)
@@ -361,6 +375,7 @@ struct ChallengeView: View {
  private var spokenMovementCue:String {
   switch challenge.kind {
   case .pushUps:return appText("Lower yourself, then push up.")
+  case .squats:return appText("Bend your knees smoothly, then stand tall.")
   case .waveHand:return appText("Wave your hand side to side.")
   case .neckRotation:return appText("Turn your head to each side, then back to the middle.")
   case .jumpingJacks:return appText("Open your arms and legs, then bring them together.")
@@ -373,17 +388,20 @@ struct ChallengeView: View {
 
  @MainActor private func startCamera() async {
   guard !busy, !finished, !stopping, scene == .active, let coordinator, let target = challenge.repetitions else { return }
-  busy = true; reps = 0; message = appText("Getting the camera ready…")
+  busy = true; reps = 0; trackingHint = nil; romProgress = 0; isLowLight = false; message = appText("Getting the camera ready…")
   let generation = UUID(); captureGeneration = generation; consent = true; tracking = .empty
   defer { busy = false }
-  let capture = CameraCapture(target: target) { update in Task { @MainActor in
+  let capture = CameraCapture(target: target, variant: challenge.pushUpVariant ?? .standard) { update in Task { @MainActor in
    guard captureGeneration == generation, consent, !finished, !stopping else { return }
    if update.reps > reps { voice?.rep(update.reps, spoken: !update.ready) }
    voice?.hint(update.message)
    tracking=update.tracking
-   reps = update.reps; message = update.message
+   trackingHint=update.trackingHint
+   romProgress=update.romProgress
+   isLowLight=update.isLowLight
+   reps = update.reps; message = update.scanError?.message(practicing: practicing) ?? update.message
    if update.ready { await completePushUps(update.counter) }
-   else if update.ended { camera?.stop(); camera = nil; consent = false; await coordinator.suspend() }
+   else if update.ended { camera?.stop(); camera = nil; consent = false; fillLightOn = false; romProgress = nil; await coordinator.suspend() }
   }}
   beginCoaching(); camera = capture; await capture.start()
  }
@@ -454,7 +472,7 @@ struct ChallengeView: View {
   pauseResources()
   retrying = true
   coordinator = ChallengeCoordinator(alarm: effectiveAlarm, cloud: model.cloud, scheduler: model.scheduler, rehearsal: true)
-  transcript = ""; speechEnded = false; reps = 0; rhythmCycles = 0; consentDialog = false
+  transcript = ""; speechEnded = false; reps = 0; rhythmCycles = 0; consentDialog = false; trackingHint = nil
   preparePrompt(repickReadAloud: false)
   result = nil; completion = nil; message = challengeInstructions
  }
@@ -495,7 +513,7 @@ struct ChallengeView: View {
  }
 
  @MainActor private func startRhythm() async {
-  guard rhythmCamera == nil, !busy, !finished, !stopping, scene == .active else { return }; busy = true; message = appText("Getting the camera ready…")
+  guard rhythmCamera == nil, !busy, !finished, !stopping, scene == .active else { return }; busy = true; trackingHint = nil; message = appText("Getting the camera ready…")
   let generation = UUID(); captureGeneration = generation
   tracking = .empty
   let capture = GuidedRhythmCapture(variant: challenge.rhythmVariant ?? .standing, targetCycles: 3) { update in Task { @MainActor in
@@ -503,7 +521,8 @@ struct ChallengeView: View {
    if update.cycles > rhythmCycles { voice?.rep(update.cycles, spoken: !update.completed) }
    voice?.hint(update.message)
    tracking=update.tracking
-   rhythmCycles = update.cycles; message = update.message
+   trackingHint=update.trackingHint
+   rhythmCycles = update.cycles; message = update.scanError?.message(practicing: practicing) ?? update.message
    if update.completed { finish(.localCompleted, success: appText("Guided rhythm completed.")) }
    else if update.ended { rhythmCamera?.stop(); rhythmCamera = nil }
   }}
@@ -512,7 +531,7 @@ struct ChallengeView: View {
 
  @MainActor private func startMovement() async {
   guard movementCamera == nil, !busy, !finished, !stopping, scene == .active, challenge.kind.usesLocalMovement else { return }
-  busy = true; message = appText("Getting the camera ready…")
+  busy = true; trackingHint = nil; message = appText("Getting the camera ready…")
   let generation = UUID(); captureGeneration = generation
   tracking = .empty
   let capture = MovementChallengeCapture(kind: challenge.kind) { update in Task { @MainActor in
@@ -520,21 +539,25 @@ struct ChallengeView: View {
    if update.reps > reps { voice?.rep(update.reps, spoken: !update.ready) }
    voice?.hint(update.message)
    tracking=update.tracking
-   reps = update.reps; message = update.message
-   if update.ready { finish(.localCompleted, success: appText("Challenge completed")) }
-   else if update.ended { movementCamera?.stop(); movementCamera = nil }
+   trackingHint=update.trackingHint
+   romProgress=update.romProgress
+   isLowLight=update.isLowLight
+   reps = update.reps; message = update.scanError?.message(practicing: practicing) ?? update.message
+   if update.ready { fillLightOn = false; romProgress = nil; finish(.localCompleted, success: appText("Challenge completed")) }
+   else if update.ended { movementCamera?.stop(); movementCamera = nil; fillLightOn = false; romProgress = nil }
   }}
   beginCoaching(); movementCamera = capture; await capture.start(); busy = false
  }
 
  @MainActor private func startMorningLight() async {
   guard lightCamera == nil, !busy, !finished, !stopping, scene == .active else { return }
-  busy = true; lightProgress = 0; message = appText("Getting the camera ready…")
+  busy = true; lightProgress = 0; trackingHint = nil; message = appText("Getting the camera ready…")
   let availability = await MorningLightCapture.requestAccessIfNeeded()
   guard !finished, !stopping, scene == .active else { busy = false; return }
   guard availability == .ready else {
    busy = false
-   message = appText("Morning light isn’t available on this device without a camera.")
+   let err: VisionScanError = availability == .needsPermission ? .cameraPermissionDenied : .cameraUnavailable
+   message = err.message(practicing: practicing)
    return
   }
   let generation = UUID(); captureGeneration = generation
@@ -558,6 +581,7 @@ struct ChallengeView: View {
    onInterruption: {
     Task { @MainActor in
      lightCamera?.stop(); lightCamera = nil
+     message = VisionScanError.interrupted.message(practicing: practicing)
     }
    }
   )
@@ -565,7 +589,7 @@ struct ChallengeView: View {
    lightCamera = capture
    message = appText("Point toward a bright window or lamp")
   } else {
-   message = appText("Morning light isn’t available on this device without a camera.")
+   message = VisionScanError.cameraUnavailable.message(practicing: practicing)
   }
   busy = false
  }
@@ -607,7 +631,7 @@ struct ChallengeView: View {
  }
 
  private func pauseResources() {
-  captureGeneration = UUID(); consent = false; speechListening = false; speechFinishing = false; tracking = .empty
+  captureGeneration = UUID(); consent = false; speechListening = false; speechFinishing = false; tracking = .empty; trackingHint = nil
   voice?.stop()
   camera?.stop(); camera = nil
   movementCamera?.stop(); movementCamera = nil

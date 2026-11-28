@@ -8,6 +8,7 @@ import { DurableStore, cleanup } from './store.js';
 import { GeminiVerifier, boundedJSON } from './gemini.js';
 import { prepareDemoEvidence } from './evidence.js';
 import { contentResponse } from './content.js';
+import { generateWeeklyInsight, weeklyInsightRequestSchema } from './insights.js';
 import challengeContent from '../content/challenge-content.json';
 export class VerificationHub extends DurableObject<Env> {
  private readonly service:VerificationService;
@@ -33,6 +34,17 @@ export default {
   try {
    if(path==='/content/v1/challenge-content.json')return contentResponse(request,challengeContent);
    if(path==='/health'&&request.method==='GET')return Response.json({status:'ok',mode:'synthetic-demo',model:MODEL,enabled:env.AI_VERIFICATION_ENABLED==='true'},{headers:{'Cache-Control':'no-store'}});
+   if(path==='/v1/insights/weekly') {
+    if(request.method!=='POST'||request.headers.get('Content-Type')?.split(';')[0].trim()!=='application/json')throw new Failure('invalid-argument','Use a JSON POST request');
+    workerConfig(env);
+    await authorize(request,env);
+    let rawBody:unknown;
+    try {rawBody=await boundedJSON(new Response(request.body),8*1024);}catch{throw new Failure('invalid-argument','Invalid request body');}
+    const parsed=weeklyInsightRequestSchema.safeParse(rawBody);
+    if(!parsed.success)throw new Failure('invalid-argument','Invalid weekly insight stats payload');
+    const insight=await generateWeeklyInsight(parsed.data,env.GEMINI_API_KEY??'');
+    return Response.json(insight,{headers:{'Cache-Control':'no-store'}});
+   }
    const method=path.slice(1) as Method;
    if(!Object.hasOwn(methods,method))throw new Failure('not-found','Endpoint not found');
    if(request.method!=='POST'||request.headers.get('Content-Type')?.split(';')[0].trim()!=='application/json')throw new Failure('invalid-argument','Use a JSON POST request');

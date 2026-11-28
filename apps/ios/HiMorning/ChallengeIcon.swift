@@ -16,6 +16,7 @@ struct ChallengeIcon:View {
   switch kind {
   case .none:return .symbol("sun.max.fill")
   case .pushUps:return .asset("ChallengePushUps")
+  case .squats:return .asset("ChallengeRhythmStanding")
   case .readAndChoose:return .symbol("doc.text.magnifyingglass")
   case .guidedRhythm:return .asset(seated ? "ChallengeRhythmSeated" : "ChallengeRhythmStanding")
   case .readAloud:return .symbol("waveform.badge.mic")

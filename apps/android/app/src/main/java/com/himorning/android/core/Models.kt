@@ -14,16 +14,17 @@ enum class AlarmSound {
     BRIGHT_KEYS, PIXEL_MORNING, BRASS_RISE, GLASS_CHIME, WOOD_PLUCK, SOFT_BONG
 }
 enum class ScheduleState { PENDING, CONFIRMED, OFF, NEEDS_REVIEW }
-enum class ChallengeKind { NONE, PUSH_UPS, READ_AND_CHOOSE, GUIDED_RHYTHM, READ_ALOUD, WAVE_HAND, NECK_ROTATION, RIDDLE, JUMPING_JACKS, STRETCHING }
+enum class ChallengeKind { NONE, PUSH_UPS, SQUATS, READ_AND_CHOOSE, GUIDED_RHYTHM, READ_ALOUD, WAVE_HAND, NECK_ROTATION, RIDDLE, JUMPING_JACKS, STRETCHING, MORNING_LIGHT }
+enum class PushUpVariant { STANDARD, INCLINE_OR_KNEE }
 enum class WakeOutcome { SELF_CONFIRMED, LOCAL_COMPLETED, AI_VERIFIED, DISMISSED }
 enum class MorningFocus { CLEAR_START, GENTLE_MOVEMENT, FIND_YOUR_VOICE, ENERGIZE }
 enum class AppLanguage { SYSTEM, ENGLISH, VIETNAMESE }
 
 fun WakeMode.availableChallenges(legacy: ChallengeKind? = null): List<ChallengeKind> {
     val choices = when (this) {
-        WakeMode.GENTLE -> listOf(ChallengeKind.NONE, ChallengeKind.WAVE_HAND, ChallengeKind.NECK_ROTATION)
+        WakeMode.GENTLE -> listOf(ChallengeKind.NONE, ChallengeKind.WAVE_HAND, ChallengeKind.NECK_ROTATION, ChallengeKind.MORNING_LIGHT)
         WakeMode.BALANCED -> listOf(ChallengeKind.READ_ALOUD, ChallengeKind.READ_AND_CHOOSE, ChallengeKind.RIDDLE)
-        WakeMode.FOCUSED -> listOf(ChallengeKind.PUSH_UPS, ChallengeKind.JUMPING_JACKS, ChallengeKind.STRETCHING)
+        WakeMode.FOCUSED -> listOf(ChallengeKind.PUSH_UPS, ChallengeKind.SQUATS, ChallengeKind.JUMPING_JACKS, ChallengeKind.STRETCHING)
     }
     return if (legacy != null && legacy !in choices) choices + legacy else choices
 }
@@ -50,6 +51,7 @@ data class Alarm(
     val challenge: ChallengeKind = ChallengeKind.NONE,
     val repetitions: Int = 5,
     val seated: Boolean = false,
+    val pushUpVariant: PushUpVariant = PushUpVariant.STANDARD,
     val label: String = "",
     val enabled: Boolean = true,
     val state: ScheduleState = ScheduleState.PENDING,
@@ -87,6 +89,8 @@ data class MorningEntry(
     val challenge: ChallengeKind?,
     val date: Long,
     val outcome: WakeOutcome,
+    val completionDurationSec: Int? = null,
+    val avgRomScore: Double? = null,
 )
 
 internal val MorningEntry.completedChallenge: Boolean

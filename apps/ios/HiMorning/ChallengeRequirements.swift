@@ -7,8 +7,13 @@ enum ChallengeRequirements {
   case .none:
    return [appText("Stop the alarm with one tap")]
   case .pushUps:
-   return [appText("Place your phone to the side so your whole body is visible"),
+   return [appText(selection.pushUpVariant == .inclineOrKnee
+     ? "Place your phone to the side; knee or incline push-ups count too"
+     : "Place your phone to the side so your whole body is visible"),
     appText("Lower yourself, then push up %lld times",count:selection.repetitions ?? 5)]
+  case .squats:
+   return [appText("Stand in view with hips, knees, and ankles visible"),
+    appText("Bend your knees and stand back up %lld times",count:selection.kind.localMovementTarget ?? 10)]
   case .readAndChoose:
    return [appText("Read the prompt and pick the correct answer.")]
   case .riddle:
@@ -72,6 +77,7 @@ private extension ChallengeSelection {
  var checkingGuide:String {
   switch kind {
   case .pushUps:return "challenge_guide_pushups"
+  case .squats:return "challenge_guide_squats"
   case .waveHand:return "challenge_guide_wave"
   case .neckRotation:return "challenge_guide_neck"
   case .jumpingJacks:return "challenge_guide_jacks"

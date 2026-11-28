@@ -46,6 +46,7 @@ internal fun MovementChallengeIcon(
     val animation = when (kind) {
         ChallengeKind.WAVE_HAND -> MovementAnimation.WAVE
         ChallengeKind.PUSH_UPS -> MovementAnimation.PUSH_UPS
+        ChallengeKind.SQUATS -> MovementAnimation.STANDING
         ChallengeKind.JUMPING_JACKS -> MovementAnimation.JUMPING_JACKS
         ChallengeKind.STRETCHING -> MovementAnimation.REACH
         ChallengeKind.NECK_ROTATION -> MovementAnimation.NECK

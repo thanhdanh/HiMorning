@@ -96,11 +96,34 @@ class DomainTest {
         assertEquals(journey, journey.record(completion.copy(sessionId = UUID.randomUUID().toString(), date = day + 3_600_000), false, day + 3_600_000, zone))
     }
     @Test fun modeCatalogKeepsOnlyItsChoicesAndAnExistingLegacySelection() {
-        assertEquals(listOf(ChallengeKind.NONE, ChallengeKind.WAVE_HAND, ChallengeKind.NECK_ROTATION), WakeMode.GENTLE.availableChallenges())
+        assertEquals(listOf(ChallengeKind.NONE, ChallengeKind.WAVE_HAND, ChallengeKind.NECK_ROTATION, ChallengeKind.MORNING_LIGHT), WakeMode.GENTLE.availableChallenges())
         assertEquals(listOf(ChallengeKind.READ_ALOUD, ChallengeKind.READ_AND_CHOOSE, ChallengeKind.RIDDLE), WakeMode.BALANCED.availableChallenges())
-        assertEquals(listOf(ChallengeKind.PUSH_UPS, ChallengeKind.JUMPING_JACKS, ChallengeKind.STRETCHING), WakeMode.FOCUSED.availableChallenges())
-        assertEquals(4, WakeMode.GENTLE.availableChallenges(ChallengeKind.GUIDED_RHYTHM).size)
-        assertEquals(3, WakeMode.GENTLE.availableChallenges(ChallengeKind.NONE).size)
+        assertEquals(listOf(ChallengeKind.PUSH_UPS, ChallengeKind.SQUATS, ChallengeKind.JUMPING_JACKS, ChallengeKind.STRETCHING), WakeMode.FOCUSED.availableChallenges())
+        assertEquals(5, WakeMode.GENTLE.availableChallenges(ChallengeKind.GUIDED_RHYTHM).size)
+        assertEquals(4, WakeMode.GENTLE.availableChallenges(ChallengeKind.NONE).size)
+    }
+
+    @Test fun adaptationEngineStepsDownOnRepeatedPushUpFrictionAndStepsUpOnFastWins() {
+        val standardAlarm = Alarm(hour = 7, minute = 0, mode = WakeMode.FOCUSED, challenge = ChallengeKind.PUSH_UPS, repetitions = 10, pushUpVariant = PushUpVariant.STANDARD)
+        val frictionEntries = listOf(
+            MorningEntry(UUID.randomUUID().toString(), standardAlarm.id, WakeMode.FOCUSED, ChallengeKind.PUSH_UPS, 2_000L, WakeOutcome.SELF_CONFIRMED),
+            MorningEntry(UUID.randomUUID().toString(), standardAlarm.id, WakeMode.FOCUSED, ChallengeKind.PUSH_UPS, 1_000L, WakeOutcome.DISMISSED),
+        )
+        val stepDownIncline = MorningAdaptationEngine.evaluate(frictionEntries, standardAlarm)
+        assertEquals(MorningAdaptationAction.STEP_DOWN_TO_INCLINE_PUSH_UPS, stepDownIncline.action)
+        assertEquals(2, stepDownIncline.consecutiveStruggles)
+
+        val inclineAlarm = standardAlarm.copy(pushUpVariant = PushUpVariant.INCLINE_OR_KNEE)
+        val stepDownSquats = MorningAdaptationEngine.evaluate(frictionEntries, inclineAlarm)
+        assertEquals(MorningAdaptationAction.STEP_DOWN_TO_SQUATS, stepDownSquats.action)
+
+        val fastWins = (1..5).map { day ->
+            MorningEntry(UUID.randomUUID().toString(), standardAlarm.id, WakeMode.FOCUSED, ChallengeKind.PUSH_UPS, day * 86_400_000L, WakeOutcome.LOCAL_COMPLETED, completionDurationSec = 18, avgRomScore = 0.92)
+        }
+        val stepUp = MorningAdaptationEngine.evaluate(fastWins, standardAlarm)
+        assertEquals(MorningAdaptationAction.STEP_UP_REPS, stepUp.action)
+        assertEquals(12, stepUp.suggestedRepetitions)
+        assertEquals(5, stepUp.consecutiveFastWins)
     }
 
     @Test fun readingFeedbackDistinguishesMisreadWordsFromAnUnreadSuffix() {

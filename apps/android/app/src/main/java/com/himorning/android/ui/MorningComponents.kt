@@ -27,6 +27,8 @@ import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.PlayCircleOutline
 import androidx.compose.material.icons.outlined.Spa
 import androidx.compose.material.icons.outlined.WbSunny
+import androidx.compose.material.icons.outlined.WbTwilight
+import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -61,17 +63,17 @@ import com.himorning.android.core.WakeMode
 
 @Composable
 internal fun ProLockBadge(modifier: Modifier = Modifier, compact: Boolean = false) {
+    val colors = MorningTheme.colors
     val shape = RoundedCornerShape(50)
     Row(
-        modifier.background(Brush.linearGradient(listOf(Color(0xFFFFF2CF), Color(0xFFECCA82))), shape)
-            .border(0.75.dp, Color(0xFFC09A50), shape)
+        modifier.background(Brush.linearGradient(listOf(colors.proGoldLight, colors.proGold)), shape)
+            .border(0.75.dp, colors.proGoldEdge, shape)
             .padding(horizontal = if (compact) 7.dp else 9.dp, vertical = if (compact) 3.dp else 4.dp),
         horizontalArrangement = Arrangement.spacedBy(5.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val ink = Color(0xFF4E3516)
-        Icon(Icons.Outlined.Lock, null, tint = ink, modifier = Modifier.size(12.dp))
-        Text(stringResource(R.string.pro_badge), style = MaterialTheme.typography.labelSmall, color = ink, fontWeight = FontWeight.Bold, letterSpacing = 0.45.sp)
+        Icon(Icons.Outlined.Lock, null, tint = colors.proInk, modifier = Modifier.size(12.dp))
+        Text(stringResource(R.string.pro_badge), style = MaterialTheme.typography.labelSmall, color = colors.proInk, fontWeight = FontWeight.Bold, letterSpacing = 0.45.sp)
     }
 }
 
@@ -95,12 +97,11 @@ internal fun MorningButton(
             .morningPress(interactions, enabled)
             .morningSurface(
                 buttonSurface,
-                radius = 16.dp,
-                tint = if (enabled) colors.yellow else Color.Transparent,
-                elevated = primary && enabled,
+                radius = MorningTheme.Radius.control,
+                elevated = false,
                 borderColor = if (!primary || !enabled) colors.line else null,
             ),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(MorningTheme.Radius.control),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent,
             contentColor = if (primary) colors.onYellow else colors.ink,
@@ -130,8 +131,8 @@ internal fun MorningIconButton(
         onClick = onClick,
         enabled = enabled,
         interactionSource = interactions,
-        modifier = modifier.size(48.dp).morningPress(interactions, enabled)
-            .morningSurface(colors.surface, radius = 24.dp, tint = colors.yellow, elevated = false)
+        modifier = modifier.size(44.dp).morningPress(interactions, enabled)
+            .morningSurface(colors.surface, radius = 22.dp, elevated = false, borderColor = colors.line)
             .semantics { contentDescription = label; role = Role.Button },
     ) { Icon(icon, contentDescription = null, tint = if (enabled) colors.ink else colors.muted.copy(alpha = .45f)) }
 }
@@ -194,6 +195,7 @@ internal fun MorningSun(size: Dp = 68.dp, showRays: Boolean = true, modifier: Mo
 internal fun challengeIcon(kind: ChallengeKind, seated: Boolean = false): ImageVector = when (kind) {
     ChallengeKind.NONE -> Icons.Outlined.WbSunny
     ChallengeKind.PUSH_UPS -> ImageVector.vectorResource(R.drawable.challenge_push_ups)
+    ChallengeKind.SQUATS -> ImageVector.vectorResource(R.drawable.challenge_rhythm_standing)
     ChallengeKind.READ_AND_CHOOSE -> Icons.Outlined.Book
     ChallengeKind.GUIDED_RHYTHM -> ImageVector.vectorResource(
         if (seated) R.drawable.challenge_rhythm_seated else R.drawable.challenge_rhythm_standing
@@ -204,10 +206,88 @@ internal fun challengeIcon(kind: ChallengeKind, seated: Boolean = false): ImageV
     ChallengeKind.RIDDLE -> Icons.Outlined.Lightbulb
     ChallengeKind.JUMPING_JACKS -> ImageVector.vectorResource(R.drawable.challenge_jumping_jacks)
     ChallengeKind.STRETCHING -> ImageVector.vectorResource(R.drawable.challenge_stretching)
+    ChallengeKind.MORNING_LIGHT -> Icons.Outlined.WbTwilight
 }
 
 internal fun modeIcon(mode: WakeMode) = when (mode) {
     WakeMode.GENTLE -> Icons.Outlined.Spa
     WakeMode.BALANCED -> Icons.Outlined.WbSunny
     WakeMode.FOCUSED -> Icons.Outlined.Bolt
+}
+
+
+@Composable
+internal fun VisionErrorCard(
+    error: com.himorning.android.platform.CaptureError,
+    practice: Boolean,
+    onOpenSettings: () -> Unit,
+    onFallbackReading: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = MorningTheme.colors
+    val titleRes = when (error) {
+        com.himorning.android.platform.CaptureError.PERMISSION_REQUIRED -> R.string.vision_error_permission_title
+        com.himorning.android.platform.CaptureError.CAMERA_UNAVAILABLE -> R.string.vision_error_camera_title
+        com.himorning.android.platform.CaptureError.AI_SCANNER_UNAVAILABLE -> R.string.vision_error_ai_title
+        com.himorning.android.platform.CaptureError.TIMEOUT -> R.string.vision_error_timeout_title
+        com.himorning.android.platform.CaptureError.INTERRUPTED -> R.string.vision_error_interrupted_title
+        else -> R.string.vision_error_camera_title
+    }
+    val detailRes = when (error) {
+        com.himorning.android.platform.CaptureError.PERMISSION_REQUIRED ->
+            if (practice) R.string.vision_error_permission_practice else R.string.vision_error_permission_live
+        com.himorning.android.platform.CaptureError.CAMERA_UNAVAILABLE ->
+            if (practice) R.string.vision_error_camera_practice else R.string.vision_error_camera_live
+        com.himorning.android.platform.CaptureError.AI_SCANNER_UNAVAILABLE -> R.string.vision_error_ai_detail
+        com.himorning.android.platform.CaptureError.TIMEOUT ->
+            if (practice) R.string.vision_error_timeout_practice else R.string.vision_error_timeout_live
+        com.himorning.android.platform.CaptureError.INTERRUPTED ->
+            if (practice) R.string.vision_error_interrupted_practice else R.string.vision_error_interrupted_live
+        else -> if (practice) R.string.vision_error_camera_practice else R.string.vision_error_camera_live
+    }
+    val shape = RoundedCornerShape(MorningTheme.Radius.card)
+    androidx.compose.foundation.layout.Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(colors.error.copy(alpha = 0.10f))
+            .border(1.dp, colors.error.copy(alpha = 0.45f), shape)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.Top,
+        ) {
+            Icon(
+                Icons.Outlined.WarningAmber,
+                contentDescription = null,
+                tint = colors.error,
+                modifier = Modifier.size(22.dp),
+            )
+            androidx.compose.foundation.layout.Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    stringResource(titleRes),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colors.ink,
+                )
+                Text(
+                    stringResource(detailRes),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = colors.muted,
+                )
+            }
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            if (error == com.himorning.android.platform.CaptureError.PERMISSION_REQUIRED) {
+                androidx.compose.material3.TextButton(onClick = onOpenSettings) {
+                    Text(stringResource(R.string.open_settings), color = colors.accent, fontWeight = FontWeight.SemiBold)
+                }
+            }
+            androidx.compose.material3.TextButton(onClick = onFallbackReading) {
+                Text(stringResource(R.string.try_reading), color = colors.accent, fontWeight = FontWeight.SemiBold)
+            }
+        }
+    }
 }

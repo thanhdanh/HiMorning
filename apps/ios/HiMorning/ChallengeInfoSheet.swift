@@ -104,6 +104,7 @@ struct ChallengeInfoSheet:View {
   switch kind {
   case .none:return "Stop the alarm with one tap"
   case .pushUps:return "challenge_info_pushups"
+  case .squats:return "challenge_info_squats"
   case .waveHand:return "challenge_info_wave"
   case .neckRotation:return "challenge_info_neck"
   case .jumpingJacks:return "challenge_info_jacks"

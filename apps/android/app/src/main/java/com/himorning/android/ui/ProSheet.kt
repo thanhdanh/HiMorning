@@ -206,15 +206,12 @@ internal fun ProSheet(
 @Composable
 private fun ProBenefitRow(icon: ImageVector, title: String, description: String) {
     val colors = MorningTheme.colors
-    val dark = isSystemInDarkTheme()
-    val badgeBg = if (dark) Color(0xFF363025) else Color(0xFFFBF4E5)
-    val badgeEdge = if (dark) Color(0xFF736043) else Color(0xFFC09A50).copy(alpha = 0.45f)
     Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Top) {
         Box(
             Modifier.size(36.dp)
                 .clip(RoundedCornerShape(10.dp))
-                .background(badgeBg)
-                .border(0.75.dp, badgeEdge, RoundedCornerShape(10.dp)),
+                .background(colors.proSurface)
+                .border(0.75.dp, colors.proGoldEdge.copy(alpha = 0.40f), RoundedCornerShape(10.dp)),
             contentAlignment = Alignment.Center,
         ) {
             Icon(icon, contentDescription = null, tint = colors.accent, modifier = Modifier.size(18.dp))
@@ -257,10 +254,10 @@ private fun ProPlanCard(
                     Text(
                         stringResource(R.string.pro_save_percent, savingsPercent),
                         style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
-                        color = Color(0xFF4E3516),
+                        color = colors.proInk,
                         modifier = Modifier
                             .clip(CircleShape)
-                            .background(Color(0xFFFFF2CF))
+                            .background(colors.proGoldLight)
                             .padding(horizontal = 8.dp, vertical = 3.dp),
                     )
                 }

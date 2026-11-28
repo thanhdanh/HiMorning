@@ -74,12 +74,22 @@ class AppRepository(context: Context) {
         }))
     }
 
-    fun record(sessionId: String, alarmId: String?, mode: WakeMode?, challenge: ChallengeKind?, outcome: WakeOutcome, practice: Boolean = false, now: Long = System.currentTimeMillis()): Boolean = synchronized(repositoryLock) {
+    fun record(
+        sessionId: String,
+        alarmId: String?,
+        mode: WakeMode?,
+        challenge: ChallengeKind?,
+        outcome: WakeOutcome,
+        practice: Boolean = false,
+        now: Long = System.currentTimeMillis(),
+        completionDurationSec: Int? = null,
+        avgRomScore: Double? = null,
+    ): Boolean = synchronized(repositoryLock) {
         cachedState = read()
         val id = runCatching { UUID.fromString(sessionId) }.getOrNull() ?: return false
         val date = now
         if (practice || date > now || date < now - 30L * 86_400_000) return false
-        val entry = MorningEntry(id.toString(), alarmId, mode, challenge, date, outcome)
+        val entry = MorningEntry(id.toString(), alarmId, mode, challenge, date, outcome, completionDurationSec, avgRomScore)
         val entries = reconcileWake(cachedState.entries.filter { it.date >= now - 30L * 86_400_000 }, entry) ?: return false
         val journey = cachedState.journey.record(entry, rehearsal = false, now = now)
         commit(cachedState.copy(entries = entries, journey = journey))
@@ -133,12 +143,14 @@ class AppRepository(context: Context) {
         put("alarms", JSONArray().also { a -> value.alarms.forEach { alarm -> a.put(JSONObject().apply {
             put("id", alarm.id); put("hour", alarm.hour); put("minute", alarm.minute); put("weekdays", JSONArray(alarm.weekdays.sorted()))
             put("mode", alarm.mode.name); put("sound", alarm.sound.name); put("challenge", alarm.challenge.name); put("repetitions", alarm.repetitions)
-            put("seated", alarm.seated); put("label", alarm.label); put("enabled", alarm.enabled); put("state", alarm.state.name)
+            put("seated", alarm.seated); put("pushUpVariant", alarm.pushUpVariant.name); put("label", alarm.label); put("enabled", alarm.enabled); put("state", alarm.state.name)
             alarm.scheduledAt?.let { put("scheduledAt", it) }
         }) } })
         put("entries", JSONArray().also { a -> value.entries.forEach { entry -> a.put(JSONObject().apply {
             put("sessionId", entry.sessionId); entry.alarmId?.let { put("alarmId", it) }; entry.mode?.let { put("mode", it.name) }
             entry.challenge?.let { put("challenge", it.name) }; put("date", entry.date); put("outcome", entry.outcome.name)
+            entry.completionDurationSec?.let { put("completionDurationSec", it) }
+            entry.avgRomScore?.let { put("avgRomScore", it) }
         }) } })
         put("weeklyGoal", value.weeklyGoal); put("journey", JSONObject().apply {
             put("focus", value.journey.focus.name); put("startedAt", value.journey.startedAt); put("completions", JSONArray(value.journey.completions)); put("completedJourneys", value.journey.completedJourneys)
@@ -157,12 +169,16 @@ class AppRepository(context: Context) {
                 id = a.getString("id"), hour = a.getInt("hour"), minute = a.getInt("minute"),
                 weekdays = a.getJSONArray("weekdays").let { days -> (0 until days.length()).map { days.getInt(it) }.toSet() },
                 mode = WakeMode.valueOf(a.getString("mode")), sound = AlarmSound.valueOf(a.getString("sound")), challenge = ChallengeKind.valueOf(a.getString("challenge")),
-                repetitions = a.getInt("repetitions"), seated = a.optBoolean("seated"), label = a.optString("label"), enabled = a.getBoolean("enabled"),
+                repetitions = a.getInt("repetitions"), seated = a.optBoolean("seated"),
+                pushUpVariant = a.optString("pushUpVariant").takeIf(String::isNotEmpty)?.let { runCatching { PushUpVariant.valueOf(it) }.getOrNull() } ?: PushUpVariant.STANDARD,
+                label = a.optString("label"), enabled = a.getBoolean("enabled"),
                 state = ScheduleState.valueOf(a.getString("state")), scheduledAt = if (a.has("scheduledAt")) a.getLong("scheduledAt") else null,
             ) } },
             entries = (0 until entries.length()).map { i -> entries.getJSONObject(i).let { e -> MorningEntry(
                 e.getString("sessionId"), e.optString("alarmId").ifEmpty { null }, e.optString("mode").takeIf(String::isNotEmpty)?.let(WakeMode::valueOf),
                 e.optString("challenge").takeIf(String::isNotEmpty)?.let(ChallengeKind::valueOf), e.getLong("date"), WakeOutcome.valueOf(e.getString("outcome")),
+                completionDurationSec = if (e.has("completionDurationSec") && !e.isNull("completionDurationSec")) e.getInt("completionDurationSec") else null,
+                avgRomScore = if (e.has("avgRomScore") && !e.isNull("avgRomScore")) e.getDouble("avgRomScore") else null,
             ) } },
             weeklyGoal = json.optInt("weeklyGoal", 3),
             journey = j.getJSONArray("completions").let { days ->

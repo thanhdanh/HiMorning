@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -35,6 +36,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.BarChart
+import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Event
@@ -157,10 +159,22 @@ internal fun MorningHomeScreen(
             if (state.alarms.isEmpty()) FirstMorningCard(onPractice = onQuickPractice)
             errorContent()
             readiness()
-            MorningButton(
-                text = stringResource(R.string.home_explore), onClick = onExplore, primary = false,
-                leadingIcon = Icons.Outlined.PlayCircleOutline,
-            )
+            val exploreInteractions = remember { MutableInteractionSource() }
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 48.dp)
+                    .morningPress(exploreInteractions)
+                    .morningSurface(colors.surface, radius = MorningTheme.Radius.control, elevated = false, borderColor = colors.line)
+                    .clickable(interactionSource = exploreInteractions, indication = LocalIndication.current, role = Role.Button, onClick = onExplore)
+                    .padding(horizontal = 18.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Icon(Icons.Outlined.PlayCircleOutline, contentDescription = null, tint = colors.accent, modifier = Modifier.size(22.dp))
+                Text(stringResource(R.string.home_explore), modifier = Modifier.weight(1f), style = MaterialTheme.typography.labelLarge, color = colors.ink)
+                Icon(Icons.Outlined.ChevronRight, contentDescription = null, tint = colors.muted, modifier = Modifier.size(18.dp))
+            }
         }
         JourneyCard(state, suggestedMission, purposeChosen, onPurpose, onMissionPractice, onMissionPlan, onRestartJourney, onProgress)
         if (state.alarms.isNotEmpty() || state.entries.isNotEmpty()) RecentWinsCard(state.entries, onProgress)
@@ -195,18 +209,19 @@ private fun HomeHeader(onProgress: () -> Unit, onPro: () -> Unit, onLanguage: ()
 
 @Composable
 private fun HomeHeaderActions(onProgress: () -> Unit, onPro: () -> Unit, onLanguage: () -> Unit) {
+    val colors = MorningTheme.colors
     Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
         MorningIconButton(Icons.Outlined.BarChart, stringResource(R.string.home_progress), onProgress)
         Box(
             Modifier.height(44.dp)
                 .clip(CircleShape)
-                .background(Color(0xFFFFF2CF))
-                .border(0.75.dp, Color(0xFFC09A50), CircleShape)
+                .background(colors.proGoldLight)
+                .border(0.75.dp, colors.proGoldEdge, CircleShape)
                 .clickable(onClick = onPro)
                 .padding(horizontal = 14.dp),
             contentAlignment = Alignment.Center,
         ) {
-            Text("Pro", style = MaterialTheme.typography.labelLarge, color = Color(0xFF4E3516))
+            Text(stringResource(R.string.pro_badge), style = MaterialTheme.typography.labelLarge, color = colors.proInk)
         }
         MorningIconButton(Icons.Outlined.Language, stringResource(R.string.language), onLanguage)
     }
@@ -291,14 +306,22 @@ private fun JourneyCard(
 private fun FirstMorningCard(onPractice: () -> Unit) {
     val colors = MorningTheme.colors
     Column(
-        Modifier.fillMaxWidth().morningSurface(colors.soft, radius = 24.dp, tint = colors.yellow, elevated = false).padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        Modifier.fillMaxWidth()
+            .clip(RoundedCornerShape(MorningTheme.Radius.hero))
+            .background(colors.hero)
+            .padding(18.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        Text(stringResource(R.string.home_first_title), style = MaterialTheme.typography.titleMedium, color = colors.ink)
-        Text(stringResource(R.string.home_first_subtitle), style = MaterialTheme.typography.bodyMedium, color = colors.muted)
-        TextButton(onClick = onPractice) { Text(stringResource(R.string.home_try_reading)) }
+        Text(stringResource(R.string.home_first_title), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold, color = colors.onYellow)
+        Text(stringResource(R.string.home_first_subtitle), style = MaterialTheme.typography.bodyMedium, color = colors.onYellow)
+        MorningButton(
+            text = stringResource(R.string.home_try_reading),
+            onClick = onPractice,
+            primary = false,
+            leadingIcon = Icons.Outlined.PlayCircleOutline,
+        )
+        Text(stringResource(R.string.home_first_footnote), style = MaterialTheme.typography.bodySmall, color = colors.onYellow.copy(alpha = 0.85f))
     }
-
 }
 
 @Composable
@@ -491,7 +514,7 @@ private fun ChallengeSummary(alarm: Alarm, ink: Color, onEdit: (Alarm, AlarmEdit
         Box(Modifier.size(40.dp).background(tint.copy(alpha = .13f), CircleShape), contentAlignment = Alignment.Center) {
             MovementChallengeIcon(alarm.challenge, alarm.seated, tint = tint, size = 28.dp)
         }
-        Text(stringResource(challengeText(alarm.challenge)), style = MaterialTheme.typography.titleSmall, color = ink, maxLines = 2,
+        Text(challengeDisplayTitle(LocalContext.current, alarm), style = MaterialTheme.typography.titleSmall, color = ink, maxLines = 2,
             overflow = TextOverflow.Ellipsis, textAlign = if (stacked) TextAlign.Start else TextAlign.End)
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(5.dp)) {
             Icon(modeIcon(alarm.mode), contentDescription = null, tint = tint, modifier = Modifier.size(17.dp))

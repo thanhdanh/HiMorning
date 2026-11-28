@@ -271,7 +271,7 @@ private enum class HomeSheet { PROGRESS, PRO, LANGUAGE, PURPOSE, EXPLORE, PLAN }
     val mission = missionAlarm(state.journey, full)
     fun beginNew(missionSelection: Alarm? = null) {
         val alarm = Alarm(hour = 7, minute = 0).let { base ->
-            missionSelection?.let { base.copy(mode = it.mode, challenge = it.challenge, repetitions = it.repetitions, seated = it.seated) } ?: base
+            missionSelection?.let { base.copy(mode = it.mode, challenge = it.challenge, repetitions = it.repetitions, seated = it.seated, pushUpVariant = it.pushUpVariant) } ?: base
         }
         editor = AlarmEditorDraft(alarm)
         sheet = null
@@ -492,6 +492,10 @@ private enum class HomeSheet { PROGRESS, PRO, LANGUAGE, PURPOSE, EXPLORE, PLAN }
     val audioFailed by RingingService.audioFailed.collectAsState()
     val wakeSession = remember(saved.id) { RingingService.activeSessionId.value }
     var message by remember { mutableStateOf<Int?>(null) }
+    var visionError by remember { mutableStateOf<CaptureError?>(null) }
+    var lightProgress by remember { mutableFloatStateOf(0f) }
+    var lightHolding by remember { mutableStateOf(false) }
+    var cameraConsentDialog by remember { mutableStateOf(false) }
     var transcript by remember { mutableStateOf("") }
     var listening by remember { mutableStateOf(false) }
     var capturing by remember { mutableStateOf(false) }
@@ -508,12 +512,18 @@ private enum class HomeSheet { PROGRESS, PRO, LANGUAGE, PURPOSE, EXPLORE, PLAN }
             .onFailure { message = R.string.save_error; onError() }.isSuccess
         if (ready) {
             progress = 0
+            lightProgress = 0f
+            lightHolding = false
+            visionError = null
             message = null
             capturing = true
         }
     }
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-        if (granted) startCamera() else message = R.string.camera_permission
+        if (granted) startCamera() else {
+            visionError = CaptureError.PERMISSION_REQUIRED
+            message = null
+        }
     }
     val permission = { name: String -> ContextCompat.checkSelfPermission(context, name) == android.content.pm.PackageManager.PERMISSION_GRANTED }
     DisposableEffect(Unit) {
@@ -639,6 +649,7 @@ private enum class HomeSheet { PROGRESS, PRO, LANGUAGE, PURPOSE, EXPLORE, PLAN }
             }
             if (practice) MorningButton(stringResource(R.string.retry_challenge), {
                 progress = 0
+                visionError = null
                 message = null
                 transcript = ""
                 if (kind != ChallengeKind.READ_ALOUD) prompt = catalog.prompt(kind, actualLanguage)
@@ -686,29 +697,76 @@ private enum class HomeSheet { PROGRESS, PRO, LANGUAGE, PURPOSE, EXPLORE, PLAN }
             }
         } else if (kind != ChallengeKind.NONE) {
             if (capturing) {
-                MovementCapture(kind = kind, repetitions = effective.repetitions, seated = effective.seated, progress = progress,
-                    modifier = Modifier.fillMaxWidth().aspectRatio(3f / 4f),
-                    onProgress = {
-                        progress = it
-                        repTone?.startTone(ToneGenerator.TONE_PROP_BEEP, 90)
-                    },
-                    onComplete = { finish(WakeOutcome.LOCAL_COMPLETED) }, onError = { failure ->
-                        capturing = false
-                        message = when (failure) { CaptureError.TRACKING_LOST -> R.string.tracking_lost; CaptureError.TIMEOUT -> R.string.capture_timeout; else -> R.string.capture_error }
-                    })
-                MovementMotionStage(kind = kind, seated = effective.seated, compact = true)
-                Text(instruction)
+                if (kind == ChallengeKind.MORNING_LIGHT) {
+                    MorningLightCapture(
+                        progress = lightProgress,
+                        onProgress = { lightProgress = it },
+                        onHoldingChanged = { lightHolding = it },
+                        onComplete = { finish(WakeOutcome.LOCAL_COMPLETED) },
+                        onError = { failure ->
+                            capturing = false
+                            visionError = failure
+                            message = null
+                        },
+                    )
+                    Text(stringResource(if (lightHolding) R.string.morning_light_holding else R.string.guide_morning_light))
+                } else {
+                    MovementCapture(kind = kind, repetitions = effective.repetitions, seated = effective.seated, progress = progress,
+                        modifier = Modifier.fillMaxWidth().aspectRatio(3f / 4f),
+                        pushUpVariant = effective.pushUpVariant,
+                        onProgress = {
+                            progress = it
+                            repTone?.startTone(ToneGenerator.TONE_PROP_BEEP, 90)
+                        },
+                        onComplete = { finish(WakeOutcome.LOCAL_COMPLETED) }, onError = { failure ->
+                            capturing = false
+                            visionError = failure
+                            message = null
+                        })
+                    MovementMotionStage(kind = kind, seated = effective.seated, compact = true)
+                    Text(instruction)
+                }
             } else {
                 MovementMotionStage(kind = kind, seated = effective.seated)
                 Text(instruction)
                 MorningButton(text = stringResource(R.string.start), onClick = {
-                    if (permission(Manifest.permission.CAMERA)) startCamera() else cameraLauncher.launch(Manifest.permission.CAMERA)
+                    if (kind == ChallengeKind.PUSH_UPS || kind == ChallengeKind.SQUATS || kind == ChallengeKind.MORNING_LIGHT) {
+                        cameraConsentDialog = true
+                    } else if (permission(Manifest.permission.CAMERA)) {
+                        startCamera()
+                    } else {
+                        cameraLauncher.launch(Manifest.permission.CAMERA)
+                    }
                 })
+            }
+        }
+        visionError?.let { err ->
+            val detailRes = when (err) {
+                CaptureError.PERMISSION_REQUIRED ->
+                    if (practice) R.string.vision_error_permission_practice else R.string.vision_error_permission_live
+                CaptureError.CAMERA_UNAVAILABLE ->
+                    if (practice) R.string.vision_error_camera_practice else R.string.vision_error_camera_live
+                CaptureError.AI_SCANNER_UNAVAILABLE -> R.string.vision_error_ai_detail
+                CaptureError.TIMEOUT ->
+                    if (practice) R.string.vision_error_timeout_practice else R.string.vision_error_timeout_live
+                CaptureError.INTERRUPTED ->
+                    if (practice) R.string.vision_error_interrupted_practice else R.string.vision_error_interrupted_live
+                else -> if (practice) R.string.vision_error_camera_practice else R.string.vision_error_camera_live
+            }
+            Text(stringResource(detailRes), color = MaterialTheme.colorScheme.error)
+            if (err == CaptureError.PERMISSION_REQUIRED) {
+                TextButton(onClick = {
+                    runCatching {
+                        context.startActivity(
+                            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:${context.packageName}")),
+                        )
+                    }
+                }) { Text(stringResource(R.string.open_settings)) }
             }
         }
         message?.let { Text(stringResource(it), color = MaterialTheme.colorScheme.error) }
         if (kind != ChallengeKind.NONE && kind != ChallengeKind.READ_AND_CHOOSE) TextButton(onClick = {
-            speech.stop(); neuralVoice.stop(); tts?.stop(); capturing = false; listening = false; kind = ChallengeKind.READ_AND_CHOOSE; prompt = catalog.prompt(kind, actualLanguage); message = null
+            speech.stop(); neuralVoice.stop(); tts?.stop(); capturing = false; listening = false; visionError = null; kind = ChallengeKind.READ_AND_CHOOSE; prompt = catalog.prompt(kind, actualLanguage); message = null
         }) { Text(stringResource(R.string.try_reading)) }
         if (!practice && kind == ChallengeKind.NONE) {
             MorningButton(stringResource(R.string.stop), close)
@@ -728,6 +786,26 @@ private enum class HomeSheet { PROGRESS, PRO, LANGUAGE, PURPOSE, EXPLORE, PLAN }
             }
         }
         if (practice) TextButton(onClick = close) { Text(stringResource(R.string.back_to_home)) }
+    }
+    if (cameraConsentDialog) {
+        AlertDialog(
+            onDismissRequest = { cameraConsentDialog = false },
+            title = { Text(stringResource(R.string.challenge_info_camera_required)) },
+            text = { Text(stringResource(when (kind) {
+                ChallengeKind.MORNING_LIGHT -> R.string.camera_consent_morning_light
+                ChallengeKind.SQUATS -> R.string.camera_consent_squats
+                else -> R.string.camera_consent_push_ups
+            })) },
+            confirmButton = {
+                TextButton(onClick = {
+                    cameraConsentDialog = false
+                    if (permission(Manifest.permission.CAMERA)) startCamera() else cameraLauncher.launch(Manifest.permission.CAMERA)
+                }) { Text(stringResource(R.string.open_camera)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { cameraConsentDialog = false }) { Text(stringResource(R.string.not_now)) }
+            },
+        )
     }
 }
 

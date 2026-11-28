@@ -501,11 +501,12 @@ extension ChallengeKind {
   if self == .pushUps || self == .guidedRhythm || self == .morningLight || usesLocalMovement {return title + " · " + appText("Camera")}
   return title
  }
- var editorIdentifier:String {switch self {case .none:return "none";case .pushUps:return "pushUps";case .readAndChoose:return "readAndChoose";case .guidedRhythm:return "guidedRhythm";case .readAloud:return "readAloud";case .waveHand:return "waveHand";case .neckRotation:return "neckRotation";case .riddle:return "riddle";case .jumpingJacks:return "jumpingJacks";case .stretching:return "stretching";case .morningLight:return "morningLight"}}
- var title:String {switch self {case .none:return appText("No challenge");case .pushUps:return appText("Push-ups");case .readAndChoose:return appText("Read & Choose");case .guidedRhythm:return appText("Guided Rhythm");case .readAloud:return appText("Read Aloud");case .waveHand:return appText("Wave hello");case .neckRotation:return appText("Neck turns");case .riddle:return appText("Riddle");case .jumpingJacks:return appText("Jumping jacks");case .stretching:return appText("Reach up");case .morningLight:return appText("Morning light")}}
+ var editorIdentifier:String {switch self {case .none:return "none";case .pushUps:return "pushUps";case .squats:return "squats";case .readAndChoose:return "readAndChoose";case .guidedRhythm:return "guidedRhythm";case .readAloud:return "readAloud";case .waveHand:return "waveHand";case .neckRotation:return "neckRotation";case .riddle:return "riddle";case .jumpingJacks:return "jumpingJacks";case .stretching:return "stretching";case .morningLight:return "morningLight"}}
+ var title:String {switch self {case .none:return appText("No challenge");case .pushUps:return appText("Push-ups");case .squats:return appText("Morning squats");case .readAndChoose:return appText("Read & Choose");case .guidedRhythm:return appText("Guided Rhythm");case .readAloud:return appText("Read Aloud");case .waveHand:return appText("Wave hello");case .neckRotation:return appText("Neck turns");case .riddle:return appText("Riddle");case .jumpingJacks:return appText("Jumping jacks");case .stretching:return appText("Reach up");case .morningLight:return appText("Morning light")}}
  var summary:String {switch self {
   case .none:return appText("Confirm you are awake when you are ready.")
   case .pushUps:return appText("Complete a short camera-checked movement challenge.")
+  case .squats:return appText("Complete 10 controlled morning squats. Checked on this device.")
   case .readAndChoose:return appText("Read one short sentence and choose its meaning.")
   case .guidedRhythm:return appText("Follow a simple standing or seated rhythm on camera.")
   case .readAloud:return appText("Read the English passage aloud and see which words match as you go.")
@@ -516,11 +517,14 @@ extension ChallengeKind {
   case .stretching:return appText("Raise both hands above your shoulders, then lower them.")
   case .morningLight:return appText("Point your camera toward a bright window or lamp.")
  }}
- var icon:String {switch self {case .none:return "bell.badge.slash.fill";case .pushUps:return "figure.strengthtraining.traditional";case .readAndChoose:return "doc.text.magnifyingglass";case .guidedRhythm:return "figure.mind.and.body";case .readAloud:return "waveform.badge.mic";case .waveHand:return "hand.wave.fill";case .neckRotation:return "person.crop.circle.badge.checkmark";case .riddle:return "puzzlepiece.extension.fill";case .jumpingJacks:return "figure.mixed.cardio";case .stretching:return "figure.flexibility";case .morningLight:return "sun.horizon.fill"}}
+ var icon:String {switch self {case .none:return "bell.badge.slash.fill";case .pushUps:return "figure.strengthtraining.traditional";case .squats:return "figure.strengthtraining.functional";case .readAndChoose:return "doc.text.magnifyingglass";case .guidedRhythm:return "figure.mind.and.body";case .readAloud:return "waveform.badge.mic";case .waveHand:return "hand.wave.fill";case .neckRotation:return "person.crop.circle.badge.checkmark";case .riddle:return "puzzlepiece.extension.fill";case .jumpingJacks:return "figure.mixed.cardio";case .stretching:return "figure.flexibility";case .morningLight:return "sun.horizon.fill"}}
 }
 extension ChallengeSelection {
  var displayTitle:String {
-  if kind == .pushUps,let repetitions {return appText("%lld push-ups",count:repetitions)}
+  if kind == .pushUps,let repetitions {
+   let base=appText("%lld push-ups",count:repetitions)
+   return pushUpVariant == .inclineOrKnee ? "\(base) · \(appText("Incline / Knee"))" : base
+  }
   if kind == .guidedRhythm {return rhythmVariant == .seated ? appText("Guided Rhythm · Seated") : appText("Guided Rhythm · Standing")}
   return kind.title
  }

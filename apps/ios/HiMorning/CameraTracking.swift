@@ -2,6 +2,37 @@ import SwiftUI
 import Vision
 import AVFoundation
 
+enum VisionScanError: Equatable, Sendable {
+ case cameraPermissionDenied
+ case cameraUnavailable
+ case aiScannerFailed
+ case timedOut
+ case interrupted
+
+ func message(practicing: Bool) -> String {
+  switch self {
+  case .cameraPermissionDenied:
+   return appText(practicing
+    ? "Allow camera access in Settings so on-device AI can track your movement, or switch to Read & Choose."
+    : "Allow camera access in Settings so on-device AI can track your movement, or tap I’m awake when it unlocks.")
+  case .cameraUnavailable:
+   return appText(practicing
+    ? "This device’s camera isn’t available right now. Try again or switch to Read & Choose."
+    : "This device’s camera isn’t available right now. Try again, switch to Read & Choose, or tap I’m awake when it unlocks.")
+  case .aiScannerFailed:
+   return appText("On-device AI couldn’t detect a clear frame. Check lighting, keep the lens clear, and try again.")
+  case .timedOut:
+   return appText(practicing
+    ? "No complete reps were detected in time. Try again or switch to Read & Choose."
+    : "No complete reps were detected in time. Try again, or tap I’m awake when it unlocks.")
+  case .interrupted:
+   return appText(practicing
+    ? "The camera session was interrupted. Tap Start to resume or switch to Read & Choose."
+    : "The camera session was interrupted. Tap Start to resume or tap I’m awake when it unlocks.")
+  }
+ }
+}
+
 struct TrackedJoint:Sendable {
  let point:CGPoint
  let confidence:Float
@@ -190,27 +221,65 @@ struct TrackedCameraPreview:View {
  let tracking:CameraTrackingSnapshot
  let counter:String
  var largeCounter=false
+ var statusHint:String?=nil
+ var romProgress:Double?=nil
+ var isLowLight=false
+ var fillLightOn=false
+ var onToggleFillLight:(()->Void)?=nil
  var body:some View {
   TimelineView(.periodic(from:.now,by:0.1)) {_ in
    let fresh=tracking.isFresh(at:ProcessInfo.processInfo.systemUptime)
    CameraPreview(session:session)
     .overlay {if fresh {CameraTrackingOverlay(snapshot:tracking)}}
     .background(.black)
+    .overlay {
+     if fillLightOn {
+      RoundedRectangle(cornerRadius:24)
+       .strokeBorder(Color(red:1.0,green:0.97,blue:0.88),lineWidth:14)
+       .allowsHitTesting(false)
+     }
+    }
+    .overlay(alignment:.topLeading) {
+     if (isLowLight || fillLightOn),let onToggleFillLight {
+      Button(action:onToggleFillLight) {
+       Label(appText(fillLightOn ? "Fill light on" : "Fill light"),systemImage:fillLightOn ? "sun.max.fill" : "sun.max")
+        .font(.caption.weight(.semibold))
+        .foregroundStyle(fillLightOn ? Color.black : Color(red:1.0,green:0.95,blue:0.75))
+        .padding(.horizontal,10).padding(.vertical,6)
+        .background(fillLightOn ? Color(red:1.0,green:0.95,blue:0.75) : Color.black.opacity(0.72),in:Capsule())
+      }.buttonStyle(.plain).padding(10).accessibilityIdentifier("cameraFillLightToggle")
+     }
+    }
     .overlay(alignment:.bottomLeading) {
-     Label(appText(fresh && tracking.hasRequiredMarks ? "Tracking movement" : "Waiting for a clear view"),systemImage:"viewfinder")
+     Label(fresh && tracking.hasRequiredMarks ? appText("Tracking movement") : (statusHint ?? appText("Waiting for a clear view")),systemImage:"viewfinder")
       .font(.caption.weight(.semibold)).lineLimit(1).minimumScaleFactor(0.7)
       .foregroundStyle(fresh && tracking.hasRequiredMarks ? Color.mint : .yellow)
       .padding(8).background(.black.opacity(0.7),in:Capsule()).padding(10)
       .accessibilityIdentifier("cameraTrackingStatus")
     }
     .overlay(alignment:.topTrailing) {
-     Text(counter)
-      .font(.system(size:largeCounter ? 44 : 30,weight:.bold,design:.rounded))
-      .monospacedDigit()
-      .contentTransition(.numericText())
-      .animation(.smooth(duration:0.2),value:counter)
-      .padding(.horizontal,12).padding(.vertical,6).foregroundStyle(.white)
-      .background(.black.opacity(0.7),in:Capsule()).padding(10).accessibilityIdentifier("cameraRepCounter")
+     VStack(alignment:.trailing,spacing:6) {
+      Text(counter)
+       .font(.system(size:largeCounter ? 44 : 30,weight:.bold,design:.rounded))
+       .monospacedDigit()
+       .contentTransition(.numericText())
+       .animation(.smooth(duration:0.2),value:counter)
+       .padding(.horizontal,12).padding(.vertical,6).foregroundStyle(.white)
+       .background(.black.opacity(0.7),in:Capsule()).accessibilityIdentifier("cameraRepCounter")
+      if let rom=romProgress {
+       let clamped=min(1.0,max(0.0,rom))
+       HStack(spacing:6) {
+        Text(appText("Depth")).font(.caption2.weight(.semibold)).foregroundStyle(.white.opacity(0.85))
+        ZStack(alignment:.leading) {
+         Capsule().fill(.white.opacity(0.22)).frame(width:54,height:6)
+         Capsule().fill(clamped >= 0.85 ? Color.mint : Color.yellow).frame(width:max(4,54*clamped),height:6)
+        }
+       }
+       .padding(.horizontal,9).padding(.vertical,5)
+       .background(.black.opacity(0.7),in:Capsule())
+       .accessibilityIdentifier("cameraRomGauge")
+      }
+     }.padding(10)
     }
   }.clipShape(RoundedRectangle(cornerRadius:24)).accessibilityElement(children:.contain).accessibilityIdentifier("trackedCameraPreview")
  }

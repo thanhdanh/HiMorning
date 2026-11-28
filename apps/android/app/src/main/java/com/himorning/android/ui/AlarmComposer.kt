@@ -49,6 +49,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.himorning.android.R
 import com.himorning.android.core.Alarm
 import com.himorning.android.core.ChallengeKind
+import com.himorning.android.core.PushUpVariant
 import com.himorning.android.core.WakeMode
 import com.himorning.android.core.availableChallenges
 import com.himorning.android.platform.AlarmScheduler
@@ -84,7 +85,7 @@ fun AlarmComposer(
     var challengeInfo by remember(draft) { mutableStateOf<Alarm?>(null) }
     var filter by remember(draft) { mutableStateOf(alarm.mode) }
     var confirmDelete by remember { mutableStateOf(false) }
-    var chooseChallenge by remember(draft) { mutableStateOf(draft.scope == AlarmEditorScope.CHALLENGE) }
+    var chooseChallenge by remember(draft) { mutableStateOf(true) }
     val lifecycle = androidx.lifecycle.compose.LocalLifecycleOwner.current.lifecycle
     androidx.compose.runtime.DisposableEffect(lifecycle, draft) {
         val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
@@ -439,6 +440,7 @@ fun AlarmComposer(
                 minLines = if (!wide && !legacy && LocalConfiguration.current.fontScale <= 1.15f) 2 else 1)
             val indicator = when {
                 selected && !locked -> Icons.Outlined.CheckCircle to R.string.composer_challenge_selected
+                kind == ChallengeKind.STRETCHING -> null to R.string.composer_free
                 usesCamera(kind) -> Icons.Outlined.CameraAlt to R.string.composer_camera
                 kind == ChallengeKind.READ_ALOUD -> Icons.Outlined.Mic to R.string.composer_microphone
                 else -> null
@@ -447,7 +449,9 @@ fun AlarmComposer(
                 if (locked && wide) {
                     ProLockBadge(compact = true)
                 } else if (indicator != null) Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-                    Icon(indicator.first, null, tint = if (selected) tint else colors.muted, modifier = Modifier.size(14.dp))
+                    indicator.first?.let { icon ->
+                        Icon(icon, null, tint = if (selected) tint else colors.muted, modifier = Modifier.size(14.dp))
+                    }
                     Text(stringResource(indicator.second), color = if (selected) tint else colors.muted, style = MaterialTheme.typography.labelSmall)
                 }
             }
@@ -476,19 +480,21 @@ fun AlarmComposer(
 }
 
 private fun isProChallenge(kind: ChallengeKind): Boolean =
-    kind == ChallengeKind.PUSH_UPS || kind == ChallengeKind.JUMPING_JACKS
+    kind == ChallengeKind.PUSH_UPS || kind == ChallengeKind.SQUATS || kind == ChallengeKind.JUMPING_JACKS
 
 private fun usesCamera(kind: ChallengeKind): Boolean = when (kind) {
-    ChallengeKind.PUSH_UPS, ChallengeKind.GUIDED_RHYTHM, ChallengeKind.WAVE_HAND,
-    ChallengeKind.NECK_ROTATION, ChallengeKind.JUMPING_JACKS, ChallengeKind.STRETCHING -> true
+    ChallengeKind.PUSH_UPS, ChallengeKind.SQUATS, ChallengeKind.GUIDED_RHYTHM, ChallengeKind.WAVE_HAND,
+    ChallengeKind.NECK_ROTATION, ChallengeKind.JUMPING_JACKS, ChallengeKind.STRETCHING,
+    ChallengeKind.MORNING_LIGHT -> true
     else -> false
 }
 
 private fun challengeCameraFraming(alarm: Alarm): Int = when (alarm.challenge) {
-    ChallengeKind.PUSH_UPS -> R.string.challenge_info_side_whole_body
+    ChallengeKind.PUSH_UPS, ChallengeKind.SQUATS -> R.string.challenge_info_side_whole_body
     ChallengeKind.WAVE_HAND -> R.string.challenge_info_front_hand
     ChallengeKind.NECK_ROTATION -> R.string.challenge_info_front_face
     ChallengeKind.STRETCHING -> R.string.challenge_info_front_upper_body
+    ChallengeKind.MORNING_LIGHT -> R.string.explore_badge_window_light
     ChallengeKind.GUIDED_RHYTHM ->
         if (alarm.seated) R.string.challenge_info_front_upper_body else R.string.challenge_info_side_whole_body
     else -> R.string.challenge_info_front_whole_body
@@ -497,10 +503,12 @@ private fun challengeCameraFraming(alarm: Alarm): Int = when (alarm.challenge) {
 private fun challengeInfoInstruction(alarm: Alarm): Int = when (alarm.challenge) {
     ChallengeKind.NONE -> R.string.requirement_none
     ChallengeKind.PUSH_UPS -> R.string.challenge_info_pushups
+    ChallengeKind.SQUATS -> R.string.challenge_info_squats
     ChallengeKind.WAVE_HAND -> R.string.challenge_info_wave
     ChallengeKind.NECK_ROTATION -> R.string.challenge_info_neck
     ChallengeKind.JUMPING_JACKS -> R.string.challenge_info_jacks
     ChallengeKind.STRETCHING -> R.string.challenge_info_reach
+    ChallengeKind.MORNING_LIGHT -> R.string.guide_morning_light
     ChallengeKind.GUIDED_RHYTHM -> if (alarm.seated) R.string.challenge_info_seated else R.string.challenge_info_standing
     ChallengeKind.READ_ALOUD -> R.string.challenge_info_read_aloud
     ChallengeKind.READ_AND_CHOOSE -> R.string.challenge_info_read_choose
@@ -511,14 +519,46 @@ private fun challengeInfoInstruction(alarm: Alarm): Int = when (alarm.challenge)
     val colors = MorningTheme.colors
     val alarm = draft.alarm
     val max = if (fullAccess) 50 else 5
-    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Column(Modifier.weight(1f)) {
-            Text(stringResource(R.string.repetitions, alarm.repetitions), color = colors.ink, fontWeight = FontWeight.SemiBold)
-            Text(stringResource(R.string.composer_pushup_preview), color = colors.muted, style = MaterialTheme.typography.bodySmall)
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                Text(stringResource(R.string.repetitions, alarm.repetitions), color = colors.ink, fontWeight = FontWeight.SemiBold)
+                Text(stringResource(R.string.composer_pushup_preview), color = colors.muted, style = MaterialTheme.typography.bodySmall)
+            }
+            IconButton(onClick = { draft.alarm = alarm.copy(repetitions = (alarm.repetitions - 1).coerceAtLeast(1)) }, enabled = alarm.repetitions > 1) { Text("−", color = colors.ink, fontSize = 22.sp) }
+            Text(alarm.repetitions.toString(), color = colors.ink, modifier = Modifier.widthIn(min = 24.dp), style = MaterialTheme.typography.titleMedium)
+            IconButton(onClick = { draft.alarm = alarm.copy(repetitions = (alarm.repetitions + 1).coerceAtMost(max)) }, enabled = alarm.repetitions < max) { Text("+", color = colors.ink, fontSize = 22.sp) }
         }
-        IconButton(onClick = { draft.alarm = alarm.copy(repetitions = (alarm.repetitions - 1).coerceAtLeast(1)) }, enabled = alarm.repetitions > 1) { Text("−", color = colors.ink, fontSize = 22.sp) }
-        Text(alarm.repetitions.toString(), color = colors.ink, modifier = Modifier.widthIn(min = 24.dp), style = MaterialTheme.typography.titleMedium)
-        IconButton(onClick = { draft.alarm = alarm.copy(repetitions = (alarm.repetitions + 1).coerceAtMost(max)) }, enabled = alarm.repetitions < max) { Text("+", color = colors.ink, fontSize = 22.sp) }
+        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Text(stringResource(R.string.pushup_variant_label), color = colors.muted, style = MaterialTheme.typography.labelMedium)
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                listOf(
+                    PushUpVariant.STANDARD to R.string.pushup_variant_standard,
+                    PushUpVariant.INCLINE_OR_KNEE to R.string.pushup_variant_incline,
+                ).forEach { (variant, labelRes) ->
+                    val selected = alarm.pushUpVariant == variant
+                    val chipShape = RoundedCornerShape(14.dp)
+                    Box(
+                        Modifier
+                            .weight(1f)
+                            .clip(chipShape)
+                            .background(if (selected) colors.yellow.copy(alpha = 0.22f) else colors.surface)
+                            .border(if (selected) 1.5.dp else 1.dp, if (selected) colors.accent else colors.line, chipShape)
+                            .clickable(role = Role.Button) { draft.alarm = alarm.copy(pushUpVariant = variant) }
+                            .padding(horizontal = 10.dp, vertical = 10.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            stringResource(labelRes),
+                            color = if (selected) colors.ink else colors.muted,
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -552,10 +592,12 @@ internal fun ChallengeCheckingGuide(alarm: Alarm) {
 
 private fun challengeCheckingGuide(alarm: Alarm): Int = when (alarm.challenge) {
     ChallengeKind.PUSH_UPS -> R.string.challenge_guide_pushups
+    ChallengeKind.SQUATS -> R.string.challenge_guide_squats
     ChallengeKind.WAVE_HAND -> R.string.challenge_guide_wave
     ChallengeKind.NECK_ROTATION -> R.string.challenge_guide_neck
     ChallengeKind.JUMPING_JACKS -> R.string.challenge_guide_jacks
     ChallengeKind.STRETCHING -> R.string.challenge_guide_reach
+    ChallengeKind.MORNING_LIGHT -> R.string.challenge_guide_morning_light
     ChallengeKind.GUIDED_RHYTHM -> if (alarm.seated) R.string.challenge_guide_seated else R.string.challenge_guide_standing
     ChallengeKind.READ_ALOUD -> R.string.challenge_guide_words
     ChallengeKind.READ_AND_CHOOSE, ChallengeKind.RIDDLE -> R.string.challenge_guide_answer
@@ -567,6 +609,7 @@ private fun challengeCheckingGuide(alarm: Alarm): Int = when (alarm.challenge) {
     val requirements = when (alarm.challenge) {
         ChallengeKind.NONE -> listOf(R.string.requirement_none)
         ChallengeKind.PUSH_UPS -> listOf(R.string.requirement_pushup_place, R.string.requirement_pushup_count)
+        ChallengeKind.SQUATS -> listOf(R.string.requirement_body_view, R.string.requirement_squats_count)
         ChallengeKind.READ_AND_CHOOSE -> listOf(R.string.requirement_read_clues, R.string.requirement_choose_answer)
         ChallengeKind.RIDDLE -> listOf(R.string.requirement_solve_riddle, R.string.requirement_choose_answer)
         ChallengeKind.READ_ALOUD -> listOf(R.string.requirement_read_aloud, R.string.requirement_word_match)
@@ -574,6 +617,7 @@ private fun challengeCheckingGuide(alarm: Alarm): Int = when (alarm.challenge) {
         ChallengeKind.NECK_ROTATION -> listOf(R.string.requirement_face_view, R.string.requirement_neck_count)
         ChallengeKind.JUMPING_JACKS -> listOf(R.string.requirement_body_view, R.string.requirement_jacks_count)
         ChallengeKind.STRETCHING -> listOf(R.string.requirement_shoulders_view, R.string.requirement_stretch_count)
+        ChallengeKind.MORNING_LIGHT -> listOf(R.string.guide_morning_light, R.string.requirement_morning_light_hold)
         ChallengeKind.GUIDED_RHYTHM -> if (alarm.seated) listOf(R.string.requirement_seated, R.string.requirement_seated_cycles) else listOf(R.string.requirement_standing, R.string.requirement_standing_cycles)
     }
     Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
@@ -581,7 +625,7 @@ private fun challengeCheckingGuide(alarm: Alarm): Int = when (alarm.challenge) {
             val text = when (id) {
                 R.string.requirement_pushup_count -> stringResource(id, alarm.repetitions)
                 R.string.requirement_wave_count, R.string.requirement_neck_count, R.string.requirement_stretch_count -> stringResource(id, 3)
-                R.string.requirement_jacks_count -> stringResource(id, 10)
+                R.string.requirement_jacks_count, R.string.requirement_squats_count -> stringResource(id, 10)
                 else -> stringResource(id)
             }
             Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(7.dp)) {

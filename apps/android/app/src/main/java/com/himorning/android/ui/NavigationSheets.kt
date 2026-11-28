@@ -16,6 +16,7 @@ import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalConfiguration
@@ -78,27 +79,99 @@ private tailrec fun Context.activity(): Activity? = when (this) {
 
 @Composable internal fun PracticePicker(onChoose: (ChallengeKind) -> Unit) {
     val colors = MorningTheme.colors
-    Text(stringResource(R.string.practice_note), color = colors.muted, style = MaterialTheme.typography.bodyMedium)
-    val exercises = listOf(
-        ChallengeKind.READ_AND_CHOOSE, ChallengeKind.RIDDLE, ChallengeKind.READ_ALOUD,
-        ChallengeKind.WAVE_HAND, ChallengeKind.NECK_ROTATION, ChallengeKind.STRETCHING,
-        ChallengeKind.GUIDED_RHYTHM, ChallengeKind.JUMPING_JACKS, ChallengeKind.PUSH_UPS,
+    Text(stringResource(R.string.explore_subtitle), color = colors.muted, style = MaterialTheme.typography.bodyMedium)
+    val categories = listOf(
+        R.string.explore_category_camera_free to listOf(
+            ChallengeKind.READ_AND_CHOOSE, ChallengeKind.RIDDLE, ChallengeKind.READ_ALOUD, ChallengeKind.NONE,
+        ),
+        R.string.explore_category_gentle_camera to listOf(
+            ChallengeKind.MORNING_LIGHT, ChallengeKind.WAVE_HAND, ChallengeKind.NECK_ROTATION, ChallengeKind.GUIDED_RHYTHM,
+        ),
+        R.string.explore_category_active_movement to listOf(
+            ChallengeKind.PUSH_UPS, ChallengeKind.SQUATS, ChallengeKind.JUMPING_JACKS, ChallengeKind.STRETCHING,
+        ),
     )
-    exercises.forEach { kind ->
-        val interactions = remember(kind) { MutableInteractionSource() }
-        Surface(onClick = { onChoose(kind) }, interactionSource = interactions, color = Color.Transparent, contentColor = colors.ink,
-            shape = RoundedCornerShape(20.dp), modifier = Modifier.fillMaxWidth()
-                .morningPress(interactions).morningSurface(colors.surface, radius = 20.dp, elevated = false)) {
-            Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                Icon(challengeIcon(kind), null, tint = MorningTheme.modeAccent(preferredMode(kind)), modifier = Modifier.size(28.dp))
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                    Text(stringResource(challengeText(kind)), style = MaterialTheme.typography.titleMedium)
-                    Text(stringResource(practiceMethod(kind)), style = MaterialTheme.typography.bodySmall, color = colors.muted)
+    categories.forEach { (titleRes, kinds) ->
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Text(stringResource(titleRes), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, color = colors.ink)
+            kinds.forEach { kind ->
+                val tint = MorningTheme.modeAccent(preferredMode(kind))
+                val interactions = remember(kind) { MutableInteractionSource() }
+                Surface(
+                    onClick = { onChoose(kind) },
+                    interactionSource = interactions,
+                    color = Color.Transparent,
+                    contentColor = colors.ink,
+                    shape = RoundedCornerShape(MorningTheme.Radius.card),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .morningPress(interactions)
+                        .morningSurface(colors.surface, radius = MorningTheme.Radius.card, elevated = false, borderColor = colors.line),
+                ) {
+                    Row(
+                        Modifier.padding(14.dp),
+                        verticalAlignment = Alignment.Top,
+                        horizontalArrangement = Arrangement.spacedBy(14.dp),
+                    ) {
+                        Box(
+                            Modifier
+                                .size(42.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(tint.copy(alpha = 0.12f)),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            MovementChallengeIcon(kind, tint = tint, size = 24.dp, animated = true)
+                        }
+                        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Row(
+                                Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                Text(
+                                    stringResource(challengeText(kind)),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = colors.ink,
+                                    modifier = Modifier.weight(1f),
+                                )
+                                Text(
+                                    stringResource(practiceMethod(kind)),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = colors.muted,
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(50))
+                                        .background(colors.soft)
+                                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                                )
+                            }
+                            Text(
+                                stringResource(exploreSummary(kind)),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = colors.muted,
+                            )
+                        }
+                    }
                 }
-                Icon(Icons.Outlined.PlayCircleOutline, null, tint = colors.accent)
             }
         }
     }
+}
+
+private fun exploreSummary(kind: ChallengeKind): Int = when (kind) {
+    ChallengeKind.NONE -> R.string.explore_summary_none
+    ChallengeKind.PUSH_UPS -> R.string.explore_summary_push_ups
+    ChallengeKind.SQUATS -> R.string.explore_summary_squats
+    ChallengeKind.READ_AND_CHOOSE -> R.string.explore_summary_read_and_choose
+    ChallengeKind.GUIDED_RHYTHM -> R.string.explore_summary_guided_rhythm
+    ChallengeKind.READ_ALOUD -> R.string.explore_summary_read_aloud
+    ChallengeKind.WAVE_HAND -> R.string.explore_summary_wave_hand
+    ChallengeKind.NECK_ROTATION -> R.string.explore_summary_neck_rotation
+    ChallengeKind.RIDDLE -> R.string.explore_summary_riddle
+    ChallengeKind.JUMPING_JACKS -> R.string.explore_summary_jumping_jacks
+    ChallengeKind.STRETCHING -> R.string.explore_summary_stretching
+    ChallengeKind.MORNING_LIGHT -> R.string.explore_summary_morning_light
 }
 
 @Composable internal fun PurposePicker(current: MorningFocus, onChoose: (MorningFocus) -> Unit) {

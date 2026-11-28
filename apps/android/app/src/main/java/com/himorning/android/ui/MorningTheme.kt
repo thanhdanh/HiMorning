@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontVariation
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.himorning.android.R
 import com.himorning.android.core.WakeMode
@@ -32,6 +33,13 @@ internal data class MorningColors(
     val accent: Color,
     val success: Color,
     val correctWord: Color,
+    val error: Color,
+    val proGoldLight: Color,
+    val proGold: Color,
+    val proGoldEdge: Color,
+    val proInk: Color,
+    val proSurface: Color,
+    val proOutline: Color,
 )
 
 private val lightMorningColors = MorningColors(
@@ -39,14 +47,18 @@ private val lightMorningColors = MorningColors(
     ink = Color(0xFF29251D), muted = Color(0xFF6D675B), line = Color(0xFFDDD7CA),
     yellow = Color(0xFFF5C842), hero = Color(0xFFF8D960), alarmClockOff = Color(0xFF6D675B),
     onYellow = Color(0xFF29251D), accent = Color(0xFF805E08), success = Color(0xFF44634A),
-    correctWord = Color(0xFF126B36),
+    correctWord = Color(0xFF126B36), error = Color(0xFFBA3B34),
+    proGoldLight = Color(0xFFFFF2CF), proGold = Color(0xFFECCA82), proGoldEdge = Color(0xFFC09A50),
+    proInk = Color(0xFF4E3516), proSurface = Color(0xFFFBF4E5), proOutline = Color(0xFFDDC9A1),
 )
 private val darkMorningColors = MorningColors(
     canvas = Color(0xFF171612), surface = Color(0xFF25231D), soft = Color(0xFF312E26),
     ink = Color(0xFFF8F4EA), muted = Color(0xFFC2BBAE), line = Color(0xFF4D493E),
     yellow = Color(0xFFF5C842), hero = Color(0xFFF8D960), alarmClockOff = Color(0xFFA8A093),
     onYellow = Color(0xFF29251D), accent = Color(0xFFF5C842), success = Color(0xFFBDD6BF),
-    correctWord = Color(0xFF7FE5A2),
+    correctWord = Color(0xFF7FE5A2), error = Color(0xFFFF8A80),
+    proGoldLight = Color(0xFFFFEAC0), proGold = Color(0xFFDBB167), proGoldEdge = Color(0xFFB38C48),
+    proInk = Color(0xFF4E3516), proSurface = Color(0xFF363025), proOutline = Color(0xFF736043),
 )
 
 // Nunito ships under the bundled OFL; explicit axes avoid its default 200 weight.
@@ -66,6 +78,12 @@ internal val quicksandFont = FontFamily(
 private val LocalMorningColors = compositionLocalOf { lightMorningColors }
 
 internal object MorningTheme {
+    object Radius {
+        val hero = 24.dp
+        val card = 18.dp
+        val control = 16.dp
+    }
+
     val colors: MorningColors @Composable get() = LocalMorningColors.current
     val alarmCardHighlight = Color(0xFFFBE693)
     val alarmCardEdge = Color(0xFFE1B73B)
@@ -88,7 +106,7 @@ internal object MorningTheme {
 internal fun HiMorningTheme(content: @Composable () -> Unit) {
     val dark = isSystemInDarkTheme()
     val palette = if (dark) darkMorningColors else lightMorningColors
-    val error = if (dark) Color(0xFFFFB4AB) else Color(0xFFBA453E)
+    val error = palette.error
     val scheme = if (dark) darkColorScheme(
         primary = palette.accent, onPrimary = if (dark) palette.onYellow else Color.White,
         primaryContainer = palette.soft, onPrimaryContainer = palette.ink,

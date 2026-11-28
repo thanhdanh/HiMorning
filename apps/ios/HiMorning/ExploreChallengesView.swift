@@ -15,7 +15,7 @@ struct ExploreChallengesView: View {
   [
    Category(id: "no-camera", titleKey: "Camera-free", kinds: [.readAndChoose, .riddle, .readAloud, .none]),
    Category(id: "gentle-camera", titleKey: "Gentle & close framing", kinds: [.morningLight, .waveHand, .neckRotation]),
-   Category(id: "active-movement", titleKey: "Active movement", kinds: [.pushUps, .jumpingJacks, .stretching])
+   Category(id: "active-movement", titleKey: "Active movement", kinds: [.pushUps, .squats, .jumpingJacks, .stretching])
   ]
  }
 
@@ -26,7 +26,7 @@ struct ExploreChallengesView: View {
   case .morningLight: return "Window light"
   case .waveHand, .neckRotation: return "Close camera"
   case .stretching: return "Upper body"
-  case .pushUps, .jumpingJacks: return "Whole body"
+  case .pushUps, .squats, .jumpingJacks: return "Whole body"
   case .guidedRhythm: return "Camera"
   }
  }

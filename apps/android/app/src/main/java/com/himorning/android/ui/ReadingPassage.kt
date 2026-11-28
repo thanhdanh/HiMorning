@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -62,9 +63,20 @@ internal fun ReadingPassage(passage: String, transcript: String, finished: Boole
         }
     }
     if (transcript.isNotBlank()) {
-        Text(stringResource(R.string.reading_score, (feedback.score * 100).roundToInt()))
+        Text(stringResource(R.string.reading_score, (feedback.score * 100).roundToInt()), style = MaterialTheme.typography.titleMedium)
+        LinearProgressIndicator(
+            progress = { feedback.score.toFloat().coerceIn(0f, 1f) },
+            modifier = Modifier.fillMaxWidth(),
+            color = MorningTheme.colors.accent,
+            trackColor = MorningTheme.colors.soft,
+        )
         Text(transcript, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
+    Text(
+        stringResource(R.string.reading_legend),
+        style = MaterialTheme.typography.bodySmall,
+        color = MorningTheme.colors.muted,
+    )
 }
 
 @Composable

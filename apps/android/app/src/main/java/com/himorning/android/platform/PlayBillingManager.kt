@@ -206,11 +206,12 @@ internal class PlayBillingManager(context: Context) : PurchasesUpdatedListener {
         val params = QueryProductDetailsParams.newBuilder()
             .setProductList(productList)
             .build()
-        client.queryProductDetailsAsync(params) { result, detailsList ->
+        client.queryProductDetailsAsync(params) { result, queryResult ->
             if (result.responseCode != BillingClient.BillingResponseCode.OK) {
                 _state.update { it.copy(catalog = BillingCatalog.Failed) }
                 return@queryProductDetailsAsync
             }
+            val detailsList = queryResult.productDetailsList
             val plans = PRODUCT_IDS.mapNotNull { id ->
                 val details = detailsList.firstOrNull { it.productId == id } ?: return@mapNotNull null
                 val offer = details.subscriptionOfferDetails?.firstOrNull() ?: return@mapNotNull null

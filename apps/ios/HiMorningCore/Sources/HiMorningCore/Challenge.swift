@@ -3,6 +3,7 @@ import Foundation
 public enum ChallengeKind: String, Codable, CaseIterable, Sendable {
  case none
  case pushUps = "push_ups"
+ case squats = "squats"
  case readAndChoose = "read_and_choose"
  case guidedRhythm = "guided_rhythm"
  case readAloud = "read_aloud"
@@ -17,21 +18,21 @@ public enum ChallengeKind: String, Codable, CaseIterable, Sendable {
   switch mode {
   case .gentle:[.none,.waveHand,.neckRotation,.morningLight]
   case .balanced:[.readAloud,.readAndChoose,.riddle]
-  case .focused:[.pushUps,.jumpingJacks,.stretching]
+  case .focused:[.pushUps,.squats,.jumpingJacks,.stretching]
   }
  }
  public var preferredMode:WakeMode {
   switch self {
   case .none,.waveHand,.neckRotation,.guidedRhythm,.morningLight:return .gentle
   case .readAloud,.readAndChoose,.riddle:return .balanced
-  case .pushUps,.jumpingJacks,.stretching:return .focused
+  case .pushUps,.squats,.jumpingJacks,.stretching:return .focused
   }
  }
  public var usesLocalMovement:Bool {localMovementTarget != nil}
  public var localMovementTarget:Int? {
   switch self {
   case .waveHand,.neckRotation,.stretching:return 3
-  case .jumpingJacks:return 10
+  case .jumpingJacks,.squats:return 10
   default:return nil
   }
  }
@@ -42,20 +43,30 @@ public enum GuidedRhythmVariant: String, Codable, CaseIterable, Sendable {
  case seated
 }
 
+public enum PushUpVariant: String, Codable, CaseIterable, Sendable {
+ case standard
+ case inclineOrKnee = "incline_or_knee"
+}
+
 public struct ChallengeSelection: Codable, Equatable, Sendable {
  public static let maximumPushUps=50
  public let kind:ChallengeKind
  public let repetitions:Int?
  public let rhythmVariant:GuidedRhythmVariant?
+ public let pushUpVariant:PushUpVariant?
 
- public init(kind:ChallengeKind,repetitions:Int?=nil,rhythmVariant:GuidedRhythmVariant?=nil) {
+ public init(kind:ChallengeKind,repetitions:Int?=nil,rhythmVariant:GuidedRhythmVariant?=nil,pushUpVariant:PushUpVariant?=nil) {
   self.kind=kind
   self.repetitions=kind == .pushUps ? min(Self.maximumPushUps,max(1,repetitions ?? 5)) : nil
   self.rhythmVariant=kind == .guidedRhythm ? rhythmVariant ?? .standing : nil
+  self.pushUpVariant=kind == .pushUps ? (pushUpVariant ?? .standard) : nil
  }
 
  public static let none=ChallengeSelection(kind:.none)
- public static func pushUps(repetitions:Int) -> ChallengeSelection {ChallengeSelection(kind:.pushUps,repetitions:repetitions)}
+ public static func pushUps(repetitions:Int,variant:PushUpVariant = .standard) -> ChallengeSelection {
+  ChallengeSelection(kind:.pushUps,repetitions:repetitions,pushUpVariant:variant)
+ }
+ public static let squats=ChallengeSelection(kind:.squats)
  public static let readAndChoose=ChallengeSelection(kind:.readAndChoose)
  public static func guidedRhythm(variant:GuidedRhythmVariant) -> ChallengeSelection {ChallengeSelection(kind:.guidedRhythm,rhythmVariant:variant)}
  public static let readAloud=ChallengeSelection(kind:.readAloud)
@@ -68,13 +79,14 @@ public struct ChallengeSelection: Codable, Equatable, Sendable {
   }
  }
 
- private enum CodingKeys:String,CodingKey {case kind,repetitions,rhythmVariant}
+ private enum CodingKeys:String,CodingKey {case kind,repetitions,rhythmVariant,pushUpVariant}
  public init(from decoder:Decoder) throws {
   let values=try decoder.container(keyedBy:CodingKeys.self)
   self.init(
    kind:try values.decode(ChallengeKind.self,forKey:.kind),
    repetitions:try values.decodeIfPresent(Int.self,forKey:.repetitions),
-   rhythmVariant:try values.decodeIfPresent(GuidedRhythmVariant.self,forKey:.rhythmVariant)
+   rhythmVariant:try values.decodeIfPresent(GuidedRhythmVariant.self,forKey:.rhythmVariant),
+   pushUpVariant:try values.decodeIfPresent(PushUpVariant.self,forKey:.pushUpVariant)
   )
  }
 }

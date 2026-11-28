@@ -9,6 +9,8 @@ struct RhythmUpdate:Sendable {
  let message:String
  let hint:FramingHint
  var tracking:CameraTrackingSnapshot = .empty
+ var scanError:VisionScanError? = nil
+ var trackingHint:String? = nil
 }
 
 /// Converts camera frames into local pose labels. It never creates image data or uploads frames.
@@ -25,6 +27,7 @@ final class GuidedRhythmCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDel
  private var tracking:CameraTrackingSnapshot = .empty
  private var active=false
  private var started:TimeInterval=0
+ private var consecutiveVisionErrors=0
  private let request=VNDetectHumanBodyPoseRequest()
  private var observers:[NSObjectProtocol]=[]
 
@@ -41,7 +44,7 @@ final class GuidedRhythmCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDel
   let granted=await AVCaptureDevice.requestAccess(for:.video)
   guard isCurrent(token) else {return}
   guard granted else {
-   publish(completed:false,ended:true,message:appText("Camera access is needed for guided rhythm."))
+   publish(completed:false,ended:true,message:appText("Camera access is needed for guided rhythm."),scanError:.cameraPermissionDenied)
    return
   }
   queue.async { [weak self] in self?.startCamera(token:token) }
@@ -79,15 +82,16 @@ final class GuidedRhythmCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDel
      self?.queue.async { [weak self] in
       guard let self,self.active else {return}
       self.stopCamera()
-      self.publish(completed:false,ended:true,message:appText("The challenge is paused. Start it again, or tap I’m awake when it unlocks."))
+      self.publish(completed:false,ended:true,message:appText("The challenge is paused. Start it again, or tap I’m awake when it unlocks."),scanError:.interrupted)
      }
     })
    }
+   consecutiveVisionErrors=0
    session.startRunning()
    publish(completed:false,ended:false,message:instruction)
   } catch {
    stopCamera()
-   publish(completed:false,ended:true,message:appText("The camera could not open. You can tap I’m awake when it unlocks."))
+   publish(completed:false,ended:true,message:appText("The camera could not open. You can tap I’m awake when it unlocks."),scanError:.cameraUnavailable)
   }
  }
 
@@ -98,6 +102,7 @@ final class GuidedRhythmCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDel
   let timestamp=Int((uptime-started)*1_000)
   do {
    try VNImageRequestHandler(cvPixelBuffer:buffer,orientation:.leftMirrored).perform([request])
+   consecutiveVisionErrors=0
    guard let body=request.results?.first else {handleOcclusion(timestamp:timestamp,hint:.noPerson);return}
    let points=try body.recognizedPoints(.all)
    tracking = .body(points,imageSize:CGSize(width:CVPixelBufferGetHeight(buffer),height:CVPixelBufferGetWidth(buffer)))
@@ -118,7 +123,13 @@ final class GuidedRhythmCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDel
     }
    }
   } catch {
-   handleOcclusion(timestamp:timestamp,hint:.ok)
+   consecutiveVisionErrors+=1
+   if consecutiveVisionErrors >= 10 {
+    stopCamera()
+    publish(completed:false,ended:true,message:appText("AI couldn’t read the camera frames. Check lighting and try again."),scanError:.aiScannerFailed)
+   } else {
+    handleOcclusion(timestamp:timestamp,hint:.ok)
+   }
   }
  }
 
@@ -180,9 +191,9 @@ final class GuidedRhythmCapture:NSObject,AVCaptureVideoDataOutputSampleBufferDel
   observers.removeAll()
  }
 
- private func publish(completed:Bool,ended:Bool,message:String,hint framing:FramingHint = .ok) {
+ private func publish(completed:Bool,ended:Bool,message:String,hint framing:FramingHint = .ok,scanError:VisionScanError?=nil) {
   let hint:FramingHint=completed || ended ? .ok : framing
-  onUpdate(.init(cycles:rhythm.completedCycles,completed:completed,ended:ended,message:hint.message ?? message,hint:hint,tracking:ended ? .empty : tracking))
+  onUpdate(.init(cycles:rhythm.completedCycles,completed:completed,ended:ended,message:hint.message ?? message,hint:hint,tracking:ended ? .empty : tracking,scanError:scanError,trackingHint:hint.message))
  }
 
  private func beginStartup() -> Int? {

@@ -1,8 +1,58 @@
 package com.himorning.android.platform
 
+import com.himorning.android.core.PushUpVariant
 import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.atan2
+import kotlin.math.cos
 import kotlin.math.max
+import kotlin.math.sin
+
+internal enum class MovementFormCue {
+    NONE,
+    LOWER_CHEST,
+    STRAIGHTEN_BODY,
+    BEND_KNEES_DEEPER,
+    STAND_TALL,
+}
+
+internal enum class CameraLightingStatus { LOW_LIGHT, OK, OVEREXPOSED }
+
+internal object CameraConditionMath {
+    const val LOW_LIGHT_MEAN_LUMA = 0.2
+    const val OVEREXPOSED_MEAN_LUMA = 0.9
+    const val ROLL_DEADZONE_DEG = 0.5
+    const val MAX_COMPENSATED_ROLL_DEG = 35.0
+
+    fun classifyLuma(meanLuma: Double): CameraLightingStatus = when {
+        meanLuma < LOW_LIGHT_MEAN_LUMA -> CameraLightingStatus.LOW_LIGHT
+        meanLuma > OVEREXPOSED_MEAN_LUMA -> CameraLightingStatus.OVEREXPOSED
+        else -> CameraLightingStatus.OK
+    }
+
+    /** Gravity vector (m/s^2) roll in portrait orientation: upright phone has gx ~ 0, gy ~ +9.81. */
+    fun androidRollDegrees(gx: Double, gy: Double): Double {
+        if (!gx.isFinite() || !gy.isFinite()) return 0.0
+        val deg = Math.toDegrees(atan2(gx, gy))
+        if (abs(deg) < ROLL_DEADZONE_DEG) return 0.0
+        return deg.coerceIn(-MAX_COMPENSATED_ROLL_DEG, MAX_COMPENSATED_ROLL_DEG)
+    }
+
+    fun derotatePoint(point: MotionPoint, width: Double, height: Double, rollDegrees: Double): MotionPoint {
+        if (abs(rollDegrees) < ROLL_DEADZONE_DEG) return point
+        val rad = Math.toRadians(-rollDegrees)
+        val c = cos(rad)
+        val s = sin(rad)
+        val cx = width / 2.0
+        val cy = height / 2.0
+        val dx = point.x - cx
+        val dy = point.y - cy
+        return MotionPoint(
+            x = cx + dx * c - dy * s,
+            y = cy + dx * s + dy * c,
+        )
+    }
+}
 
 internal class OneEuroFilter(private val minCutoff: Double, private val beta: Double) {
     private var smoothed = 0.0
@@ -227,13 +277,23 @@ internal class NeckTurnCounter {
     }
 }
 
-internal class PushUpCounter {
+internal class PushUpCounter(private val variant: PushUpVariant = PushUpVariant.STANDARD) {
+    private val elbowFilter = OneEuroFilter(2.2, 0.18)
     private var began: Long? = null
     private var lowered: Long? = null
     private var previous: Long? = null
     private var lostSince: Long? = null
     private var formLostSince: Long? = null
     private var completed = 0
+    var romProgress: Double = 0.0
+        private set
+    var formCue: MovementFormCue = MovementFormCue.NONE
+        private set
+
+    private val elbowDownMax get() = if (variant == PushUpVariant.INCLINE_OR_KNEE) 108.0 else 98.0
+    private val elbowUpMin get() = if (variant == PushUpVariant.INCLINE_OR_KNEE) 146.0 else 150.0
+    private val bodyAngleMin get() = if (variant == PushUpVariant.INCLINE_OR_KNEE) 138.0 else 150.0
+    private val inclineMax get() = if (variant == PushUpVariant.INCLINE_OR_KNEE) 68.0 else 42.0
 
     fun observe(elbow: Double, body: Double, incline: Double, now: Long): Int {
         if (previous?.let { now <= it || now - it > 1_500 } == true ||
@@ -244,7 +304,10 @@ internal class PushUpCounter {
             interrupt()
             return completed
         }
-        if (body !in 150.0..180.0 || incline !in 0.0..42.0) {
+        val smoothedElbow = elbowFilter.filter(elbow, now).coerceIn(0.0, 180.0)
+        romProgress = ((elbowUpMin - smoothedElbow) / (elbowUpMin - elbowDownMax)).coerceIn(0.0, 1.0)
+        if (body !in bodyAngleMin..180.0 || incline !in 0.0..inclineMax) {
+            formCue = MovementFormCue.STRAIGHTEN_BODY
             val since = formLostSince ?: now
             if (now - since > 450) interrupt() else formLostSince = since
             return completed
@@ -257,13 +320,16 @@ internal class PushUpCounter {
 
         val start = began
         val bottom = lowered
+        formCue = MovementFormCue.NONE
         if (start != null && now - start > 15_000) interrupt()
-        else if (start == null && elbow >= 150) began = now
-        else if (start != null && bottom == null && elbow <= 98) {
+        else if (start == null && smoothedElbow >= elbowUpMin) began = now
+        else if (start != null && bottom == null && smoothedElbow <= elbowDownMax) {
             if (now - start >= 150) lowered = now else interrupt()
-        } else if (start != null && bottom != null && elbow >= 150) {
+        } else if (start != null && bottom != null && smoothedElbow >= elbowUpMin) {
             if (now - start >= 750 && now - bottom >= 150) completed++
             interrupt()
+        } else if (start != null && bottom == null && smoothedElbow in (elbowDownMax + 0.01)..(elbowUpMin - 8.0) && now - start >= 900) {
+            formCue = MovementFormCue.LOWER_CHEST
         }
         return completed
     }
@@ -275,11 +341,79 @@ internal class PushUpCounter {
     }
 
     fun interrupt() {
+        elbowFilter.reset()
         began = null
         lowered = null
         previous = null
         lostSince = null
         formLostSince = null
+        romProgress = 0.0
+        formCue = MovementFormCue.NONE
+    }
+}
+
+/** Morning Squat counter using thresholds from shared/contracts/v1/movement-rules.json. */
+internal class SquatCounter {
+    private val kneeFilter = OneEuroFilter(2.2, 0.18)
+    private var began: Long? = null
+    private var bottomAt: Long? = null
+    private var previous: Long? = null
+    private var lostSince: Long? = null
+    var completed = 0
+        private set
+    var romProgress: Double = 0.0
+        private set
+    var formCue: MovementFormCue = MovementFormCue.NONE
+        private set
+
+    fun observe(kneeAngle: Double, now: Long): Int {
+        if (previous?.let { now <= it || now - it > 1_500 } == true ||
+            lostSince?.let { now - it > 600 } == true) interrupt()
+        previous = now
+        lostSince = null
+        if (!kneeAngle.isFinite() || kneeAngle !in 0.0..180.0) {
+            interrupt()
+            return completed
+        }
+        val smoothed = kneeFilter.filter(kneeAngle, now).coerceIn(0.0, 180.0)
+        romProgress = ((STANDING_KNEE_MIN - smoothed) / (STANDING_KNEE_MIN - BOTTOM_KNEE_MAX)).coerceIn(0.0, 1.0)
+        val start = began
+        val bottom = bottomAt
+        formCue = MovementFormCue.NONE
+        if (start != null && now - start > 15_000) interrupt()
+        else if (start == null && smoothed >= STANDING_KNEE_MIN) began = now
+        else if (start != null && bottom == null && smoothed <= BOTTOM_KNEE_MAX) {
+            if (now - start >= 140) bottomAt = now else interrupt()
+        } else if (start != null && bottom != null && smoothed >= STANDING_KNEE_MIN) {
+            if (now - start >= 650 && now - bottom >= 140) completed++
+            interrupt()
+        } else if (start != null && bottom == null && smoothed in (BOTTOM_KNEE_MAX + 0.01)..(STANDING_KNEE_MIN - 10.0) && now - start >= 900) {
+            formCue = MovementFormCue.BEND_KNEES_DEEPER
+        } else if (start != null && bottom != null && smoothed < STANDING_KNEE_MIN && now - bottom >= 900) {
+            formCue = MovementFormCue.STAND_TALL
+        }
+        return completed
+    }
+
+    fun lost(now: Long) {
+        val since = lostSince ?: now
+        if (now - since > 600) interrupt() else lostSince = since
+        previous = now
+    }
+
+    fun interrupt() {
+        kneeFilter.reset()
+        began = null
+        bottomAt = null
+        previous = null
+        lostSince = null
+        romProgress = 0.0
+        formCue = MovementFormCue.NONE
+    }
+
+    private companion object {
+        const val STANDING_KNEE_MIN = 155.0
+        const val BOTTOM_KNEE_MAX = 115.0
     }
 }
 

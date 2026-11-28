@@ -83,6 +83,10 @@ internal fun studioMotionSpec(kind: ChallengeKind, seated: Boolean): StudioMotio
         R.raw.motion_push_ups, R.drawable.motion_push_ups_poster,
         R.string.motion_cue_high_plank, R.string.motion_cue_lower_90,
     )
+    ChallengeKind.SQUATS -> StudioMotionSpec(
+        R.raw.motion_rhythm_standing, R.drawable.motion_rhythm_standing_poster,
+        R.string.motion_cue_stand_tall, R.string.motion_cue_bend_knees,
+    )
     ChallengeKind.WAVE_HAND -> StudioMotionSpec(
         R.raw.motion_wave_hand, R.drawable.motion_wave_hand_poster,
         R.string.motion_cue_wave_left, R.string.motion_cue_wave_right,
@@ -181,9 +185,19 @@ internal fun MovementMotionStage(
 
     val stepText = if (!playing || activePhase == 2) "2/2" else "1/2"
     val cueText = stringResource(if (!playing || activePhase == 2) spec.phase2Cue else spec.phase1Cue)
+    val colors = MorningTheme.colors
 
-    Box(
+    Column(
         modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(22.dp))
+            .background(colors.surface)
+            .border(1.dp, colors.line, RoundedCornerShape(22.dp))
+            .padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+    Box(
+        modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(16f / 9f)
             .clip(RoundedCornerShape(18.dp))
@@ -255,6 +269,14 @@ internal fun MovementMotionStage(
                 }
             }
         }
+    }
+    Text(
+        stringResource(R.string.motion_follow_guide),
+        style = MaterialTheme.typography.labelMedium,
+        fontWeight = FontWeight.SemiBold,
+        color = colors.accent,
+        modifier = Modifier.padding(horizontal = 4.dp),
+    )
     }
 }
 

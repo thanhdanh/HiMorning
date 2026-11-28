@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "description": "Shared declarative on-device movement detection thresholds (Single Source of Truth for iOS Swift HiMorningCore and Android Kotlin MovementTracker).",
+  "lighting": {
+    "lowLightMeanLuma": 0.2,
+    "overexposedMeanLuma": 0.9,
+    "sampleEveryNFrames": 8
+  },
+  "tilt": {
+    "rollCompensationDeadzoneDeg": 0.5,
+    "maxCompensatedRollDeg": 35.0
+  },
+  "exercises": {
+    "push_ups": {
+      "defaultTarget": 10,
+      "minTarget": 1,
+      "maxTarget": 50,
+      "minConfidence": 0.55,
+      "edgeMargin": 0.02,
+      "occlusionGraceMs": 600,
+      "formGraceMs": 450,
+      "minPhaseMs": 150,
+      "minRepMs": 750,
+      "maxRepMs": 15000,
+      "filterMinCutoff": 2.2,
+      "filterBeta": 0.18,
+      "variants": {
+        "standard": {
+          "elbowDownMaxDeg": 98.0,
+          "elbowUpMinDeg": 150.0,
+          "bodyAngleMinDeg": 150.0,
+          "inclineMaxDeg": 42.0,
+          "allowKneeFallback": false
+        },
+        "inclineOrKnee": {
+          "elbowDownMaxDeg": 108.0,
+          "elbowUpMinDeg": 146.0,
+          "bodyAngleMinDeg": 138.0,
+          "inclineMaxDeg": 68.0,
+          "allowKneeFallback": true
+        }
+      }
+    },
+    "squats": {
+      "defaultTarget": 10,
+      "minTarget": 1,
+      "maxTarget": 50,
+      "minConfidence": 0.55,
+      "edgeMargin": 0.02,
+      "occlusionGraceMs": 600,
+      "formGraceMs": 450,
+      "standingKneeMinDeg": 155.0,
+      "bottomKneeMaxDeg": 115.0,
+      "minPhaseMs": 140,
+      "minRepMs": 650,
+      "maxRepMs": 15000,
+      "filterMinCutoff": 2.2,
+      "filterBeta": 0.18
+    },
+    "jumping_jacks": {
+      "defaultTarget": 10,
+      "minConfidence": 0.55,
+      "edgeMargin": 0.02,
+      "holdMs": 100,
+      "occlusionGraceMs": 600,
+      "openFeetShoulderRatio": 1.25,
+      "closedFeetShoulderRatio": 1.15
+    },
+    "stretching": {
+      "defaultTarget": 3,
+      "minConfidence": 0.4,
+      "edgeMargin": 0.005,
+      "raisedHoldMs": 120,
+      "loweredHoldMs": 220,
+      "occlusionGraceMs": 600
+    },
+    "neck_rotation": {
+      "defaultTarget": 3,
+      "sideDegrees": 20.0,
+      "centerDegrees": 8.0,
+      "commitMs": 120,
+      "filterMinCutoff": 1.0,
+      "filterBeta": 0.05
+    },
+    "wave_hand": {
+      "defaultTarget": 3,
+      "swingThreshold": 0.62,
+      "minimumSwingMs": 80,
+      "filterMinCutoff": 3.0,
+      "filterBeta": 0.3
+    }
+  }
+}

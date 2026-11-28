@@ -7,7 +7,16 @@ import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 
-enum class CaptureError { PERMISSION_REQUIRED, UNSUPPORTED, RECOGNITION_FAILED, CAMERA_UNAVAILABLE, TRACKING_LOST, TIMEOUT }
+enum class CaptureError {
+    PERMISSION_REQUIRED,
+    UNSUPPORTED,
+    RECOGNITION_FAILED,
+    CAMERA_UNAVAILABLE,
+    AI_SCANNER_UNAVAILABLE,
+    TRACKING_LOST,
+    TIMEOUT,
+    INTERRUPTED,
+}
 
 /** Uses an on-device recognizer; each listener belongs to exactly one capture attempt. */
 class SpeechCapture(private val context: Context) {

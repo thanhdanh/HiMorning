@@ -77,8 +77,20 @@ public struct MorningEntry:Codable,Identifiable,Sendable {
  public let challenge:ChallengeSelection?
  public let date:Date
  public let outcome:WakeOutcome
- public init(id:UUID=UUID(),alarmID:UUID?=nil,mode:WakeMode?=nil,challenge:ChallengeSelection?=nil,date:Date=Date(),outcome:WakeOutcome) {
+ public let completionDurationSec:Int?
+ public let avgRomScore:Double?
+ public init(
+  id:UUID=UUID(),
+  alarmID:UUID?=nil,
+  mode:WakeMode?=nil,
+  challenge:ChallengeSelection?=nil,
+  date:Date=Date(),
+  outcome:WakeOutcome,
+  completionDurationSec:Int?=nil,
+  avgRomScore:Double?=nil
+ ) {
   self.id=id;self.alarmID=alarmID;self.mode=mode;self.challenge=challenge;self.date=date;self.outcome=outcome
+  self.completionDurationSec=completionDurationSec;self.avgRomScore=avgRomScore
  }
 }
 

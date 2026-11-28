@@ -1,17 +1,31 @@
 import AVFoundation
+import CoreMotion
 import Vision
 import HiMorningCore
 
-struct LocalMovementUpdate:Sendable {let reps:Int;let ready:Bool;let ended:Bool;let message:String;let hint:FramingHint;var tracking:CameraTrackingSnapshot = .empty}
+struct LocalMovementUpdate:Sendable {
+ let reps:Int
+ let ready:Bool
+ let ended:Bool
+ let message:String
+ let hint:FramingHint
+ var tracking:CameraTrackingSnapshot = .empty
+ var scanError:VisionScanError? = nil
+ var trackingHint:String? = nil
+ var romProgress:Double? = nil
+ var formCue:MovementFormCue = .aligned
+ var isLowLight:Bool = false
+}
 
 private enum MovementCounter {
- case wave(WaveCounter),neck(NeckTurnCounter),body(MovementChallengeProgress)
+ case wave(WaveCounter),neck(NeckTurnCounter),body(MovementChallengeProgress),squat(SquatCounter)
 
  init(kind:ChallengeKind) {
   let target=kind.localMovementTarget ?? 3
   switch kind {
   case .waveHand:self = .wave(WaveCounter(target:target))
   case .neckRotation:self = .neck(NeckTurnCounter(target:target))
+  case .squats:self = .squat(SquatCounter(target:target))
   default:self = .body(MovementChallengeProgress(kind:kind,target:target))
   }
  }
@@ -21,6 +35,7 @@ private enum MovementCounter {
   case .wave(let c):return c.completed
   case .neck(let c):return c.completed
   case .body(let c):return c.completed
+  case .squat(let c):return c.completedReps
   }
  }
 
@@ -29,7 +44,18 @@ private enum MovementCounter {
   case .wave(let c):return c.ready
   case .neck(let c):return c.ready
   case .body(let c):return c.ready
+  case .squat(let c):return c.ready
   }
+ }
+
+ var romProgress:Double? {
+  if case .squat(let c)=self {return c.romProgress}
+  return nil
+ }
+
+ var formCue:MovementFormCue {
+  if case .squat(let c)=self {return c.formCue}
+  return .aligned
  }
 
  mutating func observeLoss(timestampMs:Int) {
@@ -37,6 +63,7 @@ private enum MovementCounter {
   case .wave(var c):c.observeLoss(timestampMs:timestampMs);self = .wave(c)
   case .neck(var c):c.observeLoss(timestampMs:timestampMs);self = .neck(c)
   case .body(var c):_=c.observe(.unavailable,timestampMs:timestampMs);self = .body(c)
+  case .squat(var c):_=c.observe(kneeAngle:0,visible:false,timestampMs:timestampMs);self = .squat(c)
   }
  }
 }
@@ -45,6 +72,10 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
  let session=AVCaptureSession()
  private let kind:ChallengeKind
  private let queue=DispatchQueue(label:"com.himorning.local-movement",qos:.userInitiated)
+ private let motionManager=CMMotionManager()
+ private let motionQueue:OperationQueue={
+  let q=OperationQueue();q.name="com.himorning.local-movement.motion";q.maxConcurrentOperationCount=1;return q
+ }()
  private let onUpdate:@Sendable(LocalMovementUpdate)->Void
  private var counter:MovementCounter
  private let handRequest=VNDetectHumanHandPoseRequest()
@@ -60,18 +91,26 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
  private var tracking:CameraTrackingSnapshot = .empty
  private var active=false
  private var cancelled=false
+ private var consecutiveVisionErrors=0
+ private var frameCount=0
+ private var lastLowLight=false
+ private var rollDeg:Double=0
+ private var squatSide:Int?
+ private var observers:[NSObjectProtocol]=[]
  private let lifecycleLock=NSLock()
 
  init(kind:ChallengeKind,onUpdate:@escaping @Sendable(LocalMovementUpdate)->Void) {
   precondition(kind.usesLocalMovement)
   handRequest.maximumHandCount=1
   self.kind=kind;counter=MovementCounter(kind:kind);self.onUpdate=onUpdate;super.init()
+  motionQueue.underlyingQueue=queue
+  motionManager.deviceMotionUpdateInterval=0.25
  }
 
  func start() async {
   guard !isCancelled else {return}
   guard await AVCaptureDevice.requestAccess(for:.video) else {
-   publish(ended:true,"Camera access is off. You can tap I’m awake when it unlocks.");return
+   publish(ended:true,"Camera access is off. You can tap I’m awake when it unlocks.",scanError:.cameraPermissionDenied);return
   }
   guard !isCancelled else {return}
   queue.async { [self] in
@@ -87,41 +126,79 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
      guard session.canAddOutput(output) else {throw CameraSetupError.unavailable};session.addOutput(output)
     }
     guard !isCancelled else {return}
+    for name in [AVCaptureSession.wasInterruptedNotification,AVCaptureSession.runtimeErrorNotification] {
+     observers.append(NotificationCenter.default.addObserver(forName:name,object:session,queue:nil) { [weak self] _ in
+      self?.queue.async { [weak self] in
+       guard let self,self.active else {return}
+       self.stopCamera()
+       self.publish(ended:true,"The challenge is paused. Start it again, or tap I’m awake when it unlocks.",scanError:.interrupted)
+      }
+     })
+    }
+    if motionManager.isDeviceMotionAvailable,!motionManager.isDeviceMotionActive {
+     motionManager.startDeviceMotionUpdates(to:motionQueue) { [weak self] motion,_ in
+      guard let self,let g=motion?.gravity else {return}
+      self.rollDeg=CameraConditionMath.iosRollDegrees(gx:g.x,gy:g.y)
+     }
+    }
+    consecutiveVisionErrors=0;frameCount=0;lastLowLight=false;squatSide=nil
     counter=MovementCounter(kind:kind);started=ProcessInfo.processInfo.systemUptime;active=true;session.startRunning()
+    publish(kind.movementInstruction)
     queue.asyncAfter(deadline:.now()+90) { [weak self] in
      guard let self,active,!counter.ready else {return}
-     active=false;session.stopRunning()
-     publish(ended:true,"Movement capture timed out. Try again, or tap I’m awake when it unlocks.")
+     self.stopCamera()
+     self.publish(ended:true,"Movement capture timed out. Try again, or tap I’m awake when it unlocks.",scanError:.timedOut)
     }
-   } catch {publish(ended:true,"The camera could not open. You can tap I’m awake when it unlocks.")}
+   } catch {
+    stopCamera()
+    publish(ended:true,"The camera could not open. You can tap I’m awake when it unlocks.",scanError:.cameraUnavailable)
+   }
   }
  }
 
  func stop() {
   lifecycleLock.lock();cancelled=true;lifecycleLock.unlock()
-  queue.async { [self] in active=false;counter=MovementCounter(kind:kind);session.stopRunning() }
+  queue.async { [self] in stopCamera() }
+ }
+
+ private func stopCamera() {
+  active=false;counter=MovementCounter(kind:kind);session.stopRunning()
+  if motionManager.isDeviceMotionActive {motionManager.stopDeviceMotionUpdates()}
+  observers.forEach {NotificationCenter.default.removeObserver($0)};observers.removeAll()
  }
 
  func captureOutput(_ output:AVCaptureOutput,didOutput sampleBuffer:CMSampleBuffer,from connection:AVCaptureConnection) {
   let now=ProcessInfo.processInfo.systemUptime
   guard active,let buffer=CMSampleBufferGetImageBuffer(sampleBuffer) else {return}
   tracking = .empty
+  frameCount+=1
+  if frameCount == 1 || frameCount % 8 == 0 {
+   lastLowLight = CameraConditionMath.classifyLuma(PixelBufferLuma.sampleMeanLuma(buffer)) == .lowLight
+  }
   let timestamp=Int((now-started)*1000)
   guard timestamp<=90_000 else {
-   active=false;session.stopRunning()
-   publish(ended:true,"Movement capture timed out. Try again, or tap I’m awake when it unlocks.");return
+   stopCamera()
+   publish(ended:true,"Movement capture timed out. Try again, or tap I’m awake when it unlocks.",scanError:.timedOut);return
   }
   let size=CGSize(width:CVPixelBufferGetHeight(buffer),height:CVPixelBufferGetWidth(buffer))
   do {
    switch kind {
    case .waveHand:try observeWave(buffer,size:size,timestamp:timestamp)
    case .neckRotation:try observeNeck(buffer,size:size,timestamp:timestamp)
+   case .squats:try observeSquat(buffer,size:size,timestamp:timestamp)
    case .jumpingJacks,.stretching:try observeBody(buffer,size:size,timestamp:timestamp)
    default:return
    }
+   consecutiveVisionErrors=0
   } catch {
+   consecutiveVisionErrors+=1
    counter.observeLoss(timestampMs:timestamp)
-   publish("The view is unclear. Try moving your phone.")
+   if consecutiveVisionErrors >= 10 {
+    stopCamera()
+    publish(ended:true,"AI couldn’t read the camera frames. Check lighting and try again.",scanError:.aiScannerFailed)
+   } else {
+    publish("AI couldn’t read this frame — check lighting and hold steady.",trackingHint:appText("Low light or unclear view"))
+   }
   }
  }
 
@@ -153,16 +230,58 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
   guard let face=faceRequest.results?.first,face.confidence>=0.6,let yaw=face.yaw?.doubleValue,case .neck(var neck)=counter else {
    counter.observeLoss(timestampMs:timestamp);publish(kind.movementInstruction);return
   }
-  // Reuse the detected face for landmarks. Counting retains its existing yaw
-  // input even when the optional visual landmark pass cannot produce a curve.
   faceLandmarksRequest.inputFaceObservations=[face]
   do {
    try handler.perform([faceLandmarksRequest])
    if let markedFace=faceLandmarksRequest.results?.first {tracking = .face(markedFace,imageSize:size)}
-  } catch { /* Keep the current face box; never reuse an older curve. */ }
+  } catch {}
   neck.observe(yawDegrees:yaw*180/Double.pi,timestampMs:timestamp)
   counter = .neck(neck)
   finishFrame()
+ }
+
+ private func observeSquat(_ buffer:CVPixelBuffer,size:CGSize,timestamp:Int) throws {
+  try VNImageRequestHandler(cvPixelBuffer:buffer,orientation:.leftMirrored).perform([bodyRequest])
+  guard let body=bodyRequest.results?.first else {
+   counter.observeLoss(timestampMs:timestamp);publish(kind.movementInstruction,hint:.noPerson);return
+  }
+  let allPoints=try body.recognizedPoints(.all)
+  tracking = .body(allPoints,imageSize:size,minConfidence:0.55)
+  let samples=PoseGeometry.jointSamples(allPoints)
+  let hint=BodyFraming.hint(samples,needsFeet:true)
+  let legSides:[[VNHumanBodyPoseObservation.JointName]]=[
+   [.leftHip,.leftKnee,.leftAnkle],
+   [.rightHip,.rightKnee,.rightAnkle]
+  ]
+  let preferred=squatSide ?? 0
+  let order=[preferred,1-preferred]
+  guard let chosen=order.first(where:{idx in legSides[idx].allSatisfy {PoseGeometry.isVisible(allPoints[$0],minConfidence:0.55)}}) else {
+   counter.observeLoss(timestampMs:timestamp);publish(kind.movementInstruction,hint:hint);return
+  }
+  if let prev=squatSide,prev != chosen,case .squat(var s)=counter {s.interrupt();counter = .squat(s)}
+  squatSide=chosen
+  let aspect=size.height > 0 ? Double(size.width)/Double(size.height) : 0.75
+  let pts=legSides[chosen].map {name -> CGPoint in
+   let raw=allPoints[name]!.location
+   let d=CameraConditionMath.derotateNormalizedPoint(x:Double(raw.x),y:Double(raw.y),rollDeg:rollDeg,aspectRatio:aspect)
+   return CGPoint(x:d.x,y:d.y)
+  }
+  let kneeAngle=PoseGeometry.jointAngle(pts[0],pts[1],pts[2],imageSize:size)
+  guard case .squat(var squat)=counter else {return}
+  _=squat.observe(kneeAngle:kneeAngle,visible:true,timestampMs:timestamp)
+  counter = .squat(squat)
+  let formHint:String?
+  switch squat.formCue {
+  case .goLower:formHint=appText("Bend knees a little deeper")
+  case .extendFully:formHint=appText("Stand all the way back up")
+  case .tooFast:formHint=appText("Move smoothly")
+  default:formHint=lastLowLight ? appText("Low light — tap Fill Light") : nil
+  }
+  if squat.ready {
+   active=false;session.stopRunning();publish(ended:true,"Squats complete.")
+  } else {
+   publish(kind.movementInstruction,hint:hint,trackingHint:formHint)
+  }
  }
 
  private func observeBody(_ buffer:CVPixelBuffer,size:CGSize,timestamp:Int) throws {
@@ -172,7 +291,7 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
   }
   let allPoints=try body.recognizedPoints(.all)
   tracking = .body(allPoints,imageSize:size,
-   minConfidence:kind == .stretching ? Float(BodyFraming.upperBodyMinConfidence):0.6,
+   minConfidence:kind == .stretching ? Float(BodyFraming.upperBodyMinConfidence):0.55,
    edgeMargin:kind == .stretching ? CGFloat(BodyFraming.upperBodyEdgeMargin):0.02)
   let samples=PoseGeometry.jointSamples(allPoints)
   if kind == .stretching {
@@ -188,7 +307,7 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
   }
   let hint=BodyFraming.hint(samples,needsFeet:true)
   func point(_ name:VNHumanBodyPoseObservation.JointName)->CGPoint? {
-   guard let p=allPoints[name],PoseGeometry.isVisible(p,minConfidence:0.6) else {return nil}
+   guard let p=allPoints[name],PoseGeometry.isVisible(p,minConfidence:0.55) else {return nil}
    return p.location
   }
   guard let leftShoulder=point(.leftShoulder),let rightShoulder=point(.rightShoulder) else {
@@ -229,9 +348,22 @@ final class MovementChallengeCapture:NSObject,AVCaptureVideoDataOutputSampleBuff
   }
  }
 
- private func publish(ended:Bool=false,_ message:String,hint:FramingHint = .ok) {
+ private func publish(ended:Bool=false,_ message:String,hint:FramingHint = .ok,scanError:VisionScanError?=nil,trackingHint:String?=nil) {
   guard !isCancelled else {return}
-  onUpdate(.init(reps:counter.completed,ready:ended && counter.ready,ended:ended,message:hint.message ?? appText(message),hint:hint,tracking:ended ? .empty : tracking))
+  let resolvedHint=trackingHint ?? hint.message ?? (lastLowLight ? appText("Low light — tap Fill Light") : nil)
+  onUpdate(.init(
+   reps:counter.completed,
+   ready:ended && counter.ready,
+   ended:ended,
+   message:hint.message ?? appText(message),
+   hint:hint,
+   tracking:ended ? .empty : tracking,
+   scanError:scanError,
+   trackingHint:resolvedHint,
+   romProgress:counter.romProgress,
+   formCue:counter.formCue,
+   isLowLight:lastLowLight
+  ))
  }
  private var isCancelled:Bool {lifecycleLock.lock();defer {lifecycleLock.unlock()};return cancelled}
 }
@@ -242,6 +374,7 @@ private extension ChallengeKind {
   case .waveHand:return "Place your hand in view and wave it side to side."
   case .neckRotation:return "Turn your head to each side, then back to the middle."
   case .stretching:return "Raise both arms to count one. Lower them before raising them again."
+  case .squats:return "Stand in view, bend your knees smoothly, then stand tall."
   default:return "Keep your whole body visible and move through the jumping jack."
   }
  }

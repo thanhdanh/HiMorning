@@ -7,17 +7,30 @@ import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseLandmark.*
 import com.himorning.android.R
 import com.himorning.android.core.ChallengeKind
+import com.himorning.android.core.PushUpVariant
 import kotlin.math.abs
 import kotlin.math.acos
 import kotlin.math.atan2
 
-internal data class MovementSample(val count: Int, val hint: Int, val marks: TrackingMarks)
+internal data class MovementSample(
+    val count: Int,
+    val hint: Int,
+    val marks: TrackingMarks,
+    val romProgress: Double = 0.0,
+    val formCue: MovementFormCue = MovementFormCue.NONE,
+    val isLowLight: Boolean = false,
+)
 
-internal class MovementTracker(private val kind: ChallengeKind, private val seated: Boolean) {
+internal class MovementTracker(
+    private val kind: ChallengeKind,
+    private val seated: Boolean,
+    private val pushUpVariant: PushUpVariant = PushUpVariant.STANDARD,
+) {
     private val wave = WaveCounter()
     private val reach = ReachUpCounter()
     private val neck = NeckTurnCounter()
-    private val pushUp = PushUpCounter()
+    private val pushUp = PushUpCounter(pushUpVariant)
+    private val squat = SquatCounter()
     private val cycle = if (kind == ChallengeKind.GUIDED_RHYTHM) {
         PoseCycleCounter(listOf(listOf(0, 1, 0)), maxSequenceMillis = 8_000, maxSampleGapMillis = 600)
     } else {
@@ -33,24 +46,38 @@ internal class MovementTracker(private val kind: ChallengeKind, private val seat
         else -> R.string.tracking_show_body
     }
 
-    fun body(pose: Pose, frame: CameraFrame, now: Long): MovementSample {
+    fun body(
+        pose: Pose,
+        frame: CameraFrame,
+        now: Long,
+        rollDegrees: Double = 0.0,
+        isLowLight: Boolean = false,
+    ): MovementSample {
         val stretching = kind == ChallengeKind.STRETCHING
         val minimum = if (stretching) 0.4f else 0.55f
         val margin = if (stretching) 0.005 else 0.02
-        val joints = pose.allPoseLandmarks.mapNotNull { landmark ->
+        val rawJoints = pose.allPoseLandmarks.mapNotNull { landmark ->
             val point = landmark.position.motionPoint()
             if (landmark.inFrameLikelihood >= minimum && frame.contains(point, margin)) {
                 landmark.landmarkType to point
             } else null
         }.toMap()
-        val marks = bodyMarks(joints)
+        val marks = bodyMarks(rawJoints)
+        val joints = if (abs(rollDegrees) >= CameraConditionMath.ROLL_DEADZONE_DEG) {
+            val w = frame.uprightWidth.toDouble()
+            val h = frame.uprightHeight.toDouble()
+            rawJoints.mapValues { (_, pt) -> CameraConditionMath.derotatePoint(pt, w, h, rollDegrees) }
+        } else {
+            rawJoints
+        }
         val missing = if (joints.isEmpty()) R.string.tracking_waiting else framingHint
         return when (kind) {
-            ChallengeKind.STRETCHING -> reach(joints, frame, now, marks, missing)
-            ChallengeKind.GUIDED_RHYTHM -> rhythm(joints, frame, now, marks, missing)
-            ChallengeKind.JUMPING_JACKS -> jumpingJacks(joints, frame, now, marks, missing)
-            ChallengeKind.PUSH_UPS -> pushUp(joints, frame, now, marks, missing)
-            else -> lost(now)
+            ChallengeKind.STRETCHING -> reach(joints, frame, now, marks, missing, isLowLight)
+            ChallengeKind.GUIDED_RHYTHM -> rhythm(joints, frame, now, marks, missing, isLowLight)
+            ChallengeKind.JUMPING_JACKS -> jumpingJacks(joints, frame, now, marks, missing, isLowLight)
+            ChallengeKind.PUSH_UPS -> pushUp(joints, frame, now, marks, missing, isLowLight)
+            ChallengeKind.SQUATS -> squats(joints, now, marks, missing, isLowLight)
+            else -> lost(now, isLowLight = isLowLight)
         }
     }
 
@@ -96,31 +123,37 @@ internal class MovementTracker(private val kind: ChallengeKind, private val seat
         return active(marks)
     }
 
-    fun lost(now: Long, marks: TrackingMarks = TrackingMarks(), hint: Int = framingHint): MovementSample {
+    fun lost(
+        now: Long,
+        marks: TrackingMarks = TrackingMarks(),
+        hint: Int = framingHint,
+        isLowLight: Boolean = false,
+    ): MovementSample {
         when (kind) {
             ChallengeKind.WAVE_HAND -> wave.lost(now)
             ChallengeKind.NECK_ROTATION -> neck.lost(now)
             ChallengeKind.STRETCHING -> reach.observe(null, now)
             ChallengeKind.PUSH_UPS -> pushUp.lost(now)
+            ChallengeKind.SQUATS -> squat.lost(now)
             else -> cycle.observe(null, now)
         }
-        return MovementSample(count, hint, marks)
+        return MovementSample(count, hint, marks, isLowLight = isLowLight)
     }
 
-    private fun reach(joints: Map<Int, MotionPoint>, frame: CameraFrame, now: Long, marks: TrackingMarks, missing: Int): MovementSample {
-        val ls = joints[LEFT_SHOULDER] ?: return lost(now, marks, missing)
-        val rs = joints[RIGHT_SHOULDER] ?: return lost(now, marks, missing)
-        val le = joints[LEFT_ELBOW] ?: return lost(now, marks, missing)
-        val re = joints[RIGHT_ELBOW] ?: return lost(now, marks, missing)
-        if ((ls - rs).length < frame.shortSide * 0.06) return lost(now, marks, R.string.tracking_move_closer)
+    private fun reach(joints: Map<Int, MotionPoint>, frame: CameraFrame, now: Long, marks: TrackingMarks, missing: Int, isLowLight: Boolean): MovementSample {
+        val ls = joints[LEFT_SHOULDER] ?: return lost(now, marks, missing, isLowLight)
+        val rs = joints[RIGHT_SHOULDER] ?: return lost(now, marks, missing, isLowLight)
+        val le = joints[LEFT_ELBOW] ?: return lost(now, marks, missing, isLowLight)
+        val re = joints[RIGHT_ELBOW] ?: return lost(now, marks, missing, isLowLight)
+        if ((ls - rs).length < frame.shortSide * 0.06) return lost(now, marks, R.string.tracking_move_closer, isLowLight)
         count = reach.observe(reachPose(ls, rs, le, re, frame.shortSide), now)
-        return active(marks)
+        return active(marks, isLowLight = isLowLight)
     }
 
-    private fun rhythm(joints: Map<Int, MotionPoint>, frame: CameraFrame, now: Long, marks: TrackingMarks, missing: Int): MovementSample {
+    private fun rhythm(joints: Map<Int, MotionPoint>, frame: CameraFrame, now: Long, marks: TrackingMarks, missing: Int, isLowLight: Boolean): MovementSample {
         val state = if (seated) {
-            val ls = joints[LEFT_SHOULDER] ?: return lost(now, marks, missing)
-            val rs = joints[RIGHT_SHOULDER] ?: return lost(now, marks, missing)
+            val ls = joints[LEFT_SHOULDER] ?: return lost(now, marks, missing, isLowLight)
+            val rs = joints[RIGHT_SHOULDER] ?: return lost(now, marks, missing, isLowLight)
             val lw = joints[LEFT_WRIST]
             val rw = joints[RIGHT_WRIST]
             if (lw != null && rw != null) {
@@ -131,12 +164,12 @@ internal class MovementTracker(private val kind: ChallengeKind, private val seat
                     else -> null
                 }
             } else {
-                val le = joints[LEFT_ELBOW] ?: return lost(now, marks, missing)
-                val re = joints[RIGHT_ELBOW] ?: return lost(now, marks, missing)
+                val le = joints[LEFT_ELBOW] ?: return lost(now, marks, missing, isLowLight)
+                val re = joints[RIGHT_ELBOW] ?: return lost(now, marks, missing, isLowLight)
                 reachPose(ls, rs, le, re, frame.shortSide)
             }
         } else {
-            val leg = visibleSide(joints, LEG_SIDES) ?: return lost(now, marks, missing)
+            val leg = visibleSide(joints, LEG_SIDES) ?: return lost(now, marks, missing, isLowLight)
             if (side != leg.first) cycle.interrupt()
             side = leg.first
             val (hip, knee, ankle) = leg.second
@@ -147,21 +180,21 @@ internal class MovementTracker(private val kind: ChallengeKind, private val seat
             }
         }
         count = cycle.observe(state, now, holdMillis = 120, visible = true)
-        return active(marks)
+        return active(marks, isLowLight = isLowLight)
     }
 
-    private fun jumpingJacks(joints: Map<Int, MotionPoint>, frame: CameraFrame, now: Long, marks: TrackingMarks, missing: Int): MovementSample {
-        val ls = joints[LEFT_SHOULDER] ?: return lost(now, marks, missing)
-        val rs = joints[RIGHT_SHOULDER] ?: return lost(now, marks, missing)
+    private fun jumpingJacks(joints: Map<Int, MotionPoint>, frame: CameraFrame, now: Long, marks: TrackingMarks, missing: Int, isLowLight: Boolean): MovementSample {
+        val ls = joints[LEFT_SHOULDER] ?: return lost(now, marks, missing, isLowLight)
+        val rs = joints[RIGHT_SHOULDER] ?: return lost(now, marks, missing, isLowLight)
         val lw = joints[LEFT_WRIST]
         val rw = joints[RIGHT_WRIST]
         val le = joints[LEFT_ELBOW]
         val re = joints[RIGHT_ELBOW]
-        if ((lw == null && le == null) || (rw == null && re == null)) return lost(now, marks, missing)
-        val la = joints[LEFT_ANKLE] ?: return lost(now, marks, R.string.tracking_show_feet)
-        val ra = joints[RIGHT_ANKLE] ?: return lost(now, marks, R.string.tracking_show_feet)
+        if ((lw == null && le == null) || (rw == null && re == null)) return lost(now, marks, missing, isLowLight)
+        val la = joints[LEFT_ANKLE] ?: return lost(now, marks, R.string.tracking_show_feet, isLowLight)
+        val ra = joints[RIGHT_ANKLE] ?: return lost(now, marks, R.string.tracking_show_feet, isLowLight)
         val shoulderWidth = abs(ls.x - rs.x)
-        if (shoulderWidth < frame.shortSide * 0.06) return lost(now, marks, R.string.tracking_move_closer)
+        if (shoulderWidth < frame.shortSide * 0.06) return lost(now, marks, R.string.tracking_move_closer, isLowLight)
         val feet = abs(la.x - ra.x)
         val leftUp = lw?.let { ls.y - it.y > frame.uprightHeight * 0.06 } ?: (le != null && ls.y - le.y > -frame.uprightHeight * 0.02)
         val rightUp = rw?.let { rs.y - it.y > frame.uprightHeight * 0.06 } ?: (re != null && rs.y - re.y > -frame.uprightHeight * 0.02)
@@ -173,22 +206,47 @@ internal class MovementTracker(private val kind: ChallengeKind, private val seat
             else -> null
         }
         count = cycle.observe(state, now, holdMillis = 100, visible = true)
-        return active(marks)
+        return active(marks, isLowLight = isLowLight)
     }
 
-    private fun pushUp(joints: Map<Int, MotionPoint>, frame: CameraFrame, now: Long, marks: TrackingMarks, missing: Int): MovementSample {
-        val chain = visibleSide(joints, PUSH_UP_SIDES) ?: return lost(now, marks, missing)
+    private fun pushUp(joints: Map<Int, MotionPoint>, frame: CameraFrame, now: Long, marks: TrackingMarks, missing: Int, isLowLight: Boolean): MovementSample {
+        val chain = visibleSide(joints, PUSH_UP_SIDES)
+            ?: (if (pushUpVariant == PushUpVariant.INCLINE_OR_KNEE) visibleSide(joints, KNEE_PUSH_UP_SIDES) else null)
+            ?: return lost(now, marks, missing, isLowLight)
         if (side != chain.first) pushUp.interrupt()
         side = chain.first
-        val (shoulder, elbow, wrist, hip, ankle) = chain.second
-        val stance = ankle - shoulder
+        val (shoulder, elbow, wrist, hip, anchor) = chain.second
+        val stance = anchor - shoulder
         val incline = Math.toDegrees(atan2(abs(stance.y), abs(stance.x)))
-        val body = jointAngle(shoulder, hip, ankle)
-        val supported = shoulder.y <= wrist.y + frame.uprightHeight * 0.02 &&
-            abs(wrist.y - ankle.y) <= maxOf(24.0, stance.length * 0.28)
-        if (!supported) return lost(now, marks, R.string.tracking_push_up_form)
+        val body = jointAngle(shoulder, hip, anchor)
+        val supported = if (pushUpVariant == PushUpVariant.INCLINE_OR_KNEE) {
+            shoulder.y <= wrist.y + frame.uprightHeight * 0.14
+        } else {
+            shoulder.y <= wrist.y + frame.uprightHeight * 0.02 &&
+                abs(wrist.y - anchor.y) <= maxOf(24.0, stance.length * 0.28)
+        }
+        if (!supported) return lost(now, marks, R.string.tracking_push_up_form, isLowLight)
         count = pushUp.observe(jointAngle(shoulder, elbow, wrist), body, incline, now)
-        return if (body >= 150 && incline <= 42) active(marks) else MovementSample(count, R.string.tracking_push_up_form, marks)
+        val hint = when (pushUp.formCue) {
+            MovementFormCue.STRAIGHTEN_BODY -> R.string.tracking_push_up_form
+            MovementFormCue.LOWER_CHEST -> R.string.tracking_push_up_lower
+            else -> R.string.tracking_active
+        }
+        return MovementSample(count, hint, marks, romProgress = pushUp.romProgress, formCue = pushUp.formCue, isLowLight = isLowLight)
+    }
+
+    private fun squats(joints: Map<Int, MotionPoint>, now: Long, marks: TrackingMarks, missing: Int, isLowLight: Boolean): MovementSample {
+        val leg = visibleSide(joints, LEG_SIDES) ?: return lost(now, marks, missing, isLowLight)
+        if (side != leg.first) squat.interrupt()
+        side = leg.first
+        val (hip, knee, ankle) = leg.second
+        count = squat.observe(jointAngle(hip, knee, ankle), now)
+        val hint = when (squat.formCue) {
+            MovementFormCue.BEND_KNEES_DEEPER -> R.string.tracking_squat_deeper
+            MovementFormCue.STAND_TALL -> R.string.tracking_squat_stand_tall
+            else -> R.string.tracking_active
+        }
+        return MovementSample(count, hint, marks, romProgress = squat.romProgress, formCue = squat.formCue, isLowLight = isLowLight)
     }
 
     private fun visibleSide(joints: Map<Int, MotionPoint>, sides: Array<IntArray>): Pair<Int, List<MotionPoint>>? {
@@ -201,7 +259,8 @@ internal class MovementTracker(private val kind: ChallengeKind, private val seat
         return null
     }
 
-    private fun active(marks: TrackingMarks) = MovementSample(count, R.string.tracking_active, marks)
+    private fun active(marks: TrackingMarks, romProgress: Double = 0.0, isLowLight: Boolean = false) =
+        MovementSample(count, R.string.tracking_active, marks, romProgress = romProgress, isLowLight = isLowLight)
 
     private fun bodyMarks(joints: Map<Int, MotionPoint>): TrackingMarks {
         val paths = buildList {
@@ -234,8 +293,11 @@ internal class MovementTracker(private val kind: ChallengeKind, private val seat
         val RIGHT_LEG = intArrayOf(RIGHT_HIP, RIGHT_KNEE, RIGHT_ANKLE)
         val LEFT_PUSH_UP = intArrayOf(LEFT_SHOULDER, LEFT_ELBOW, LEFT_WRIST, LEFT_HIP, LEFT_ANKLE)
         val RIGHT_PUSH_UP = intArrayOf(RIGHT_SHOULDER, RIGHT_ELBOW, RIGHT_WRIST, RIGHT_HIP, RIGHT_ANKLE)
+        val LEFT_KNEE_PUSH_UP = intArrayOf(LEFT_SHOULDER, LEFT_ELBOW, LEFT_WRIST, LEFT_HIP, LEFT_KNEE)
+        val RIGHT_KNEE_PUSH_UP = intArrayOf(RIGHT_SHOULDER, RIGHT_ELBOW, RIGHT_WRIST, RIGHT_HIP, RIGHT_KNEE)
         val LEG_SIDES = arrayOf(LEFT_LEG, RIGHT_LEG)
         val PUSH_UP_SIDES = arrayOf(LEFT_PUSH_UP, RIGHT_PUSH_UP)
+        val KNEE_PUSH_UP_SIDES = arrayOf(LEFT_KNEE_PUSH_UP, RIGHT_KNEE_PUSH_UP)
         val BODY_CHAINS = listOf(
             TrackingColor.LEFT to intArrayOf(LEFT_SHOULDER, LEFT_ELBOW, LEFT_WRIST),
             TrackingColor.RIGHT to intArrayOf(RIGHT_SHOULDER, RIGHT_ELBOW, RIGHT_WRIST),

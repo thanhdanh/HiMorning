@@ -6,7 +6,7 @@ import HiMorningCore
 extension ChallengeKind {
  var hasMovementIllustration:Bool {
   switch self {
-  case .pushUps,.waveHand,.neckRotation,.jumpingJacks,.stretching,.guidedRhythm:return true
+  case .pushUps,.squats,.waveHand,.neckRotation,.jumpingJacks,.stretching,.guidedRhythm:return true
   default:return false
   }
  }
@@ -34,7 +34,7 @@ extension ChallengeSelection {
   case .neckRotation:return .face
   case .stretching:return .upperBody
   case .guidedRhythm:return rhythmVariant == .seated ? .upperBody : .wholeBodySide
-  case .pushUps:return .wholeBodySide
+  case .pushUps,.squats:return .wholeBodySide
   default:return .wholeBodyFront
   }
  }
@@ -64,6 +64,8 @@ struct StudioMotionAsset {
   switch selection.kind {
   case .pushUps:
    return StudioMotionAsset(key:"push_ups",phase1CueKey:"High plank",phase2CueKey:"Lower 90°",focusJoint:(0.64,0.626))
+  case .squats:
+   return StudioMotionAsset(key:"rhythm_standing",phase1CueKey:"Stand tall",phase2CueKey:"Bend knees",focusJoint:(0.518,0.692))
   case .waveHand:
    return StudioMotionAsset(key:"wave_hand",phase1CueKey:"Wave left",phase2CueKey:"Wave right",focusJoint:(0.257,0.478))
   case .neckRotation:

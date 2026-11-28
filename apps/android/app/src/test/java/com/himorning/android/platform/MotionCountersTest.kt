@@ -1,5 +1,6 @@
 package com.himorning.android.platform
 
+import com.himorning.android.core.PushUpVariant
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -92,5 +93,44 @@ class MotionCountersTest {
         assertEquals(MotionPoint(540.0, 330.0), rawCameraPoint(upright, 640, 480, 180))
         assertEquals(MotionPoint(490.0, 100.0), rawCameraPoint(upright, 640, 480, 270))
         assertEquals(upright, rawCameraPoint(upright, 640, 480, 0))
+    }
+
+    @Test fun inclinePushUpAcceptsElevatedInclineAndTracksRomProgress() {
+        val counter = PushUpCounter(PushUpVariant.INCLINE_OR_KNEE)
+        assertEquals(0, counter.observe(160.0, 142.0, 58.0, 0))
+        assertTrue(counter.romProgress < 0.1)
+        assertEquals(0, counter.observe(102.0, 142.0, 58.0, 400))
+        assertTrue(counter.romProgress > 0.9)
+        assertEquals(1, counter.observe(156.0, 142.0, 58.0, 950))
+    }
+
+    @Test fun squatCounterCountsCleanRepsRejectsShallowBouncesAndEmitsDepthCue() {
+        val squat = SquatCounter()
+        // Standing -> shallow bounce (130 deg) -> standing: should NOT count
+        assertEquals(0, squat.observe(170.0, 0))
+        assertEquals(0, squat.observe(130.0, 400))
+        assertEquals(0, squat.observe(130.0, 1_000))
+        assertEquals(MovementFormCue.BEND_KNEES_DEEPER, squat.formCue)
+        assertEquals(0, squat.observe(170.0, 1_400))
+
+        // Full clean squat: 170 -> 105 -> 168
+        assertEquals(0, squat.observe(170.0, 2_000))
+        assertEquals(0, squat.observe(105.0, 2_450))
+        assertTrue(squat.romProgress > 0.9)
+        assertEquals(1, squat.observe(168.0, 2_950))
+    }
+
+    @Test fun cameraConditionMathClassifiesLumaAndDerotatesTiltedFrames() {
+        assertEquals(CameraLightingStatus.LOW_LIGHT, CameraConditionMath.classifyLuma(0.12))
+        assertEquals(CameraLightingStatus.OK, CameraConditionMath.classifyLuma(0.55))
+        assertEquals(CameraLightingStatus.OVEREXPOSED, CameraConditionMath.classifyLuma(0.95))
+
+        assertEquals(0.0, CameraConditionMath.androidRollDegrees(0.02, 9.81), 0.001)
+        val roll = CameraConditionMath.androidRollDegrees(3.0, 9.34)
+        assertTrue(roll > 15.0 && roll < 20.0)
+        val center = MotionPoint(320.0, 240.0)
+        val same = CameraConditionMath.derotatePoint(center, 640.0, 480.0, 18.0)
+        assertEquals(center.x, same.x, 0.001)
+        assertEquals(center.y, same.y, 0.001)
     }
 }
